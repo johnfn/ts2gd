@@ -1,0 +1,324 @@
+// TODO: Convert bbcode thing e.g. [b]blah[/b] to html
+// TODO make docstrings better
+
+import fs from 'fs';
+import path from 'path';
+import { parseStringPromise } from 'xml2js';
+import { buildBase } from './generate_base';
+
+export function generateGodotLibraryDefinitions(root: string): void {
+  const godotDocumentationPath = "./../godot/doc/classes/";
+  const contents = fs.readdirSync(godotDocumentationPath);
+  const xmlFiles = contents.filter(file => file.endsWith(".xml"));
+  const destPath = path.join(root, "godot_defs")
+  fs.mkdirSync(destPath, { recursive: true });
+
+  function convertType(godotType: string): string {
+    if (godotType === "int") {
+      return "number";
+    }
+
+    if (godotType === "float") {
+      return "number";
+    }
+
+    if (godotType === "bool") {
+      return "boolean";
+    }
+
+    if (godotType === "Array") {
+      return "any[]";
+    }
+
+    if (godotType === "Variant") {
+      return "any";
+    }
+
+    if (godotType === "NodePath") {
+      // TODO
+      return "NodePathType";
+    }
+
+    return godotType;
+  }
+
+  function sanitizeName(name: string): string {
+    if (name === "with" || name === "var" || name === "class" || name === "default" || name === "in") {
+      return "_" + name;
+    }
+
+    // for enum names in @GlobalScope
+    name = name.replace(".", "_");
+
+    // Bizarre case in SliderJoint3D.xml
+    if (name.includes('/')) {
+      name = '"' + name + '"';
+    }
+
+    return name;
+  }
+
+  function prettyPrintDocString(docstring: string) {
+    return "/** " + docstring.trim() + " */";
+  }
+
+  async function parseFile(path: string) {
+    const content = fs.readFileSync(path, 'utf-8');
+    const json = await parseStringPromise(content);
+    const methodsXml: any[] = json.class.methods[0].method ?? [];
+    const members = (json.class.members ?? [])[0]?.member ?? [];
+    let className = json.class['$'].name;
+    const inherits = json.class['$'].inherits;
+    const constants = (json.class.constants ?? [])[0]?.constant ?? [];
+    const signals = (json.class.signals ?? [])[0]?.signal ?? [];
+
+    const methods = methodsXml.map((method: any) => {
+      const name = method['$'].name as string;
+      const args = method.argument;
+      const isConstructor = name === className;
+      const docString = prettyPrintDocString(method.description[0].trim());
+      const returnType = convertType(method.return[0]['$'].type);
+      let argumentList: string = '';
+
+      if (args) {
+        argumentList = args.map((arg: any) => {
+          return sanitizeName(arg['$'].name) + (arg['$'].default ? '?' : '') + ": " + convertType(arg['$'].type)
+        }).join(', ');
+      }
+
+      return {
+        name,
+        argumentList,
+        isConstructor,
+        docString,
+        returnType,
+      }
+    });
+
+    const constructorInfo = methods.filter(method => method.isConstructor);
+
+    if (className === "Signal") {
+      className = 'Signal<T>';
+    }
+
+    const output = `
+interface ${className}${inherits ? ` extends ${inherits}` : ''} {
+${members.map((member: any) => {
+      const name = member['$'].name.trim();
+      if (!member['_']) {
+        return '';
+      }
+
+      return `
+${prettyPrintDocString(member['_'].trim())}
+${sanitizeName(member['$'].name)}: ${convertType(member['$'].type)};`
+    }).join('\n')
+      }
+
+${signals.map((signal: any) => {
+        return `${prettyPrintDocString(signal.description[0])}\n${signal['$'].name}: Signal<(${(signal.argument || []).map((arg: any) => arg['$'].name + ': ' + convertType(arg['$'].type)).join(", ")}) => void>\n`;
+      }).join('\n')
+      }
+
+${methods.map(method => {
+        if (method.name === 'get_node') {
+          return "";
+        }
+
+        // This is a constructor
+        if (method.isConstructor) {
+          return '';
+        }
+
+        return `${method.docString}
+${method.name}(${method.argumentList}): ${method.returnType};`;
+      }).join('\n\n')
+      }
+
+${(() => {
+        // Generate wrapper functions for operator overloading stuff.
+
+        if (
+          className === "Vector2" ||
+          className === "Vector2i" ||
+          className === "Vector3" ||
+          className === "Vector3i"
+        ) {
+          return `
+add(other: number | ${className}): ${className};
+sub(other: number | ${className}): ${className};
+mul(other: number | ${className}): ${className};
+div(other: number | ${className}): ${className};
+`;
+        } else {
+          return '';
+        }
+      })()
+      }
+
+${constants.map((c: any) => {
+        const value: string = c['$'].value.trim();
+        let type: string | null = null;
+
+        if (value.startsWith('Vector2')) {
+          type = 'Vector2'
+        }
+
+        if (value.startsWith('Vector3')) {
+          type = 'Vector3'
+        }
+
+        if (value.startsWith('"')) {
+          type = 'string'
+        }
+
+        if (value.startsWith('false') || value.startsWith('true')) {
+          type = 'boolean'
+        }
+
+        if (/^[0-9]+$/.test(value)) {
+          type = 'number';
+        }
+
+        if (c['$'].value && (type === 'string' || type === 'boolean' || type === 'number')) {
+          return `${prettyPrintDocString(c['_'] || '')}\nstatic ${c['$'].name}: ${c['$'].value};\n`;
+        } else {
+          if (type) {
+            return `${prettyPrintDocString(c['_'] || '')}\nstatic ${c['$'].name}: ${type};\n`;
+          } else {
+            return `${prettyPrintDocString(c['_'] || '')}\n// static ${c['$'].name}: ${type};\n`;
+          }
+        }
+      }).join('\n')
+      }
+
+/** ${(json.class.description[0] || 'no documentation').trim()} */
+${(() => {
+        if ((className as string).toLowerCase() === 'signal<t>') {
+          return '';
+        }
+
+        let constructors = '';
+
+        // These are the Godot constuctors - either Object.new() or Object(args);
+        if (constructorInfo.length === 0) {
+          constructors += `  "new"(): this\n`;
+        } else {
+          constructors += `
+${constructorInfo.map(inf => `  (${inf.argumentList}): this;`).join('\n')}
+`;
+        }
+
+        // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
+        // Unfortunately by adding this, we also make new Object() not a syntax error - even
+        // though it really should be.
+
+        constructors += `  new(): this\n`;
+
+        return constructors;
+      })()
+      }
+}
+${(() => {
+        if (className.toLowerCase() === 'signal<t>') {
+          return ''
+        } else {
+          return `declare const ${className}: ${className};`
+        }
+      })()
+      }
+`;
+
+    return output;
+  }
+
+  const singletons: string[] = [];
+
+  async function parseGlobalScope(path: string) {
+    const content = fs.readFileSync(path, 'utf-8');
+    const json = await parseStringPromise(content);
+    const methods = json.class.methods[0].method ?? [];
+    const members = (json.class.members ?? [])[0]?.member ?? [];
+    const className = json.class['$'].name;
+    const inherits = json.class['$'].inherits;
+    const constants = (json.class.constants ?? [])[0]?.constant ?? [];
+    const enums: { [key: string]: any } = {};
+
+    for (const c of constants) {
+      const doc = c['_'];
+      const enumName = c['$'].enum;
+
+      if (enumName) {
+        enums[enumName] = [...(enums[enumName] || []), { ...c['$'], doc: c['_'] }];
+      }
+    }
+
+    const result = `
+declare const load: <T extends AssetPath>(path: T) => AssetType[T];
+${members.map((member: any) => {
+      const name = sanitizeName(member['$'].name);
+      // these dont have .xml files
+      const commentOut = (name === 'VisualScriptEditor' || name === 'GodotSharp');
+
+      singletons.push(name);
+      if (!member['_']) {
+        return '';
+      }
+
+      return `
+${prettyPrintDocString(member['_'].trim())}
+${commentOut ? '//' : ''}declare const ${name}: ${convertType(member['$'].type)}Class;`
+    }).join('\n')
+      }
+
+${Object.keys(enums).map(key => {
+        return `
+    declare enum ${sanitizeName(key)} {
+      ${enums[key].map((enumItem: any) => {
+          return `${prettyPrintDocString(enumItem.doc)}\n${enumItem.name} = ${/^-?\d+$/.test(enumItem.value) ? enumItem.value : '"' + enumItem.value + '"'}`;
+        }).join(",\n")}
+    }
+    `;
+      }).join('\n')
+      }
+    `;
+
+    return result;
+  }
+
+  async function buildGlobals() {
+    const result = await parseGlobalScope(godotDocumentationPath + '@GlobalScope.xml');
+    fs.writeFileSync(path.join(destPath, '@globals.d.ts'), result);
+  }
+
+  async function buildDefinitions() {
+    for (let fileName of xmlFiles) {
+      if (fileName === '@GlobalScope.xml') {
+        continue;
+      }
+
+      if (fileName === 'Array.xml') {
+        continue;
+      }
+
+      const result = await parseFile(godotDocumentationPath + fileName);
+
+      fs.writeFileSync(path.join(destPath, fileName.slice(0, -4) + ".d.ts"), result)
+    }
+  }
+
+  async function main() {
+    await buildGlobals();
+    await buildBase(destPath);
+    await buildDefinitions();
+  }
+
+  // async function debug() {
+  //   let fileName = 'KinematicBody2D.xml';
+  //   const result = await parseFile(godotDocumentationPath + fileName);
+
+  //   console.log(result);
+  // }
+
+  main();
+}
