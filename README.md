@@ -10,8 +10,6 @@ GDScript is a great language - it's perfectly designed for quick prototyping. Bu
 
 We can also get really, really good autocomplete and refactoring support. 
 
-TODO: Add pics - or better yet, those sublime text style gifs!
-
 ## How?!
 
 Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript. 
