@@ -115,7 +115,7 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] ../ node paths
 - [ ] Break our assumption that filename === classname
 - [ ] handle actions
-- [ ] Onready vs nonready
+- [ ] Onready vs nonready - maybe we don't have to mark everything as an onready var? Is there an advantage to so doing?
 - [ ] ts2gd: Handle adding new files.
 - [ ] ts2gd: Handle deleting old files.
 - [ ] ts2gd: Random newlines at beginning of file.
