@@ -122,24 +122,7 @@ async function walk(dir: string): Promise<string[]> {
 async function buildAssetPathsType(project: TsGdProject) {
   const assetFileContents = `
 declare type AssetType = {
-${project.assets.map(({ resPath, fsPath }) => `  '${resPath}': ${(() => {
-    if (resPath.endsWith('.gd')) {
-      const sourceFile = project.sourceFiles.find(file => file.resPath === resPath);
-
-      if (!sourceFile) {
-        throw new Error(`Couldn't find source file for ${resPath}`);
-      }
-
-      return `import('${sourceFile.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile.className}`;
-    } else if (resPath.endsWith('.tscn')) {
-      const scene = project.scenes.find(scene => scene.fsPath === fsPath)!;
-
-      return scene.rootNode.script?.type ?? scene.rootNode.type;
-    } else if (resPath.endsWith('.ttf')) {
-      return 'DynamicFontData';
-    }
-  })()
-    }`).join(',\n')}
+${project.assets.map(({ resPath, fsPath, className }) => `  '${resPath}': ${className}`).join(',\n')}
 }
 
 declare type AssetPath = keyof AssetType;
@@ -212,7 +195,7 @@ export type ParsedSourceFile = {
 export type TsGdProject = {
   sourceFiles: ParsedSourceFile[];
   scenes: ParsedScene[];
-  assets: { resPath: string; fsPath: string }[];
+  assets: { resPath: string; fsPath: string; className: string; }[];
   mainScene: { resPath: string; fsPath: string };
 }
 
@@ -331,7 +314,13 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
       } else if (resPath.endsWith('.tscn')) {
         const scene = scenes.find(scene => scene.fsPath === fsPath)!;
 
-        className = scene.rootNode.script?.type ?? scene.rootNode.type;
+        if (scene.rootNode.script) {
+          let sourceFile = sourceFiles.find(file => file.resPath === scene.rootNode.script?.resPath);
+
+          className = `PackedScene<import('${sourceFile?.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile?.className}>`;
+        } else {
+          className = `PackedScene<${scene.rootNode.type}>`;
+        }
       } else if (resPath.endsWith('.ttf')) {
         className = 'DynamicFontData';
       } else {

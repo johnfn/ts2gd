@@ -87,7 +87,7 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 
 ## Road to usability
 
-- [ ] load("myscene.tscn) should return a `PackedScene<T>` where T is the type of the root node of the scene
+- [x] load("myscene.tscn) should return a `PackedScene<T>` where T is the type of the root node of the scene
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?

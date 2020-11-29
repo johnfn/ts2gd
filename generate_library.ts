@@ -305,6 +305,10 @@ ${Object.keys(enums).map(key => {
         continue;
       }
 
+      if (fileName === 'PackedScene.xml') {
+        continue;
+      }
+
       const result = await parseFile(godotDocumentationPath + fileName);
 
       fs.writeFileSync(path.join(destPath, fileName.slice(0, -4) + ".d.ts"), result)
