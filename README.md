@@ -65,9 +65,9 @@ Note that `get_node()` on an autoloaded class will autocomplete to nodes found i
 
 ### Vector2 / Vector3 operator overloading
 
-For now, TypeScript sadly has no support for operator overloading. 
+TypeScript sadly has no support for operator overloading. 
 
-But for now, you have to write code like this:
+For now, you have to write code like this:
 
 ```
 const v1 = Vector(1, 2)
@@ -90,6 +90,7 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] load("myscene.tscn) should return a `PackedScene<T>` where T is the type of the root node of the scene
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
+- [ ] How come I can't call get_tree() on a class that extends Object?
 - [ ] `callables`
 - [ ] `connect()`
 - [ ] Translate `add()`, `sub()`, etc
@@ -98,9 +99,13 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [ ] Handle the thing where if u never yield its never a coroutine
 - [ ] Have a way to mark int vs float, even though it's not particulary typesafe
+- [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
+- [ ] Fallthrough cases in switch are currently not supported.
+- [ ] `tool`
 
 ## Road to superior development
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
+- [ ] parse the TS xml style
 - [ ] get_nodes_in_group should parse scene to determine a more accurate return type
 - [ ] add a way to install ts2gd as a global command
 - [ ] add a way to use ts2gd via installer rather than command line

@@ -102,17 +102,47 @@ export function generateGodotLibraryDefinitions(root: string): void {
     }
 
     const output = `
-interface ${className}${inherits ? ` extends ${inherits}` : ''} {
-${members.map((member: any) => {
-      const name = member['$'].name.trim();
-      if (!member['_']) {
-        return '';
+declare class ${className}${inherits ? ` extends ${inherits}` : ''} {
+
+  
+/** ${(json.class.description[0] || 'no documentation').trim()} */
+${(() => {
+        if ((className as string).toLowerCase() === 'signal<t>') {
+          return '';
+        }
+
+        let constructors = '';
+
+        if (constructorInfo.length === 0) {
+          constructors += `  "new"()\n`;
+        } else {
+          constructors += `
+${constructorInfo.map(inf => `  constructor(${inf.argumentList});`).join('\n')}
+`;
+        }
+
+        // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
+        // Unfortunately by adding this, we also make new Object() not a syntax error - even
+        // though it really should be.
+
+        constructors += `  static "new"(): this\n`;
+
+        return constructors;
+      })()
       }
 
-      return `
+
+
+${members.map((member: any) => {
+        const name = member['$'].name.trim();
+        if (!member['_']) {
+          return '';
+        }
+
+        return `
 ${prettyPrintDocString(member['_'].trim())}
 ${sanitizeName(member['$'].name)}: ${convertType(member['$'].type)};`
-    }).join('\n')
+      }).join('\n')
       }
 
 ${signals.map((signal: any) => {
@@ -186,44 +216,18 @@ ${constants.map((c: any) => {
           if (type) {
             return `${prettyPrintDocString(c['_'] || '')}\nstatic ${c['$'].name}: ${type};\n`;
           } else {
-            return `${prettyPrintDocString(c['_'] || '')}\n// static ${c['$'].name}: ${type};\n`;
+            return `${prettyPrintDocString(c['_'] || '')}\n static ${c['$'].name}: ${type};\n`;
           }
         }
       }).join('\n')
       }
-
-/** ${(json.class.description[0] || 'no documentation').trim()} */
-${(() => {
-        if ((className as string).toLowerCase() === 'signal<t>') {
-          return '';
-        }
-
-        let constructors = '';
-
-        // These are the Godot constuctors - either Object.new() or Object(args);
-        if (constructorInfo.length === 0) {
-          constructors += `  "new"(): this\n`;
-        } else {
-          constructors += `
-${constructorInfo.map(inf => `  (${inf.argumentList}): this;`).join('\n')}
-`;
-        }
-
-        // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
-        // Unfortunately by adding this, we also make new Object() not a syntax error - even
-        // though it really should be.
-
-        constructors += `  new(): this\n`;
-
-        return constructors;
-      })()
-      }
 }
+
 ${(() => {
         if (className.toLowerCase() === 'signal<t>') {
           return ''
         } else {
-          return `declare const ${className}: ${className};`
+          return ` `
         }
       })()
       }

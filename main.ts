@@ -1,48 +1,4 @@
-// Immediately necessary:
-// TODO: load(.tscn) into a scene of the appropriate type!
-// TODO: Relative node paths as well as absolute ones.
-// TODO: Figure out callables - not just strings!
-// TODO: Figure out connect - again, not strings!
-// TODO: Translate .add() .sub() etc
-// TODO: When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where
-// the compiled versions are.
-
-// TODO: extends must come before everything else, including enum declarations.
-
-// Would be nice:
-// TODO: add a way to install ts2gd as a global command
-// TODO: add a way to use ts2gd via installer rather than command line
-// TODO: Whether to hide away constants into enums or not could be parameterizeable.
-//   * Some sort of error if an autoload class is not entirely static.
-// TODO:yield(this.get_tree(), "idle_frame"); could autocomplete idle_frame? 
-//        - yep, it's possible: just get all the signals on the object.
-// TODO: Fancy language features
-// * TODO: destructuring
-// * TODO: ...
-// TODO: Handle the thing where if u never yield its never a coroutine
-// TODO: Map, filter, NOT reduce.
-// TODO: int/float classes - ugh, but then you can't add them
-// TODO: Skip compiled/
-//  * maybe number for int; bigint for float.
-
-// TODO: ../ node paths
-
-// TODO: Assumes that filename === classname
-// TODO: handle actions
-// TODO: get_nodes_in_group could at least be a Node[]
-//         might be able to parse scenes to get a better type
-// TODO: Onready vs nonready
-
-// TODO: Handle adding new files.
-// TODO: Handle deleting old files.
-// TODO: Random newlines at beginning of file.
-
-// TODO: mark unused variables with _ to avoid warnings
-// TODO: Rewrite the code so you dont even need to add autoload classes bc they just get auto registered.
-// TODO: Is there a better way to do Dictionary, with strongly typed k/v?
-// TODO: Sourcemaps???
-
-import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, ConstructorDeclaration, PropertyDeclaration, CallExpression, PropertyAccessExpression, ThisExpression, Identifier, StringLiteral, Block, ExpressionStatement, SuperExpression, MethodDeclaration, ParameterDeclaration, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, ForStatement, VariableDeclarationList, VariableDeclaration, PostfixUnaryExpression, AsExpression, ForOfStatement, BreakStatement, PrefixUnaryExpression, ReturnStatement, ElementAccessExpression, YieldExpression, ParenthesizedExpression, NewExpression, ClassExpression, ForInStatement, WhileStatement, EnumDeclaration, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression } from "typescript";
+import ts from "typescript";
 import fs from 'fs';
 import path from 'path';
 
@@ -113,12 +69,12 @@ function reportWatchStatusChanged(diagnostic: ts.Diagnostic, newLine: string) {
   const sourcePath = diagnostic.file?.fileName;
 
   if (sourcePath && !sourcePath.endsWith('.d.ts') && project) {
-    compile(sourcePath, project);
+    compile(project.sourceFiles.find(file => file.tsFullPath === sourcePath)!, project);
   }
 }
 
-function compile(sourcePath: string, project: TsGdProject): void {
-  const source = watchProgram.getProgram().getSourceFile(sourcePath);
+function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
+  const source = watchProgram.getProgram().getSourceFile(sourceFile.tsRelativePath);
 
   if (!source) {
     console.error('invalid path to source file!');
@@ -133,12 +89,10 @@ function compile(sourcePath: string, project: TsGdProject): void {
     mostRecentControlStructureIsSwitch: false,
   });
 
-  const destPath = path.join(srcDestPath, sourcePath.slice(srcRootPath.length, -path.extname(sourcePath).length) + ".gd");
+  fs.mkdirSync(path.dirname(sourceFile.gdPath), { recursive: true })
+  fs.writeFileSync(sourceFile.gdPath, gdSource);
 
-  fs.mkdirSync(path.dirname(destPath), { recursive: true })
-  fs.writeFileSync(destPath, gdSource);
-
-  console.log('[write]:', destPath);
+  console.log('[write]:', sourceFile.gdPath);
 }
 
 async function* walkCo(dir: string): AsyncGenerator<string, undefined, undefined> {
@@ -168,14 +122,20 @@ async function walk(dir: string): Promise<string[]> {
 async function buildAssetPathsType(project: TsGdProject) {
   const assetFileContents = `
 declare type AssetType = {
-${project.assets.map(({ assetPath, fsPath }) => `  '${assetPath}': ${(() => {
-    if (assetPath.endsWith('.gd')) {
-      return assetPath.slice(assetPath.lastIndexOf('/') + 1, -'.gd'.length);
-    } else if (assetPath.endsWith('.tscn')) {
+${project.assets.map(({ resPath, fsPath }) => `  '${resPath}': ${(() => {
+    if (resPath.endsWith('.gd')) {
+      const sourceFile = project.sourceFiles.find(file => file.resPath === resPath);
+
+      if (!sourceFile) {
+        throw new Error(`Couldn't find source file for ${resPath}`);
+      }
+
+      return `import('${sourceFile.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile.className}`;
+    } else if (resPath.endsWith('.tscn')) {
       const scene = project.scenes.find(scene => scene.fsPath === fsPath)!;
 
       return scene.rootNode.script?.type ?? scene.rootNode.type;
-    } else if (assetPath.endsWith('.ttf')) {
+    } else if (resPath.endsWith('.ttf')) {
       return 'DynamicFontData';
     }
   })()
@@ -189,27 +149,27 @@ declare type AssetPath = keyof AssetType;
   fs.writeFileSync(destPath, assetFileContents);
 }
 
-function getClassNameFromResPath(resPath: string): string {
-  return resPath.slice(resPath.lastIndexOf('/') + 1, resPath.lastIndexOf('.'));
-}
-
 async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
   const scene = project.scenes.find(scene => scene.fsPath === sceneFsPath)!;
-  // TODO: Assumes that filename === classname
-  const classesInScene = scene.resources.map(res => ({
-    resPath: res.resPath,
-    className: getClassNameFromResPath(res.resPath),
-  }));
+  const classesInScene = scene.resources.filter(res => res.resPath.endsWith('.gd')).map(res => {
+    let result = project.sourceFiles.find(source => source.resPath === res.resPath);
+
+    if (!result) {
+      console.log('cant find class for', res.resPath, 'in', sceneFsPath);
+      return undefined!;
+    }
+
+    return result;
+  });
+
   const nodesInScene = scene.nodes;
 
   const allClasses = [
     ...classesInScene,
-    ...(project.mainScene.fsPath === sceneFsPath ? project.autoloads : []),
+    ...(project.mainScene.fsPath === sceneFsPath ? project.sourceFiles.filter(source => source.isAutoload) : []),
   ];
 
-  for (const { resPath, className } of allClasses) {
-    const isAutoload = project.autoloads.find(a => a.resPath === resPath);
-
+  for (const { resPath, className, isAutoload } of allClasses) {
     let assetFileContents = `
 declare type NodePathToType${className} = {`
 
@@ -226,22 +186,12 @@ declare type NodePathToType${className} = {`
     assetFileContents += `import ${className} from './../${tsgdJson.source}/${className}';
 `;
 
-    if (isAutoload) {
-      assetFileContents += `
-declare module './../${tsgdJson.source}/${className}' {
-  namespace ${className} {
-    export function get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
-  }
-}`
-
-    } else {
-      assetFileContents += `
+    assetFileContents += `
 declare module './../${tsgdJson.source}/${className}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
   }
 }`
-    }
 
     const destPath = path.join(tsgdPath, "godot_defs", `@node_paths_${className}.d.ts`)
     fs.writeFileSync(destPath, assetFileContents);
@@ -249,11 +199,20 @@ declare module './../${tsgdJson.source}/${className}' {
 
 }
 
+export type ParsedSourceFile = {
+  resPath: string;
+  gdPath: string;
+  className: string;
+  tsFullPath: string;
+  tsRelativePath: string;
+  tsFileContent: string;
+  isAutoload: boolean;
+};
+
 export type TsGdProject = {
-  sourceFilePaths: string[];
-  scenes: Scene[];
-  autoloads: { className: string; resPath: string }[];
-  assets: { assetPath: string; fsPath: string }[];
+  sourceFiles: ParsedSourceFile[];
+  scenes: ParsedScene[];
+  assets: { resPath: string; fsPath: string }[];
   mainScene: { resPath: string; fsPath: string };
 }
 
@@ -317,23 +276,80 @@ const getMainScene = () => {
 
 const getProjectProperties = async (): Promise<TsGdProject> => {
   const allFiles = await walk(tsgdPath);
-
-  let assets = allFiles
-    .filter(f => f.endsWith('.tscn') || f.endsWith('.gd') || f.endsWith('.ttf'))
-    .map(f => ({
-      assetPath: "res://" + f.slice(tsgdPath.length + 1),
-      fsPath: f,
-      className: f.slice(tsgdPath.length + 1, tsgdPath.lastIndexOf('.')),
-    }));
+  const autoloads = getAutoloadFiles();
 
   let scenePaths = allFiles.filter(f => f.endsWith('.tscn'));
 
+  const sourceFilePaths = watchProgram.getProgram().getSourceFiles().map(source => source.fileName).filter(path => !path.endsWith('.d.ts') && !path.includes('/test/'));
+  const sourceFiles = sourceFilePaths.map(sourceFilePath => {
+    let tsFileContent = fs.readFileSync(sourceFilePath, 'utf-8');
+    // TODO: this is a bit brittle
+    let classNameMatch = [...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /mg)];
+    let className = "";
+    let gdPath = path.join(srcDestPath, sourceFilePath.slice(srcRootPath.length, -path.extname(sourceFilePath).length) + ".gd");
+    let resPath = fsPathToResPath(gdPath);
+
+    if (classNameMatch && classNameMatch.length === 1) {
+      className = classNameMatch[0][1];
+    } else {
+      if (classNameMatch.length > 1) {
+        throw new Error(`Found too many exported classes in ${sourceFilePath}`);
+      } else {
+        throw new Error(`Couldn't find an exported class in ${sourceFilePath}`);
+      }
+    }
+
+    const result: ParsedSourceFile = {
+      className,
+      tsFileContent: '',
+      resPath: fsPathToResPath(gdPath),
+      tsFullPath: sourceFilePath,
+      tsRelativePath: sourceFilePath,
+      gdPath,
+      isAutoload: !!autoloads.find(autoload => autoload.resPath === resPath),
+    };
+
+    return result;
+  });
+
+  let scenes = scenePaths.map(scenePath => parseScene(scenePath));
+
+  let assets = allFiles
+    .filter(f => f.endsWith('.tscn') || f.endsWith('.gd') || f.endsWith('.ttf'))
+    .map(fsPath => {
+      let resPath = "res://" + fsPath.slice(tsgdPath.length + 1);
+      let className: string;
+
+      if (resPath.endsWith('.gd')) {
+        const sourceFile = sourceFiles.find(file => file.resPath === resPath);
+
+        if (!sourceFile) {
+          throw new Error(`Couldn't find source file for ${resPath}`);
+        }
+
+        className = `import('${sourceFile.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile.className}`;
+      } else if (resPath.endsWith('.tscn')) {
+        const scene = scenes.find(scene => scene.fsPath === fsPath)!;
+
+        className = scene.rootNode.script?.type ?? scene.rootNode.type;
+      } else if (resPath.endsWith('.ttf')) {
+        className = 'DynamicFontData';
+      } else {
+        throw new Error("unhandled asset type! " + resPath);
+      }
+
+      return {
+        resPath: "res://" + fsPath.slice(tsgdPath.length + 1),
+        fsPath,
+        className,
+      };
+    });
+
   return {
-    sourceFilePaths: watchProgram.getProgram().getSourceFiles().map(source => source.fileName).filter(path => !path.endsWith('.d.ts')),
-    scenes: scenePaths.map(scenePath => parseScene(scenePath)),
+    scenes,
     assets,
-    autoloads: getAutoloadFiles(),
     mainScene: getMainScene(),
+    sourceFiles,
   };
 };
 
@@ -345,9 +361,10 @@ type Node = {
   script?: { resPath: string; type: string; id: number; fsPath: string; };
   parent?: string;
   groups?: string;
+  rest: string;
 };
 
-type Scene = {
+type ParsedScene = {
   nodes: Node[];
   fsPath: string;
   resPath: string;
@@ -355,7 +372,7 @@ type Scene = {
   rootNode: Node;
 }
 
-const parseScene = (fsPath: string): Scene => {
+const parseScene = (fsPath: string): ParsedScene => {
   const content = fs.readFileSync(fsPath, 'utf-8');
   const extResourceRe = /^\[ext_resource path="(.*)" type="(.*)" id=([0-9]+)\]$/gm;
 
@@ -374,7 +391,7 @@ const parseScene = (fsPath: string): Scene => {
     const scriptReResult = scriptRe.exec(groups.rest);
     const script = scriptReResult ? extResources.find(resource => resource.id === Number(scriptReResult[1])) : undefined;
 
-    return {
+    let node: Node = {
       name: groups.name,
       type: groups.type,
       isRoot: !groups.parent,
@@ -385,6 +402,8 @@ const parseScene = (fsPath: string): Scene => {
       scenePath: '',
       rest: groups.rest,
     }
+
+    return node;
   });
 
   const rootNode = allNodes.find(node => !node.parent)!;
@@ -423,15 +442,15 @@ const main = async () => {
 
   generateGodotLibraryDefinitions(tsgdPath);
 
-  for (const path of project.sourceFilePaths) {
-    compile(path, project);
+  for (const sourceFile of project.sourceFiles) {
+    compile(sourceFile, project);
 
-    fs.watchFile(path, { persistent: true, interval: 250 }, (curr, prev) => {
+    fs.watchFile(sourceFile.tsFullPath, { persistent: true, interval: 250 }, (curr, prev) => {
       if (+curr.mtime <= +prev.mtime) {
         return;
       }
 
-      compile(path, project);
+      compile(sourceFile, project);
     });
   }
 };
