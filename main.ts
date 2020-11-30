@@ -74,7 +74,7 @@ function reportWatchStatusChanged(diagnostic: ts.Diagnostic, newLine: string) {
 }
 
 function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
-  const source = watchProgram.getProgram().getSourceFile(sourceFile.tsRelativePath);
+  const source = watchProgram.getProgram().getSourceFile(sourceFile.tsFullPath);
 
   if (!source) {
     console.error('invalid path to source file!');
@@ -152,25 +152,32 @@ async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
     ...(project.mainScene.fsPath === sceneFsPath ? project.sourceFiles.filter(source => source.isAutoload) : []),
   ];
 
-  for (const { resPath, className, isAutoload } of allClasses) {
+  for (const { resPath, className, tsFullPath, tsRelativePath } of allClasses) {
     let assetFileContents = `
 declare type NodePathToType${className} = {`
 
     for (const { scenePath, type, script } of nodesInScene) {
       if (script) {
-        let tsPath = script.fsPath.slice(0, script.fsPath.lastIndexOf('/')) + "/src/" + script.type;
+        const associatedClass = project.sourceFiles.find(source => {
+          return source.className === script.type;
+        })!;
 
-        assetFileContents += `  '${scenePath}': import("${tsPath}").${script.type},\n`;
+        if (!associatedClass) {
+          throw new Error("Can't find the class for " + script.type)
+        }
+
+        assetFileContents += `  '${scenePath}': import("${associatedClass.tsFullPath.slice(0, -'.ts'.length)}").${script.type},\n`;
+
       } else {
         assetFileContents += `  '${scenePath}': ${type},\n`;
       }
     }
     assetFileContents += '}\n\n';
-    assetFileContents += `import ${className} from './../${tsgdJson.source}/${className}';
+    assetFileContents += `import ${className} from './../${tsgdJson.source}/${path.basename(tsFullPath).slice(0, -'.ts'.length)}';
 `;
 
     assetFileContents += `
-declare module './../${tsgdJson.source}/${className}' {
+declare module './../${tsRelativePath.slice(0, -'.ts'.length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
   }
@@ -183,12 +190,25 @@ declare module './../${tsgdJson.source}/${className}' {
 }
 
 export type ParsedSourceFile = {
+  /** Path like res://src/MyFile.gd */
   resPath: string;
+
+  /** Path like /Users/johnfn/MyGame/src/file.gd */
   gdPath: string;
+
+  /** Name of the class declared in the source file */
   className: string;
+
+  /** Path like /Users/johnfn/MyGame/src/file.ts */
   tsFullPath: string;
+
+  /** Path like src/file.ts, relative to tsgd.json */
   tsRelativePath: string;
+
+  /** Unused? */
   tsFileContent: string;
+
+  /** Is this an autoload class? */
   isAutoload: boolean;
 };
 
@@ -204,7 +224,7 @@ const getAutoloadFiles = () => {
   const lines = projectFile.split('\n');
 
   let inAutoloadSection = false;
-  let results: { className: string; resPath: string }[] = [];
+  let results: { resPath: string }[] = [];
 
   for (const line of lines) {
     if (line.trim() == '[autoload]') {
@@ -224,7 +244,6 @@ const getAutoloadFiles = () => {
         const [line, className] = match
 
         results.push({
-          className,
           resPath: `res://${className}.gd`,
         });
       }
@@ -287,13 +306,15 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
       tsFileContent: '',
       resPath: fsPathToResPath(gdPath),
       tsFullPath: sourceFilePath,
-      tsRelativePath: sourceFilePath,
+      tsRelativePath: sourceFilePath.slice(tsgdPath.length + 1),
       gdPath,
       isAutoload: !!autoloads.find(autoload => autoload.resPath === resPath),
     };
 
     return result;
   });
+
+  console.log(sourceFiles);
 
   let scenes = scenePaths.map(scenePath => parseScene(scenePath));
 

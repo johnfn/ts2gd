@@ -114,7 +114,7 @@ ${(() => {
         let constructors = '';
 
         if (constructorInfo.length === 0) {
-          constructors += `  "new"()\n`;
+          constructors += `  "new"(): this;\n`;
         } else {
           constructors += `
 ${constructorInfo.map(inf => `  constructor(${inf.argumentList});`).join('\n')}
@@ -125,7 +125,7 @@ ${constructorInfo.map(inf => `  constructor(${inf.argumentList});`).join('\n')}
         // Unfortunately by adding this, we also make new Object() not a syntax error - even
         // though it really should be.
 
-        constructors += `  static "new"(): this\n`;
+        constructors += `  static "new"(): this;\n`;
 
         return constructors;
       })()

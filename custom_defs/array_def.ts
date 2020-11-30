@@ -203,8 +203,9 @@ interface Array<T> {
   (from: PackedInt64Array): this;
   (from: PackedInt32Array): this;
   (from: PackedByteArray): this;
-  new(): this
+  new(): this;
 
   [n: number]: T;
+  [Symbol.iterator](): IterableIterator<T>;
 }
 `;
