@@ -3,7 +3,7 @@ import { program } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
 import { parseSourceFile } from "./parse_node/parse_source_file";
-import { isEnumType, syntaxToKind, tsTypeToGodotType } from "./ts_utils";
+import { isEnumType, syntaxToKind } from "./ts_utils";
 import { parseTypeReference } from "./parse_node/parse_type_reference";
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal";
 import { parseArrayLiteralExpression } from "./parse_node/parse_array_literal_expression";

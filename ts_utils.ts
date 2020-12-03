@@ -26,19 +26,72 @@ export const syntaxToKind = (kind: ts.Node["kind"]) => {
   return ts.SyntaxKind[kind];
 };
 
-export function tsTypeToGodotType(type: ts.Type): string {
-  const tsTypeName = program.getTypeChecker().typeToString(type);
+/**
+ * Get the Godot type for a node. The more arguments that are passed in, the more precise
+ * we can be aboue this type.
+ * 
+ * Note we need actualType because if we have let x: float, TS will infer the
+ * type to be number, which isn't very useful.
+ * 
+ * @param typecheckerInferredType This is the type that getTypeAtLocation returns
+ * @param actualType This is the actual type node in the program, if there is one
+ */
+export function getGodotType(
+  node: ts.Node,
+  initializer?: ts.Expression,
+  actualType?: ts.TypeNode
+): string {
+  const typecheckerInferredType = program.getTypeChecker().getTypeAtLocation(node);
+
+  // If we have a precise initializer, use that first
+
+  if (initializer) {
+    let preciseInitializerType = getPreciseInitializerType(initializer);
+
+    if (preciseInitializerType) {
+      return preciseInitializerType;
+    }
+  }
+
+  // If we have an explicitly written type e.g. x: string, use that. 
+  // Otherwise, use the type that TS inferred.
+
+  let tsTypeName: string | null = null;
+
+  if (actualType) {
+    tsTypeName = actualType.getText();
+  } else {
+    tsTypeName = program.getTypeChecker().typeToString(typecheckerInferredType);
+  }
 
   if (tsTypeName === "string") {
     return "String";
+  }
+
+  if (tsTypeName === "boolean") {
+    return "bool";
+  }
+
+  if (tsTypeName === "number") {
+    console.log("Unknown number type, writing float");
+    return "float";
   }
 
   if (tsTypeName.startsWith('{')) {
     return 'Dictionary';
   }
 
-  if (tsTypeName === "number") {
-    return "float";
+  if (tsTypeName.startsWith('IterableIterator')) {
+    return 'Array';
+  }
+
+  if (tsTypeName.includes('[')) {
+    return 'Array'
+  }
+
+  if (tsTypeName.startsWith('PackedScene')) {
+    // This is a generic type in TS, so just return the non-generic Godot type.
+    return 'PackedScene';
   }
 
   return tsTypeName;
@@ -63,10 +116,6 @@ export function getPreciseInitializerType(initializer: ts.Expression | undefined
   // attempt to figure out from the literal type whether this is a int or a float.
   let isInt = !!initStr.match(/^[0-9]+$/);
   let isFloat = (!!initStr.match(/^([0-9]+)?\.([0-9]+)?$/)) && initStr.length > 1;
-
-  if (initializer.getText().startsWith("6")) {
-    console.log(initializer.getText(), isInt, isFloat)
-  }
 
   if (isInt) {
     return "int";
