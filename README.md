@@ -91,6 +91,7 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
+- [ ] Have a way to mark int vs float, even though it's not particulary typesafe
 - [ ] `callables`
 - [ ] `connect()`
 - [ ] Translate `add()`, `sub()`, etc
@@ -98,7 +99,6 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [ ] Handle the thing where if u never yield its never a coroutine
-- [ ] Have a way to mark int vs float, even though it's not particulary typesafe
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
 - [ ] `tool`

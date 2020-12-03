@@ -37,6 +37,10 @@ export function tsTypeToGodotType(type: ts.Type): string {
     return 'Dictionary';
   }
 
+  if (tsTypeName === "number") {
+    return "float";
+  }
+
   return tsTypeName;
 }
 
