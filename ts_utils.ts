@@ -40,7 +40,7 @@ export function getGodotType(
   node: ts.Node,
   initializer?: ts.Expression,
   actualType?: ts.TypeNode
-): string {
+): string | undefined {
   const typecheckerInferredType = program.getTypeChecker().getTypeAtLocation(node);
 
   // If we have a precise initializer, use that first
@@ -64,37 +64,44 @@ export function getGodotType(
     tsTypeName = program.getTypeChecker().typeToString(typecheckerInferredType);
   }
 
-  if (tsTypeName === "string") {
-    return "String";
-  }
-
-  if (tsTypeName === "boolean") {
-    return "bool";
-  }
-
   if (tsTypeName === "number") {
     console.log("Unknown number type, writing float");
     return "float";
   }
 
-  if (tsTypeName.startsWith('{')) {
-    return 'Dictionary';
-  }
+  return undefined;
 
-  if (tsTypeName.startsWith('IterableIterator')) {
-    return 'Array';
-  }
+  // TODO: In theory, we could do the below, but it's subtle to get right
+  // and doesn't confer a lot of benefit. In some cases (e.g. using user-defined
+  // types) it actually causes errors due to cyclic dependencies, and those would
+  // be a huge pain to resolve properly.
 
-  if (tsTypeName.includes('[')) {
-    return 'Array'
-  }
+  // if (tsTypeName === "string") {
+  //   return "String";
+  // }
 
-  if (tsTypeName.startsWith('PackedScene')) {
-    // This is a generic type in TS, so just return the non-generic Godot type.
-    return 'PackedScene';
-  }
+  // if (tsTypeName === "boolean") {
+  //   return "bool";
+  // }
 
-  return tsTypeName;
+  // if (tsTypeName.startsWith('{')) {
+  //   return 'Dictionary';
+  // }
+
+  // if (tsTypeName.startsWith('IterableIterator')) {
+  //   return 'Array';
+  // }
+
+  // if (tsTypeName.includes('[')) {
+  //   return 'Array'
+  // }
+
+  // if (tsTypeName.startsWith('PackedScene')) {
+  //   // This is a generic type in TS, so just return the non-generic Godot type.
+  //   return 'PackedScene';
+  // }
+
+  // return tsTypeName;
 }
 
 /**
