@@ -1,3 +1,13 @@
+// TODO: use ts.transpileModule to save time.
+// TODO: TileMap.INVALID_CELL is typed null
+// TODO: as is Color.red
+// TODO: The whole Class() thing is clearly possible - see String() for
+//       an example!
+// TODO: I don't know how to do { [key: Vector2]: value }. except maybe not 
+//       using {}, which is kind of lame. 
+// TODO: Node2D has a size() property.
+// TODO: tile_get_shapes is any[] when it shouldn't be
+
 import ts from "typescript";
 import fs from 'fs';
 import path from 'path';
@@ -41,6 +51,7 @@ if (!configPath) {
   console.error("tsconfig.json must be in the same folder as tsgd.json. Thanks!");
   process.exit(0);
 }
+
 
 const formatHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: path => path,
@@ -172,6 +183,7 @@ declare type NodePathToType${className} = {`
         assetFileContents += `  '${scenePath}': ${type},\n`;
       }
     }
+
     assetFileContents += '}\n\n';
     assetFileContents += `import ${className} from './../${tsgdJson.source}/${path.basename(tsFullPath).slice(0, -'.ts'.length)}';
 `;

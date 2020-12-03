@@ -190,23 +190,20 @@ ${constants.map((c: any) => {
         const value: string = c['$'].value.trim();
         let type: string | null = null;
 
-        if (value.startsWith('Vector2')) {
+        let genericClassNameRe = /([A-Z][a-z]*)\(.*\)/;
+        const match = genericClassNameRe.exec(value);
+
+        if (match) {
+          type = match[1];
+        } else if (value.startsWith('Vector2')) {
           type = 'Vector2'
-        }
-
-        if (value.startsWith('Vector3')) {
+        } else if (value.startsWith('Vector3')) {
           type = 'Vector3'
-        }
-
-        if (value.startsWith('"')) {
+        } else if (value.startsWith('"')) {
           type = 'string'
-        }
-
-        if (value.startsWith('false') || value.startsWith('true')) {
+        } else if (value.startsWith('false') || value.startsWith('true')) {
           type = 'boolean'
-        }
-
-        if (/^[0-9]+$/.test(value)) {
+        } else if (/^[0-9]+$/.test(value)) {
           type = 'number';
         }
 
