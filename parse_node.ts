@@ -234,6 +234,8 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
       return "+";
     case SyntaxKind.SlashToken:
       return "/";
+    case SyntaxKind.AmpersandAmpersandToken:
+      return "and";
     case SyntaxKind.EqualsEqualsEqualsToken:
       return "==";
     case SyntaxKind.LessThanToken:
@@ -250,8 +252,10 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
       return "true";
     case SyntaxKind.InstanceOfKeyword:
       return "is";
-    case SyntaxKind.AmpersandAmpersandToken:
-      return "and";
+    case SyntaxKind.InKeyword:
+      return "in"
+    case SyntaxKind.ContinueStatement:
+      return "continue"
   }
 
   throw new Error('uh oh!: ' + syntaxToKind(genericNode.kind) + " " + (genericNode.getText ? genericNode.getText() : genericNode));
