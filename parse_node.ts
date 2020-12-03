@@ -1,4 +1,4 @@
-import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral } from "typescript";
+import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration } from "typescript";
 import { program } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
@@ -37,6 +37,8 @@ import { parseBreakStatement } from "./parse_node/parse_break_statement";
 import { parseBlock } from "./parse_node/parse_block";
 import { parseCallExpression } from "./parse_node/parse_call_expression";
 import { parseVariableStatement } from "./parse_node/parse_variable_statement";
+import { parseSetAccessor } from "./parse_node/parse_set_accessor";
+import { parseGetAccessor } from "./parse_node/parse_get_accessor";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -162,13 +164,56 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
         extendsFrom = type.getText();
       }
 
+      // Preprocess set/get to make setget declarations
+      const setOrGetters = node.members.filter(member => member.kind === SyntaxKind.SetAccessor || member.kind === SyntaxKind.GetAccessor);
+
+      const pairings: { setter?: ts.SetAccessorDeclaration; getter?: ts.GetAccessorDeclaration; name: string }[] = [];
+
+      for (const setGet of setOrGetters) {
+        if (setGet.kind === SyntaxKind.SetAccessor) {
+          const setter = setGet as SetAccessorDeclaration;
+          const name = setter.name.getText();
+          const existingObj = pairings.find(pair => pair.name === name);
+
+          if (existingObj) {
+            existingObj.setter = setter;
+          } else {
+            pairings.push({ setter, name })
+          }
+        }
+
+        if (setGet.kind === SyntaxKind.GetAccessor) {
+          const getter = setGet as GetAccessorDeclaration;
+          const name = getter.name.getText();
+          const existingObj = pairings.find(pair => pair.name === name);
+
+          if (existingObj) {
+            existingObj.getter = getter;
+          } else {
+            pairings.push({ getter, name })
+          }
+        }
+      }
+
+      const parsedSetterGetters = `
+${pairings.map(({ setter, getter, name }) => {
+        return `var ${name} setget ${setter ? name + "_set" : ""}, ${getter ? name + "_get" : ""}`
+      }).join('\n')}
+      `
+
       return `${extendsFrom ? `extends ${extendsFrom}` : ''}
 ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
+${parsedSetterGetters}
 ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
 `;
 
       return `i am a class lol`;
     }
+    case SyntaxKind.SetAccessor:
+      return parseSetAccessor(genericNode, props);
+    case SyntaxKind.GetAccessor:
+      return parseGetAccessor(genericNode, props);
+    case SyntaxKind.GetAccessor:
     case SyntaxKind.MinusEqualsToken:
       return "-=";
     case SyntaxKind.PlusEqualsToken:
@@ -211,4 +256,3 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
 
   throw new Error('uh oh!: ' + syntaxToKind(genericNode.kind) + " " + (genericNode.getText ? genericNode.getText() : genericNode));
 }
-

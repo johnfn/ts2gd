@@ -29,6 +29,10 @@ interface Number {
 
 }
 
+interface String {
+  [Symbol.iterator](): IterableIterator<string>;
+}
+
 interface RegExp {
 
 }

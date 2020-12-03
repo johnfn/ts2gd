@@ -326,8 +326,6 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
     return result;
   });
 
-  console.log(sourceFiles);
-
   let scenes = scenePaths.map(scenePath => parseScene(scenePath));
 
   let assets = allFiles
