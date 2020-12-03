@@ -13,6 +13,10 @@ declare interface CallableFunction { };
 interface Function {
 
 }
+
+declare type int = number;
+declare type float = number;
+
 interface FunctionConstructor {
   (...args: string[]): Function;
 }

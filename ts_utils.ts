@@ -44,3 +44,37 @@ export function tsTypeToGodotType(type: ts.Type): string {
   return tsTypeName;
 }
 
+/**
+ * In cases like 
+ * 
+ * var x = 1.5
+ * var x = 1
+ * 
+ * TypeScript will infer both of those to be type "number", but we want to be able to say
+ * that the first one is a "float" and the second one is an "int".
+ */
+export function getPreciseInitializerType(initializer: ts.Expression | undefined): string | undefined {
+  if (!initializer) {
+    return "";
+  }
+
+  const initStr = initializer.getText();
+
+  // attempt to figure out from the literal type whether this is a int or a float.
+  let isInt = !!initStr.match(/^[0-9]+$/);
+  let isFloat = (!!initStr.match(/^([0-9]+)?\.([0-9]+)?$/)) && initStr.length > 1;
+
+  if (initializer.getText().startsWith("6")) {
+    console.log(initializer.getText(), isInt, isFloat)
+  }
+
+  if (isInt) {
+    return "int";
+  }
+
+  if (isFloat) {
+    return "float";
+  }
+
+  return undefined;
+}

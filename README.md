@@ -91,7 +91,7 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [ ] Have a way to mark int vs float, even though it's not particulary typesafe
+- [ ] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [ ] `callables`
 - [ ] `connect()`
 - [ ] Translate `add()`, `sub()`, etc
