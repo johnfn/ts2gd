@@ -65,13 +65,21 @@ Note that `get_node()` on an autoloaded class will autocomplete to nodes found i
 
 ### yield
 
-Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names - unfortunately, `yield` is a reserved word in TypeScript, not a function. So, you can continue to use `yield` if you'd like, but you can also use the global function `Yield`. `Yield` works just like `yield` but provides type completion on the signal argument.
+Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names, but `yield` is a keyword in TypeScript, which can't provide completion like functions can. So, you can continue to use `yield` if you'd like, but you can also use the global function `Yield`. `Yield` works just like `yield` but provides type completion on the signal argument.
 
 ### Vector2 / Vector3 operator overloading
 
 TypeScript sadly has no support for operator overloading. 
 
-For now, you have to write code like this:
+There are two alternatives:
+
+#### Use my forked TypeScript compiler
+
+I forked TS and added support for Vectors, so you can do `Vector2(1, 1) + Vector(2, 2)` like normal. 
+
+#### Use replacement methods
+
+I realize that using a forked TS compiler might not be the best option for everyone, so I provide an alternative solution.
 
 ```
 const v1 = Vector(1, 2)
@@ -83,9 +91,7 @@ v1.mul(v2); // v1 * v2
 v1.div(v2); // v1 / v2
 ```
 
-The add/sub/mul/div will get compiled into the corresponding arithmatic.
-
-Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about alternate approaches here. (I'm highly tempted to fork the TypeScript LSP. HIGHLY TEMPTED.)
+The add/sub/mul/div gets compiled into the corresponding arithmatic.
 
 # Roadmap
 
@@ -94,6 +100,8 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [x] load("myscene.tscn) should return a `PackedScene<T>` where T is the type of the root node of the scene
 - [x] `connect()`
 - [x] When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where the compiled versions are.
+- [x] Compile "Yield" to "yield"
+- [ ] generate Godot without warnings (as much as possible)
 - [ ] mark int/float in API
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
@@ -110,8 +118,9 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 - [ ] `tool`
 
 ## Road to superior development
+- [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
-- [ ] parse the TS xml style
+- [ ] parse the bbcode in the XML into markdown that TS can read.
 - [ ] get_nodes_in_group should parse scene to determine a more accurate return type
 - [ ] add a way to install ts2gd as a global command
 - [ ] add a way to use ts2gd via installer rather than command line
