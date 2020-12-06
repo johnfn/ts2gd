@@ -101,6 +101,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] `connect()`
 - [x] When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where the compiled versions are.
 - [x] Compile "Yield" to "yield"
+- [x] Translate `add()`, `sub()`, etc
 - [ ] generate Godot without warnings (as much as possible)
 - [ ] mark int/float in API
 - [ ] add documentation for class names.
@@ -109,12 +110,12 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [ ] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] `callables`
-- [ ] Translate `add()`, `sub()`, etc
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [ ] Handle the thing where if u never yield its never a coroutine
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
+- [ ] handle parameters to _functions that aren't provided in TS
 - [ ] `tool`
 
 ## Road to superior development
