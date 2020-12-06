@@ -40,12 +40,14 @@ import { parseVariableStatement } from "./parse_node/parse_variable_statement";
 import { parseSetAccessor } from "./parse_node/parse_set_accessor";
 import { parseGetAccessor } from "./parse_node/parse_get_accessor";
 import { parseContinueStatement } from "./parse_node/parse_continue_statement";
+import * as utils from 'tsutils';
 
 export type ParseState = {
   isConstructor: boolean;
   indent: string;
   isAutoload: false | { className: string };
-  mostRecentControlStructureIsSwitch: boolean,
+  mostRecentControlStructureIsSwitch: boolean;
+  usages: Map<ts.Identifier, utils.VariableInfo>
 }
 
 export const addIndent = (oldProps: ParseState) => {
@@ -96,7 +98,7 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
     case SyntaxKind.MethodDeclaration:
       return parseMethodDeclaration(genericNode, props);
     case SyntaxKind.Parameter:
-      return parseParameter(genericNode);
+      return parseParameter(genericNode, props);
     case SyntaxKind.ElementAccessExpression:
       return parseElementAccessExpression(genericNode, props);
     case SyntaxKind.PropertyDeclaration:
