@@ -15,11 +15,11 @@ export function generateGodotLibraryDefinitions(root: string): void {
 
   function convertType(godotType: string): string {
     if (godotType === "int") {
-      return "number";
+      return "int";
     }
 
     if (godotType === "float") {
-      return "number";
+      return "float";
     }
 
     if (godotType === "bool") {

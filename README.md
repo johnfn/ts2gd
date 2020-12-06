@@ -102,8 +102,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where the compiled versions are.
 - [x] Compile "Yield" to "yield"
 - [x] Translate `add()`, `sub()`, etc
-- [ ] generate Godot without warnings (as much as possible)
-- [ ] mark int/float in API
+- [x] mark int/float in API
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
@@ -116,10 +115,12 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
 - [ ] handle parameters to _functions that aren't provided in TS
+- [ ] generate Godot without warnings (as much as possible)
 - [ ] `tool`
 
 ## Road to superior development
 - [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
+- [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
 - [ ] parse the bbcode in the XML into markdown that TS can read.
 - [ ] get_nodes_in_group should parse scene to determine a more accurate return type
