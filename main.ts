@@ -1,12 +1,12 @@
-// TODO: use ts.transpileModule to save time.
-// TODO: TileMap.INVALID_CELL is typed null
-// TODO: as is Color.red
+// TODO: _prefixed names could possibly clash
+// TODO: Discarded return values from function calls?
 // TODO: The whole Class() thing is clearly possible - see String() for
 //       an example!
 // TODO: I don't know how to do { [key: Vector2]: value }. except maybe not 
 //       using {}, which is kind of lame. 
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
+// TODO: multiple statements in for loops
 
 import ts from "typescript";
 import fs from 'fs';
@@ -98,6 +98,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     isConstructor: false,
     isAutoload: false,
     mostRecentControlStructureIsSwitch: false,
+    usages: new Map(),
   });
 
   fs.mkdirSync(path.dirname(sourceFile.gdPath), { recursive: true })

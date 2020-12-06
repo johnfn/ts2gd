@@ -1,11 +1,28 @@
-import ts, { ForOfStatement } from "typescript";
+import ts, { ForOfStatement, SyntaxKind } from "typescript";
 import { ParseState, parseNodeToString } from "../parse_node";
 
 export function parseForOfStatement(genericNode: ts.Node, props: ParseState) {
   const node = genericNode as ForOfStatement;
   const newProps = { ...props, indent: props.indent + "  " };
 
-  const initializedVariable = node.initializer.getChildAt(1);
+  const initializer = node.initializer;
 
-  return `${props.indent}for ${initializedVariable.getText()} in ${parseNodeToString(node.expression, props)}:\n${parseNodeToString(node.statement, newProps)}`;
+  if (initializer.kind === SyntaxKind.VariableDeclarationList) {
+    const initializerNode = initializer as ts.VariableDeclarationList;
+    const decl = initializerNode.declarations[0];
+
+    if (initializerNode.declarations.length > 1) {
+      // TODO: Handle this case
+      throw new Error("Uh oh! For...of with > 1 declaration");
+    }
+
+    const usages = props.usages.get(decl.name as ts.Identifier);
+    const isUnused = usages?.uses.length === 0
+
+    return `${props.indent}for ${isUnused ? "_" : ""}${decl.name.getText()} in ${parseNodeToString(node.expression, props)}:\n${parseNodeToString(node.statement, newProps)}`;
+  } else {
+    const initializedVariable = node.initializer.getChildAt(1);
+
+    return `${props.indent}for ${initializedVariable.getText()} in ${parseNodeToString(node.expression, props)}:\n${parseNodeToString(node.statement, newProps)}`;
+  }
 }
