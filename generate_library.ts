@@ -145,11 +145,6 @@ ${sanitizeName(member['$'].name)}: ${convertType(member['$'].type)};`
       }).join('\n')
       }
 
-${signals.map((signal: any) => {
-        return `${prettyPrintDocString(signal.description[0])}\n${signal['$'].name}: Signal<(${(signal.argument || []).map((arg: any) => arg['$'].name + ': ' + convertType(arg['$'].type)).join(", ")}) => void>\n`;
-      }).join('\n')
-      }
-
 ${methods.map(method => {
         if (method.name === 'get_node') {
           return "";
@@ -160,13 +155,21 @@ ${methods.map(method => {
           return '';
         }
 
+        // Special case
+        if (method.name === "connect") {
+          return "";
+        }
+
         return `${method.docString}
 ${method.name}(${method.argumentList}): ${method.returnType};`;
       }).join('\n\n')
       }
 
+  connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
+
 ${(() => {
         // Generate wrapper functions for operator overloading stuff.
+        // TODO: Basically unnecessary now.
 
         if (
           className === "Vector2" ||
@@ -218,7 +221,13 @@ ${constants.map((c: any) => {
         }
       }).join('\n')
       }
+
+  ${signals.map((signal: any) => {
+        return `${prettyPrintDocString(signal.description[0])}\n${signal['$'].name}: Signal<(${(signal.argument || []).map((arg: any) => arg['$'].name + ': ' + convertType(arg['$'].type)).join(", ")}) => void>\n`;
+      }).join('\n')
+      }
 }
+
 
 ${(() => {
         if (className.toLowerCase() === 'signal<t>') {

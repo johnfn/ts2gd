@@ -149,7 +149,7 @@ async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
     let result = project.sourceFiles.find(source => source.resPath === res.resPath);
 
     if (!result) {
-      console.log('cant find class for', res.resPath, 'in', sceneFsPath);
+      console.error('cant find class for', res.resPath, 'in', sceneFsPath);
       return undefined!;
     }
 
@@ -165,7 +165,7 @@ async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
 
   for (const { resPath, className, tsFullPath, tsRelativePath } of allClasses) {
     let assetFileContents = `
-declare type NodePathToType${className} = {`
+declare type NodePathToType${className} = {\n`
 
     for (const { scenePath, type, script } of nodesInScene) {
       if (script) {
@@ -178,7 +178,6 @@ declare type NodePathToType${className} = {`
         }
 
         assetFileContents += `  '${scenePath}': import("${associatedClass.tsFullPath.slice(0, -'.ts'.length)}").${script.type},\n`;
-
       } else {
         assetFileContents += `  '${scenePath}': ${type},\n`;
       }
@@ -192,6 +191,7 @@ declare type NodePathToType${className} = {`
 declare module './../${tsRelativePath.slice(0, -'.ts'.length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
   }
 }`
 
@@ -404,7 +404,7 @@ const parseScene = (fsPath: string): ParsedScene => {
     id: Number(match[3]),
   }))
 
-  const nodeRe = /^\[node name="(?<name>[^"]+)" type="(?<type>[^"]+)"( parent="(?<parent>[^"]+)")?( groups=\[(?<groups>[^\]]+)\])?\](?<rest>[^]*?)\n\n/gm;
+  const nodeRe = /^\[node name="(?<name>[^"]+)" type="(?<type>[^"]+)"( parent="(?<parent>[^"]+)")?( groups=\[(?<groups>[^\]]+)\])?\](?<rest>[^]*?)(\n\n|\n$)/gm;
   const allNodes: Node[] = [...content.matchAll(nodeRe)].map((match) => {
     const groups = match.groups!;
     const scriptRe = /^script = ExtResource\( ([0-9]+) \)$/gm;

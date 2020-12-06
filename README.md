@@ -63,6 +63,10 @@ We really should have a way to provide an error for this case.
 
 Note that `get_node()` on an autoloaded class will autocomplete to nodes found in the main scene (the scene that Godot launches at the start of the game). Since the autoload class initializes when the game starts, this is accurate.
 
+### yield
+
+Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names - unfortunately, `yield` is a reserved word in TypeScript, not a function. So, you can continue to use `yield` if you'd like, but you can also use the global function `Yield`. `Yield` works just like `yield` but provides type completion on the signal argument.
+
 ### Vector2 / Vector3 operator overloading
 
 TypeScript sadly has no support for operator overloading. 

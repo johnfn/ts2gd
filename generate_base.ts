@@ -17,6 +17,10 @@ interface Function {
 declare type int = number;
 declare type float = number;
 
+// Used for typing connect()
+type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
+type SignalsOf<T> = KeysMatching<T, Signal<any>>;
+
 interface FunctionConstructor {
   (...args: string[]): Function;
 }
@@ -24,6 +28,8 @@ interface FunctionConstructor {
 interface IArguments {
 
 }
+
+declare const Yield: <A extends Object, T extends SignalsOf<A>>(node: A, name: T) => void;
 
 interface NewableFunction {
 
@@ -41,7 +47,8 @@ interface RegExp {
 
 }
 
-interface Object extends Dictionary {}
+interface Object extends Dictionary {
+}
 
 interface IteratorYieldResult<TYield> {
   done?: false;
