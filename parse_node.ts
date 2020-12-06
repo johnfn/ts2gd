@@ -1,4 +1,4 @@
-import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration } from "typescript";
+import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement } from "typescript";
 import { program } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
@@ -39,6 +39,7 @@ import { parseCallExpression } from "./parse_node/parse_call_expression";
 import { parseVariableStatement } from "./parse_node/parse_variable_statement";
 import { parseSetAccessor } from "./parse_node/parse_set_accessor";
 import { parseGetAccessor } from "./parse_node/parse_get_accessor";
+import { parseContinueStatement } from "./parse_node/parse_continue_statement";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -112,6 +113,8 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
       return parseStringLiteral(genericNode as StringLiteral);
     case SyntaxKind.BreakStatement:
       return parseBreakStatement(genericNode as BreakStatement, props);
+    case SyntaxKind.ContinueStatement:
+      return parseContinueStatement(genericNode as ContinueStatement, props);
     case SyntaxKind.Block:
       return parseBlock(genericNode as ts.Block, props);
     case SyntaxKind.CallExpression:
@@ -204,11 +207,9 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
         }
       }
 
-      const parsedSetterGetters = `
-${pairings.map(({ setter, getter, name }) => {
+      const parsedSetterGetters = pairings.map(({ setter, getter, name }) => {
         return `var ${name} setget ${setter ? name + "_set" : ""}, ${getter ? name + "_get" : ""}`
-      }).join('\n')}
-      `
+      }).join('\n')
 
       return `${extendsFrom ? `extends ${extendsFrom}` : ''}
 ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
@@ -263,8 +264,6 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
       return "is";
     case SyntaxKind.InKeyword:
       return "in"
-    case SyntaxKind.ContinueStatement:
-      return "continue"
   }
 
   throw new Error('uh oh!: ' + syntaxToKind(genericNode.kind) + " " + (genericNode.getText ? genericNode.getText() : genericNode));

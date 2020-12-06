@@ -1,4 +1,4 @@
-import ts from "typescript"
+import ts, { isParameter } from "typescript"
 import { parseNodeToString, ParseState } from "../parse_node"
 
 /*
@@ -6,5 +6,15 @@ import { parseNodeToString, ParseState } from "../parse_node"
  *               ^^^^^^^^^^^^^^^^^^^
  */
 export const parseParameterList = (list: ts.NodeArray<ts.ParameterDeclaration>, props: ParseState) => {
-  return list.map(param => parseNodeToString(param, props)).join(', ')
+  let result = "";
+
+  for (let i = 0; i < list.length; i++) {
+    const param = list[i];
+
+    const paramString = parseNodeToString(param, props);
+
+    result += paramString + (i === list.length - 1 ? "" : ", ");
+  }
+
+  return result;
 }
