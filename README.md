@@ -92,15 +92,16 @@ Yeah, it kinda sucks. This is a huge bummer, and I'm still thinking about altern
 ## Road to usability
 
 - [x] load("myscene.tscn) should return a `PackedScene<T>` where T is the type of the root node of the scene
+- [x] `connect()`
+- [x] When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where the compiled versions are.
+- [ ] mark int/float in API
 - [ ] add documentation for class names.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
 - [ ] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [ ] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] `callables`
-- [ ] `connect()`
 - [ ] Translate `add()`, `sub()`, etc
-- [ ] When i migrate to only using compiled gdscripts, adjust the imports() appropriately to figure out where the compiled versions are.
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [ ] Handle the thing where if u never yield its never a coroutine

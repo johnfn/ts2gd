@@ -145,7 +145,16 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
         }
       }
 
-      return `${parseNodeToString(node.expression, props)}.${parseNodeToString(node.name, props)}`
+      const lhs = parseNodeToString(node.expression, props);
+      const rhs = parseNodeToString(node.name, props);
+
+      // TS requires you to write this.blah everywhere, but Godot does not, and in fact
+      // even generates a warning since it cant prove that self.blah is real.
+      if (lhs === 'self') {
+        return rhs;
+      }
+
+      return `${lhs}.${rhs}`;
     }
     case SyntaxKind.ThisKeyword: return parseThisKeyword(genericNode);
     case SyntaxKind.Constructor: return parseConstructor(genericNode, props);
