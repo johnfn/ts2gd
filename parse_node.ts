@@ -46,6 +46,11 @@ export type ParseState = {
   isConstructor: boolean;
   indent: string;
   project: TsGdProject;
+
+  /**
+   * Is the current file we're in an autoload class?
+   */
+  isAutoload: boolean;
   mostRecentControlStructureIsSwitch: boolean;
   usages: Map<ts.Identifier, utils.VariableInfo>
 }
@@ -214,9 +219,9 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
       }).join('\n')
 
       // const isAutoload = props.project.sourceFiles.find()
-      // ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
 
       return `${extendsFrom ? `extends ${extendsFrom}` : ''}
+${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
 ${parsedSetterGetters}
 ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
 `;
