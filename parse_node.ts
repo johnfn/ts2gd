@@ -172,17 +172,6 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
     case SyntaxKind.ClassDeclaration: {
       const node = genericNode as ClassDeclaration | ClassExpression;
 
-      let extendsFrom = "";
-
-      if (node.heritageClauses) {
-        // TODO: Ensure there's only one of each here
-
-        const clause = node.heritageClauses[0] as HeritageClause;
-        const type = clause.types[0];
-
-        extendsFrom = type.getText();
-      }
-
       // Preprocess set/get to make setget declarations
       const setOrGetters = node.members.filter(member => member.kind === SyntaxKind.SetAccessor || member.kind === SyntaxKind.GetAccessor);
 
@@ -218,11 +207,10 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
         return `var ${name} setget ${setter ? name + "_set" : ""}, ${getter ? name + "_get" : ""}`
       }).join('\n')
 
-      // const isAutoload = props.project.sourceFiles.find()
+      // NOTE: Since extends and class_name *must* come first in the file,
+      // they are added ahead of time by parse_source_file.ts.
 
-      return `${extendsFrom ? `extends ${extendsFrom}` : ''}
-${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
-${parsedSetterGetters}
+      return `${parsedSetterGetters}
 ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
 `;
 

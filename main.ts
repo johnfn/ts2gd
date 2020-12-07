@@ -1,3 +1,6 @@
+// TODO: Put class_name and extends first, ALWAYS. 
+// TODO: Then, put Npc = preload('...') afterwards - need to generate this from imports i think
+
 // TODO: _prefixed names could possibly clash
 // TODO: Discarded return values from function calls?
 // TODO: The whole Class() thing is clearly possible - see String() for
@@ -98,6 +101,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     isConstructor: false,
     project,
     mostRecentControlStructureIsSwitch: false,
+    isAutoload: false,
     usages: new Map(),
   });
 
