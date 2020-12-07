@@ -236,6 +236,8 @@ export type TsGdProject = {
   sourceFiles: ParsedSourceFile[];
   scenes: ParsedScene[];
   assets: { resPath: string; fsPath: string; className: string; }[];
+  tsgdPathWithFilename: string;
+  tsgdPath: string;
   mainScene: { resPath: string; fsPath: string };
 }
 
@@ -378,6 +380,8 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   return {
     scenes,
     assets,
+    tsgdPath,
+    tsgdPathWithFilename,
     mainScene: getMainScene(),
     sourceFiles,
   };

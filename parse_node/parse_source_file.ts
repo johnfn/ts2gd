@@ -47,7 +47,7 @@ Can't find associated sourceInfo
 
   for (const statement of statements) {
     // The only VariableStatements outside of a class are for autoload classes, which
-    // are only needed for Godot.
+    // are only needed for TypeScript.
     if (statement.kind === SyntaxKind.VariableStatement) {
       continue;
     }
