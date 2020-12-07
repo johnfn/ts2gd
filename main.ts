@@ -96,7 +96,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     source, {
     indent: "",
     isConstructor: false,
-    isAutoload: false,
+    project,
     mostRecentControlStructureIsSwitch: false,
     usages: new Map(),
   });
@@ -175,7 +175,10 @@ declare type NodePathToType${className} = {\n`
         })!;
 
         if (!associatedClass) {
-          throw new Error("Can't find the class for " + script.type)
+          throw new Error(`\nCan't find the class for ${script.type}
+  in scene ${sceneFsPath}
+  script.type=${script.type}
+`)
         }
 
         assetFileContents += `  '${scenePath}': import("${associatedClass.tsFullPath.slice(0, -'.ts'.length)}").${script.type},\n`;
@@ -330,7 +333,8 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   let scenes = scenePaths.map(scenePath => parseScene(scenePath));
 
   let assets = allFiles
-    .filter(f => f.endsWith('.tscn') || f.endsWith('.gd') || f.endsWith('.ttf'))
+    // TODO: A more resilient check to exclude compiled files.
+    .filter(f => (f.endsWith('.tscn') || f.endsWith('.gd') || f.endsWith('.ttf')) && !f.includes("/compiled/"))
     .map(fsPath => {
       let resPath = "res://" + fsPath.slice(tsgdPath.length + 1);
       let className: string;
@@ -339,7 +343,8 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
         const sourceFile = sourceFiles.find(file => file.resPath === resPath);
 
         if (!sourceFile) {
-          throw new Error(`Couldn't find source file for ${resPath}`);
+          throw new Error(`Couldn't find source file for ${resPath}
+  in ${fsPath}`);
         }
 
         className = `import('${sourceFile.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile.className}`;

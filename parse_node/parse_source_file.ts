@@ -6,6 +6,10 @@ export const parseSourceFile = (node: ts.SourceFile, props: ParseState) => {
   const { statements } = node;
   let result = '';
 
+  // props.project.sourceFiles.find(file => file.)
+
+  console.log(node.fileName);
+
   props.usages = utils.collectVariableUsage(node);
 
   for (const statement of statements) {

@@ -1,5 +1,5 @@
 import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement } from "typescript";
-import { program } from "./main";
+import { program, TsGdProject } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
 import { parseSourceFile } from "./parse_node/parse_source_file";
@@ -45,7 +45,7 @@ import * as utils from 'tsutils';
 export type ParseState = {
   isConstructor: boolean;
   indent: string;
-  isAutoload: false | { className: string };
+  project: TsGdProject;
   mostRecentControlStructureIsSwitch: boolean;
   usages: Map<ts.Identifier, utils.VariableInfo>
 }
@@ -213,8 +213,10 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
         return `var ${name} setget ${setter ? name + "_set" : ""}, ${getter ? name + "_get" : ""}`
       }).join('\n')
 
+      // const isAutoload = props.project.sourceFiles.find()
+      // ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
+
       return `${extendsFrom ? `extends ${extendsFrom}` : ''}
-${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}
 ${parsedSetterGetters}
 ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
 `;

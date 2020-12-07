@@ -6,6 +6,49 @@ import path from 'path';
 import { parseStringPromise } from 'xml2js';
 import { buildBase } from './generate_base';
 
+function formatJsDoc(input: string): string {
+  if (!input) {
+    return `/** No documentation provided. */`;
+  }
+
+  let lines = input.split('\n');
+
+  if (lines.length === 1) {
+    return `/** ${input} */`;
+  }
+
+  const indentationLength = lines[1].length - lines[1].trimStart().length;
+
+  // All lines are indented except the first one for some reason.
+  lines = [lines[0], ...lines.slice(1).map(line => line.slice(indentationLength))];
+
+  lines = lines.filter(line => line.trim() !== "");
+
+  let result = '/**\n';
+
+  let insideCodeBlock = false;
+
+  for (let line of lines) {
+    if (line.includes("[codeblock]")) { result += " * @example \n"; insideCodeBlock = true; }
+    if (line.includes("[/codeblock]")) { result += " * @summary \n"; insideCodeBlock = true; }
+
+    line = line.replaceAll("[b]", "**");
+    line = line.replaceAll("[/b]", "**");
+    line = line.replaceAll("[i]", "**");
+    line = line.replaceAll("[/i]", "**");
+    line = line.replaceAll("[code]", "`");
+    line = line.replaceAll("[/code]", "`");
+    line = line.replaceAll("[codeblock]", "");
+    line = line.replaceAll("[/codeblock]", "");
+
+    result += " * " + line + "\n" + (!insideCodeBlock ? " *\n" : "");
+  }
+
+  result += '*/';
+
+  return result;
+}
+
 export function generateGodotLibraryDefinitions(root: string): void {
   const godotDocumentationPath = "./../godot/doc/classes/";
   const contents = fs.readdirSync(godotDocumentationPath);
@@ -58,10 +101,6 @@ export function generateGodotLibraryDefinitions(root: string): void {
     return name;
   }
 
-  function prettyPrintDocString(docstring: string) {
-    return "/** " + docstring.trim() + " */";
-  }
-
   async function parseFile(path: string) {
     const content = fs.readFileSync(path, 'utf-8');
     const json = await parseStringPromise(content);
@@ -76,7 +115,7 @@ export function generateGodotLibraryDefinitions(root: string): void {
       const name = method['$'].name as string;
       const args = method.argument;
       const isConstructor = name === className;
-      const docString = prettyPrintDocString(method.description[0].trim());
+      const docString = formatJsDoc(method.description[0].trim());
       const returnType = convertType(method.return[0]['$'].type);
       let argumentList: string = '';
 
@@ -102,10 +141,11 @@ export function generateGodotLibraryDefinitions(root: string): void {
     }
 
     const output = `
+${formatJsDoc(json.class.description[0])}
 declare class ${className}${inherits ? ` extends ${inherits}` : ''} {
 
   
-/** ${(json.class.description[0] || 'no documentation').trim()} */
+${formatJsDoc(json.class.description[0])}
 ${(() => {
         if ((className as string).toLowerCase() === 'signal<t>') {
           return '';
@@ -140,7 +180,7 @@ ${members.map((member: any) => {
         }
 
         return `
-${prettyPrintDocString(member['_'].trim())}
+${formatJsDoc(member['_'].trim())}
 ${sanitizeName(member['$'].name)}: ${convertType(member['$'].type)};`
       }).join('\n')
       }
@@ -211,19 +251,19 @@ ${constants.map((c: any) => {
         }
 
         if (c['$'].value && (type === 'string' || type === 'boolean' || type === 'number')) {
-          return `${prettyPrintDocString(c['_'] || '')}\nstatic ${c['$'].name}: ${c['$'].value};\n`;
+          return `${formatJsDoc(c['_'] || '')}\nstatic ${c['$'].name}: ${c['$'].value};\n`;
         } else {
           if (type) {
-            return `${prettyPrintDocString(c['_'] || '')}\nstatic ${c['$'].name}: ${type};\n`;
+            return `${formatJsDoc(c['_'] || '')}\nstatic ${c['$'].name}: ${type};\n`;
           } else {
-            return `${prettyPrintDocString(c['_'] || '')}\n static ${c['$'].name}: ${type};\n`;
+            return `${formatJsDoc(c['_'] || '')}\n static ${c['$'].name}: ${type};\n`;
           }
         }
       }).join('\n')
       }
 
   ${signals.map((signal: any) => {
-        return `${prettyPrintDocString(signal.description[0])}\n${signal['$'].name}: Signal<(${(signal.argument || []).map((arg: any) => arg['$'].name + ': ' + convertType(arg['$'].type)).join(", ")}) => void>\n`;
+        return `${formatJsDoc(signal.description[0])}\n${signal['$'].name}: Signal<(${(signal.argument || []).map((arg: any) => arg['$'].name + ': ' + convertType(arg['$'].type)).join(", ")}) => void>\n`;
       }).join('\n')
       }
 }
@@ -276,7 +316,7 @@ ${members.map((member: any) => {
       }
 
       return `
-${prettyPrintDocString(member['_'].trim())}
+${formatJsDoc(member['_'].trim())}
 ${commentOut ? '//' : ''}declare const ${name}: ${convertType(member['$'].type)}Class;`
     }).join('\n')
       }
@@ -285,7 +325,7 @@ ${Object.keys(enums).map(key => {
         return `
     declare enum ${sanitizeName(key)} {
       ${enums[key].map((enumItem: any) => {
-          return `${prettyPrintDocString(enumItem.doc)}\n${enumItem.name} = ${/^-?\d+$/.test(enumItem.value) ? enumItem.value : '"' + enumItem.value + '"'}`;
+          return `${formatJsDoc(enumItem.doc)}\n${enumItem.name} = ${/^-?\d+$/.test(enumItem.value) ? enumItem.value : '"' + enumItem.value + '"'}`;
         }).join(",\n")}
     }
     `;

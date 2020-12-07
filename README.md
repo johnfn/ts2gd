@@ -103,10 +103,10 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] Compile "Yield" to "yield"
 - [x] Translate `add()`, `sub()`, etc
 - [x] mark int/float in API
-- [ ] add documentation for class names.
+- [x] add documentation for class names.
+- [x] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [ ] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [ ] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [ ] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] `callables`
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
@@ -117,9 +117,10 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] handle parameters to _functions that aren't provided in TS
 - [ ] generate Godot without warnings (as much as possible)
 - [ ] `tool`
+- [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
 
 ## Road to superior development
-- [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
+- [ ] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
 - [ ] parse the bbcode in the XML into markdown that TS can read.
