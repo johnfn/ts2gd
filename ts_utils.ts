@@ -1,6 +1,29 @@
 import ts from "typescript";
 import { program } from "./main";
 
+export const generatePrecedingNewlines = (node: ts.Node): string => {
+  const fullText = node.getFullText();
+  let numNewlines = 0;
+
+  for (const ch of [...fullText]) {
+    if (ch.trim() !== "") {
+      break;
+    }
+
+    if (ch === '\n') {
+      numNewlines += 1;
+    }
+  }
+
+  let result = "";
+
+  for (let i = 0; i < numNewlines - 1; i++) {
+    result += '\n';
+  }
+
+  return result;
+}
+
 export function isEnumType(type: ts.Type) {
   if (type.flags & ts.TypeFlags.Enum) {
     return true;

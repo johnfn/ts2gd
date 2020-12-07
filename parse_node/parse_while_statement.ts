@@ -6,5 +6,5 @@ export function parseWhileStatement(genericNode: ts.Node, props: ParseState) {
   const newProps = { ...props, indent: props.indent + "  ", mostRecentControlStructureIsSwitch: false };
 
   return `${props.indent}while ${parseNodeToString(node.expression, newProps)}:
-${parseNodeToString(node.statement, newProps)}\n`;
+${parseNodeToString(node.statement, newProps)}`;
 }
