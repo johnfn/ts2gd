@@ -62,6 +62,6 @@ export function parseImportDeclaration(node: ts.ImportDeclaration, props: ParseS
     // No need to generate imports for autoload classes.
     return "";
   } else {
-    return `onready var ${importedSourceFile.className} = preload("${importedSourceFile.resPath}")`;
+    return `const ${importedSourceFile.className} = preload("${importedSourceFile.resPath}")`;
   }
 }

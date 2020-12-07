@@ -11,6 +11,8 @@
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: multiple statements in for loops
 
+// foo[foo] actually causes Godot to crash - probably should report this.
+
 import ts from "typescript";
 import fs from 'fs';
 import path from 'path';
