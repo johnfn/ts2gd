@@ -220,7 +220,6 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
       return parseSetAccessor(genericNode, props);
     case SyntaxKind.GetAccessor:
       return parseGetAccessor(genericNode, props);
-    case SyntaxKind.GetAccessor:
     case SyntaxKind.MinusEqualsToken:
       return "-=";
     case SyntaxKind.PlusEqualsToken:
@@ -238,7 +237,9 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
     case SyntaxKind.PlusToken:
       return "+";
     case SyntaxKind.MinusToken:
-      return "+";
+      return "-";
+    case SyntaxKind.ExclamationToken:
+      return "not";
     case SyntaxKind.SlashToken:
       return "/";
     case SyntaxKind.AmpersandAmpersandToken:

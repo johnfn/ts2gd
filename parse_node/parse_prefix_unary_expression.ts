@@ -17,6 +17,6 @@ export function parsePrefixUnaryExpression(node: ts.PrefixUnaryExpression, props
       // TODO: Error?
       return `~${operand}`;
     case SyntaxKind.ExclamationToken:
-      return `-${operand}`;
+      return `not ${operand}`;
   }
 }
