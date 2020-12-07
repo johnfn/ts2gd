@@ -49,7 +49,7 @@ export function parseImportDeclaration(node: ts.ImportDeclaration, props: ParseS
     );
   }
 
-  pathToImportedTs += ".ts"
+  pathToImportedTs += ".ts";
 
   const importedSourceFile = props.project.sourceFiles.find(sf => sf.tsFullPath === pathToImportedTs);
 
