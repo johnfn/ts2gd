@@ -47,7 +47,9 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
       commonRelativePaths = getAllRelativePaths(rootScene.rootNode);
       commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({ path: `/root/${path}`, node }));
     } else {
-      return;
+      // This class is never instantiated as a node.
+
+      commonRelativePaths = [];
     }
   } else {
     const relativePathsPerNode = instances.map(i => i.children.flatMap(ch => getAllRelativePaths(ch)));
@@ -86,6 +88,11 @@ declare module './../${script.tsRelativePath.slice(0, -'.ts'.length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  }
+  namespace ${className} {
+    export function _new(): ${className};
+
+    export { _new as new };
   }
 }
   `;

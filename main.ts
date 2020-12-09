@@ -13,6 +13,7 @@
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: multiple statements in for loops
 // TODO:     let x = this.get_node("EnemySprite") doesnt work bc Sprite is type any - is it Sprite2D or something?
+// TODO: Use chokidar rather than my ... thing.
 
 import ts from "typescript";
 import fs from 'fs';
@@ -504,8 +505,6 @@ const main = async () => {
   project = await getProjectProperties();
 
   buildAssetPathsType(project);
-
-  const scripts = project.sourceFiles.map(sf => sf.className);
 
   for (const script of project.sourceFiles) {
     buildNodePathsTypeForScript(script, project);

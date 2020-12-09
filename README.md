@@ -106,26 +106,29 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] add documentation for class names.
 - [x] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [x] Autocomplete relative node paths as well as absolute ones
+- [x] `extends` must be transpiled before everything else, including enum declarations and other top level things
+- [x] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
+- [ ] explain tne `enum` thing better
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [ ] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
+- [ ] handle parameters to _functions that aren't provided in TS
 - [ ] `callables`
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
-- [ ] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [ ] Handle the thing where if u never yield its never a coroutine
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
-- [ ] handle parameters to _functions that aren't provided in TS
 - [ ] generate Godot without warnings (as much as possible)
 - [ ] `tool`
 - [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
 
 ## Road to superior development
+- [x] Mark unused variables with _ to avoid warnings
+- [x] parse the bbcode in the XML into markdown that TS can read.
 - [ ] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
-- [ ] parse the bbcode in the XML into markdown that TS can read.
 - [ ] get_nodes_in_group should parse scene to determine a more accurate return type
 - [ ] add a way to install ts2gd as a global command
+- [ ] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
 - [ ] Whether to hide away constants into enums or not could be parameterizeable. It is *correct* to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone. 
 - [ ] Some sort of error if an autoload class is not entirely static.
@@ -142,7 +145,6 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] ts2gd: Handle adding new files.
 - [ ] ts2gd: Handle deleting old files.
 - [ ] ts2gd: Random newlines at beginning of file.
-- [ ] Mark unused variables with _ to avoid warnings
 - [ ] Rewrite the code so you dont even need to add autoload classes bc they just get auto registered.
 - [ ] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???
