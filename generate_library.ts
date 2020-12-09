@@ -101,6 +101,8 @@ export function generateGodotLibraryDefinitions(root: string): void {
     return name;
   }
 
+  const singletons: string[] = [];
+
   async function parseFile(path: string) {
     const content = fs.readFileSync(path, 'utf-8');
     const json = await parseStringPromise(content);
@@ -140,6 +142,10 @@ export function generateGodotLibraryDefinitions(root: string): void {
       className = 'Signal<T>';
     }
 
+    if (singletons.includes(className)) {
+      className += "Class";
+    }
+
     const output = `
 ${formatJsDoc(json.class.description[0])}
 declare class ${className}${inherits ? ` extends ${inherits}` : ''} {
@@ -170,8 +176,6 @@ ${constructorInfo.map(inf => `  constructor(${inf.argumentList});`).join('\n')}
         return constructors;
       })()
       }
-
-
 
 ${members.map((member: any) => {
         const name = member['$'].name.trim();
@@ -281,8 +285,6 @@ ${(() => {
 
     return output;
   }
-
-  const singletons: string[] = [];
 
   async function parseGlobalScope(path: string) {
     const content = fs.readFileSync(path, 'utf-8');
