@@ -44,7 +44,8 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
       // Special logic for autoload classes.
 
       const rootScene = project.scenes.find(s => project.mainScene.resPath === s.resPath)!;
-      commonRelativePaths = rootScene.rootNode.children.flatMap(child => getAllRelativePaths(child));
+      commonRelativePaths = getAllRelativePaths(rootScene.rootNode);
+      commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({ path: `/root/${path}`, node }));
     } else {
       return;
     }
