@@ -262,6 +262,10 @@ ${node.members.map(member => parseNodeToString(member, props)).join('\n')}
       return "is";
     case SyntaxKind.InKeyword:
       return "in"
+    case SyntaxKind.UndefinedKeyword:
+      return "null";
+    case SyntaxKind.NullKeyword:
+      return "null";
   }
 
   throw new Error('uh oh!: ' + syntaxToKind(genericNode.kind) + " " + (genericNode.getText ? genericNode.getText() : genericNode));

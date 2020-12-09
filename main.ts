@@ -14,6 +14,7 @@
 // TODO: multiple statements in for loops
 // TODO:     let x = this.get_node("EnemySprite") doesnt work bc Sprite is type any - is it Sprite2D or something?
 // TODO: Use chokidar rather than my ... thing.
+// TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
 
 import ts from "typescript";
 import fs from 'fs';
