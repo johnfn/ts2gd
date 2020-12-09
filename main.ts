@@ -1,5 +1,5 @@
-// TODO: Put class_name and extends first, ALWAYS. 
-// TODO: Then, put Npc = preload('...') afterwards - need to generate this from imports i think
+// TODO: Workout SpontaneousDialog.instance()
+// TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
 
 // TODO: _prefixed names could possibly clash
 // TODO: Discarded return values from function calls?
@@ -10,8 +10,7 @@
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: multiple statements in for loops
-
-// foo[foo] actually causes Godot to crash - probably should report this.
+// TODO:     let x = this.get_node("EnemySprite") doesnt work bc Sprite is type any - is it Sprite2D or something?
 
 import ts from "typescript";
 import fs from 'fs';
@@ -20,6 +19,7 @@ import path from 'path';
 import * as process from 'process'
 import { generateGodotLibraryDefinitions } from "./generate_library";
 import { parseNodeToString } from "./parse_node";
+import { buildNodePathsTypeForScript } from "./build_paths_for_node";
 
 const inputPath = process.argv[2];
 let tsgdPathWithFilename: string;
@@ -165,12 +165,17 @@ async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
 
   const nodesInScene = scene.nodes;
 
-  const allClasses = [
+  const allClassesInScene = [
     ...classesInScene,
     ...(project.mainScene.fsPath === sceneFsPath ? project.sourceFiles.filter(source => source.isAutoload) : []),
   ];
 
-  for (const { resPath, className, tsFullPath, tsRelativePath } of allClasses) {
+  // Scene Dialog
+  // - Node Graphic
+  //   - Node Text
+  //   - Node Button
+
+  for (const { resPath, className, tsFullPath, tsRelativePath } of allClassesInScene) {
     let assetFileContents = `
 declare type NodePathToType${className} = {\n`
 
@@ -238,6 +243,7 @@ export type TsGdProject = {
   sourceFiles: ParsedSourceFile[];
   scenes: ParsedScene[];
   assets: { resPath: string; fsPath: string; className: string; }[];
+  sourcePath: string;
   tsgdPathWithFilename: string;
   tsgdPath: string;
   mainScene: { resPath: string; fsPath: string };
@@ -384,12 +390,13 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
     assets,
     tsgdPath,
     tsgdPathWithFilename,
+    sourcePath: tsgdJson.source,
     mainScene: getMainScene(),
     sourceFiles,
   };
 };
 
-type Node = {
+export type Node = {
   name: string;
   type: string;
   isRoot: boolean;
@@ -398,6 +405,7 @@ type Node = {
   parent?: string;
   groups?: string;
   rest: string;
+  children: Node[];
 };
 
 type ParsedScene = {
@@ -437,6 +445,9 @@ const parseScene = (fsPath: string): ParsedScene => {
       groups: groups.groups,
       scenePath: '',
       rest: groups.rest,
+
+      // Will be filled in in the next pass
+      children: [],
     }
 
     return node;
@@ -458,22 +469,44 @@ const parseScene = (fsPath: string): ParsedScene => {
     node.scenePath = path;
   }
 
-  return {
+  for (const node of allNodes) {
+    // Find my children
+    let pathThatAChildWouldHave = "";
+
+    if (!node.parent) {
+      pathThatAChildWouldHave = ".";
+    } else {
+      if (node.parent === ".") {
+        pathThatAChildWouldHave = node.name
+      } else {
+        pathThatAChildWouldHave = node.parent + "/" + node.name
+      }
+    }
+
+    node.children = allNodes.filter(node => node.parent === pathThatAChildWouldHave);
+  }
+
+  const result: ParsedScene = {
     nodes: allNodes,
     resources: extResources,
     fsPath,
     resPath: fsPathToResPath(fsPath),
     rootNode: allNodes.find(node => !node.parent)!,
   };
+
+  return result;
 };
+
 
 const main = async () => {
   project = await getProjectProperties();
 
   buildAssetPathsType(project);
 
-  for (const scene of project.scenes) {
-    buildNodePathsType(scene.fsPath, project);
+  const scripts = project.sourceFiles.map(sf => sf.className);
+
+  for (const script of project.sourceFiles) {
+    buildNodePathsTypeForScript(script, project);
   }
 
   generateGodotLibraryDefinitions(tsgdPath);

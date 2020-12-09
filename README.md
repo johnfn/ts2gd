@@ -105,7 +105,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] mark int/float in API
 - [x] add documentation for class names.
 - [x] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
-- [ ] Autocomplete relative node paths as well as absolute ones
+- [x] Autocomplete relative node paths as well as absolute ones
 - [ ] How come I can't call get_tree() on a class that extends Object?
 - [ ] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] `callables`
