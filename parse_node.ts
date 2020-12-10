@@ -1,4 +1,4 @@
-import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement } from "typescript";
+import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement, TypeAliasDeclaration } from "typescript";
 import { program, TsGdProject } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
@@ -41,6 +41,7 @@ import { parseSetAccessor } from "./parse_node/parse_set_accessor";
 import { parseGetAccessor } from "./parse_node/parse_get_accessor";
 import { parseContinueStatement } from "./parse_node/parse_continue_statement";
 import * as utils from 'tsutils';
+import { parseTypeAliasDeclaration } from "./parse_node/parse_type_alias_declaration";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -70,6 +71,8 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
       return parseImportDeclaration(genericNode as ImportDeclaration, props);
     case SyntaxKind.TypeReference:
       return parseTypeReference(genericNode as TypeReferenceNode, props);
+    case SyntaxKind.TypeAliasDeclaration:
+      return parseTypeAliasDeclaration(genericNode as TypeAliasDeclaration, props);
     case SyntaxKind.BinaryExpression:
       return parseBinaryExpression(genericNode as BinaryExpression, props);
     case SyntaxKind.NumericLiteral:

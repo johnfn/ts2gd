@@ -13,7 +13,7 @@ export function parseSwitchStatement(node: ts.SwitchStatement, props: ParseState
 ${node.caseBlock.clauses.map(clause => {
     if (clause.kind === SyntaxKind.CaseClause) {
       return `  ${props.indent}${parseNodeToString(clause.expression, props)}:
-${clause.statements.map(statement => parseNodeToString(statement, newProps)).join('\n')}`;
+${clause.statements.map(statement => parseNodeToString(statement, newProps)).join('\n')}\n`;
     }
     // TODO: Handle default!
   }).join('')}`;
