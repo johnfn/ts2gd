@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript";
 import { program } from "../main";
 import { parseNodeToString, ParseState } from "../parse_node";
-import { isDictionary, isEnumType, syntaxToKind } from "../ts_utils";
+import { isDictionary, isEnumType } from "../ts_utils";
 
 export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression, props: ParseState) => {
   const leftType = program.getTypeChecker().getTypeAtLocation(node.expression);
@@ -30,7 +30,8 @@ export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression,
 
   if (isDictionary(leftType)) {
     // In TS, dictionary access is indistinguishable from normal property access
-    // In Godot, it's dict.get("key") or dict.has("key")
+    // In Godot, it could be dict.has("key") if we're checking if the key
+    // is actually in the dict or not.
 
     // We need to walk up the AST to figure out which of the two it is.
     let parent: ts.Node = node.parent;
@@ -49,7 +50,11 @@ export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression,
       return `${lhs}.has("${rhs}")`
     }
 
-    return `${lhs}["${rhs}"]`;
+    if (rhs === "type") {
+      return `${lhs}["${rhs}"]`;
+    }
+
+    return `${lhs}.${rhs}`;
   }
 
   return `${lhs}.${rhs}`;

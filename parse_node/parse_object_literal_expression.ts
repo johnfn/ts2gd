@@ -10,13 +10,13 @@ export function parseObjectLiteralExpression(node: ts.ObjectLiteralExpression, p
 
   for (const prop of node.properties) {
     if (prop.kind === SyntaxKind.PropertyAssignment) {
-      result += `  "${props.indent}${prop.name.getText()}": ${parseNodeToString(prop.initializer, addIndent(props))},\n`;
+      result += `  ${props.indent}"${prop.name.getText()}": ${parseNodeToString(prop.initializer, addIndent(props))},\n`;
     } else {
       throw new Error("Unknown property in object.");
     }
   }
 
-  result += `${props.indent}}\n`;
+  result += `${props.indent}}`;
 
   return result;
 }
