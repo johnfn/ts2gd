@@ -146,12 +146,15 @@ export function generateGodotLibraryDefinitions(root: string): void {
 }[]`;
       }
 
+      const isAbstract = name.startsWith('_');
+
       return {
         name,
         argumentList,
         isConstructor,
         docString,
         returnType,
+        isAbstract,
       }
     });
 
@@ -224,7 +227,7 @@ ${methods.map(method => {
         }
 
         return `${method.docString}
-${method.name}(${method.argumentList}): ${method.returnType};`;
+${method.isAbstract ? 'protected ' : ''}${method.name}(${method.argumentList}): ${method.returnType};`;
       }).join('\n\n')
       }
 

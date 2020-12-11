@@ -116,7 +116,7 @@ export function getGodotType(
   }
 
   if (tsTypeName === "number") {
-    console.log("Unknown number type, writing float");
+    console.log(`Unknown number type, writing float for ${node.getText()}`);
     console.log("  ->", node.getSourceFile().fileName)
     return "float";
   }

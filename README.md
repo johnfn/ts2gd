@@ -123,6 +123,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 ## Road to superior development
 - [x] Mark unused variables with _ to avoid warnings
 - [x] parse the bbcode in the XML into markdown that TS can read.
+- [ ] don't hide object autocomplete names
 - [ ] strongly type input action names
 - [ ] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
