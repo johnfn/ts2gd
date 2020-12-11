@@ -30,8 +30,14 @@ function formatJsDoc(input: string): string {
 
   for (let line of lines) {
     if (line.includes("[codeblock]")) { result += " * @example \n"; insideCodeBlock = true; }
-    if (line.includes("[/codeblock]")) { result += " * @summary \n"; insideCodeBlock = true; }
+    if (line.includes("[/codeblock]")) { result += " * @summary \n"; insideCodeBlock = false; }
+    if (line.includes("[codeblocks]")) { result += " * @example \n"; insideCodeBlock = true; }
+    if (line.includes("[/codeblocks]")) { result += " * @summary \n"; insideCodeBlock = false; }
 
+    line = line.replaceAll("[gdscript]", "");
+    line = line.replaceAll("[/gdscript]", "");
+    line = line.replaceAll("[csharp]", "");
+    line = line.replaceAll("[/csharp]", "");
     line = line.replaceAll("[b]", "**");
     line = line.replaceAll("[/b]", "**");
     line = line.replaceAll("[i]", "**");
@@ -40,6 +46,8 @@ function formatJsDoc(input: string): string {
     line = line.replaceAll("[/code]", "`");
     line = line.replaceAll("[codeblock]", "");
     line = line.replaceAll("[/codeblock]", "");
+    line = line.replaceAll("[codeblocks]", "");
+    line = line.replaceAll("[/codeblocks]", "");
 
     result += " * " + line + "\n" + (!insideCodeBlock ? " *\n" : "");
   }
@@ -118,13 +126,24 @@ export function generateGodotLibraryDefinitions(root: string): void {
       const args = method.argument;
       const isConstructor = name === className;
       const docString = formatJsDoc(method.description[0].trim());
-      const returnType = convertType(method.return[0]['$'].type);
+      let returnType = convertType(method.return[0]['$'].type);
       let argumentList: string = '';
 
       if (args) {
         argumentList = args.map((arg: any) => {
           return sanitizeName(arg['$'].name) + (arg['$'].default ? '?' : '') + ": " + convertType(arg['$'].type)
         }).join(', ');
+      }
+
+      // Special case for TileSet#tile_get_shapes
+      if (name === "tile_get_shapes") {
+        returnType = `{
+  autotile_coord: Vector2,
+  one_way: bool,
+  one_way_margin: int,
+  shape: CollisionShape2D,
+  shape_transform: Transform2D,
+}[]`;
       }
 
       return {
