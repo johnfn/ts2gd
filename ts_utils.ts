@@ -1,5 +1,33 @@
-import ts from "typescript";
+import ts, { ObjectFlags, SyntaxKind, TypeFlags, TypeLiteralNode } from "typescript";
 import { program } from "./main";
+
+// I can not for the life of me figure out a clear way to
+// ask TS if a type is an object literal type. 
+export const isDictionary = (type: ts.Type): boolean => {
+  if (type.flags & TypeFlags.Object) {
+    const objectType = type as ts.ObjectType;
+
+    for (const decl of type.symbol?.declarations) {
+      if (decl.kind === SyntaxKind.ClassDeclaration) {
+        return false;
+      }
+
+      if (decl.kind === SyntaxKind.EnumDeclaration) {
+        return false;
+      }
+
+      if (decl.kind === SyntaxKind.TypeLiteral) {
+        // This is probably it!
+
+        continue;
+      }
+    }
+
+    return (objectType.objectFlags & ObjectFlags.Anonymous) !== 0;
+  }
+
+  return false;
+}
 
 export const generatePrecedingNewlines = (node: ts.Node): string => {
   const fullText = node.getFullText();

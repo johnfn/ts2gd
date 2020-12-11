@@ -1,9 +1,9 @@
-import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement, TypeAliasDeclaration } from "typescript";
+import ts, { ClassDeclaration, HeritageClause, SourceFile, SyntaxKind, PropertyDeclaration, CallExpression, PropertyAccessExpression, Block, TypeReference, TypeReferenceNode, IfStatement, BinaryExpression, ImportDeclaration, LiteralToken, NumericLiteral, VariableStatement, PostfixUnaryExpression, AsExpression, BreakStatement, PrefixUnaryExpression, ReturnStatement, YieldExpression, NewExpression, ClassExpression, SwitchStatement, SignatureKind, ArrayLiteralExpression, classicNameResolver, parseJsonSourceFileConfigFileContent, ObjectLiteralExpression, StringLiteral, SetAccessorDeclaration, GetAccessorDeclaration, ContinueStatement, TypeAliasDeclaration, TypeFlags } from "typescript";
 import { program, TsGdProject } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
 import { parseSourceFile } from "./parse_node/parse_source_file";
-import { isEnumType, syntaxToKind } from "./ts_utils";
+import { isDictionary, isEnumType, syntaxToKind } from "./ts_utils";
 import { parseTypeReference } from "./parse_node/parse_type_reference";
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal";
 import { parseArrayLiteralExpression } from "./parse_node/parse_array_literal_expression";
@@ -42,6 +42,7 @@ import { parseGetAccessor } from "./parse_node/parse_get_accessor";
 import { parseContinueStatement } from "./parse_node/parse_continue_statement";
 import * as utils from 'tsutils';
 import { parseTypeAliasDeclaration } from "./parse_node/parse_type_alias_declaration";
+import { parsePropertyAccessExpression } from "./parse_node/parse_property_access_expression";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -141,34 +142,8 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): stri
       return parseVariableDeclarationList(genericNode, props);
     case SyntaxKind.SuperKeyword:
       return parseSuperKeyword(genericNode);
-    case SyntaxKind.PropertyAccessExpression: {
-      const node = genericNode as PropertyAccessExpression;
-      const type = program.getTypeChecker().getTypeAtLocation(node.expression);
-
-      // Compile things like KeyList.KEY_SPACE into KEY_SPACE
-      if (isEnumType(type)) {
-        const symbol = type.getSymbol()!;
-        const declarations = symbol.declarations;
-        const sourceFiles = declarations.map(d => d.getSourceFile().fileName);
-
-        const isGlobal = !!sourceFiles.find(f => f.includes("@globals.d.ts"))
-
-        if (isGlobal) {
-          return parseNodeToString(node.name, props);
-        }
-      }
-
-      const lhs = parseNodeToString(node.expression, props);
-      const rhs = parseNodeToString(node.name, props);
-
-      // TS requires you to write this.blah everywhere, but Godot does not, and in fact
-      // even generates a warning since it cant prove that self.blah is real.
-      if (lhs === 'self') {
-        return rhs;
-      }
-
-      return `${lhs}.${rhs}`;
-    }
+    case SyntaxKind.PropertyAccessExpression:
+      return parsePropertyAccessExpression(genericNode as ts.PropertyAccessExpression, props)
     case SyntaxKind.ThisKeyword: return parseThisKeyword(genericNode);
     case SyntaxKind.Constructor: return parseConstructor(genericNode, props);
     case SyntaxKind.ClassExpression:

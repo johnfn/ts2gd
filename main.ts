@@ -1,3 +1,5 @@
+// TODO: Clean up TS errors and output - only output if something is
+// seriously wrong!
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Workout SpontaneousDialog.instance()
 // TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
