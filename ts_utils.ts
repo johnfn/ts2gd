@@ -1,6 +1,20 @@
 import ts, { ObjectFlags, SyntaxKind, TypeFlags, TypeLiteralNode } from "typescript";
 import { program } from "./main";
 
+/** 
+ * Gets the inheritance tree of the provided type. E.g. if Foo extends Bar
+ * extends Baz, and we pass in Foo, then this returns [Bar, Baz].
+ */
+export const getTypeHierarchy = (type: ts.Type): ts.Type[] => {
+  if (type.isClass()) {
+    const baseTypes = type.getBaseTypes() ?? [];
+
+    return [...baseTypes, ...baseTypes.flatMap(type => getTypeHierarchy(type))];
+  }
+
+  return [];
+};
+
 // I can not for the life of me figure out a clear way to
 // ask TS if a type is an object literal type. 
 export const isDictionary = (type: ts.Type): boolean => {
