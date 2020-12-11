@@ -27,6 +27,7 @@ import { generateGodotLibraryDefinitions } from "./generate_library";
 import { parseNodeToString } from "./parse_node";
 import { buildNodePathsTypeForScript } from "./build_paths_for_node";
 
+let verbose = false;
 const inputPath = process.argv[2];
 let tsgdPathWithFilename: string;
 let tsgdPath: string;
@@ -71,8 +72,20 @@ const formatHost: ts.FormatDiagnosticsHost = {
 };
 
 function reportDiagnostic(diagnostic: ts.Diagnostic) {
-  console.error("Error", diagnostic.code, ":", ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine()));
-  console.log(diagnostic.file?.fileName, diagnostic.start)
+  const errorMessage = ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine());
+
+  // Quiet the errors which are not really errors.
+
+  if (errorMessage.match(/Operator '[+\-*/]=?' cannot be applied to types 'Vector[23]' and '(Vector[23]|number)'/)) {
+    return;
+  }
+
+  if (errorMessage.match(/The left-hand side of an 'in' expression must be of type/)) {
+    return;
+  }
+
+  console.error("Error", diagnostic.code, ":", errorMessage);
+  console.log(diagnostic.file?.fileName, diagnostic.start);
 }
 
 export let program: ts.Program;
@@ -116,7 +129,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
   fs.mkdirSync(path.dirname(sourceFile.gdPath), { recursive: true })
   fs.writeFileSync(sourceFile.gdPath, gdSource);
 
-  console.log('[write]:', sourceFile.gdPath);
+  if (verbose) console.log('[write]:', sourceFile.gdPath);
 }
 
 async function* walkCo(dir: string): AsyncGenerator<string, undefined, undefined> {
