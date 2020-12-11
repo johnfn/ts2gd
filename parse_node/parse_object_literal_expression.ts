@@ -11,6 +11,9 @@ export function parseObjectLiteralExpression(node: ts.ObjectLiteralExpression, p
   for (const prop of node.properties) {
     if (prop.kind === SyntaxKind.PropertyAssignment) {
       result += `  ${props.indent}"${prop.name.getText()}": ${parseNodeToString(prop.initializer, addIndent(props))},\n`;
+    } else if (prop.kind === SyntaxKind.ShorthandPropertyAssignment) {
+      const shorthandProp = prop as ts.ShorthandPropertyAssignment;
+      result += `  ${props.indent}"${shorthandProp.name.getText()}": ${parseNodeToString(shorthandProp.name, addIndent(props))},\n`;
     } else {
       throw new Error("Unknown property in object.");
     }
