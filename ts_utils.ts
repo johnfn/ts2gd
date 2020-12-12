@@ -1,4 +1,4 @@
-import ts, { ObjectFlags, SyntaxKind, TypeFlags, TypeLiteralNode } from "typescript";
+import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript";
 import { program } from "./main";
 
 /** 

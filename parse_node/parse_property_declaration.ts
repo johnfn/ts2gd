@@ -11,9 +11,19 @@ export function parsePropertyDeclaration(node: ts.PropertyDeclaration, props: Pa
   result += generatePrecedingNewlines(node);
 
   if (node.initializer) {
-    const initializerType = program.getTypeChecker().getTypeAtLocation(node.initializer);
-    const hierarchy = getTypeHierarchy(initializerType).map(x => program.getTypeChecker().typeToString(x));
-    let needsOnReady = hierarchy.includes('Node2D') || hierarchy.includes('Node');
+    let needsOnReady = false;
+
+    // I think there's some sort of race where we save .d.ts files too fast to 
+    // then have the type checker re-analyze them, so the get_node() calls have a habit
+    // of coming back as 'any'.
+    if (node.initializer.getText().includes("get_node(")) {
+      needsOnReady = true;
+    } else {
+      const initializerType = program.getTypeChecker().getTypeAtLocation(node.initializer);
+      const hierarchy = getTypeHierarchy(initializerType).map(x => program.getTypeChecker().typeToString(x));
+
+      needsOnReady = hierarchy.includes('Node2D') || hierarchy.includes('Node');
+    }
 
     if (godotType) {
       result += `${needsOnReady ? 'onready ' : ''}var ${node.name.getText()}: ${godotType} = ${parseNodeToString(node.initializer, props)}`;

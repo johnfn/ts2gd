@@ -3,6 +3,7 @@
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Workout SpontaneousDialog.instance()
 // TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
+// TODO: Mark things as onready with @onready
 
 // TODO: You can have _ready() and constructor
 // TODO: _prefixed names could possibly clash
