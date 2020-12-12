@@ -4,15 +4,19 @@ import { parseNodeToString, ParseState } from "../parse_node"
 
 
 /*
- * Like set_text(s: string, c: Color)
- *               ^^^^^^^^^^^^^^^^^^^
+ * Like func set_text(s: string, c: Color)
+ *                    ^^^^^^^^^^^^^^^^^^^
  */
 export const parseParameterList = (list: ts.NodeArray<ts.ParameterDeclaration>, props: ParseState) => {
   let result = "";
 
   for (let i = 0; i < list.length; i++) {
     const param = list[i];
-    const paramString = parseNodeToString(param, props);
+    let paramString = parseNodeToString(param, props);
+
+    if (param.initializer) {
+      paramString = paramString + ` = ${parseNodeToString(param.initializer, props)}`;
+    }
 
     result += paramString + (i === list.length - 1 ? "" : ", ");
   }
