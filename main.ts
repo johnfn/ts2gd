@@ -1,5 +1,8 @@
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
+// TODO: Because I consider Dictionary = {}, it considers everything
+// to be a Dictionary... even Node2D
+// TODO: SUbtracting vectors gives a number for some reason
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Workout SpontaneousDialog.instance()
 // TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
@@ -15,7 +18,6 @@
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: multiple statements in for loops
-// TODO:     let x = this.get_node("EnemySprite") doesnt work bc Sprite is type any - is it Sprite2D or something?
 // TODO: Use chokidar rather than my ... thing.
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
 

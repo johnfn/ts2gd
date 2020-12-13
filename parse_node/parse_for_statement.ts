@@ -1,8 +1,8 @@
-import ts, { ForStatement } from "typescript";
+import ts from "typescript";
 import { ParseState, parseNodeToString } from "../parse_node";
 
 export function parseForStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ForStatement;
+  const node = genericNode as ts.ForStatement;
   const newProps = { ...props, indent: props.indent + "  ", mostRecentControlStructureIsSwitch: false };
 
   return `${node.initializer ? props.indent + parseNodeToString(node.initializer, props) : ""}

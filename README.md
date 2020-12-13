@@ -110,7 +110,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] explain tne `enum` thing better
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [ ] handle parameters to _functions that aren't provided in TS
+- [ ] handle parameters to _functions that aren't provided in TS by autofilling them in Godot
 - [ ] `callables`
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] Handle the thing where if u never yield its never a coroutine

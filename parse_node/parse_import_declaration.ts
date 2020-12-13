@@ -1,4 +1,5 @@
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import { ParseState } from "../parse_node";
 import path from 'path'
 

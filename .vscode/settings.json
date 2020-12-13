@@ -1,3 +1,4 @@
 {
+  // "typescript.preferences.importModuleSpecifierEnding": "js"
   // "typescript.tsserver.log": "verbose"
 }

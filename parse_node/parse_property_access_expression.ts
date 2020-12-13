@@ -1,4 +1,5 @@
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import { program } from "../main";
 import { parseNodeToString, ParseState } from "../parse_node";
 import { isDictionary, isEnumType } from "../ts_utils";

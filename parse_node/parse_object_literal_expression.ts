@@ -1,4 +1,5 @@
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import { ParseState, parseNodeToString, addIndent } from "../parse_node";
 
 export function parseObjectLiteralExpression(node: ts.ObjectLiteralExpression, props: ParseState) {

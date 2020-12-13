@@ -1,4 +1,5 @@
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import { ParseState, parseNodeToString } from "../parse_node";
 
 export function parsePostfixUnaryExpression(node: ts.PostfixUnaryExpression, props: ParseState): string {

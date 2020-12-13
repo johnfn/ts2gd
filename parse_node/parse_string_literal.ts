@@ -1,7 +1,7 @@
-import ts, { StringLiteral } from "typescript";
+import ts from "typescript";
 
 export function parseStringLiteral(genericNode: ts.Node) {
-  const node = genericNode as StringLiteral;
+  const node = genericNode as ts.StringLiteral;
 
   return `"${node.text}"`;
 }

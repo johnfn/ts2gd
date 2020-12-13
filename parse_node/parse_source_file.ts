@@ -1,4 +1,5 @@
-import ts, { SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import * as utils from "tsutils";
 import { parseNodeToString, ParseState } from "../parse_node";
 

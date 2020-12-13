@@ -1,5 +1,4 @@
 import ts from "typescript"
-import { program } from "../main";
 import { parseNodeToString, ParseState } from "../parse_node"
 
 

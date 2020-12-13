@@ -1,8 +1,9 @@
-import ts, { ForOfStatement, SyntaxKind } from "typescript";
+import ts from "typescript";
+const { SyntaxKind } = ts;
 import { ParseState, parseNodeToString } from "../parse_node";
 
 export function parseForOfStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ForOfStatement;
+  const node = genericNode as ts.ForOfStatement;
   const newProps = { ...props, indent: props.indent + "  " };
 
   const initializer = node.initializer;

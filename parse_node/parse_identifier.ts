@@ -1,7 +1,7 @@
-import ts, { Identifier } from "typescript";
+import ts from "typescript";
 
 export function parseIdentifier(genericNode: ts.Node) {
-  const node = genericNode as Identifier;
+  const node = genericNode as ts.Identifier;
   const name = node.text;
 
   if (name === "undefined") {
