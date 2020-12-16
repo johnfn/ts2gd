@@ -136,8 +136,6 @@ export function getGodotType(
     return "float";
   }
 
-  // return undefined;
-
   if (tsTypeName === "string") {
     return "String";
   }
@@ -168,7 +166,7 @@ export function getGodotType(
   // types) it actually causes errors due to cyclic dependencies, and those would
   // be a huge pain to resolve properly.
 
-  return tsTypeName;
+  return undefined;
 }
 
 export function notEmpty<TValue>(value: (TValue | null | undefined)[]): TValue[] {

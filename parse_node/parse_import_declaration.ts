@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript";
 import { combine, ParseNodeType, ParseState } from "../parse_node";
 import path from 'path'
-import { ParsedSourceFile, program } from "../main";
+import { program } from "../main";
 import { isEnumType } from "../ts_utils";
 
 const getPathWithoutExtension = (node: ts.ImportDeclaration, props: ParseState) => {
@@ -29,6 +29,48 @@ const getPathWithoutExtension = (node: ts.ImportDeclaration, props: ParseState) 
 
   return pathToImportedTs;
 };
+
+export const getImportResPathForEnum = (node: ts.Type, props: ParseState): {
+  sourceFile: ts.SourceFile;
+  resPath: string;
+  enumName: string;
+} => {
+  const symbol = node.getSymbol();
+
+  if (!symbol) {
+    throw new Error("Can't find symbol for node.");
+  }
+
+  const declarations = symbol.declarations;
+
+  if (declarations.length === 0 || declarations.length > 1) {
+    throw new Error(`Invalid length for declarations: ${declarations.length}`);
+  }
+
+  const decl = declarations[0];
+  const sourceFile = decl.getSourceFile();
+
+  const importedSourceFile = props.project.sourceFiles.find(sf => sf.tsFullPath === sourceFile.fileName);
+
+  if (!importedSourceFile) {
+    throw new Error(`Can't find associated sourcefile for ${sourceFile.fileName}`);
+  }
+
+  let enumTypeString = program.getTypeChecker().typeToString(node);
+
+  if (enumTypeString.startsWith('typeof ')) {
+    enumTypeString = enumTypeString.slice('typeof '.length);
+  }
+
+  const pathWithoutEnum = importedSourceFile.resPath;
+  const importPath = pathWithoutEnum.slice(0, -'.gd'.length) + '_' + enumTypeString + '.gd';
+
+  return {
+    resPath: importPath,
+    sourceFile,
+    enumName: enumTypeString,
+  };
+}
 
 export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseState): ParseNodeType => {
 
@@ -83,19 +125,22 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
 
     for (const element of bindings.elements) {
       const type = program.getTypeChecker().getTypeAtLocation(element);
-      let typeString = program.getTypeChecker().typeToString(type);
-
-      if (typeString.startsWith('typeof ')) {
-        typeString = typeString.slice('typeof '.length);
-      }
 
       if (isEnumType(type)) {
-        // TODO: Refactor this out - this code is also in parse_enum.
-        const pathWithoutEnum = importedSourceFile.resPath;
-        const newPath = pathWithoutEnum.slice(0, -'.gd'.length) + '_' + typeString + '.gd';
+        const {
+          resPath,
+          enumName,
+        } = getImportResPathForEnum(type, props);
 
-        imports.push({ type: typeString, resPath: newPath });
+        imports.push({ type: enumName, resPath: resPath });
       } else {
+
+        let typeString = program.getTypeChecker().typeToString(type);
+
+        if (typeString.startsWith('typeof ')) {
+          typeString = typeString.slice('typeof '.length);
+        }
+
         if (!importedSourceFile.isAutoload) {
           imports.push({ type: typeString, resPath: importedSourceFile.resPath });
         }

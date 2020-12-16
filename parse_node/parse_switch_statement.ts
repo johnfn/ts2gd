@@ -9,7 +9,11 @@ export const parseSwitchStatement = (node: ts.SwitchStatement, props: ParseState
   };
 
   return combine({
-    parent: node, nodes: [node.expression, node.caseBlock], props: newProps, content: (expr, block) => `match ${expr}:
+    parent: node,
+    nodes: [node.expression, node.caseBlock],
+    props: newProps,
+    addIndent: true,
+    content: (expr, block) => `match ${expr}:
   ${block}
 ` });
 };
@@ -18,7 +22,6 @@ export const parseSwitchCaseBlock = (node: ts.CaseBlock, props: ParseState): Par
   return combine({
     parent: node,
     nodes: node.clauses,
-    addIndent: true,
     props: props,
     content: (...clauses) => clauses.join('\n'),
   });
