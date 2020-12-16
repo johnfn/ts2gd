@@ -1,8 +1,8 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
 
-export function parseExpressionStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ExpressionStatement;
+import { ParseNodeType } from "../parse_node"
 
-  return props.indent + parseNodeToString(node.expression, props) + "\n";
+export const parseExpressionStatement = (node: ts.ExpressionStatement, props: ParseState): ParseNodeType => {
+  return combine(node, node.expression, props, expr => expr);
 }

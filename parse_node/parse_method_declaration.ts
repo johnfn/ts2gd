@@ -1,18 +1,19 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
-import { parseParameterList } from "./parse_parameter_list";
+import { ParseState, combine } from "../parse_node";
 
-export function parseMethodDeclaration(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.MethodDeclaration;
-  const newProps = { ...props, indent: props.indent + "  " };
+import { ParseNodeType } from "../parse_node"
 
+export const parseMethodDeclaration = (node: ts.MethodDeclaration, props: ParseState): ParseNodeType => {
   const funcName = node.name.getText();
-  let params = parseParameterList(node.parameters, props);
 
-  // TODO: handle other built-in functions in the same way
-  if (funcName === '_process' && params.trim().length === 0) {
-    params = '_delta: float';
-  }
+  return combine(node, [node.body, ...node.parameters], props, (body, ...params) => {
+    let joinedParams = params.join(', ');
 
-  return `func ${funcName}(${params}):\n${parseNodeToString(node.body!, newProps)}\n`;
+    // TODO: handle other built-in functions in the same way
+    if (funcName === '_process' && joinedParams.trim().length === 0) {
+      joinedParams = "_delta: float";
+    }
+
+    return `func ${funcName}(${joinedParams}):${body || " pass"}`;
+  });
 }

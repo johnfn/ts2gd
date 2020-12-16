@@ -1,6 +1,7 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, parseNodeToString, combine } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseArrayLiteralExpression(node: ts.ArrayLiteralExpression, props: ParseState) {
-  return `[${node.elements.map(e => parseNodeToString(e, props)).join(', ')}]`;
+export const parseArrayLiteralExpression = (node: ts.ArrayLiteralExpression, props: ParseState): ParseNodeType => {
+  return combine(node, node.elements, props, (...args) => `[${args.join(", ")}]`);
 }

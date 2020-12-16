@@ -1,11 +1,14 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
 
-export function parseForStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ForStatement;
-  const newProps = { ...props, indent: props.indent + "  ", mostRecentControlStructureIsSwitch: false };
+import { ParseNodeType } from "../parse_node"
 
-  return `${node.initializer ? props.indent + parseNodeToString(node.initializer, props) : ""}
-${props.indent}while ${node.condition ? parseNodeToString(node.condition, newProps) : "true"}:
-${parseNodeToString(node.statement, newProps)}${node.incrementor ? newProps.indent + parseNodeToString(node.incrementor, props) : ""}`;
+export const parseForStatement = (node: ts.ForStatement, props: ParseState): ParseNodeType => {
+  props = { ...props, mostRecentControlStructureIsSwitch: false };
+
+  return combine(node, [node.initializer, node.condition, node.statement, node.incrementor] as (ts.Node | undefined)[], props, (init, cond, statement, inc) =>
+    `${init ? init : ""}
+while ${cond || "true"}:
+${statement}${inc ? props.indent + inc : ""}`
+  );
 }

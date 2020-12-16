@@ -1,11 +1,12 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
 
-export function parseForInStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ForInStatement;
-  const newProps = { ...props, indent: props.indent + "  " };
+import { ParseNodeType } from "../parse_node"
 
+export const parseForInStatement = (node: ts.ForInStatement, props: ParseState): ParseNodeType => {
   const initializedVariable = node.initializer.getChildAt(1);
+  const initializedVariableName = initializedVariable.getText(); // TODO: There is probably a better way to do this.
 
-  return `${props.indent}for ${initializedVariable.getText()} in ${parseNodeToString(node.expression, props)}:\n${parseNodeToString(node.statement, newProps)}`;
+  return combine(node, [node.expression, node.statement], props, (expr, statement) => `for ${initializedVariableName} in ${expr}:\n${statement}`
+  );
 }

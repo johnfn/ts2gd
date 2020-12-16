@@ -136,39 +136,43 @@ export function getGodotType(
     return "float";
   }
 
-  return undefined;
+  // return undefined;
+
+  if (tsTypeName === "string") {
+    return "String";
+  }
+
+  if (tsTypeName === "boolean") {
+    return "bool";
+  }
+
+  if (tsTypeName.startsWith('{')) {
+    return 'Dictionary';
+  }
+
+  if (tsTypeName.startsWith('IterableIterator')) {
+    return 'Array';
+  }
+
+  if (tsTypeName.includes('[')) {
+    return 'Array'
+  }
+
+  if (tsTypeName.startsWith('PackedScene')) {
+    // This is a generic type in TS, so just return the non-generic Godot type.
+    return 'PackedScene';
+  }
 
   // TODO: In theory, we could do the below, but it's subtle to get right
   // and doesn't confer a lot of benefit. In some cases (e.g. using user-defined
   // types) it actually causes errors due to cyclic dependencies, and those would
   // be a huge pain to resolve properly.
 
-  // if (tsTypeName === "string") {
-  //   return "String";
-  // }
+  return tsTypeName;
+}
 
-  // if (tsTypeName === "boolean") {
-  //   return "bool";
-  // }
-
-  // if (tsTypeName.startsWith('{')) {
-  //   return 'Dictionary';
-  // }
-
-  // if (tsTypeName.startsWith('IterableIterator')) {
-  //   return 'Array';
-  // }
-
-  // if (tsTypeName.includes('[')) {
-  //   return 'Array'
-  // }
-
-  // if (tsTypeName.startsWith('PackedScene')) {
-  //   // This is a generic type in TS, so just return the non-generic Godot type.
-  //   return 'PackedScene';
-  // }
-
-  // return tsTypeName;
+export function notEmpty<TValue>(value: (TValue | null | undefined)[]): TValue[] {
+  return value.filter(x => x !== undefined && x !== null) as TValue[];
 }
 
 /**

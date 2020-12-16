@@ -1,10 +1,7 @@
 import ts from "typescript";
-import { parseNodeToString, ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseReturnStatement(node: ts.ReturnStatement, props: ParseState) {
-  if (node.expression) {
-    return `${props.indent}return ${parseNodeToString(node.expression, props)}`;
-  } else {
-    return `${props.indent}return`;
-  }
+export const parseReturnStatement = (node: ts.ReturnStatement, props: ParseState): ParseNodeType => {
+  return combine(node, node.expression, props, expr => `return ${expr}`);
 }

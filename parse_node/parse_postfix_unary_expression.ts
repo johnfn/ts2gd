@@ -1,14 +1,16 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, parseNodeToString, combine } from "../parse_node";
 
-export function parsePostfixUnaryExpression(node: ts.PostfixUnaryExpression, props: ParseState): string {
-  const operand = parseNodeToString(node.operand, props);
+import { ParseNodeType } from "../parse_node"
 
-  switch (node.operator) {
-    case SyntaxKind.PlusPlusToken:
-      return `${operand}++`;
-    case SyntaxKind.MinusMinusToken:
-      return `${operand}--`;
-  }
+export const parsePostfixUnaryExpression = (node: ts.PostfixUnaryExpression, props: ParseState): ParseNodeType => {
+  return combine(node, node.operand, props, (operand) => {
+    switch (node.operator) {
+      case SyntaxKind.PlusPlusToken:
+        return `${operand}++`;
+      case SyntaxKind.MinusMinusToken:
+        return `${operand}--`;
+    }
+  })
 }

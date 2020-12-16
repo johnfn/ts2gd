@@ -1,16 +1,15 @@
 import ts from "typescript";
-import { ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
 import { getGodotType } from "../ts_utils";
+import { ParseNodeType } from "../parse_node"
 
-export function parseParameter(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ParameterDeclaration;
+export const parseParameter = (node: ts.ParameterDeclaration, props: ParseState): ParseNodeType => {
   const type = getGodotType(node, node.initializer, node.type);
   const usages = props.usages.get(node.name as ts.Identifier);
-  const isUnused = usages?.uses.length === 0;
+  const unusedPrefix = usages?.uses.length === 0 ? '_' : '';
+  const typeString = type ? `: ${type}` : '';
 
-  if (type) {
-    return `${isUnused ? '_' : ''}${node.name.getText()}: ${type}`;
-  } else {
-    return `${isUnused ? '_' : ''}${node.name.getText()}`;
-  }
+  return combine(node, node.initializer, props, initializer =>
+    `${unusedPrefix}${node.name.getText()}${typeString}${initializer && `= ${initializer}`}`
+  );
 }

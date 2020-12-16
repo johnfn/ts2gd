@@ -1,20 +1,12 @@
 import ts from "typescript";
-const { SyntaxKind } = ts;
-import { ParseState, parseNodeToString } from "../parse_node";
-import { syntaxToKind } from "../ts_utils";
+import { ParseState, combine } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseWhileStatement(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.WhileStatement;
-  const newProps = { ...props, indent: props.indent + "  ", mostRecentControlStructureIsSwitch: false };
+export const parseWhileStatement = (node: ts.WhileStatement, props: ParseState): ParseNodeType => {
+  const newProps = { ...props, mostRecentControlStructureIsSwitch: false };
 
-  let body: string;
-
-  if (node.statement.kind === SyntaxKind.EmptyStatement) {
-    body = `${props.indent}  pass`;
-  } else {
-    body = parseNodeToString(node.statement, newProps);
-  }
-
-  return `${props.indent}while ${parseNodeToString(node.expression, newProps)}:
-${body}`;
+  return combine(node, [node.expression, node.statement], newProps, (expr, statement) =>
+    `while ${expr}:
+${statement}`
+  );
 }

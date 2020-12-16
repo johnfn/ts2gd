@@ -1,12 +1,13 @@
 import ts from "typescript";
 
-export function parseIdentifier(genericNode: ts.Node) {
-  const node = genericNode as ts.Identifier;
+import { combine, ParseNodeType, ParseState } from "../parse_node"
+
+export const parseIdentifier = (node: ts.Identifier, props: ParseState): ParseNodeType => {
   const name = node.text;
 
   if (name === "undefined") {
-    return "null"
+    return combine(node, [], props, () => "null");
   } else {
-    return node.text;
+    return combine(node, [], props, () => node.text);
   }
 }

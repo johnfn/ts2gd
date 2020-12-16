@@ -1,6 +1,8 @@
 import ts from "typescript";
 
-export function parseEnumDeclaration(genericNode: ts.Node) {
+import { ParseNodeType, ParseState } from "../parse_node"
+
+export const parseEnumDeclaration = (genericNode: ts.EnumDeclaration, props: ParseState): ParseNodeType => {
   const node = genericNode as ts.EnumDeclaration;
   let result = `enum ${node.name.text} {\n`;
 
@@ -10,5 +12,11 @@ export function parseEnumDeclaration(genericNode: ts.Node) {
 
   result += '}';
 
-  return result;
+  return {
+    content: '',
+    enums: [{
+      content: result,
+      name: node.name.text,
+    }],
+  };
 }

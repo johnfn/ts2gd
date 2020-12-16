@@ -1,6 +1,7 @@
 import ts from "typescript";
-import { ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseTypeReference(node: ts.TypeReferenceNode, props: ParseState) {
-  return node.getText();
+export const parseTypeReference = (node: ts.TypeReferenceNode, props: ParseState): ParseNodeType => {
+  return combine(node, [], props, () => node.getText());
 }

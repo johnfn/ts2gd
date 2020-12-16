@@ -14,6 +14,8 @@ interface Function {
 
 }
 
+declare function exports(target: Node, name: string): void;
+
 declare type int = number;
 declare type float = number;
 

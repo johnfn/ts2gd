@@ -1,12 +1,11 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseVariableDeclarationList(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.VariableDeclarationList;
-
+export const parseVariableDeclarationList = (node: ts.VariableDeclarationList, props: ParseState): ParseNodeType => {
   if (node.declarations.length > 1) {
     console.error("Cant handle so many declarations!");
   }
 
-  return parseNodeToString(node.declarations[0], props);
+  return combine(node, node.declarations, props, (...decls) => decls.join(""));
 }

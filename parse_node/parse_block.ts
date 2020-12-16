@@ -1,18 +1,11 @@
 import ts from "typescript";
-import { parseNodeToString, ParseState } from "../parse_node";
-import { generatePrecedingNewlines } from "../ts_utils";
+import { combine, ParseState } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseBlock(node: ts.Block, props: ParseState) {
-  let result = "";
-
+export const parseBlock = (node: ts.Block, props: ParseState): ParseNodeType => {
   if (node.statements.length !== 0) {
-    for (const statement of node.statements) {
-      result += generatePrecedingNewlines(statement);
-      result += parseNodeToString(statement, props);
-    }
+    return combine(node, node.statements, props, (...parsed) => parsed.join(""));
   } else {
-    result = props.indent + "pass\n"
+    return combine(node, [], props, () => "pass\n");
   }
-
-  return result;
 }

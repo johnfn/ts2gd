@@ -1,11 +1,8 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, parseNodeToString, combine } from "../parse_node";
 
-export function parseElementAccessExpression(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ElementAccessExpression;
+import { ParseNodeType } from "../parse_node"
 
-  const lhs = parseNodeToString(node.expression, props);
-  const rhs = parseNodeToString(node.argumentExpression, props);
-
-  return `${lhs}[${rhs}]`;
+export const parseElementAccessExpression = (node: ts.ElementAccessExpression, props: ParseState): ParseNodeType => {
+  return combine(node, [node.expression, node.argumentExpression], props, (lhs, rhs) => `${lhs}[${rhs}]`)
 }

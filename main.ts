@@ -1,3 +1,4 @@
+// TODO: Support enum export
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
 // TODO: Because I consider Dictionary = {}, it considers everything
@@ -20,6 +21,7 @@
 // TODO: multiple statements in for loops
 // TODO: Use chokidar rather than my ... thing.
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
+// TODO: Use AST transformers?
 
 import ts from "typescript";
 import fs from 'fs';
@@ -119,7 +121,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     process.exit();
   }
 
-  const gdSource = parseNodeToString(
+  const result = parseNodeToString(
     source, {
     indent: "",
     isConstructor: false,
@@ -130,7 +132,11 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
   });
 
   fs.mkdirSync(path.dirname(sourceFile.gdPath), { recursive: true })
-  fs.writeFileSync(sourceFile.gdPath, gdSource);
+  fs.writeFileSync(sourceFile.gdPath, result.content);
+
+  for (const { content, name } of result.enums ?? []) {
+    fs.writeFileSync(sourceFile.gdPath.slice(0, -'.gd'.length) + '_' + name + ".gd", content);
+  }
 
   if (verbose) console.log('[write]:', sourceFile.gdPath);
 }
@@ -308,6 +314,7 @@ const getAutoloadFiles = () => {
 const resPathToFsPath = (resPath: string) => {
   return path.join(tsgdPath, resPath.slice('res://'.length));
 };
+
 const fsPathToResPath = (fsPath: string) => {
   return "res://" + fsPath.slice(tsgdPath.length + 1);
 };
@@ -518,7 +525,6 @@ const parseScene = (fsPath: string): ParsedScene => {
 
   return result;
 };
-
 
 const main = async () => {
   project = await getProjectProperties();

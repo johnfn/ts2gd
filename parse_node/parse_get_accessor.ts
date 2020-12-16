@@ -1,12 +1,14 @@
 import ts from "typescript";
-import { parseParameterList } from "./parse_parameter_list";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
 
-export function parseGetAccessor(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.GetAccessorDeclaration;
-  const newProps = { ...props, indent: props.indent + "  " };
-  return `
-func ${node.name.getText()}_get(${parseParameterList(node.parameters, props)}):
-${parseNodeToString(node.body!, newProps)}
-    `;
+import { ParseNodeType } from "../parse_node"
+
+export const parseGetAccessor = (node: ts.GetAccessorDeclaration, props: ParseState): ParseNodeType => {
+  // TODO: fix node.name.getText()
+
+  return combine(node, [node.body, ...node.parameters], props, (body, ...params) =>
+    `
+func ${node.name.getText()}_get(${params}):
+${body || "pass"}
+    `);
 }

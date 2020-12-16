@@ -1,22 +1,16 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
 import { program } from "../main";
-import { parseNodeToString, ParseState } from "../parse_node";
+import { combine, parseNodeToString, ParseState } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseCallExpression(node: ts.CallExpression, props: ParseState) {
+export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {
   // TODO: Work out a better way to determine if something is a call expression
   if (node.expression.getText() === "super") {
-    return "";
+    return combine(node, node.expression, props, () => "");
   }
 
-  let lhs = parseNodeToString(node.expression, props);
-  let rhs = node.arguments.map(arg => parseNodeToString(arg, props)).join(", ");
-
-  if (lhs === "Yield") {
-    lhs = "yield";
-  }
-
-  // This statement compiles vec.add(vec2) into vec + vec2.
+  // This block compiles vec.add(vec2) into vec + vec2.
 
   // node = [[ a.b(c) ]]
   if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
@@ -34,13 +28,21 @@ export function parseCallExpression(node: ts.CallExpression, props: ParseState) 
       stringType === "Vector3i"
     );
 
-    const newLhs = parseNodeToString(prop.expression, props);
+    let operator: undefined | string = undefined;
 
-    if (functionName === "add" && isVector) return `${newLhs} + ${rhs}`;
-    if (functionName === "sub" && isVector) return `${newLhs} - ${rhs}`;
-    if (functionName === "mul" && isVector) return `${newLhs} * ${rhs}`;
-    if (functionName === "div" && isVector) return `${newLhs} / ${rhs}`;
+    if (functionName === "add" && isVector) operator = "+";
+    if (functionName === "sub" && isVector) operator = "-";
+    if (functionName === "mul" && isVector) operator = "*";
+    if (functionName === "div" && isVector) operator = "/";
+
+    if (operator !== undefined) {
+      return combine(node, [node.expression, node.arguments[0]], props, (exp, arg) => `${exp} ${operator} ${arg}`);
+    }
   }
 
-  return `${lhs}(${rhs})`
+  return combine(node, [node.expression, ...node.arguments], props, (expr, ...args) => {
+    if (expr === "Yield") expr = "yield";
+
+    return `${expr}(${args.join(', ')})`;
+  });
 }

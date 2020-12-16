@@ -1,4 +1,5 @@
 {
+  // "typescript.tsserver.experimental.enableProjectDiagnostics": true
   // "typescript.preferences.importModuleSpecifierEnding": "js"
   // "typescript.tsserver.log": "verbose"
 }

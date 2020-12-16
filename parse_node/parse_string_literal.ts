@@ -1,7 +1,9 @@
 import ts from "typescript";
 
-export function parseStringLiteral(genericNode: ts.Node) {
-  const node = genericNode as ts.StringLiteral;
+import { combine, ParseNodeType, ParseState } from "../parse_node"
 
-  return `"${node.text}"`;
+export const parseStringLiteral = (node: ts.StringLiteral, props: ParseState): ParseNodeType => {
+  return combine(node, [], props, () =>
+    `"${node.text}"`
+  );
 }

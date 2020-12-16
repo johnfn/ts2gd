@@ -1,10 +1,12 @@
 import ts from "typescript";
-import { ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
 
-export function parseBreakStatement(node: ts.BreakStatement, props: ParseState) {
+import { ParseNodeType } from "../parse_node"
+
+export const parseBreakStatement = (node: ts.BreakStatement, props: ParseState): ParseNodeType => {
   if (props.mostRecentControlStructureIsSwitch) {
-    return '';
+    return combine(node, [], props, () => "");
   } else {
-    return `${props.indent}break`;
+    return combine(node, [], props, () => `break`);
   }
 }

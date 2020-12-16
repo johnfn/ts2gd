@@ -1,8 +1,12 @@
 import ts from "typescript";
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine } from "../parse_node";
 
-export function parseConstructor(genericNode: ts.Node, props: ParseState) {
-  const node = genericNode as ts.ConstructorDeclaration;
+import { ParseNodeType } from "../parse_node"
 
-  return `func _ready(): \n` + parseNodeToString(node.body!, { ...props, isConstructor: true, indent: "  " + props.indent });
+export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseState): ParseNodeType => {
+  if (node.body) {
+    return combine(node, node.body, props, body => `func _ready(): ${body}`);
+  } else {
+    return combine(node, [], props, () => `func _ready():\n pass`);
+  }
 }

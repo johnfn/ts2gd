@@ -1,7 +1,7 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
 import * as utils from "tsutils";
-import { parseNodeToString, ParseState } from "../parse_node";
+import { combine, ParseNodeType, ParseState } from "../parse_node";
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
@@ -23,10 +23,8 @@ const preprocessClassDecl = (node: ts.ClassDeclaration, props: ParseState) => {
 ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}`
 };
 
-export const parseSourceFile = (node: ts.SourceFile, props: ParseState) => {
+export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNodeType => {
   const { statements } = node;
-  let result = '';
-
   const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
 
   if (!sourceInfo) {
@@ -43,20 +41,10 @@ Can't find associated sourceInfo
   };
 
   const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration;
+  const relevantStatements = statements.filter(statement => statement.kind !== SyntaxKind.VariableStatement);
 
-  result += preprocessClassDecl(classDecl, newProps);
-
-  for (const statement of statements) {
-    // The only VariableStatements outside of a class are for autoload classes, which
-    // are only needed for TypeScript.
-    if (statement.kind === SyntaxKind.VariableStatement) {
-      continue;
-    }
-
-    let parsed = parseNodeToString(statement, props);
-
-    result += parsed + "\n";
-  }
-
-  return result;
+  return combine(node, relevantStatements, newProps, (...statements) =>
+    preprocessClassDecl(classDecl, newProps) +
+    statements.join('\n')
+  );
 }

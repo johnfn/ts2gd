@@ -1,8 +1,10 @@
 import ts from "typescript";
-import { ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
 
-export function parseNumericLiteral(node: ts.NumericLiteral, props: ParseState) {
+import { ParseNodeType } from "../parse_node"
+
+export const parseNumericLiteral = (node: ts.NumericLiteral, props: ParseState): ParseNodeType => {
   // node.text has some weird edge cases e.g. "6.1" gives "6"!
 
-  return node.getText();
+  return combine(node, [], props, () => node.getText());
 }

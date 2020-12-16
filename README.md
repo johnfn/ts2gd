@@ -109,6 +109,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] `extends` must be transpiled before everything else, including enum declarations and other top level things
 - [x] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] explain tne `enum` thing better
+- [ ] @node annotations to say which node a class belongs to
 - [ ] How come I can't call get_tree() on a class that extends Object?
 - [ ] handle parameters to _functions that aren't provided in TS by autofilling them in Godot
 - [ ] `callables`

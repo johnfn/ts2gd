@@ -1,7 +1,7 @@
 import ts from "typescript";
 
-export function parseThisKeyword(genericNode: ts.Node) {
-  const node = genericNode as ts.ThisExpression;
+import { combine, ParseNodeType, ParseState } from "../parse_node"
 
-  return `self`;
+export const parseThisKeyword = (node: ts.ThisExpression, props: ParseState): ParseNodeType => {
+  return combine(node, [], props, () => `self`);
 }

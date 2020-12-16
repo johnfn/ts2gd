@@ -1,21 +1,31 @@
 import ts from "typescript";
-const { SyntaxKind } = ts;
-import { ParseState, parseNodeToString } from "../parse_node";
+import { ParseState, combine, addIndent } from "../parse_node";
+import { ParseNodeType } from "../parse_node"
 
-export function parseSwitchStatement(node: ts.SwitchStatement, props: ParseState): string {
+export const parseSwitchStatement = (node: ts.SwitchStatement, props: ParseState): ParseNodeType => {
   const newProps = {
     ...props,
     mostRecentControlStructureIsSwitch: true,
-    indent: props.indent + '    ',
   };
-  const expression = parseNodeToString(node.expression, props);
 
-  return `${props.indent}match ${expression}:
-${node.caseBlock.clauses.map(clause => {
-    if (clause.kind === SyntaxKind.CaseClause) {
-      return `  ${props.indent}${parseNodeToString(clause.expression, props)}:
-${clause.statements.map(statement => parseNodeToString(statement, newProps)).join('\n')}\n`;
-    }
-    // TODO: Handle default!
-  }).join('')}`;
+  return combine(node, [node.expression, node.caseBlock], newProps, (expr, block) =>
+    `match ${expr}:
+${block}`
+  );
+};
+
+export const parseSwitchCaseBlock = (node: ts.CaseBlock, props: ParseState): ParseNodeType => {
+  return combine(node, node.clauses, addIndent(props), (...clauses) => clauses.join('\n'));
+};
+
+export const parseCaseClause = (node: ts.CaseClause, props: ParseState): ParseNodeType => {
+  return combine(node, [node.expression, ...node.statements], addIndent(props), (expr, ...statements) =>
+    `${props.indent}${expr}:
+${statements.join('')}`);
+}
+
+export const parseDefaultClause = (node: ts.DefaultClause, props: ParseState): ParseNodeType => {
+  return combine(node, [...node.statements], addIndent(props), (expr, ...statements) =>
+    `${props.indent}_:
+${statements.join('')}`);
 }
