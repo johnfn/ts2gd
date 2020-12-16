@@ -1,6 +1,5 @@
 import ts from "typescript";
 import { combine, parseNodeToString, ParseState } from "../parse_node";
-import { getPreciseInitializerType } from "../ts_utils";
 
 import { ParseNodeType } from "../parse_node"
 

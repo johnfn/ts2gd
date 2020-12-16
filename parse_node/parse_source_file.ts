@@ -45,6 +45,6 @@ Can't find associated sourceInfo
 
   return combine({
     parent: node, nodes: relevantStatements, props: newProps, content: (...statements) => preprocessClassDecl(classDecl, newProps) +
-      statements.join('\n')
+      statements.join('')
   });
 }

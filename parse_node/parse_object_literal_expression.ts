@@ -22,7 +22,39 @@ export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, p
     }
   }
 
-  result += `${props.indent}}`;
+  const keys = node.properties.map(prop => {
+    if (prop.kind === SyntaxKind.PropertyAssignment) {
+      return prop.name.getText();
+    } else if (prop.kind === SyntaxKind.ShorthandPropertyAssignment) {
+      return prop.name.getText();
+    } else {
+      throw new Error("Unknown property in object.");
+    }
+  });
 
-  return combine({ parent: node, nodes: [], props, content: () => result });
+  const values = node.properties.map(prop => {
+    if (prop.kind === SyntaxKind.PropertyAssignment) {
+      return prop.initializer;
+    } else if (prop.kind === SyntaxKind.ShorthandPropertyAssignment) {
+      return prop.name;
+    } else {
+      throw new Error("Unknown property in object.");
+    }
+  })
+
+  // result += `${props.indent}}`;
+
+  return combine({
+    parent: node,
+    nodes: values,
+    props,
+    content: (...values) => {
+      const valueAndNames = values.map((_, i) => [keys[i], values[i]]);
+      return `
+{
+${valueAndNames.map(([k, v]) => `  "${k}": ${v},`).join('\n')}
+}      
+      `
+    }
+  });
 }

@@ -49,7 +49,7 @@ export const parseClassDeclaration = (node: ts.ClassDeclaration | ts.ClassExpres
     parent: node, nodes: node.members, props, content: (...members) => {
       return `
 ${parsedSetterGetters}
-${members.join('\n')}
+${members.join('')}
 `;
     }
   });

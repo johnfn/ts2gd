@@ -109,7 +109,12 @@ export function combine(args: {
 
     if (!node) { return ''; }
 
-    let isStatement = node.kind >= SyntaxKind.FirstStatement && node.kind <= SyntaxKind.LastStatement;
+    let isStandAloneLine =
+      (node.kind >= SyntaxKind.FirstStatement && node.kind <= SyntaxKind.LastStatement) ||
+      node.kind === SyntaxKind.PropertyDeclaration ||
+      node.kind === SyntaxKind.ImportDeclaration ||
+      node.kind === SyntaxKind.EnumDeclaration
+      ;
     let result = content;
     const lines = content.split('\n');
 
@@ -120,11 +125,11 @@ export function combine(args: {
       }
     }
 
-    if (isStatement && lines.length === 1) {
+    if (isStandAloneLine && lines.length === 1) {
       result = result + "\n";
     }
 
-    if (isStatement || lines.length > 1) {
+    if (isStandAloneLine || lines.length > 1) {
       const preceding = generatePrecedingNewlines(node);
       result = preceding + result;
     }
@@ -135,7 +140,7 @@ export function combine(args: {
   let stringResult = content(...strings);
   let dummy = content(...strings.map(s => "x"));
   let initialWhitespaceLength = dummy.length - dummy.trimLeft().length;
-  stringResult = stringResult.slice(initialWhitespaceLength).trimRight();
+  stringResult = stringResult.slice(initialWhitespaceLength).trimRight() + (stringResult.endsWith('\n') ? '\n' : '');
 
   // Indent and do whitespace properly
 

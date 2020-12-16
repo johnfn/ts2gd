@@ -7,6 +7,7 @@ export const parseSetAccessor = (node: ts.SetAccessorDeclaration, props: ParseSt
     parent: node,
     nodes: [node.name, node.body, ...node.parameters],
     props,
+    addIndent: true,
     content: (name, body, ...params) =>
       `
 func ${name}_set(${params.join(', ')}):

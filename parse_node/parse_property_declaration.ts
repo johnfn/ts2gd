@@ -39,5 +39,10 @@ export const parsePropertyDeclaration = (node: ts.PropertyDeclaration, props: Pa
   const exportText = isExported(node) ? `export(${godotType}) ` : '';
   const onReady = isOnReady(node)
 
-  return combine({ parent: node, nodes: node.initializer, props, content: initializer => `${exportText}${onReady ? 'onready ' : ''}var ${node.name.getText()}${godotType ? `: ${godotType}` : ''}${initializer && ` = ${initializer}`}` });
+  return combine({
+    parent: node,
+    nodes: node.initializer,
+    props,
+    content: initializer => `${exportText}${onReady ? 'onready ' : ''}var ${node.name.getText()}${godotType ? `: ${godotType}` : ''}${initializer && ` = ${initializer}`}`
+  });
 }

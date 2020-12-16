@@ -36,7 +36,12 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     if (functionName === "div" && isVector) operator = "/";
 
     if (operator !== undefined) {
-      return combine({ parent: node, nodes: [node.expression, node.arguments[0]], props, content: (exp, arg) => `${exp} ${operator} ${arg}` });
+      return combine({
+        parent: node,
+        nodes: [node.expression, node.arguments[0]],
+        props,
+        content: (exp, arg) => `${exp} ${operator} ${arg}`,
+      });
     }
   }
 

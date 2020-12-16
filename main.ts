@@ -1,7 +1,8 @@
-// TODO: Support enum export
 // TODO: Per-file tests
+// TODO: There's a bug where cleaning up self. can cause variable name collisions.
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
+// TODO: this.blah.add() doesnt parse right
 // TODO: Because I consider Dictionary = {}, it considers everything
 // to be a Dictionary... even Node2D
 // TODO: SUbtracting vectors gives a number for some reason
