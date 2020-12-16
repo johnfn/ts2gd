@@ -6,8 +6,8 @@ export const parseIdentifier = (node: ts.Identifier, props: ParseState): ParseNo
   const name = node.text;
 
   if (name === "undefined") {
-    return combine(node, [], props, () => "null");
+    return combine({ parent: node, nodes: [], props, content: () => "null" });
   } else {
-    return combine(node, [], props, () => node.text);
+    return combine({ parent: node, nodes: [], props, content: () => node.text });
   }
 }

@@ -5,8 +5,13 @@ import { ParseNodeType } from "../parse_node"
 export const parseWhileStatement = (node: ts.WhileStatement, props: ParseState): ParseNodeType => {
   const newProps = { ...props, mostRecentControlStructureIsSwitch: false };
 
-  return combine(node, [node.expression, node.statement], newProps, (expr, statement) =>
-    `while ${expr}:
-${statement}`
-  );
+  return combine({
+    parent: node,
+    nodes: [node.expression, node.statement],
+    props: newProps,
+    addIndent: true,
+    content: (expr, statement) => `
+while ${expr}:
+  ${statement}
+` });
 }

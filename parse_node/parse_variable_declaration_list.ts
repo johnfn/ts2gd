@@ -7,5 +7,5 @@ export const parseVariableDeclarationList = (node: ts.VariableDeclarationList, p
     console.error("Cant handle so many declarations!");
   }
 
-  return combine(node, node.declarations, props, (...decls) => decls.join(""));
+  return combine({ parent: node, nodes: node.declarations, props, content: (...decls) => decls.join("") });
 }

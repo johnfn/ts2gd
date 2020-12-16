@@ -7,5 +7,5 @@ import { combine, parseNodeToString, ParseState } from "../parse_node"
  *                    ^^^^^^^^^^^^^^^^^^^
  */
 export const parseParameterList = (parent: ts.Node, list: ts.NodeArray<ts.ParameterDeclaration>, props: ParseState) => {
-  return combine(parent, list, props, (...params) => params.join(', '));
+  return combine({ parent, nodes: list, props, content: (...params) => params.join(', ') });
 }

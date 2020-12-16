@@ -45,9 +45,12 @@ export const parseClassDeclaration = (node: ts.ClassDeclaration | ts.ClassExpres
   // NOTE: Since extends and class_name *must* come first in the file,
   // they are added ahead of time by parse_source_file.ts.
 
-  return combine(node, node.members, props, (...members) => {
-    return `${parsedSetterGetters}
+  return combine({
+    parent: node, nodes: node.members, props, content: (...members) => {
+      return `
+${parsedSetterGetters}
 ${members.join('\n')}
 `;
+    }
   });
 }

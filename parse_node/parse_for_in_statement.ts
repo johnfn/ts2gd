@@ -7,6 +7,9 @@ export const parseForInStatement = (node: ts.ForInStatement, props: ParseState):
   const initializedVariable = node.initializer.getChildAt(1);
   const initializedVariableName = initializedVariable.getText(); // TODO: There is probably a better way to do this.
 
-  return combine(node, [node.expression, node.statement], props, (expr, statement) => `for ${initializedVariableName} in ${expr}:\n${statement}`
-  );
+  return combine({
+    parent: node, nodes: [node.expression, node.statement], props, addIndent: true, content: (expr, statement) => `
+for ${initializedVariableName} in ${expr}:
+  ${statement}
+` });
 }

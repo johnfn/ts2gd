@@ -5,8 +5,8 @@ import { ParseNodeType } from "../parse_node"
 
 export const parseBreakStatement = (node: ts.BreakStatement, props: ParseState): ParseNodeType => {
   if (props.mostRecentControlStructureIsSwitch) {
-    return combine(node, [], props, () => "");
+    return combine({ parent: node, nodes: [], props, content: () => "" });
   } else {
-    return combine(node, [], props, () => `break`);
+    return combine({ parent: node, nodes: [], props, content: () => `break` });
   }
 }

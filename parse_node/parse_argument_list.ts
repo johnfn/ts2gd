@@ -11,7 +11,5 @@ export const parseArgumentList = (parent: ts.Node, list: ts.NodeArray<ts.Express
     return { content: "" };
   }
 
-  return combine(parent, [...list], props,
-    (...args) => `${args.join(", ")}`
-  );
+  return combine({ parent, nodes: [...list], props, content: (...args) => `${args.join(", ")}` });
 }

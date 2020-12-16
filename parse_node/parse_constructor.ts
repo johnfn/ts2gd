@@ -5,8 +5,16 @@ import { ParseNodeType } from "../parse_node"
 
 export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseState): ParseNodeType => {
   if (node.body) {
-    return combine(node, node.body, props, body => `func _ready(): ${body}`);
+    return combine({
+      parent: node,
+      nodes: node.body,
+      props,
+      addIndent: true,
+      content: body => `
+func _ready(): 
+  ${body}
+` });
   } else {
-    return combine(node, [], props, () => `func _ready():\n pass`);
+    return combine({ parent: node, nodes: [], props, content: () => `func _ready():\n pass` });
   }
 }

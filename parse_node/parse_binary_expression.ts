@@ -18,12 +18,10 @@ export const parseBinaryExpression = (node: ts.BinaryExpression, props: ParseSta
       const keyNode = leftPropAccess.name;
 
       if (isDictionary(dictNodeType)) {
-        return combine(node, [dictNode, node.right], props, (dictNode, right) => `${dictNode}["${keyNode.text}"] = ${right}`)
+        return combine({ parent: node, nodes: [dictNode, node.right], props, content: (dictNode, right) => `${dictNode}["${keyNode.text}"] = ${right}` })
       }
     }
   }
 
-  return combine(node, [node.left, node.operatorToken, node.right], props, (left, operatorToken, right) =>
-    `${left}${needsLeftHandSpace ? ' ' : ''}${operatorToken} ${right}`
-  );
+  return combine({ parent: node, nodes: [node.left, node.operatorToken, node.right], props, content: (left, operatorToken, right) => `${left}${needsLeftHandSpace ? ' ' : ''}${operatorToken} ${right}` });
 }

@@ -90,6 +90,7 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
       }
 
       if (isEnumType(type)) {
+        // TODO: Refactor this out - this code is also in parse_enum.
         const pathWithoutEnum = importedSourceFile.resPath;
         const newPath = pathWithoutEnum.slice(0, -'.gd'.length) + '_' + typeString + '.gd';
 
@@ -102,9 +103,9 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
     }
   }
 
-  return combine(node, [], props, () =>
-    imports.map(({ type, resPath }) => {
+  return combine({
+    parent: node, nodes: [], props, content: () => imports.map(({ type, resPath }) => {
       return `const ${type} = preload("${resPath}")`;
     }).join('\n')
-  );
+  });
 }

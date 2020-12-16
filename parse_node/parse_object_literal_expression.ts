@@ -6,7 +6,7 @@ import { ParseNodeType } from "../parse_node"
 
 export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, props: ParseState): ParseNodeType => {
   if (node.properties.length === 0) {
-    return combine(node, [], props, () => '{}');
+    return combine({ parent: node, nodes: [], props, content: () => '{}' });
   }
 
   let result = '{\n';
@@ -24,5 +24,5 @@ export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, p
 
   result += `${props.indent}}`;
 
-  return combine(node, [], props, () => result);
+  return combine({ parent: node, nodes: [], props, content: () => result });
 }

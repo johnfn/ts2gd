@@ -43,8 +43,8 @@ Can't find associated sourceInfo
   const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration;
   const relevantStatements = statements.filter(statement => statement.kind !== SyntaxKind.VariableStatement);
 
-  return combine(node, relevantStatements, newProps, (...statements) =>
-    preprocessClassDecl(classDecl, newProps) +
-    statements.join('\n')
-  );
+  return combine({
+    parent: node, nodes: relevantStatements, props: newProps, content: (...statements) => preprocessClassDecl(classDecl, newProps) +
+      statements.join('\n')
+  });
 }

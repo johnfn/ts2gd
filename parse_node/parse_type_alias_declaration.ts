@@ -4,5 +4,5 @@ import { ParseNodeType } from "../parse_node"
 
 // This is something like "type Blah = ...". There is nothing to do here.
 export const parseTypeAliasDeclaration = (node: ts.TypeAliasDeclaration, props: ParseState): ParseNodeType => {
-  return combine(node, [], props, () => "");
+  return combine({ parent: node, nodes: [], props, content: () => "" });
 }

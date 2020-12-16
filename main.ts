@@ -1,4 +1,5 @@
 // TODO: Support enum export
+// TODO: Per-file tests
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
 // TODO: Because I consider Dictionary = {}, it considers everything

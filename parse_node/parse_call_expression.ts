@@ -7,7 +7,7 @@ import { ParseNodeType } from "../parse_node"
 export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {
   // TODO: Work out a better way to determine if something is a call expression
   if (node.expression.getText() === "super") {
-    return combine(node, node.expression, props, () => "");
+    return combine({ parent: node, nodes: node.expression, props, content: () => "" });
   }
 
   // This block compiles vec.add(vec2) into vec + vec2.
@@ -36,13 +36,16 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     if (functionName === "div" && isVector) operator = "/";
 
     if (operator !== undefined) {
-      return combine(node, [node.expression, node.arguments[0]], props, (exp, arg) => `${exp} ${operator} ${arg}`);
+      return combine({ parent: node, nodes: [node.expression, node.arguments[0]], props, content: (exp, arg) => `${exp} ${operator} ${arg}` });
     }
   }
 
-  return combine(node, [node.expression, ...node.arguments], props, (expr, ...args) => {
-    if (expr === "Yield") expr = "yield";
+  return combine({
+    parent: node, nodes: [node.expression, ...node.arguments], props, content: (expr, ...args) => {
+      if (expr === "Yield")
+        expr = "yield";
 
-    return `${expr}(${args.join(', ')})`;
+      return `${expr}(${args.join(', ')})`;
+    }
   });
 }

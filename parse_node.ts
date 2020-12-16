@@ -45,6 +45,7 @@ import * as utils from 'tsutils';
 import { parseTypeAliasDeclaration } from "./parse_node/parse_type_alias_declaration";
 import { parsePropertyAccessExpression } from "./parse_node/parse_property_access_expression";
 import { parseClassDeclaration } from "./parse_node/parse_class_declaration";
+import { parseEmptyStatement } from "./parse_node/parse_empty_statement";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -59,62 +60,84 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
 }
 
-export const addIndent = (oldProps: ParseState) => {
-  return {
-    ...oldProps,
-    indent: oldProps.indent + "  ",
-  };
-}
-
 export type ParseNodeType = {
   content: string;
-  enums?: { content: string; name: string }[]
+  enums?: { content: string; name: string }[];
 };
 
-export function combine(parent: ts.Node, node: ts.Node | undefined, props: ParseState, content: (arg: string) => string): ParseNodeType;
-export function combine(parent: ts.Node, nodes: ts.Node[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-export function combine(parent: ts.Node, nodes: (ts.Node | undefined)[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-export function combine(parent: ts.Node, nodes: ts.NodeArray<ts.Node>, props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-export function combine(parent: ts.Node, nodes: undefined | ts.Node | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>, props: ParseState, content: (...args: string[]) => string): ParseNodeType {
+// export function combine(parent: ts.Node, nodes: ts.Node[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
+// export function combine(parent: ts.Node, nodes: (ts.Node | undefined)[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
+// export function combine(parent: ts.Node, nodes: ts.NodeArray<ts.Node>, props: ParseState, content: (...args: string[]) => string): ParseNodeType;
+// export function combine(args: { parent: ts.Node, nodes: ts.Node | undefined, props: ParseState, content: (arg: string) => string }): ParseNodeType;
+export function combine(args: {
+  parent: ts.Node;
+  nodes: undefined | ts.Node | undefined | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>;
+  props: ParseState;
+  content: (...args: string[]) => string;
+
+  addIndent?: boolean;
+}): ParseNodeType {
+  let { parent, nodes, props, content, addIndent } = args;
+
   if (!Array.isArray(nodes)) {
     nodes = [nodes];
   } else {
     nodes = [...nodes]
   }
 
-  if (parent.kind === SyntaxKind.Block) {
-    props = addIndent(props);
-  }
-
   const parsedNodes = nodes.map(node => {
     if (!node) {
+      // We need to preserve the order of the array, incl. undefined, when we call content().
       return {
-        content: "",
+        node: undefined,
+        content: '',
         enums: [],
       };
-    }
+    };
 
-    const preceding = ''; // generatePrecedingNewlines(node);
     const parsed = parseNodeToString(node, props)
 
     return {
-      content: preceding + parsed.content,
+      node,
+      content: parsed.content,
       enums: parsed.enums ?? [],
     }
   });
 
-  const strings = parsedNodes.map(node => {
-    return node.content;
+  const strings = parsedNodes.map((parsed) => {
+    const { node, content, enums } = parsed;
+
+    if (!node) { return ''; }
+
+    let isStatement = node.kind >= SyntaxKind.FirstStatement && node.kind <= SyntaxKind.LastStatement;
+    let result = content;
+    const lines = content.split('\n');
+
+    if (addIndent) {
+      if (lines.length > 1) {
+        // indent all but the first line.
+        result = lines.map((line, i) => ((i > 0) ? '  ' : '') + line + '\n').join('');
+      }
+    }
+
+    if (isStatement && lines.length === 1) {
+      result = result + "\n";
+    }
+
+    if (isStatement || lines.length > 1) {
+      const preceding = generatePrecedingNewlines(node);
+      result = preceding + result;
+    }
+
+    return result;
   });
+
   let stringResult = content(...strings);
+  let dummy = content(...strings.map(s => "x"));
+  let initialWhitespaceLength = dummy.length - dummy.trimLeft().length;
+  stringResult = stringResult.slice(initialWhitespaceLength).trimRight();
 
   // Indent and do whitespace properly
-
-  let isStatement = parent.kind >= SyntaxKind.FirstStatement && parent.kind <= SyntaxKind.LastStatement;
-
-  if (isStatement) {
-    stringResult = props.indent + stringResult + '\n';
-  }
 
   return {
     content: stringResult,
@@ -151,7 +174,7 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): Pars
     case SyntaxKind.IfStatement:
       return parseIfStatement(genericNode as ts.IfStatement, props);
     case SyntaxKind.EmptyStatement:
-      return { content: '' };
+      return parseEmptyStatement(genericNode as ts.EmptyStatement, props);
     case SyntaxKind.SwitchStatement:
       return parseSwitchStatement(genericNode as ts.SwitchStatement, props);
     case SyntaxKind.CaseBlock:

@@ -9,8 +9,8 @@ export const parseVariableStatement = (node: ts.VariableStatement, props: ParseS
 
   // skip variable declarations; there's no code to generate here
   if (modifiers?.includes('declare')) {
-    return combine(node, [], props, () => "");
+    return combine({ parent: node, nodes: [], props, content: () => "" });
   }
 
-  return combine(node, node.declarationList, props, list => list);
+  return combine({ parent: node, nodes: node.declarationList, props, content: list => list });
 };

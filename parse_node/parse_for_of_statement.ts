@@ -19,14 +19,26 @@ export const parseForOfStatement = (node: ts.ForOfStatement, props: ParseState):
     const usages = props.usages.get(decl.name as ts.Identifier);
     const isUnused = usages?.uses.length === 0;
 
-    return combine(node, [node.expression, node.statement], props, (expr, statement) =>
-      `for ${isUnused ? "_" : ""}${decl.name.getText()} in ${expr}:\n${statement}`
-    );
+    return combine({
+      parent: node,
+      nodes: [node.expression, node.statement],
+      props,
+      addIndent: true,
+      content: (expr, statement) => `
+for ${isUnused ? "_" : ""}${decl.name.getText()} in ${expr}:
+  ${statement}
+` });
   } else {
     const initializedVariable = node.initializer.getChildAt(1);
 
-    return combine(node, [node.expression, node.statement], props, (expr, statement) =>
-      `for ${initializedVariable.getText()} in ${expr}:\n${statement}`
-    );
+    return combine({
+      parent: node,
+      nodes: [node.expression, node.statement],
+      props,
+      addIndent: true,
+      content: (expr, statement) => `
+for ${initializedVariable.getText()} in ${expr}:
+  ${statement}
+` });
   }
 }

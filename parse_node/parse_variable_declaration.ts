@@ -10,7 +10,5 @@ export const parseVariableDeclaration = (node: ts.VariableDeclaration, props: Pa
   const unused = (usages?.uses.length === 0) ? '_' : '';
   const typeString = type ? `: ${type}` : '';
 
-  return combine(node, [node.name, node.initializer], props, (nodeName, init) =>
-    `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}`
-  );
+  return combine({ parent: node, nodes: [node.name, node.initializer], props, content: (nodeName, init) => `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}` });
 }
