@@ -24,7 +24,9 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
 
   for (const scene of project.scenes) {
     for (const node of scene.nodes) {
-      if (node.script && node.script.resPath === script.resPath) {
+      const nodeScript = node.getScript(project.scenes);
+
+      if (nodeScript && nodeScript.resPath === script.resPath) {
         instances.push(node);
       }
     }
@@ -61,7 +63,7 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
   let result = `declare type NodePathToType${className} = {\n`
 
   for (const { path, node } of commonRelativePaths) {
-    const script = node.script;
+    const script = node.getScript(project.scenes);
 
     if (script) {
       const associatedClass = project.sourceFiles.find(source => {

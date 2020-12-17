@@ -23,12 +23,15 @@ const isOnReady = (node: ts.PropertyDeclaration) => {
 
     if (node.initializer.getText().includes("get_node(")) {
       return true;
-    } else {
-      const initializerType = program.getTypeChecker().getTypeAtLocation(node.initializer);
-      const hierarchy = getTypeHierarchy(initializerType).map(x => program.getTypeChecker().typeToString(x));
-
-      return hierarchy.includes('Node2D') || hierarchy.includes('Node');
     }
+
+    // TODO: This isn't quite so simple, because we could do something like node.value - where
+    // node is Node but value is int - which we should mark as onready, but we aren't currently
+
+    const initializerType = program.getTypeChecker().getTypeAtLocation(node.initializer);
+    const hierarchy = getTypeHierarchy(initializerType).map(x => program.getTypeChecker().typeToString(x));
+
+    return hierarchy.includes('Node2D') || hierarchy.includes('Node');
   }
 
   return false;

@@ -209,7 +209,11 @@ async function buildNodePathsType(sceneFsPath: string, project: TsGdProject) {
     let assetFileContents = `
 declare type NodePathToType${className} = {\n`
 
-    for (const { scenePath, type, script } of nodesInScene) {
+    for (const node of nodesInScene) {
+      const { scenePath, type } = node;
+
+      const script = node.getScript(project.scenes);
+
       if (script) {
         const associatedClass = project.sourceFiles.find(source => {
           return source.className === script.type;
@@ -396,8 +400,9 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
       } else if (resPath.endsWith('.tscn')) {
         const scene = scenes.find(scene => scene.fsPath === fsPath)!;
 
-        if (scene.rootNode.script) {
-          let sourceFile = sourceFiles.find(file => file.resPath === scene.rootNode.script?.resPath);
+        const script = scene.rootNode.getScript(scenes);
+        if (script) {
+          let sourceFile = sourceFiles.find(file => file.resPath === script.resPath);
 
           className = `PackedScene<import('${sourceFile?.tsFullPath.slice(0, -'.ts'.length)}').${sourceFile?.className}>`;
         } else {
@@ -427,17 +432,54 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   };
 };
 
-export type Node = {
+export class Node {
   name: string;
   type: string;
   isRoot: boolean;
   scenePath: string;
-  script?: { resPath: string; type: string; id: number; fsPath: string; };
+  private script?: { resPath: string; type: string; id: number; fsPath: string; };
   parent?: string;
   groups?: string;
   rest: string;
   children: Node[];
-};
+  instancedSceneFsPath?: string;
+
+  constructor(props: {
+    name: string;
+    type: string;
+    isRoot: boolean;
+    scenePath: string;
+    script?: { resPath: string; type: string; id: number; fsPath: string; };
+    instancedSceneFsPath?: string;
+    parent?: string;
+    groups?: string;
+    rest: string;
+    children: Node[];
+  }) {
+    this.name = props.name;
+    this.type = props.type;
+    this.isRoot = props.isRoot;
+    this.scenePath = props.scenePath;
+    this.script = props.script;
+    this.parent = props.parent;
+    this.instancedSceneFsPath = props.instancedSceneFsPath;
+    this.groups = props.groups;
+    this.rest = props.rest;
+    this.children = props.children;
+  }
+
+  getScript(scenes: ParsedScene[]) {
+    if (this.script) {
+      return this.script;
+    }
+
+    if (this.instancedSceneFsPath) {
+      const instancedScene = scenes.find(s => s.fsPath === this.instancedSceneFsPath);
+
+      return instancedScene?.rootNode.script;
+    }
+  }
+}
 
 type ParsedScene = {
   nodes: Node[];
@@ -459,14 +501,36 @@ const parseScene = (fsPath: string): ParsedScene => {
     id: Number(match[3]),
   }))
 
-  const nodeRe = /^\[node name="(?<name>[^"]+)" type="(?<type>[^"]+)"( parent="(?<parent>[^"]+)")?( groups=\[(?<groups>[^\]]+)\])?\](?<rest>[^]*?)(\n\n|\n$)/gm;
+  const nodeRe = /^\[node name="(?<name>[^"]+)"( type="(?<type>[^"]+)")?( parent="(?<parent>[^"]+)")?( instance=ExtResource\( (?<instanceId>[0-9]+) \))?( groups=\[(?<groups>[^\]]+)\])?\](?<rest>[^]*?)(\n\n|\n$)/gm;
   const allNodes: Node[] = [...content.matchAll(nodeRe)].map((match) => {
     const groups = match.groups!;
     const scriptRe = /^script = ExtResource\( ([0-9]+) \)$/gm;
     const scriptReResult = scriptRe.exec(groups.rest);
     const script = scriptReResult ? extResources.find(resource => resource.id === Number(scriptReResult[1])) : undefined;
 
-    let node: Node = {
+    let instanceId = groups.instanceId ? Number(groups.instanceId) : undefined;
+
+    if (instanceId) {
+      const instanceResource = extResources.find(res => res.id === instanceId);
+      const instancedSceneFsPath = instanceResource?.fsPath;
+
+      return new Node({
+        name: groups.name,
+        type: groups.type,
+        isRoot: !groups.parent,
+        // script: groups.script,
+        script: script,
+        parent: groups.parent,
+        groups: groups.groups,
+        scenePath: '',
+        rest: groups.rest,
+        instancedSceneFsPath: instancedSceneFsPath,
+        // Will be filled in in the next pass
+        children: [],
+      });
+    }
+
+    return new Node({
       name: groups.name,
       type: groups.type,
       isRoot: !groups.parent,
@@ -479,9 +543,7 @@ const parseScene = (fsPath: string): ParsedScene => {
 
       // Will be filled in in the next pass
       children: [],
-    }
-
-    return node;
+    });
   });
 
   const rootNode = allNodes.find(node => !node.parent)!;

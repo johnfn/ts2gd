@@ -19,7 +19,7 @@ export const parseEnumDeclaration = (node: ts.EnumDeclaration, props: ParseState
     enumName,
   } = getImportResPathForEnum(enumType, props);
 
-  let importString = `const ${enumName} = preload("${resPath}").${enumName}`
+  const importString = `const ${enumName} = preload("${resPath}").${enumName}`;
 
   return {
     content: importString,

@@ -1,5 +1,4 @@
-import ts, { isArrayLiteralExpression } from "typescript";
-const { SyntaxKind } = ts;
+import ts, { isArrayLiteralExpression, SyntaxKind } from "typescript";
 import { TsGdProject } from "./main";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
