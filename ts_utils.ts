@@ -161,6 +161,12 @@ export function getGodotType(
     return 'PackedScene';
   }
 
+  // Enum type names are actually not imported!
+
+  // if (isEnumType(typecheckerInferredType)) {
+  //   return tsTypeName;
+  // }
+
   // TODO: In theory, we could do the below, but it's subtle to get right
   // and doesn't confer a lot of benefit. In some cases (e.g. using user-defined
   // types) it actually causes errors due to cyclic dependencies, and those would

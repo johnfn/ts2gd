@@ -1,7 +1,7 @@
 import ts from "typescript";
 import { program } from "../main";
 import { combine, ParseState } from "../parse_node";
-import { getGodotType, getTypeHierarchy } from "../ts_utils";
+import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils";
 import { ParseNodeType } from "../parse_node"
 
 const isExported = (node: ts.PropertyDeclaration) => {
@@ -38,14 +38,21 @@ const isOnReady = (node: ts.PropertyDeclaration) => {
 }
 
 export const parsePropertyDeclaration = (node: ts.PropertyDeclaration, props: ParseState): ParseNodeType => {
-  const godotType = getGodotType(node, node.initializer, node.type);
-  const exportText = isExported(node) ? `export(${godotType}) ` : '';
+  let exportedType = program.getTypeChecker().getTypeAtLocation(node);
+  let exportedTypeName = getGodotType(node, node.initializer, node.type);
+  let typeHintName = exportedTypeName;
+
+  if (isEnumType(exportedType)) {
+    exportedTypeName = program.getTypeChecker().typeToString(exportedType);
+  }
+
+  const exportText = isExported(node) ? `export(${exportedTypeName}) ` : '';
   const onReady = isOnReady(node)
 
   return combine({
     parent: node,
     nodes: node.initializer,
     props,
-    content: initializer => `${exportText}${onReady ? 'onready ' : ''}var ${node.name.getText()}${godotType ? `: ${godotType}` : ''}${initializer && ` = ${initializer}`}`
+    content: initializer => `${exportText}${onReady ? 'onready ' : ''}var ${node.name.getText()}${typeHintName ? `: ${typeHintName}` : ''}${initializer && ` = ${initializer}`}`
   });
 }

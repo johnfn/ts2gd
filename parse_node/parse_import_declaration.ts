@@ -73,28 +73,6 @@ export const getImportResPathForEnum = (node: ts.Type, props: ParseState): {
 }
 
 export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseState): ParseNodeType => {
-
-  // TODO: This code does nothing currently, but will be helpful
-  // when we add multiple classes per file.
-
-  // const namedBindings = node.importClause?.namedBindings;
-
-  // if (!namedBindings) {
-  //   throw new Error("Unsupported import type!");
-  // }
-
-  // if (namedBindings.kind === SyntaxKind.NamedImports) {
-  //   const imports = namedBindings as ts.NamedImports;
-
-  //   for (const element of imports.elements) {
-  //     const name = element.propertyName!;
-
-  //     console.log(name.text);
-  //   }
-  // }
-
-  // Go ahead and assume they imported the main class from the file
-
   // Step 1: resolve full path
 
   const pathWithoutExtension = getPathWithoutExtension(node, props);
@@ -110,7 +88,7 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
   // Step 2: Parse bindings, sorting between class and enum types (which we need to generate different imports
   // for).
 
-  type ImportType = { type: string; resPath: string; };
+  type ImportType = { importedName: string; type: 'enum' | 'class'; resPath: string; };
 
   const namedBindings = node.importClause?.namedBindings;
 
@@ -132,7 +110,7 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
           enumName,
         } = getImportResPathForEnum(type, props);
 
-        imports.push({ type: enumName, resPath: resPath });
+        imports.push({ importedName: enumName, resPath: resPath, type: 'enum' });
       } else {
 
         let typeString = program.getTypeChecker().typeToString(type);
@@ -142,15 +120,22 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
         }
 
         if (!importedSourceFile.isAutoload) {
-          imports.push({ type: typeString, resPath: importedSourceFile.resPath });
+          imports.push({ importedName: typeString, resPath: importedSourceFile.resPath, type: 'class' });
         }
       }
     }
   }
 
   return combine({
-    parent: node, nodes: [], props, content: () => imports.map(({ type, resPath }) => {
-      return `const ${type} = preload("${resPath}")`;
+    parent: node,
+    nodes: [],
+    props,
+    content: () => imports.map(({ importedName, type, resPath }) => {
+      if (type === "class") {
+        return `const ${importedName} = preload("${resPath}")`;
+      } else if (type === "enum") {
+        return `const ${importedName} = preload("${resPath}").${importedName}`;
+      }
     }).join('\n')
   });
 }
