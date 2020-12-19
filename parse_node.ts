@@ -61,6 +61,7 @@ export type ParseState = {
 
 export type ParseNodeType = {
   content: string;
+  hoistedEnumImports?: string[];
   enums?: { content: string; name: string }[];
 };
 
@@ -100,6 +101,7 @@ export function combine(args: {
       node,
       content: parsed.content,
       enums: parsed.enums ?? [],
+      hoistedEnumImports: parsed.hoistedEnumImports ?? [],
     }
   });
 
@@ -115,7 +117,7 @@ export function combine(args: {
       node.kind === SyntaxKind.EnumDeclaration
       ;
     let result = content;
-    const lines = content.split('\n');
+    const lines = content.split('\n'); // .filter(x => x !== '');
 
     if (addIndent) {
       if (lines.length > 1) {
@@ -141,11 +143,10 @@ export function combine(args: {
   let initialWhitespaceLength = dummy.length - dummy.trimLeft().length;
   stringResult = stringResult.slice(initialWhitespaceLength).trimRight() + (stringResult.endsWith('\n') ? '\n' : '');
 
-  // Indent and do whitespace properly
-
   return {
     content: stringResult,
     enums: parsedNodes.flatMap(node => node.enums ?? []),
+    hoistedEnumImports: parsedNodes.flatMap(node => node.hoistedEnumImports ?? []),
   };
 }
 

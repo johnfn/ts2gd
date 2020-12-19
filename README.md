@@ -148,7 +148,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] Onready vs nonready - maybe we don't have to mark everything as an onready var? Is there an advantage to so doing?
 - [ ] ts2gd: Handle adding new files.
 - [ ] ts2gd: Handle deleting old files.
-- [ ] ts2gd: Random newlines at beginning of file.
+- [x] ts2gd: Random newlines at beginning of file.
 - [ ] Rewrite the code so you dont even need to add autoload classes bc they just get auto registered.
 - [ ] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???

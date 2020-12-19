@@ -1,3 +1,5 @@
+// TODO: change_scene should accept a AssetPath filtered on tscn
+// TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
 // TODO: Per-file tests
 // TODO: There's a bug where cleaning up self. can cause variable name collisions.
 // TODO: Clean up TS errors and output - only output if something is
@@ -6,7 +8,6 @@
 // TODO: Because I consider Dictionary = {}, it considers everything
 // to be a Dictionary... even Node2D
 // TODO: SUbtracting vectors gives a number for some reason
-// TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Workout SpontaneousDialog.instance()
 // TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
 // TODO: Mark things as onready with @onready

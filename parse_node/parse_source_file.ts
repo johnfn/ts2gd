@@ -1,7 +1,7 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
 import * as utils from "tsutils";
-import { combine, ParseNodeType, ParseState } from "../parse_node";
+import { combine, parseNodeToString as parseNode, ParseNodeType, ParseState } from "../parse_node";
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
@@ -41,10 +41,23 @@ Can't find associated sourceInfo
   };
 
   const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration;
-  const relevantStatements = statements.filter(statement => statement.kind !== SyntaxKind.VariableStatement);
+  const parsedStatements = statements.map(statement => parseNode(statement, props));
 
-  return combine({
-    parent: node, nodes: relevantStatements, props: newProps, content: (...statements) => preprocessClassDecl(classDecl, newProps) +
-      statements.join('')
-  });
+  return {
+    content: `
+${preprocessClassDecl(classDecl, props)} 
+${parsedStatements.flatMap(x => x.hoistedEnumImports ?? []).join('\n')}
+${parsedStatements.map(x => x.content).join('')}
+`.trim()
+  }
+
+  // const relevantStatements = statements.filter(statement => statement.kind !== SyntaxKind.VariableStatement);
+
+  // return combine({
+  //   parent: node,
+  //   nodes: relevantStatements,
+  //   props: newProps,
+  //   content: (...statements) => preprocessClassDecl(classDecl, newProps) +
+  //     statements.join('')
+  // });
 }

@@ -5,6 +5,8 @@ import { ParseNodeType } from "../parse_node"
 
 export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseState): ParseNodeType => {
   if (node.body) {
+    // The trim() is for a constructor with only one element: a super() call
+
     return combine({
       parent: node,
       nodes: node.body,
@@ -12,9 +14,14 @@ export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseSt
       addIndent: true,
       content: body => `
 func _ready(): 
-  ${body}
+  ${body.trim().length > 0 ? body : 'pass'}
 ` });
   } else {
-    return combine({ parent: node, nodes: [], props, content: () => `func _ready():\n pass` });
+    return combine({
+      parent: node,
+      nodes: [],
+      props,
+      content: () => `func _ready():\n pass`
+    });
   }
 }
