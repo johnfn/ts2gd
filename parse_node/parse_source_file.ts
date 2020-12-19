@@ -1,7 +1,6 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import * as utils from "tsutils";
-import { combine, parseNode as parseNode, ParseNodeType, ParseState } from "../parse_node";
+import ts, { SyntaxKind } from "typescript";
+import * as utils from 'tsutils';
+import { parseNode as parseNode, ParseNodeType, ParseState } from "../parse_node";
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
@@ -32,6 +31,7 @@ export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNo
 Can't find associated sourceInfo
   for ${node.fileName}`);
   }
+  props.usages = utils.collectVariableUsage(node);
 
   const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration;
   const parsedStatements = statements.map(statement => parseNode(statement, props));

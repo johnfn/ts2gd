@@ -9,5 +9,10 @@ export const parseParameter = (node: ts.ParameterDeclaration, props: ParseState)
   const unusedPrefix = usages?.uses.length === 0 ? '_' : '';
   const typeString = type ? `: ${type}` : '';
 
-  return combine({ parent: node, nodes: node.initializer, props, content: initializer => `${unusedPrefix}${node.name.getText()}${typeString}${initializer && `= ${initializer}`}` });
+  return combine({
+    parent: node,
+    nodes: node.initializer,
+    props,
+    content: initializer => `${unusedPrefix}${node.name.getText()}${typeString}${initializer && `= ${initializer}`}`
+  });
 }
