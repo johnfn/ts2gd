@@ -1,7 +1,7 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
 import { program } from "../main";
-import { combine, parseNodeToString, ParseState } from "../parse_node";
+import { combine, parseNode, ParseState } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
 
 export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {

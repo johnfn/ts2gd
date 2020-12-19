@@ -1,7 +1,7 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
 import { program } from "../main";
-import { combine, parseNodeToString, ParseNodeType, ParseState } from "../parse_node";
+import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node";
 import { isDictionary, isEnumType } from "../ts_utils";
 
 
@@ -16,7 +16,7 @@ export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression,
     const isGlobal = !!sourceFiles.find(f => f.includes("@globals.d.ts"))
 
     if (isGlobal) {
-      return parseNodeToString(node.name, props);
+      return parseNode(node.name, props);
     }
   }
 

@@ -45,6 +45,7 @@ import { parseTypeAliasDeclaration } from "./parse_node/parse_type_alias_declara
 import { parsePropertyAccessExpression } from "./parse_node/parse_property_access_expression";
 import { parseClassDeclaration } from "./parse_node/parse_class_declaration";
 import { parseEmptyStatement } from "./parse_node/parse_empty_statement";
+import { parseConditionalExpression } from "./parse_node/parse_conditional_expression";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -95,7 +96,7 @@ export function combine(args: {
       };
     };
 
-    const parsed = parseNodeToString(node, props)
+    const parsed = parseNode(node, props)
 
     return {
       node,
@@ -150,7 +151,7 @@ export function combine(args: {
   };
 }
 
-export const parseNodeToString = (genericNode: ts.Node, props: ParseState): ParseNodeType => {
+export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeType => {
   switch (genericNode.kind) {
     case SyntaxKind.SourceFile:
       return parseSourceFile(genericNode as ts.SourceFile, props);
@@ -171,7 +172,7 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): Pars
     case SyntaxKind.PrefixUnaryExpression:
       return parsePrefixUnaryExpression(genericNode as ts.PrefixUnaryExpression, props);
     case SyntaxKind.AsExpression:
-      return parseNodeToString((genericNode as ts.AsExpression).expression, props);
+      return parseNode((genericNode as ts.AsExpression).expression, props);
     case SyntaxKind.NewExpression:
       return parseNewExpression(genericNode as ts.NewExpression, props);
     case SyntaxKind.PostfixUnaryExpression:
@@ -222,6 +223,8 @@ export const parseNodeToString = (genericNode: ts.Node, props: ParseState): Pars
       return parseBlock(genericNode as ts.Block, props);
     case SyntaxKind.CallExpression:
       return parseCallExpression(genericNode as ts.CallExpression, props);
+    case SyntaxKind.ConditionalExpression:
+      return parseConditionalExpression(genericNode as ts.ConditionalExpression, props);
     case SyntaxKind.ExpressionStatement:
       return parseExpressionStatement(genericNode as ts.ExpressionStatement, props);
     case SyntaxKind.VariableStatement:

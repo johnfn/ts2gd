@@ -1,6 +1,6 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
-import { ParseState, parseNodeToString, combine } from "../parse_node";
+import { ParseState, parseNode, combine } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
 
@@ -13,10 +13,10 @@ export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, p
 
   for (const prop of node.properties) {
     if (prop.kind === SyntaxKind.PropertyAssignment) {
-      result += `  ${props.indent}"${prop.name.getText()}": ${parseNodeToString(prop.initializer, props)},\n`;
+      result += `  ${props.indent}"${prop.name.getText()}": ${parseNode(prop.initializer, props)},\n`;
     } else if (prop.kind === SyntaxKind.ShorthandPropertyAssignment) {
       const shorthandProp = prop as ts.ShorthandPropertyAssignment;
-      result += `  ${props.indent}"${shorthandProp.name.getText()}": ${parseNodeToString(shorthandProp.name, props)},\n`;
+      result += `  ${props.indent}"${shorthandProp.name.getText()}": ${parseNode(shorthandProp.name, props)},\n`;
     } else {
       throw new Error("Unknown property in object.");
     }

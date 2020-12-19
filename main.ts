@@ -32,7 +32,7 @@ import path from 'path';
 
 import * as process from 'process'
 import { generateGodotLibraryDefinitions } from "./generate_library";
-import { parseNodeToString } from "./parse_node";
+import { parseNode } from "./parse_node";
 import { buildNodePathsTypeForScript } from "./build_paths_for_node";
 
 let verbose = false;
@@ -124,7 +124,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     process.exit();
   }
 
-  const result = parseNodeToString(
+  const result = parseNode(
     source, {
     indent: "",
     isConstructor: false,

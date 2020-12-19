@@ -1,6 +1,6 @@
 import ts from "typescript";
 const { SyntaxKind } = ts;
-import { ParseState, parseNodeToString, combine } from "../parse_node";
+import { ParseState, parseNode, combine } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
 

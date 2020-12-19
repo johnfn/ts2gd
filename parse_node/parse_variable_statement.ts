@@ -1,5 +1,5 @@
 import ts from "typescript";
-import { combine, parseNodeToString, ParseState } from "../parse_node";
+import { combine, parseNode, ParseState } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
 
