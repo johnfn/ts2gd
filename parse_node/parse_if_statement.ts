@@ -8,7 +8,7 @@ export const parseIfStatement = (node: ts.IfStatement, props: ParseState): Parse
     parent: node, nodes: [node.expression, node.thenStatement, node.elseStatement],
     props,
     content: (expression, thenStatement, elseStatement) => `
-if ${expression}: 
+if ${expression}:
   ${thenStatement}${elseStatement ? `
 else:
   ${elseStatement}` : ''}`

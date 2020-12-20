@@ -3,7 +3,7 @@ import path from 'path';
 import { ArrayDefinition } from './custom_defs/array_def';
 import { PackedSceneDef } from './custom_defs/packed_scene_def';
 
-const baseFileContent = `
+export const baseFileContent = `
 declare interface Boolean {
 
 }
@@ -92,3 +92,11 @@ declare const print: (...args: any[]) => void;
 export const buildBase = (basePath: string) => {
   fs.writeFileSync(path.join(basePath, "@base.d.ts"), baseFileContent);
 }
+
+export const baseContentForTests = `
+${baseFileContent}
+interface Vector2 {}
+interface Vector3 {}
+interface Vector2i {}
+interface Vector3i {}
+`

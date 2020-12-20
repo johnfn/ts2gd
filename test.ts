@@ -1,12 +1,18 @@
 import * as ts from "typescript";
-import * as everything from './parse_node/'
 import { parseNode } from "./parse_node";
+import { baseContentForTests } from "./generate_base";
+import fs from 'fs';
+import path from 'path';
 
 export const compileTs = (code: string) => {
   const filename = "test.ts";
 
   const sourceFile = ts.createSourceFile(
-    filename, code, ts.ScriptTarget.Latest, true
+    filename, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS
+  );
+
+  const libDTs = ts.createSourceFile(
+    "lib.d.ts", baseContentForTests, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS
   );
 
   const defaultCompilerHost = ts.createCompilerHost({});
@@ -15,6 +21,8 @@ export const compileTs = (code: string) => {
     getSourceFile: (name, languageVersion) => {
       if (name === filename) {
         return sourceFile;
+      } else if (name === 'lib.d.ts') {
+        return libDTs;
       } else {
         return defaultCompilerHost.getSourceFile(
           name, languageVersion
@@ -74,35 +82,58 @@ type TestResult =
   | TestResultFail;
 
 type TestResultPass = { type: 'success' };
-type TestResultFail = { type: 'fail'; result: string; name: string; expected: string; expectFail?: boolean };
+type TestResultFail = { type: 'fail'; result: string; name: string; expected: string; expectFail?: boolean; fileName: string };
 
-const test = (props: Test, name: string): TestResult => {
+const trim = (s: string) => {
+  return s.split('\n').map(x => x.trimRight()).filter(x => x.trim() !== '').join('\n');
+}
+
+const test = (props: Test, name: string, fileName: string): TestResult => {
   const { ts, expected } = props;
 
   const output = compileTs(ts);
 
-  if (output.trim() === expected.trim()) {
+  if (trim(output) === trim(expected)) {
     return { type: 'success' }
   }
 
   return {
     type: 'fail',
-    result: output,
-    expected,
+    result: trim(output),
+    expected: trim(expected),
     name,
     expectFail: props.expectFail ?? false,
+    fileName,
   };
 }
 
-export const runTests = () => {
+const getAllFiles = async () => {
+  const files = fs.readdirSync('./parse_node');
+  const results: { [key: string]: any } = {};
+
+  for (const fts of files) {
+    const f = path.basename(fts);
+
+    if (f === 'index') { continue; }
+
+    const obj = await import('./parse_node/' + f);
+
+    results[f] = obj;
+  }
+
+  return results;
+}
+
+export const runTests = async () => {
   let total = 0;
+  let tests: (Test & { testName: string; fileName: string })[] = [];
 
-  let tests: (Test & { name: string })[] = [];
+  const everything = await getAllFiles()
 
-  for (const [name, mod] of Object.entries(everything)) {
+  for (const [fileName, mod] of Object.entries(everything)) {
     for (const [testName, testObj] of Object.entries(mod)) {
       if (testName.startsWith('test')) {
-        tests.push({ ...testObj, name: testName });
+        tests.push({ ...(testObj as any), testName, fileName });
       }
     }
   }
@@ -112,7 +143,7 @@ export const runTests = () => {
   const failures: TestResultFail[] = [];
 
   for (const testObj of tests) {
-    const result = test(testObj, testObj.name);
+    const result = test(testObj, testObj.testName, testObj.fileName);
 
     total++;
     if (result.type === 'fail') {
@@ -129,14 +160,31 @@ export const runTests = () => {
   } else {
     console.log('Failed', failures.length, 'tests.\n\n');
 
-    for (const { expected, name, result } of failures) {
+    for (let { expected, name, result, fileName } of failures) {
       console.log('=============================================');
       console.log(name, 'failed:');
+      console.log('  in', `./parse_node/${fileName}`);
       console.log('=============================================\n');
       console.log('\x1b[31mExpected:\x1b[0m');
-      console.log(expected.split('\n').map(x => '  ' + x + '\n').join(''));
+
+      let str = '';
+
+      for (let i = 0; i < expected.length; i++) {
+        if (expected[i] !== result[i]) {
+          if (expected[i].trim() === '') {
+            str += `\x1b[41m${expected[i]}\x1b[0m`
+          } else {
+            str += `\x1b[31m${expected[i]}\x1b[0m`
+          }
+        } else {
+          str += expected[i];
+        }
+      }
+      console.log(str.split('\n').map(x => '  ' + x + '\n').join(''));
       console.log('\x1b[32mActual:\x1b[0m');
       console.log(result.split('\n').map(x => '  ' + x + '\n').join(''));
+
+      console.log(result[41], expected[41], result.charCodeAt(41), expected.charCodeAt(41), result[41] === expected[41])
     }
   }
 };

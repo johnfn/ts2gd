@@ -1,6 +1,7 @@
 import ts from "typescript";
 import { combine, ParseState } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseConditionalExpression = (node: ts.ConditionalExpression, props: ParseState): ParseNodeType => {
   return combine({
@@ -12,3 +13,10 @@ export const parseConditionalExpression = (node: ts.ConditionalExpression, props
     }
   });
 }
+
+export const testAddVec2: Test = {
+  expectFail: true,
+  ts: `const x = true ? 1 : 2`,
+  expected: `var x = 1 if true else 2`,
+};
+

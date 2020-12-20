@@ -1,5 +1,5 @@
 import ts, { SyntaxKind } from "typescript";
-import { combine, parseNode, ParseState } from "../parse_node";
+import { combine, ParseState } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
 
@@ -20,7 +20,6 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
 
     const type = props.program.getTypeChecker().getTypeAtLocation(prop.expression);
     const stringType = props.program.getTypeChecker().typeToString(type);
-    console.log(stringType);
     const isVector = (
       stringType === "Vector2" ||
       stringType === "Vector2i" ||
@@ -38,7 +37,7 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     if (operator !== undefined) {
       return combine({
         parent: node,
-        nodes: [node.expression, node.arguments[0]],
+        nodes: [prop.expression, node.arguments[0]],
         props,
         content: (exp, arg) => `${exp} ${operator} ${arg}`,
       });
@@ -47,8 +46,9 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
 
   return combine({
     parent: node, nodes: [node.expression, ...node.arguments], props, content: (expr, ...args) => {
-      if (expr === "Yield")
+      if (expr === "Yield") {
         expr = "yield";
+      }
 
       return `${expr}(${args.join(', ')})`;
     }
@@ -66,6 +66,16 @@ export const testAddVec: Test = {
 var v1
 var v2
 v1 + v2
+`,
+};
+
+export const testAddVec2: Test = {
+  expectFail: true,
+  ts: `const foo: { v: Vector2; }; const v2: Vector2; foo.v.add(v2)`,
+  expected: `
+var foo
+var v2
+foo['v'] + v2
 `,
 };
 

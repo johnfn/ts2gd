@@ -8,7 +8,11 @@ export const parseForStatement = (node: ts.ForStatement, props: ParseState): Par
 
   // TODO: Does this even work? Lol
   return combine({
-    parent: node, nodes: ([node.initializer, node.condition, node.statement, node.incrementor] as (ts.Node | undefined)[]), props, content: (init, cond, statement, inc) => `
+    parent: node,
+    addIndent: true,
+    nodes: ([node.initializer, node.condition, node.statement, node.incrementor] as (ts.Node | undefined)[]),
+    props,
+    content: (init, cond, statement, inc) => `
 ${init ? init : ""}
 while ${cond || "true"}:
   ${statement}
