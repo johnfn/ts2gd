@@ -1,7 +1,6 @@
 import ts, { SyntaxKind } from "typescript";
 import { combine, ParseNodeType, ParseState } from "../parse_node";
 import path from 'path'
-import { program } from "../main";
 import { isEnumType } from "../ts_utils";
 
 const getPathWithoutExtension = (node: ts.ImportDeclaration, props: ParseState) => {
@@ -56,7 +55,7 @@ export const getImportResPathForEnum = (node: ts.Type, props: ParseState): {
     throw new Error(`Can't find associated sourcefile for ${sourceFile.fileName}`);
   }
 
-  let enumTypeString = program.getTypeChecker().typeToString(node);
+  let enumTypeString = props.program.getTypeChecker().typeToString(node);
 
   if (enumTypeString.startsWith('typeof ')) {
     enumTypeString = enumTypeString.slice('typeof '.length);
@@ -102,7 +101,7 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
     const bindings = namedBindings as ts.NamedImports;
 
     for (const element of bindings.elements) {
-      const type = program.getTypeChecker().getTypeAtLocation(element);
+      const type = props.program.getTypeChecker().getTypeAtLocation(element);
 
       if (isEnumType(type)) {
         const {
@@ -113,7 +112,7 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
         imports.push({ importedName: enumName, resPath: resPath, type: 'enum' });
       } else {
 
-        let typeString = program.getTypeChecker().typeToString(type);
+        let typeString = props.program.getTypeChecker().typeToString(type);
 
         if (typeString.startsWith('typeof ')) {
           typeString = typeString.slice('typeof '.length);

@@ -34,6 +34,7 @@ import * as process from 'process'
 import { generateGodotLibraryDefinitions } from "./generate_library";
 import { parseNode } from "./parse_node";
 import { buildNodePathsTypeForScript } from "./build_paths_for_node";
+import { GodotNode, ParsedScene, TsGdProject } from "./ts_utils";
 
 let verbose = false;
 const inputPath = process.argv[2];
@@ -131,6 +132,7 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     project,
     mostRecentControlStructureIsSwitch: false,
     isAutoload: false,
+    program: program,
     usages: new Map(),
   });
 
@@ -273,16 +275,6 @@ export type ParsedSourceFile = {
   /** Is this an autoload class? */
   isAutoload: boolean;
 };
-
-export type TsGdProject = {
-  sourceFiles: ParsedSourceFile[];
-  scenes: ParsedScene[];
-  assets: { resPath: string; fsPath: string; className: string; }[];
-  sourcePath: string;
-  tsgdPathWithFilename: string;
-  tsgdPath: string;
-  mainScene: { resPath: string; fsPath: string };
-}
 
 const getAutoloadFiles = () => {
   const projectFile = fs.readFileSync(path.join(tsgdPath, "project.godot"), "utf-8");
@@ -433,63 +425,6 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   };
 };
 
-export class Node {
-  name: string;
-  type: string;
-  isRoot: boolean;
-  scenePath: string;
-  private script?: { resPath: string; type: string; id: number; fsPath: string; };
-  parent?: string;
-  groups?: string;
-  rest: string;
-  children: Node[];
-  instancedSceneFsPath?: string;
-
-  constructor(props: {
-    name: string;
-    type: string;
-    isRoot: boolean;
-    scenePath: string;
-    script?: { resPath: string; type: string; id: number; fsPath: string; };
-    instancedSceneFsPath?: string;
-    parent?: string;
-    groups?: string;
-    rest: string;
-    children: Node[];
-  }) {
-    this.name = props.name;
-    this.type = props.type;
-    this.isRoot = props.isRoot;
-    this.scenePath = props.scenePath;
-    this.script = props.script;
-    this.parent = props.parent;
-    this.instancedSceneFsPath = props.instancedSceneFsPath;
-    this.groups = props.groups;
-    this.rest = props.rest;
-    this.children = props.children;
-  }
-
-  getScript(scenes: ParsedScene[]) {
-    if (this.script) {
-      return this.script;
-    }
-
-    if (this.instancedSceneFsPath) {
-      const instancedScene = scenes.find(s => s.fsPath === this.instancedSceneFsPath);
-
-      return instancedScene?.rootNode.script;
-    }
-  }
-}
-
-type ParsedScene = {
-  nodes: Node[];
-  fsPath: string;
-  resPath: string;
-  resources: { resPath: string; fsPath: string; type: string; id: number }[];
-  rootNode: Node;
-}
-
 const parseScene = (fsPath: string): ParsedScene => {
   const content = fs.readFileSync(fsPath, 'utf-8');
   const extResourceRe = /^\[ext_resource path="(.*)" type="(.*)" id=([0-9]+)\]$/gm;
@@ -500,10 +435,10 @@ const parseScene = (fsPath: string): ParsedScene => {
     // TODO: Assumes that filename === classname
     type: match[1].slice(match[1].lastIndexOf('/') + 1, match[1].lastIndexOf('.')),
     id: Number(match[3]),
-  }))
+  }));
 
   const nodeRe = /^\[node name="(?<name>[^"]+)"( type="(?<type>[^"]+)")?( parent="(?<parent>[^"]+)")?( instance=ExtResource\( (?<instanceId>[0-9]+) \))?( groups=\[(?<groups>[^\]]+)\])?\](?<rest>[^]*?)(\n\n|\n$)/gm;
-  const allNodes: Node[] = [...content.matchAll(nodeRe)].map((match) => {
+  const allNodes: GodotNode[] = [...content.matchAll(nodeRe)].map((match) => {
     const groups = match.groups!;
     const scriptRe = /^script = ExtResource\( ([0-9]+) \)$/gm;
     const scriptReResult = scriptRe.exec(groups.rest);
@@ -515,7 +450,7 @@ const parseScene = (fsPath: string): ParsedScene => {
       const instanceResource = extResources.find(res => res.id === instanceId);
       const instancedSceneFsPath = instanceResource?.fsPath;
 
-      return new Node({
+      return new GodotNode({
         name: groups.name,
         type: groups.type,
         isRoot: !groups.parent,
@@ -531,7 +466,7 @@ const parseScene = (fsPath: string): ParsedScene => {
       });
     }
 
-    return new Node({
+    return new GodotNode({
       name: groups.name,
       type: groups.type,
       isRoot: !groups.parent,

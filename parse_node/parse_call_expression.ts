@@ -1,8 +1,7 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import { program } from "../main";
+import ts, { SyntaxKind } from "typescript";
 import { combine, parseNode, ParseState } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {
   // TODO: Work out a better way to determine if something is a call expression
@@ -19,8 +18,9 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     const prop = node.expression as ts.PropertyAccessExpression;
     const functionName = prop.name.getText();
 
-    const type = program.getTypeChecker().getTypeAtLocation(prop.expression);
-    const stringType = program.getTypeChecker().typeToString(type);
+    const type = props.program.getTypeChecker().getTypeAtLocation(prop.expression);
+    const stringType = props.program.getTypeChecker().typeToString(type);
+    console.log(stringType);
     const isVector = (
       stringType === "Vector2" ||
       stringType === "Vector2i" ||
@@ -54,3 +54,18 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     }
   });
 }
+
+export const testBasicCall: Test = {
+  ts: `foo("bar")`,
+  expected: `foo("bar")`,
+};
+
+export const testAddVec: Test = {
+  ts: `const v1: Vector2; const v2: Vector2; v1.add(v2)`,
+  expected: `
+var v1
+var v2
+v1 + v2
+`,
+};
+

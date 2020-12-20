@@ -1,7 +1,25 @@
 import ts from "typescript";
 import { ParseState, parseNode, combine } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseArrayLiteralExpression = (node: ts.ArrayLiteralExpression, props: ParseState): ParseNodeType => {
-  return combine({ parent: node, nodes: node.elements, props, content: (...args) => `[${args.join(", ")}]` });
+  return combine({
+    parent: node,
+    nodes: node.elements,
+    props,
+    content: (...args) => `[${args.join(", ")}]`,
+  });
 }
+
+// Tests
+
+export const testArrayLiteral: Test = {
+  ts: '[1, 2, 3]',
+  expected: '[1, 2, 3]',
+};
+
+export const testEmptyArrayLiteral: Test = {
+  ts: '[]',
+  expected: '[]',
+};

@@ -1,9 +1,8 @@
-import ts, { isArrayLiteralExpression, SyntaxKind } from "typescript";
-import { TsGdProject } from "./main";
+import ts, { SyntaxKind } from "typescript";
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration";
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression";
 import { parseSourceFile } from "./parse_node/parse_source_file";
-import { generatePrecedingNewlines, notEmpty, syntaxToKind } from "./ts_utils";
+import { generatePrecedingNewlines, syntaxToKind, TsGdProject } from "./ts_utils";
 import { parseTypeReference } from "./parse_node/parse_type_reference";
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal";
 import { parseArrayLiteralExpression } from "./parse_node/parse_array_literal_expression";
@@ -51,6 +50,7 @@ export type ParseState = {
   isConstructor: boolean;
   indent: string;
   project: TsGdProject;
+  program: ts.Program;
 
   /**
    * Is the current file we're in an autoload class?

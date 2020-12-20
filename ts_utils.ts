@@ -1,6 +1,6 @@
-import ts from "typescript";
-const { ObjectFlags, SyntaxKind, TypeFlags } = ts;
-import { program } from "./main";
+import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript";
+import { ParsedSourceFile } from "./main";
+import { ParseState } from "./parse_node";
 
 /** 
  * Gets the inheritance tree of the provided type. E.g. if Foo extends Bar
@@ -104,10 +104,11 @@ export const syntaxToKind = (kind: ts.Node["kind"]) => {
  */
 export function getGodotType(
   node: ts.Node,
+  props: ParseState,
   initializer?: ts.Expression,
   actualType?: ts.TypeNode
 ): string | undefined {
-  const typecheckerInferredType = program.getTypeChecker().getTypeAtLocation(node);
+  const typecheckerInferredType = props.program.getTypeChecker().getTypeAtLocation(node);
 
   // If we have a precise initializer, use that first
 
@@ -127,7 +128,7 @@ export function getGodotType(
   if (actualType) {
     tsTypeName = actualType.getText();
   } else {
-    tsTypeName = program.getTypeChecker().typeToString(typecheckerInferredType);
+    tsTypeName = props.program.getTypeChecker().typeToString(typecheckerInferredType);
   }
 
   if (tsTypeName === "number") {
@@ -208,4 +209,71 @@ export function getPreciseInitializerType(initializer: ts.Expression | undefined
   }
 
   return undefined;
+}
+
+export type TsGdProject = {
+  sourceFiles: ParsedSourceFile[];
+  scenes: ParsedScene[];
+  assets: { resPath: string; fsPath: string; className: string; }[];
+  sourcePath: string;
+  tsgdPathWithFilename: string;
+  tsgdPath: string;
+  mainScene: { resPath: string; fsPath: string };
+}
+
+export type ParsedScene = {
+  nodes: GodotNode[];
+  fsPath: string;
+  resPath: string;
+  resources: { resPath: string; fsPath: string; type: string; id: number }[];
+  rootNode: GodotNode;
+}
+
+export class GodotNode {
+  name: string;
+  type: string;
+  isRoot: boolean;
+  scenePath: string;
+  private script?: { resPath: string; type: string; id: number; fsPath: string; };
+  parent?: string;
+  groups?: string;
+  rest: string;
+  children: GodotNode[];
+  instancedSceneFsPath?: string;
+
+  constructor(props: {
+    name: string;
+    type: string;
+    isRoot: boolean;
+    scenePath: string;
+    script?: { resPath: string; type: string; id: number; fsPath: string; };
+    instancedSceneFsPath?: string;
+    parent?: string;
+    groups?: string;
+    rest: string;
+    children: GodotNode[];
+  }) {
+    this.name = props.name;
+    this.type = props.type;
+    this.isRoot = props.isRoot;
+    this.scenePath = props.scenePath;
+    this.script = props.script;
+    this.parent = props.parent;
+    this.instancedSceneFsPath = props.instancedSceneFsPath;
+    this.groups = props.groups;
+    this.rest = props.rest;
+    this.children = props.children;
+  }
+
+  getScript(scenes: ParsedScene[]) {
+    if (this.script) {
+      return this.script;
+    }
+
+    if (this.instancedSceneFsPath) {
+      const instancedScene = scenes.find(s => s.fsPath === this.instancedSceneFsPath);
+
+      return instancedScene?.rootNode.script;
+    }
+  }
 }

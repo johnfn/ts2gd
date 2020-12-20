@@ -1,5 +1,4 @@
 import ts, { SyntaxKind } from "typescript";
-import * as utils from 'tsutils';
 import { parseNode as parseNode, ParseNodeType, ParseState } from "../parse_node";
 
 /**
@@ -24,23 +23,23 @@ ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}`
 
 export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNodeType => {
   const { statements } = node;
-  const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
+  //   const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
 
-  if (!sourceInfo) {
-    throw new Error(`Error!
-Can't find associated sourceInfo
-  for ${node.fileName}`);
-  }
-  props.usages = utils.collectVariableUsage(node);
+  //   if (!sourceInfo) {
+  //     throw new Error(`Error!
+  // Can't find associated sourceInfo
+  //   for ${node.fileName}`);
+  //   }
+  // props.usages = utils.collectVariableUsage(node);
 
-  const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration;
+  const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration | null;
   const parsedStatements = statements.map(statement => parseNode(statement, props));
 
   return {
     content: `
-${preprocessClassDecl(classDecl, props)} 
+${classDecl ? preprocessClassDecl(classDecl, props) : ''} 
 ${parsedStatements.flatMap(x => x.hoistedEnumImports ?? []).join('\n')}
-${parsedStatements.map(x => x.content).join('')}
+${parsedStatements.map(x => x.content).join('\n')}
 `.trim()
   };
 }

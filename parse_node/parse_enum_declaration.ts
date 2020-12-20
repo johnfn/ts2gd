@@ -1,5 +1,4 @@
 import ts from "typescript";
-import { program } from "../main";
 
 import { ParseNodeType, ParseState } from "../parse_node"
 import { getImportResPathForEnum } from "./parse_import_declaration";
@@ -13,7 +12,7 @@ export const parseEnumDeclaration = (node: ts.EnumDeclaration, props: ParseState
 
   result += '}';
 
-  const enumType = program.getTypeChecker().getTypeAtLocation(node);
+  const enumType = props.program.getTypeChecker().getTypeAtLocation(node);
   const {
     resPath,
     enumName,

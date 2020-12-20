@@ -1,5 +1,4 @@
 import ts from "typescript";
-import { program } from "../main";
 import { combine, ParseState } from "../parse_node";
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils";
 import { ParseNodeType } from "../parse_node"
@@ -14,7 +13,7 @@ const isExported = (node: ts.PropertyDeclaration) => {
   return false;
 }
 
-const isOnReady = (node: ts.PropertyDeclaration) => {
+const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
   if (node.initializer) {
 
     // I think there's some sort of race where we save .d.ts files too fast to 
@@ -28,8 +27,8 @@ const isOnReady = (node: ts.PropertyDeclaration) => {
     // TODO: This isn't quite so simple, because we could do something like node.value - where
     // node is Node but value is int - which we should mark as onready, but we aren't currently
 
-    const initializerType = program.getTypeChecker().getTypeAtLocation(node.initializer);
-    const hierarchy = getTypeHierarchy(initializerType).map(x => program.getTypeChecker().typeToString(x));
+    const initializerType = props.program.getTypeChecker().getTypeAtLocation(node.initializer);
+    const hierarchy = getTypeHierarchy(initializerType).map(x => props.program.getTypeChecker().typeToString(x));
 
     return hierarchy.includes('Node2D') || hierarchy.includes('Node');
   }
@@ -38,16 +37,16 @@ const isOnReady = (node: ts.PropertyDeclaration) => {
 }
 
 export const parsePropertyDeclaration = (node: ts.PropertyDeclaration, props: ParseState): ParseNodeType => {
-  let exportedType = program.getTypeChecker().getTypeAtLocation(node);
-  let exportedTypeName = getGodotType(node, node.initializer, node.type);
+  let exportedType = props.program.getTypeChecker().getTypeAtLocation(node);
+  let exportedTypeName = getGodotType(node, props, node.initializer, node.type);
   let typeHintName = exportedTypeName;
 
   if (isEnumType(exportedType)) {
-    exportedTypeName = program.getTypeChecker().typeToString(exportedType);
+    exportedTypeName = props.program.getTypeChecker().typeToString(exportedType);
   }
 
   const exportText = isExported(node) ? `export(${exportedTypeName}) ` : '';
-  const onReady = isOnReady(node)
+  const onReady = isOnReady(node, props);
 
   return combine({
     parent: node,

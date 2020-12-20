@@ -1,10 +1,11 @@
-import { ParsedSourceFile, TsGdProject, Node } from "./main";
+import { ParsedSourceFile } from "./main";
 import path from 'path';
 import fs from 'fs';
+import { GodotNode, TsGdProject } from "./ts_utils";
 
-export const getAllRelativePaths = (node: Node, prefix = ""): { path: string, node: Node }[] => {
+export const getAllRelativePaths = (node: GodotNode, prefix = ""): { path: string, node: GodotNode }[] => {
   let myPath = (prefix ? (prefix + "/") : "") + node.name
-  let result: { path: string; node: Node }[] = [
+  let result: { path: string; node: GodotNode }[] = [
     { path: myPath, node },
   ];
 
@@ -20,7 +21,7 @@ export const getAllRelativePaths = (node: Node, prefix = ""): { path: string, no
 export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: TsGdProject) => {
   // Find all instances of this script in all scenes.
 
-  const instances: Node[] = [];
+  const instances: GodotNode[] = [];
 
   for (const scene of project.scenes) {
     for (const node of scene.nodes) {
@@ -38,7 +39,7 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
   const className = script.className;
   let commonRelativePaths: {
     path: string;
-    node: Node;
+    node: GodotNode;
   }[] = [];
 
   if (instances.length === 0) {

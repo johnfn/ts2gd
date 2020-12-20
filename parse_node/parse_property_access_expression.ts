@@ -1,12 +1,10 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import { program } from "../main";
+import ts, { SyntaxKind } from "typescript";
 import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node";
 import { isDictionary, isEnumType } from "../ts_utils";
 
 
 export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression, props: ParseState): ParseNodeType => {
-  const leftType = program.getTypeChecker().getTypeAtLocation(node.expression);
+  const leftType = props.program.getTypeChecker().getTypeAtLocation(node.expression);
 
   // Compile things like KeyList.KEY_SPACE into KEY_SPACE
   if (isEnumType(leftType)) {
