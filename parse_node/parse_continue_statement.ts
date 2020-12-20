@@ -29,7 +29,6 @@ while x < 10:
   `,
 };
 
-
 export const testContinue2: Test = {
   ts: `
 for (let x = 0; x < 10; x++) {

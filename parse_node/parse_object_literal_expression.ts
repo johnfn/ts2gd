@@ -1,26 +1,19 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import { ParseState, parseNode, combine } from "../parse_node";
+import ts, { SyntaxKind } from "typescript";
+import { ParseState, combine } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, props: ParseState): ParseNodeType => {
   if (node.properties.length === 0) {
-    return combine({ parent: node, nodes: [], props, content: () => '{}' });
+    return combine({
+      parent: node,
+      nodes: [],
+      props, content: () => '{}',
+    });
   }
 
-  let result = '{\n';
-
-  for (const prop of node.properties) {
-    if (prop.kind === SyntaxKind.PropertyAssignment) {
-      result += `  ${props.indent}"${prop.name.getText()}": ${parseNode(prop.initializer, props)},\n`;
-    } else if (prop.kind === SyntaxKind.ShorthandPropertyAssignment) {
-      const shorthandProp = prop as ts.ShorthandPropertyAssignment;
-      result += `  ${props.indent}"${shorthandProp.name.getText()}": ${parseNode(shorthandProp.name, props)},\n`;
-    } else {
-      throw new Error("Unknown property in object.");
-    }
-  }
+  const isMultiline = node.getText().includes('\n');
 
   const keys = node.properties.map(prop => {
     if (prop.kind === SyntaxKind.PropertyAssignment) {
@@ -40,9 +33,7 @@ export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, p
     } else {
       throw new Error("Unknown property in object.");
     }
-  })
-
-  // result += `${props.indent}}`;
+  });
 
   return combine({
     parent: node,
@@ -50,11 +41,82 @@ export const parseObjectLiteralExpression = (node: ts.ObjectLiteralExpression, p
     props,
     content: (...values) => {
       const valueAndNames = values.map((_, i) => [keys[i], values[i]]);
-      return `
+      if (isMultiline) {
+        return `
 {
-${valueAndNames.map(([k, v]) => `  "${k}": ${v},`).join('\n')}
+${valueAndNames.map(([k, v]) => `  "${k}": ${v},\n`).join('')}
 }      
       `
+      } else {
+        return `
+{ ${valueAndNames.map(([k, v]) => `"${k}": ${v}`).join(', ')} }      
+      `
+
+      }
     }
   });
 }
+
+export const testObjectLiteral: Test = {
+  ts: `
+let x = {}
+  `,
+  expected: `
+var _x = {}
+  `,
+};
+
+export const testObjectLiteral2: Test = {
+  ts: `
+let x = {a: 1}
+  `,
+  expected: `
+var _x = { "a": 1 }
+  `,
+};
+
+export const testObjectLiteralShorthand: Test = {
+  ts: `
+let x = {a}
+  `,
+  expected: `
+var _x = { "a": a }
+  `,
+};
+
+export const testObjectLiteralShorthand2: Test = {
+  ts: `
+let x = { a: 1 }
+  `,
+  expected: `
+var _x = { "a": 1 }
+  `,
+};
+
+export const testObjectLiteralMultiline: Test = {
+  ts: `
+let x = {
+  a: 1
+}
+  `,
+  expected: `
+var _x = { 
+  "a": 1,
+}
+  `,
+};
+
+export const testObjectLiteralMultiline2: Test = {
+  ts: `
+let x = {
+  a: 1,
+  b: 1,
+}
+  `,
+  expected: `
+var _x = { 
+  "a": 1,
+  "b": 1,
+}
+  `,
+};

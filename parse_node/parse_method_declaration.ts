@@ -2,6 +2,7 @@ import ts from "typescript";
 import { ParseState, combine } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseMethodDeclaration = (node: ts.MethodDeclaration, props: ParseState): ParseNodeType => {
   const funcName = node.name.getText();
@@ -26,3 +27,17 @@ func ${funcName}(${joinedParams}):
     }
   });
 }
+
+export const testProcessGetsArgsAdded: Test = {
+  ts: `
+class Foo extends Node2D {
+  _process() {}
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+func _process(_delta: float):
+  pass
+  `,
+};

@@ -3,6 +3,7 @@ const { SyntaxKind } = ts;
 import { ParseState, combine } from "../parse_node";
 
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../test";
 
 export const parseForOfStatement = (node: ts.ForOfStatement, props: ParseState): ParseNodeType => {
   const initializer = node.initializer;
@@ -42,3 +43,13 @@ for ${initializedVariable.getText()} in ${expr}:
 ` });
   }
 }
+
+export const testPass1: Test = {
+  ts: `
+for (let x of []) print(1)
+  `,
+  expected: `
+for _x in []:
+  print(1)
+  `,
+};

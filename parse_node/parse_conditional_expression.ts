@@ -17,6 +17,6 @@ export const parseConditionalExpression = (node: ts.ConditionalExpression, props
 export const testAddVec2: Test = {
   expectFail: true,
   ts: `const x = true ? 1 : 2`,
-  expected: `var x = 1 if true else 2`,
+  expected: `var _x = 1 if true else 2`,
 };
 

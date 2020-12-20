@@ -82,7 +82,7 @@ type TestResult =
   | TestResultFail;
 
 type TestResultPass = { type: 'success' };
-type TestResultFail = { type: 'fail'; result: string; name: string; expected: string; expectFail?: boolean; fileName: string };
+type TestResultFail = { type: 'fail'; result: string; name: string; expected: string; expectFail?: boolean; fileName: string; logs?: any[][] };
 
 const trim = (s: string) => {
   return s.split('\n').map(x => x.trimRight()).filter(x => x.trim() !== '').join('\n');
@@ -143,10 +143,17 @@ export const runTests = async () => {
   const failures: TestResultFail[] = [];
 
   for (const testObj of tests) {
+    // mock out console.log to display logs nicer
+
+    const logged: any[][] = [];
+    const oldConsoleLog = console.log
+    console.log = (...args: any[]) => logged.push(args);
     const result = test(testObj, testObj.testName, testObj.fileName);
+    console.log = oldConsoleLog;
 
     total++;
     if (result.type === 'fail') {
+      result.logs = logged;
       failures.push(result);
     }
   }
@@ -160,7 +167,7 @@ export const runTests = async () => {
   } else {
     console.log('Failed', failures.length, 'tests.\n\n');
 
-    for (let { expected, name, result, fileName } of failures) {
+    for (let { expected, name, result, fileName, logs } of failures.filter(x => !x.expectFail)) {
       console.log('=============================================');
       console.log(name, 'failed:');
       console.log('  in', `./parse_node/${fileName}`);
@@ -180,11 +187,18 @@ export const runTests = async () => {
           str += expected[i];
         }
       }
+
       console.log(str.split('\n').map(x => '  ' + x + '\n').join(''));
       console.log('\x1b[32mActual:\x1b[0m');
       console.log(result.split('\n').map(x => '  ' + x + '\n').join(''));
 
-      console.log(result[41], expected[41], result.charCodeAt(41), expected.charCodeAt(41), result[41] === expected[41])
+      if (logs) {
+        console.log('Logs:')
+
+        for (const log of logs) {
+          console.log(...log);
+        }
+      }
     }
   }
 };
