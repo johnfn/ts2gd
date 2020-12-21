@@ -42,6 +42,7 @@ export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNo
     content: `
 ${classDecl ? preprocessClassDecl(classDecl, props) : ''} 
 ${parsedStatements.flatMap(x => x.hoistedEnumImports ?? []).join('\n')}
+${parsedStatements.flatMap(x => x.hoistedLibraryFunctions ?? []).join('\n')}
 ${parsedStatements.flatMap(x => x.hoistedArrowFunctions ?? []).join('\n')}
 ${parsedStatements.map(x => x.content).join('\n')}
 `.trim()

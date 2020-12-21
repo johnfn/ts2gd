@@ -1,9 +1,43 @@
-import ts, { SyntaxKind } from "typescript";
+import ts, { SyntaxKind, TypeFlags } from "typescript";
 import { combine, ParseState } from "../parse_node";
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
+import { isArrayType } from "../ts_utils";
+
+type LibraryFunctionNames = 'map' | 'filter';
+const LibraryFunctions = {
+  'map': {
+    name: 'map',
+    definition: `
+func __map(list, fn):
+  var result = []
+
+  for item in list:
+    result.append(fn.call_func(item))
+
+  return result
+    `
+  },
+
+  'filter': {
+    name: 'filter',
+    definition: `
+func __filter(list, fn):
+  var result = []
+
+  for item in list:
+    if fn.call_func(item):
+      result.append(item)
+
+  return result
+    `
+  },
+}
 
 export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {
+  let expression = node.expression;
+  let args = node.arguments;
+
   if (node.expression.kind === SyntaxKind.SuperKeyword) {
     return combine({
       parent: node,
@@ -24,27 +58,46 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
 
     const type = props.program.getTypeChecker().getTypeAtLocation(prop.expression);
     const stringType = props.program.getTypeChecker().typeToString(type);
-    const isVector = (
+
+    if (isArrayType(type)) {
+      if (functionName in LibraryFunctions) {
+        const result = combine({
+          parent: node,
+          nodes: [prop.expression, ...args],
+          props,
+          content: (expr, ...args) => {
+            return `__${functionName}(${[expr, ...args].join(', ')})`;
+          }
+        });
+
+        result.hoistedLibraryFunctions = [(LibraryFunctions as any)[functionName].definition];
+
+        return result;
+      }
+    }
+
+    if (
       stringType === "Vector2" ||
       stringType === "Vector2i" ||
       stringType === "Vector3" ||
       stringType === "Vector3i"
-    );
+    ) {
+      let operator: undefined | string = undefined;
 
-    let operator: undefined | string = undefined;
+      if (functionName === "add") operator = "+";
+      if (functionName === "sub") operator = "-";
+      if (functionName === "mul") operator = "*";
+      if (functionName === "div") operator = "/";
 
-    if (functionName === "add" && isVector) operator = "+";
-    if (functionName === "sub" && isVector) operator = "-";
-    if (functionName === "mul" && isVector) operator = "*";
-    if (functionName === "div" && isVector) operator = "/";
+      if (operator) {
+        return combine({
+          parent: node,
+          nodes: [prop.expression, node.arguments[0]],
+          props,
+          content: (exp, arg) => `${exp} ${operator} ${arg}`,
+        });
 
-    if (operator !== undefined) {
-      return combine({
-        parent: node,
-        nodes: [prop.expression, node.arguments[0]],
-        props,
-        content: (exp, arg) => `${exp} ${operator} ${arg}`,
-      });
+      }
     }
   }
 
@@ -52,7 +105,10 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
   const isArrowFunction = decls && (decls[0].kind === SyntaxKind.ArrowFunction && decls[0].getSourceFile() === node.getSourceFile());
 
   return combine({
-    parent: node, nodes: [node.expression, ...node.arguments], props, content: (expr, ...args) => {
+    parent: node,
+    nodes: [expression, ...args],
+    props,
+    content: (expr, ...args) => {
       if (expr === "Yield") {
         expr = "yield";
       }
@@ -90,6 +146,14 @@ foo['v'] + v2
 `,
 };
 
+export const testNormalVec: Test = {
+  ts: `const v1: Vector2; v1.distance_to(v1)`,
+  expected: `
+var v1
+v1.distance_to(v1)
+`,
+};
+
 export const testArrowFunction: Test = {
   ts: `
 const test = () => 5;
@@ -102,3 +166,19 @@ var test = funcref(self, "func1")
 test.call_func()
 `,
 };
+
+
+export const testMap: Test = {
+  ts: `
+let x = [1, 2, 3]
+x.map(y => y * 3)
+  `,
+  expected: `
+${LibraryFunctions.map.definition}
+func func1(y: float):
+  return y * 3
+var x = [1, 2, 3]
+__map(x, funcref(self, "func1"))
+`,
+};
+

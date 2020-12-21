@@ -66,6 +66,7 @@ export type ParseNodeType = {
   content: string;
   hoistedEnumImports?: string[];
   hoistedArrowFunctions?: string[];
+  hoistedLibraryFunctions?: string[]
   enums?: { content: string; name: string }[];
 };
 
@@ -98,6 +99,7 @@ export function combine(args: {
         enums: [],
         hoistedEnumImports: [],
         hoistedArrowFunctions: [],
+        hoistedLibraryFunctions: [],
       };
     };
 
@@ -109,6 +111,7 @@ export function combine(args: {
       enums: parsed.enums ?? [],
       hoistedEnumImports: parsed.hoistedEnumImports ?? [],
       hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
+      hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
     }
   });
 
@@ -154,6 +157,7 @@ export function combine(args: {
     content: stringResult,
     enums: parsedNodes.flatMap(node => node.enums ?? []),
     hoistedEnumImports: parsedNodes.flatMap(node => node.hoistedEnumImports ?? []),
+    hoistedLibraryFunctions: parsedNodes.flatMap(node => node.hoistedLibraryFunctions ?? []),
     hoistedArrowFunctions: parsedNodes.flatMap(node => node.hoistedArrowFunctions ?? []),
   };
 }
@@ -275,6 +279,8 @@ export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeTyp
       return { content: "==" };
     case SyntaxKind.AsteriskToken:
       return { content: "*" };
+    case SyntaxKind.PercentToken:
+      return { content: "%" };
     case SyntaxKind.PlusToken:
       return { content: "+" };
     case SyntaxKind.MinusToken:

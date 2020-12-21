@@ -86,6 +86,9 @@ interface Array<T> {
   /** Reverses the order of the elements in the array. */
   invert(): void;
 
+  map<U>(fn: (elem: T) => U): U[];
+  filter(fn: (elem: T) => boolean): T[];
+
   /** Returns the maximum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
   max(): T;
 

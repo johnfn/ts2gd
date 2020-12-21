@@ -4,6 +4,7 @@ import { ArrayDefinition } from './custom_defs/array_def';
 import { PackedSceneDef } from './custom_defs/packed_scene_def';
 
 export const baseFileContent = `
+
 declare interface Boolean {
 
 }

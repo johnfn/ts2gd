@@ -67,6 +67,10 @@ export const generatePrecedingNewlines = (node: ts.Node): string => {
   return result;
 }
 
+export function isArrayType(type: ts.Type) {
+  return type.symbol?.name === "Array";
+}
+
 export function isEnumType(type: ts.Type) {
   if (type.flags & ts.TypeFlags.Enum) {
     return true;
