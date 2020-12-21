@@ -23,7 +23,7 @@ export const parseMethodDeclaration = (node: ts.MethodDeclaration, props: ParseS
 
       const specialMethod = specialMethods.find(method => method.name === funcName);
 
-      if (specialMethod) {
+      if (specialMethod && joinedParams.trim() === '') {
         joinedParams = specialMethod.args;
       }
 
@@ -45,6 +45,20 @@ class Foo extends Node2D {
 extends Node2D
 class_name Foo
 func _process(_delta: float):
+  pass
+  `,
+};
+
+export const testProcessDoesntGetArgsAdded: Test = {
+  ts: `
+class Foo extends Node2D {
+  _process(d: float) {}
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+func _process(_d):
   pass
   `,
 };
