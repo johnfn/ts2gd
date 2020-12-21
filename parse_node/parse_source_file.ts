@@ -24,8 +24,16 @@ ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}`
 
 export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNodeType => {
   const { statements } = node;
+  const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
+
+  if (!sourceInfo) {
+    throw new Error(`Error!
+  Can't find associated sourceInfo
+    for ${node.fileName}`);
+  }
 
   props.usages = utils.collectVariableUsage(node);
+  props.isAutoload = sourceInfo.isAutoload;
 
   const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration | null;
   const parsedStatements = statements.map(statement => parseNode(statement, props));

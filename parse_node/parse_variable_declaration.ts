@@ -11,13 +11,14 @@ export const parseVariableDeclaration = (node: ts.VariableDeclaration, props: Pa
   const typeString = type ? `: ${type}` : '';
 
   const decl = props.program.getTypeChecker().getTypeAtLocation(node).getSymbol()?.declarations[0];
-  const isLikelyAutoload = (
+  const isAutoload = (
+    props.isAutoload &&
     decl?.kind === SyntaxKind.ClassDeclaration &&
     (decl.getSourceFile() === node.getSourceFile()) &&
     node.parent.parent.parent.kind === SyntaxKind.SourceFile
   );
 
-  if (isLikelyAutoload) {
+  if (isAutoload) {
     return combine({
       parent: node,
       nodes: [node.name, node.initializer],
@@ -46,6 +47,19 @@ var _y = "a"
 };
 
 export const testAutoloadVariableDeclaration: Test = {
+  isAutoload: true,
+  ts: `
+export class Blah {
+
+}
+
+const x: Blah = new Blah();
+  `,
+  expected: `
+  `
+};
+
+export const testClassNameWithoutAutoload: Test = {
   ts: `
 export class Blah {
 
@@ -55,10 +69,27 @@ const x: Blah = new Blah();
   `,
   expected: `
 class_name Blah
+
+var _x = Blah()
   `
 };
 
 export const testAutoloadVariableDeclaration2: Test = {
+  isAutoload: true,
+  ts: `
+export class Blah {
+
+}
+
+const x: Blah = new Blah();
+  `,
+  expected: `
+  `
+};
+
+export const testAutoloadVariableDeclaration3: Test = {
+  isAutoload: true,
+
   ts: `
 export class Blah {
   test() {
@@ -69,8 +100,6 @@ export class Blah {
 const x: Blah = new Blah();
   `,
   expected: `
-class_name Blah
-
 func test():
   var _blah = Blah()
   `

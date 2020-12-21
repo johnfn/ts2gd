@@ -4,8 +4,8 @@ import { baseContentForTests } from "./generate_base";
 import fs from 'fs';
 import path from 'path';
 
-export const compileTs = (code: string) => {
-  const filename = "test.ts";
+export const compileTs = (code: string, isAutoload: boolean) => {
+  const filename = isAutoload ? "autoload.ts" : "test.ts";
 
   const sourceFile = ts.createSourceFile(
     filename, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS
@@ -46,7 +46,7 @@ export const compileTs = (code: string) => {
   };
 
   const program = ts.createProgram(
-    ["test.ts"], {}, customCompilerHost
+    ["test.ts", "autoload.ts"], {}, customCompilerHost
   );
 
   let i = 0;
@@ -60,7 +60,26 @@ export const compileTs = (code: string) => {
       assets: [],
       mainScene: { fsPath: "", resPath: "" },
       scenes: [],
-      sourceFiles: [],
+      sourceFiles: [
+        {
+          className: "",
+          gdPath: "",
+          isAutoload: false,
+          resPath: "",
+          tsFileContent: "",
+          tsFullPath: "test.ts",
+          tsRelativePath: "",
+        },
+        {
+          className: "",
+          gdPath: "",
+          isAutoload: true,
+          resPath: "",
+          tsFileContent: "",
+          tsFullPath: "autoload.ts",
+          tsRelativePath: "",
+        },
+      ],
       sourcePath: '',
       tsgdPath: '',
       tsgdPathWithFilename: '',
@@ -76,6 +95,7 @@ export const compileTs = (code: string) => {
 export type Test = {
   ts: string;
   expected: string;
+  isAutoload?: boolean;
   only?: boolean;
   expectFail?: boolean;
 }
@@ -91,10 +111,10 @@ const trim = (s: string) => {
   return s.split('\n').map(x => x.trimRight()).filter(x => x.trim() !== '').join('\n');
 }
 
-const test = (props: Test, name: string, fileName: string): TestResult => {
+const test = (props: Test, name: string, testFileName: string): TestResult => {
   const { ts, expected } = props;
 
-  const output = compileTs(ts);
+  const output = compileTs(ts, props.isAutoload ?? false);
 
   if (trim(output) === trim(expected)) {
     return { type: 'success' }
@@ -106,7 +126,7 @@ const test = (props: Test, name: string, fileName: string): TestResult => {
     expected: trim(expected),
     name,
     expectFail: props.expectFail ?? false,
-    fileName,
+    fileName: testFileName,
   };
 }
 
@@ -168,8 +188,6 @@ export const runTests = async () => {
     console.log('Some failed, but they were expected to fail:');
     console.log(failures.map(f => '  ' + f.name).join('\n'))
   } else {
-    console.log('Failed', failures.length, 'tests.\n\n');
-
     for (let { expected, name, result, fileName, logs } of failures.filter(x => !x.expectFail)) {
       console.log('=============================================');
       console.log(name, 'failed:');
@@ -203,6 +221,10 @@ export const runTests = async () => {
         }
       }
     }
+
+    console.log('\n');
+    console.log('Failed', failures.filter(x => !x.expectFail).length, 'tests.');
+
   }
 };
 
