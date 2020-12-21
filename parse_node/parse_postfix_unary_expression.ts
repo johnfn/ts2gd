@@ -6,7 +6,10 @@ import { ParseNodeType } from "../parse_node"
 
 export const parsePostfixUnaryExpression = (node: ts.PostfixUnaryExpression, props: ParseState): ParseNodeType => {
   return combine({
-    parent: node, nodes: node.operand, props, content: (operand) => {
+    parent: node,
+    nodes: node.operand,
+    props,
+    content: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken:
           return `${operand}++`;

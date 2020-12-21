@@ -45,12 +45,14 @@ import { parsePropertyAccessExpression } from "./parse_node/parse_property_acces
 import { parseClassDeclaration } from "./parse_node/parse_class_declaration";
 import { parseEmptyStatement } from "./parse_node/parse_empty_statement";
 import { parseConditionalExpression } from "./parse_node/parse_conditional_expression";
+import { parseArrowFunction } from "./parse_node/parse_arrow_function";
 
 export type ParseState = {
   isConstructor: boolean;
   indent: string;
   project: TsGdProject;
   program: ts.Program;
+  genUniqueName: () => string;
 
   /**
    * Is the current file we're in an autoload class?
@@ -63,6 +65,7 @@ export type ParseState = {
 export type ParseNodeType = {
   content: string;
   hoistedEnumImports?: string[];
+  hoistedArrowFunctions?: string[];
   enums?: { content: string; name: string }[];
 };
 
@@ -86,13 +89,15 @@ export function combine(args: {
     nodes = [...nodes]
   }
 
-  const parsedNodes = nodes.map(node => {
+  const parsedNodes: (Required<ParseNodeType> & { node: ts.Node | undefined })[] = nodes.map(node => {
     if (!node) {
       // We need to preserve the order of the array, incl. undefined, when we call content().
       return {
         node: undefined,
         content: '',
         enums: [],
+        hoistedEnumImports: [],
+        hoistedArrowFunctions: [],
       };
     };
 
@@ -103,6 +108,7 @@ export function combine(args: {
       content: parsed.content,
       enums: parsed.enums ?? [],
       hoistedEnumImports: parsed.hoistedEnumImports ?? [],
+      hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
     }
   });
 
@@ -148,6 +154,7 @@ export function combine(args: {
     content: stringResult,
     enums: parsedNodes.flatMap(node => node.enums ?? []),
     hoistedEnumImports: parsedNodes.flatMap(node => node.hoistedEnumImports ?? []),
+    hoistedArrowFunctions: parsedNodes.flatMap(node => node.hoistedArrowFunctions ?? []),
   };
 }
 
@@ -163,6 +170,8 @@ export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeTyp
       return parseTypeAliasDeclaration(genericNode as ts.TypeAliasDeclaration, props);
     case SyntaxKind.BinaryExpression:
       return parseBinaryExpression(genericNode as ts.BinaryExpression, props);
+    case SyntaxKind.ArrowFunction:
+      return parseArrowFunction(genericNode as ts.ArrowFunction, props);
     case SyntaxKind.NumericLiteral:
       return parseNumericLiteral(genericNode as ts.NumericLiteral, props);
     case SyntaxKind.ArrayLiteralExpression:

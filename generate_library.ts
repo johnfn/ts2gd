@@ -1,6 +1,3 @@
-// TODO: Convert bbcode thing e.g. [b]blah[/b] to html
-// TODO make docstrings better
-
 import fs from 'fs';
 import path from 'path';
 import { parseStringPromise } from 'xml2js';
@@ -235,7 +232,6 @@ ${method.isAbstract ? 'protected ' : ''}${method.name}(${method.argumentList}): 
 
 ${(() => {
         // Generate wrapper functions for operator overloading stuff.
-        // TODO: Basically unnecessary now.
 
         if (
           className === "Vector2" ||

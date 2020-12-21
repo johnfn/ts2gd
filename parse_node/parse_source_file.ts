@@ -24,13 +24,6 @@ ${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}`
 
 export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNodeType => {
   const { statements } = node;
-  //   const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
-
-  //   if (!sourceInfo) {
-  //     throw new Error(`Error!
-  // Can't find associated sourceInfo
-  //   for ${node.fileName}`);
-  //   }
 
   props.usages = utils.collectVariableUsage(node);
 
@@ -41,6 +34,7 @@ export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNo
     content: `
 ${classDecl ? preprocessClassDecl(classDecl, props) : ''} 
 ${parsedStatements.flatMap(x => x.hoistedEnumImports ?? []).join('\n')}
+${parsedStatements.flatMap(x => x.hoistedArrowFunctions ?? []).join('\n')}
 ${parsedStatements.map(x => x.content).join('\n')}
 `.trim()
   };

@@ -1,5 +1,6 @@
 import ts, { SyntaxKind } from "typescript";
 import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node";
+import { Test } from "../test";
 import { isDictionary, isEnumType } from "../ts_utils";
 
 
@@ -19,7 +20,10 @@ export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression,
   }
 
   return combine({
-    parent: node, nodes: [node.expression, node.name], props, content: (lhs, rhs) => {
+    parent: node,
+    nodes: [node.expression, node.name],
+    props,
+    content: (lhs, rhs) => {
       // TS requires you to write this.blah everywhere, but Godot does not, and in fact
       // even generates a warning since it cant prove that self.blah is real.
       if (lhs === "self") {
@@ -57,3 +61,28 @@ export const parsePropertyAccessExpression = (node: ts.PropertyAccessExpression,
   });
 
 }
+
+export const testAccess: Test = {
+  ts: `
+let foo = { bar: 1 }
+print(foo.bar)
+  `,
+  expected: `
+var foo = { "bar": 1 }
+print(foo.bar)
+  `,
+};
+
+export const testAccessRewriting: Test = {
+  ts: `
+let foo = { bar: 1 }
+if (foo.bar) {
+  print (foo.bar)
+}
+  `,
+  expected: `
+var foo = { "bar": 1 }
+if foo.has("bar"):
+  print(foo.bar)
+  `,
+};

@@ -4,9 +4,13 @@ import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
 
 export const parseCallExpression = (node: ts.CallExpression, props: ParseState): ParseNodeType => {
-  // TODO: Work out a better way to determine if something is a call expression
-  if (node.expression.getText() === "super") {
-    return combine({ parent: node, nodes: node.expression, props, content: () => "" });
+  if (node.expression.kind === SyntaxKind.SuperKeyword) {
+    return combine({
+      parent: node,
+      nodes: node.expression,
+      props,
+      content: () => ""
+    });
   }
 
   // This block compiles vec.add(vec2) into vec + vec2.
@@ -44,13 +48,20 @@ export const parseCallExpression = (node: ts.CallExpression, props: ParseState):
     }
   }
 
+  const decls = props.program.getTypeChecker().getTypeAtLocation(node.expression).symbol?.declarations;
+  const isArrowFunction = decls && (decls[0].kind === SyntaxKind.ArrowFunction && decls[0].getSourceFile() === node.getSourceFile());
+
   return combine({
     parent: node, nodes: [node.expression, ...node.arguments], props, content: (expr, ...args) => {
       if (expr === "Yield") {
         expr = "yield";
       }
 
-      return `${expr}(${args.join(', ')})`;
+      if (isArrowFunction) {
+        return `${expr}.call_func(${args.join(', ')})`;
+      } else {
+        return `${expr}(${args.join(', ')})`;
+      }
     }
   });
 }
@@ -79,3 +90,15 @@ foo['v'] + v2
 `,
 };
 
+export const testArrowFunction: Test = {
+  ts: `
+const test = () => 5;
+test()  
+  `,
+  expected: `
+func func1():
+  return 5
+var test = funcref(self, "func1")
+test.call_func()
+`,
+};

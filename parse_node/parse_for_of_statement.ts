@@ -13,7 +13,6 @@ export const parseForOfStatement = (node: ts.ForOfStatement, props: ParseState):
     const decl = initializerNode.declarations[0];
 
     if (initializerNode.declarations.length > 1) {
-      // TODO: Handle this case... and clean up the other code
       throw new Error("Uh oh! For...of with > 1 declaration");
     }
 
@@ -30,15 +29,15 @@ for ${isUnused ? "_" : ""}${decl.name.getText()} in ${expr}:
   ${statement}
 ` });
   } else {
-    const initializedVariable = node.initializer.getChildAt(1);
+    const initExpr = initializer as ts.Expression;
 
     return combine({
       parent: node,
-      nodes: [node.expression, node.statement],
+      nodes: [initExpr, node.expression, node.statement],
       props,
       addIndent: true,
       content: (expr, statement) => `
-for ${initializedVariable.getText()} in ${expr}:
+for ${initExpr} in ${expr}:
   ${statement}
 ` });
   }

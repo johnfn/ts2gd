@@ -1,6 +1,5 @@
 import ts, { SyntaxKind } from "typescript";
 import { ParseState, combine } from "../parse_node";
-import { isDictionary } from "../ts_utils";
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
 
@@ -8,18 +7,23 @@ export const parseBinaryExpression = (node: ts.BinaryExpression, props: ParseSta
   const needsLeftHandSpace = node.operatorToken.kind !== SyntaxKind.CommaToken;
 
   // We need to rewrite things like dict.a = foo into dict['a'] = foo
-  if (node.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
-    if (node.left.kind === ts.SyntaxKind.PropertyAccessExpression) {
-      const leftPropAccess = node.left as ts.PropertyAccessExpression;
-      const dictNode = leftPropAccess.expression;
-      const dictNodeType = props.program.getTypeChecker().getTypeAtLocation(dictNode);
-      const keyNode = leftPropAccess.name;
+  // if (node.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+  //   if (node.left.kind === ts.SyntaxKind.PropertyAccessExpression) {
+  //     const leftPropAccess = node.left as ts.PropertyAccessExpression;
+  //     const dictNode = leftPropAccess.expression;
+  //     const dictNodeType = props.program.getTypeChecker().getTypeAtLocation(dictNode);
+  //     const keyNode = leftPropAccess.name;
 
-      if (isDictionary(dictNodeType)) {
-        return combine({ parent: node, nodes: [dictNode, node.right], props, content: (dictNode, right) => `${dictNode}["${keyNode.text}"] = ${right}` })
-      }
-    }
-  }
+  //     if (isDictionary(dictNodeType)) {
+  //       return combine({
+  //         parent: node,
+  //         nodes: [dictNode, node.right],
+  //         props,
+  //         content: (dictNode, right) => `${dictNode}["${keyNode.text}"] = ${right}`
+  //       });
+  //     }
+  //   }
+  // }
 
   return combine({
     parent: node,
@@ -46,16 +50,17 @@ export const testAssignmentToDict: Test = {
 foo.bar = 1`,
 
   expected: `var foo = {}
-foo["bar"] = 1
+foo.bar = 1
 `
 };
 
 export const testNestedAssignmentToDict: Test = {
-  expectFail: true,
+  expectFail: false,
 
-  ts: `const foo = {};
+  ts: `const foo = { bar: {} };
 foo.bar.baz = 1`,
-  expected: `var foo = {}
-foo["bar"]["bar"] = 1
+  expected: `
+var foo = { "bar": {} }
+foo.bar.baz = 1
 `,
 };

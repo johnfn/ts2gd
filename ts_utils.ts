@@ -168,10 +168,10 @@ export function getGodotType(
   //   return tsTypeName;
   // }
 
-  // TODO: In theory, we could do the below, but it's subtle to get right
-  // and doesn't confer a lot of benefit. In some cases (e.g. using user-defined
-  // types) it actually causes errors due to cyclic dependencies, and those would
-  // be a huge pain to resolve properly.
+  // TODO: Doing all these cases is subtle to get right and doesn't confer a lot
+  // of benefit. In some cases (e.g. using user-defined types) it actually
+  // causes errors due to cyclic dependencies, and those would be a huge pain to
+  // resolve properly.
 
   return undefined;
 }

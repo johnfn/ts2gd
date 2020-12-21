@@ -1,8 +1,14 @@
 import ts from "typescript";
 import { ParseState, combine } from "../parse_node";
-
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
+
+const specialMethods = [
+  { name: '_process', args: "_delta: float" },
+  { name: '_physics_process', args: "_delta: float" },
+  { name: '_unhandled_input', args: "_event: InputEvent" },
+  { name: '_unhandled_key_input', args: "_event: InputEventKey" },
+]
 
 export const parseMethodDeclaration = (node: ts.MethodDeclaration, props: ParseState): ParseNodeType => {
   const funcName = node.name.getText();
@@ -15,9 +21,10 @@ export const parseMethodDeclaration = (node: ts.MethodDeclaration, props: ParseS
     content: (body, ...params) => {
       let joinedParams = params.join(', ');
 
-      // TODO: handle other built-in functions in the same way
-      if (funcName === '_process' && joinedParams.trim().length === 0) {
-        joinedParams = "_delta: float";
+      const specialMethod = specialMethods.find(method => method.name === funcName);
+
+      if (specialMethod) {
+        joinedParams = specialMethod.args;
       }
 
       return `

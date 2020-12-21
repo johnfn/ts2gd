@@ -49,10 +49,13 @@ export const compileTs = (code: string) => {
     ["test.ts"], {}, customCompilerHost
   );
 
+  let i = 0;
+  const genUniqueName = () => `func${++i}`;
   const godotFile = parseNode(sourceFile, {
     indent: "",
     isConstructor: false,
     program,
+    genUniqueName,
     project: {
       assets: [],
       mainScene: { fsPath: "", resPath: "" },
@@ -192,7 +195,7 @@ export const runTests = async () => {
       console.log('\x1b[32mActual:\x1b[0m');
       console.log(result.split('\n').map(x => '  ' + x + '\n').join(''));
 
-      if (logs) {
+      if (logs && logs.length > 0) {
         console.log('Logs:')
 
         for (const log of logs) {

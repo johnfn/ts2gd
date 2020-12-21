@@ -4,8 +4,6 @@ import { ParseNodeType } from "../parse_node"
 import { Test } from "../test";
 
 export const parseEmptyStatement = (node: ts.EmptyStatement, props: ParseState): ParseNodeType => {
-  // TODO - are there others?
-  // TODO - this isn't accurate for things like for(;;) { stuff() } where no pass is necessary.
   if (
     node.parent.kind === SyntaxKind.WhileStatement ||
     node.parent.kind === SyntaxKind.ForInStatement ||

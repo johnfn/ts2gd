@@ -125,10 +125,14 @@ function compile(sourceFile: ParsedSourceFile, project: TsGdProject): void {
     process.exit();
   }
 
+  let id = 0;
+  const genUniqueName = () => `func${++id}`;
+
   const result = parseNode(
     source, {
     indent: "",
     isConstructor: false,
+    genUniqueName,
     project,
     mostRecentControlStructureIsSwitch: false,
     isAutoload: false,
