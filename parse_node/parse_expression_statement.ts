@@ -12,7 +12,7 @@ export const parseExpressionStatement = (node: ts.ExpressionStatement, props: Pa
   });
 }
 
-export const testPass1: Test = {
+export const testExpressionStatement: Test = {
   ts: `
 1 + 1
   `,

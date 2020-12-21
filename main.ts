@@ -1,6 +1,7 @@
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
-// TODO: Per-file tests
+// TODO: Modulo expects int instead of float and will error if it sees the wrong one...
+// TODO: sanitize variable and function name generation
 // TODO: There's a bug where cleaning up self. can cause variable name collisions.
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
@@ -21,7 +22,6 @@
 //       using {}, which is kind of lame. 
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
-// TODO: multiple statements in for loops
 // TODO: Use chokidar rather than my ... thing.
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
 // TODO: Use AST transformers?
@@ -93,8 +93,8 @@ function reportDiagnostic(diagnostic: ts.Diagnostic) {
     return;
   }
 
-  console.error("Error", diagnostic.code, ":", errorMessage);
-  console.log(diagnostic.file?.fileName, diagnostic.start);
+  // console.error("Error", diagnostic.code, ":", errorMessage);
+  // console.log(diagnostic.file?.fileName, diagnostic.start);
 }
 
 export let program: ts.Program;

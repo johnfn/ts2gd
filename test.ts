@@ -1,10 +1,10 @@
 import * as ts from "typescript";
-import { parseNode } from "./parse_node";
+import { parseNode, ParseNodeType } from "./parse_node";
 import { baseContentForTests } from "./generate_base";
 import fs from 'fs';
 import path from 'path';
 
-export const compileTs = (code: string, isAutoload: boolean) => {
+export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const filename = isAutoload ? "autoload.ts" : "test.ts";
 
   const sourceFile = ts.createSourceFile(
@@ -89,12 +89,14 @@ export const compileTs = (code: string, isAutoload: boolean) => {
     usages: new Map(),
   });
 
-  return godotFile.content;
+  return godotFile;
 };
 
 export type Test = {
-  ts: string;
   expected: string;
+  ts: string;
+  expectedFiles?: { filename: string; content: string }[];
+
   isAutoload?: boolean;
   only?: boolean;
   expectFail?: boolean;
@@ -114,7 +116,38 @@ const trim = (s: string) => {
 const test = (props: Test, name: string, testFileName: string): TestResult => {
   const { ts, expected } = props;
 
-  const output = compileTs(ts, props.isAutoload ?? false);
+  const compiled = compileTs(ts, props.isAutoload ?? false);
+  const output = compiled.content;
+
+  if (props.expectedFiles) {
+    // Go into file comparison mode
+    for (const { filename, content } of props.expectedFiles) {
+      console.log(compiled.enums)
+      const match = (compiled.enums ?? []).find(e => e.name + ".gd" === filename);
+
+      if (!match) {
+        return {
+          type: 'fail',
+          result: '',
+          expected: `${filename} was not created.`,
+          name,
+          expectFail: props.expectFail ?? false,
+          fileName: testFileName,
+        };
+      }
+
+      if (trim(content) !== trim(match.content)) {
+        return {
+          type: 'fail',
+          result: content,
+          expected: match.content,
+          name,
+          expectFail: props.expectFail ?? false,
+          fileName: testFileName,
+        };
+      }
+    }
+  }
 
   if (trim(output) === trim(expected)) {
     return { type: 'success' }

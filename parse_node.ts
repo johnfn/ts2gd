@@ -67,7 +67,15 @@ export type ParseNodeType = {
   hoistedEnumImports?: string[];
   hoistedArrowFunctions?: string[];
   hoistedLibraryFunctions?: string[]
-  enums?: { content: string; name: string }[];
+  enums?: {
+    /** Content of the enum */
+    content: string;
+
+    /**
+     * Name of the created enum
+     */
+    name: string;
+  }[];
 };
 
 // export function combine(parent: ts.Node, nodes: ts.Node[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;

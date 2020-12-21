@@ -1,6 +1,7 @@
 import ts from "typescript";
 
 import { ParseNodeType, ParseState } from "../parse_node"
+import { Test } from "../test";
 import { getImportResPathForEnum } from "./parse_import_declaration";
 
 export const parseEnumDeclaration = (node: ts.EnumDeclaration, props: ParseState): ParseNodeType => {
@@ -29,3 +30,28 @@ export const parseEnumDeclaration = (node: ts.EnumDeclaration, props: ParseState
     }],
   };
 }
+
+export const testEnumDeclaration: Test = {
+  ts: `
+export enum Test { A, B }
+
+print(Test.A)
+  `,
+  expected: `
+const Test = preload("_Test.gd").Test
+
+print(Test.A)
+  `,
+
+  expectedFiles: [
+    {
+      filename: "Test.gd",
+      content: `
+enum Test {
+  A,
+  B,
+}      
+`
+    }
+  ]
+};

@@ -111,7 +111,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] explain tne `enum` thing better
 - [ ] @node annotations to say which node a class belongs to
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [ ] handle parameters to _functions that aren't provided in TS by autofilling them in Godot
+- [x] handle parameters to _functions that aren't provided in TS by autofilling them in Godot
 - [ ] `callables`
 - [ ] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] Handle the thing where if u never yield its never a coroutine
@@ -140,7 +140,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] Fancy TS/JS features
   * [ ] destructuring
   * [ ] ... spread operator
-- [ ] Map, filter, etc? even though they aren't part of godot, it would be nice to have them. 
+- [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them. 
 - [ ] Skip compiled/
 - [ ] ../ node paths
 - [ ] Break our assumption that filename === classname
