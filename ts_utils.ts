@@ -220,8 +220,22 @@ export type TsGdProject = {
   scenes: ParsedScene[];
   assets: { resPath: string; fsPath: string; className: string; }[];
   sourcePath: string;
+
+  /**
+   * Like /Users/johnfn/GodotProject.json
+   */
   tsgdPathWithFilename: string;
+
+  /**
+   * Like /Users/johnfn/GodotProject
+   */
   tsgdPath: string;
+
+  /**
+   * Like /Users/johnfn/GodotProject/godot_defs
+   */
+  godotDefsPath: string;
+
   mainScene: { resPath: string; fsPath: string };
 }
 
@@ -229,6 +243,7 @@ export type ParsedScene = {
   nodes: GodotNode[];
   fsPath: string;
   resPath: string;
+  name: string;
   resources: { resPath: string; fsPath: string; type: string; id: number }[];
   rootNode: GodotNode;
 }
@@ -238,7 +253,16 @@ export class GodotNode {
   type: string;
   isRoot: boolean;
   scenePath: string;
-  private script?: { resPath: string; type: string; id: number; fsPath: string; };
+  private script?: { 
+    /** Like res://Script.gd */
+    resPath: string; 
+    /** Script */
+    type: string; 
+    /** Like 1 */
+    id: number; 
+    /** /Users/johnfn/Project/Script.gd */
+    fsPath: string; 
+  };
   parent?: string;
   groups?: string;
   rest: string;

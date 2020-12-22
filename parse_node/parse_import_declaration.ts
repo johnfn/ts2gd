@@ -76,18 +76,11 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
 
   const pathWithoutExtension = getPathWithoutExtension(node, props);
   let pathToImportedTs = pathWithoutExtension + ".ts";
-  const importedSourceFile = props.project.sourceFiles.find(sf => sf.tsFullPath === pathToImportedTs);
-
-  if (!importedSourceFile) {
-    throw new Error(`Error! ${pathToImportedTs} import not found.
-  in ${node.getSourceFile().fileName}`)
-  }
-
 
   // Step 2: Parse bindings, sorting between class and enum types (which we need to generate different imports
   // for).
 
-  type ImportType = { importedName: string; type: 'enum' | 'class'; resPath: string; };
+  type ImportType = { importedName: string; type: 'enum' | 'class' | 'scene'; resPath: string; };
 
   const namedBindings = node.importClause?.namedBindings;
 
@@ -103,6 +96,8 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
     for (const element of bindings.elements) {
       const type = props.program.getTypeChecker().getTypeAtLocation(element);
 
+      console.log(type.symbol?.name);
+
       if (isEnumType(type)) {
         const {
           resPath,
@@ -110,7 +105,27 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
         } = getImportResPathForEnum(type, props);
 
         imports.push({ importedName: enumName, resPath: resPath, type: 'enum' });
+      } else if (type.symbol?.name === 'PackedScene') {
+        const importedName = bindings.elements[0].name.text;
+        const className = importedName.slice(0, -"Tscn".length)
+        const resPath = props.project.scenes.find(scene => scene.name === className)?.resPath;
+
+        if (!resPath) {
+          continue;
+        }
+
+        imports.push({
+          importedName: importedName,
+          resPath: resPath,
+          type: 'scene',
+        });
       } else {
+        const importedSourceFile = props.project.sourceFiles.find(sf => sf.tsFullPath === pathToImportedTs);
+
+        if (!importedSourceFile) {
+          throw new Error(`Error! ${pathToImportedTs} import not found.
+  in ${node.getSourceFile().fileName}`);
+        }
 
         let typeString = props.program.getTypeChecker().typeToString(type);
 
@@ -134,6 +149,8 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
         return `const ${importedName} = preload("${resPath}")`;
       } else if (type === "enum") {
         return `const ${importedName} = preload("${resPath}").${importedName}`;
+      } else if (type === "scene") {
+        return `const ${importedName} = preload("${resPath}")`;
       }
     }).join('\n')
   });

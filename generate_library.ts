@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseStringPromise } from 'xml2js';
 import { buildBase } from './generate_base';
+import { TsGdProject } from './ts_utils';
 
 function formatJsDoc(input: string): string {
   if (!input) {
@@ -54,11 +55,11 @@ function formatJsDoc(input: string): string {
   return result;
 }
 
-export function generateGodotLibraryDefinitions(root: string): void {
+export function generateGodotLibraryDefinitions(project: TsGdProject): void {
   const godotDocumentationPath = "./../godot/doc/classes/";
   const contents = fs.readdirSync(godotDocumentationPath);
   const xmlFiles = contents.filter(file => file.endsWith(".xml"));
-  const destPath = path.join(root, "godot_defs")
+  const destPath = project.godotDefsPath;
   fs.mkdirSync(destPath, { recursive: true });
 
   function convertType(godotType: string): string {

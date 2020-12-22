@@ -268,10 +268,9 @@ export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeTyp
     case SyntaxKind.Constructor:
       return parseConstructor(genericNode as ts.ConstructorDeclaration, props);
     case SyntaxKind.ClassExpression:
-    // fallthrough
-    case SyntaxKind.ClassDeclaration: {
       return parseClassDeclaration(genericNode as ts.ClassDeclaration | ts.ClassExpression, props);
-    }
+    case SyntaxKind.ClassDeclaration:
+      return parseClassDeclaration(genericNode as ts.ClassDeclaration | ts.ClassExpression, props);
     case SyntaxKind.SetAccessor:
       return parseSetAccessor(genericNode as ts.SetAccessorDeclaration, props);
     case SyntaxKind.GetAccessor:

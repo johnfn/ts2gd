@@ -84,31 +84,11 @@ script.type=${script.type}
   }
 
   let result = `declare type NodePathToType${className} = {
-${ Object.entries(pathToImport).map(([path, importStr]) => `  "${ path }": ${ importStr },\n`)}
+${ Object.entries(pathToImport).map(([path, importStr]) => `  "${ path }": ${ importStr },`).join('\n')}
 }    
-`
+`;
 
-  for (const { path, node } of commonRelativePaths) {
-    const script = node.getScript(project.scenes);
-
-    if (script) {
-      const associatedClass = project.sourceFiles.find(source => {
-        return source.className === script.type;
-      })!;
-
-      if (!associatedClass) {
-        throw new Error(`\nCan't find the class for ${script.type}
-script.type=${script.type}
-`)
-      }
-
-      result += `  '${path}': import("${associatedClass.tsFullPath.slice(0, -'.ts'.length)}").${script.type},\n`;
-    } else {
-      result += `  '${path}': ${node.type},\n`;
-    }
-  }
-
-  result += `}
+  result += `
   
 import ${className} from './../${project.sourcePath}/${path.basename(script.tsFullPath).slice(0, -'.ts'.length)}'
 
@@ -126,6 +106,6 @@ declare module './../${script.tsRelativePath.slice(0, -'.ts'.length)}' {
 }
   `;
 
-  const destPath = path.join(project.tsgdPath, "godot_defs", `@node_paths_${className}.d.ts`)
+  const destPath = path.join(project.godotDefsPath, `@node_paths_${className}.d.ts`)
   fs.writeFileSync(destPath, result);
 };

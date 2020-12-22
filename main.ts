@@ -35,6 +35,7 @@ import { generateGodotLibraryDefinitions } from "./generate_library";
 import { parseNode } from "./parse_node";
 import { buildNodePathsTypeForScript } from "./build_paths_for_node";
 import { GodotNode, ParsedScene, TsGdProject } from "./ts_utils";
+import { buildSceneImports } from "./build_scene_imports";
 
 let verbose = false;
 const inputPath = process.argv[2];
@@ -183,7 +184,7 @@ ${project.assets.map(({ resPath, fsPath, className }) => `  '${resPath}': ${clas
 declare type AssetPath = keyof AssetType;
   `;
 
-  const destPath = path.join(tsgdPath, "godot_defs", '@asset_paths.d.ts')
+  const destPath = path.join(project.godotDefsPath, '@asset_paths.d.ts')
   fs.writeFileSync(destPath, assetFileContents);
 }
 
@@ -251,7 +252,7 @@ declare module './../${tsRelativePath.slice(0, -'.ts'.length)}' {
   }
 }`
 
-    const destPath = path.join(tsgdPath, "godot_defs", `@node_paths_${className}.d.ts`)
+    const destPath = path.join(project.godotDefsPath, `@node_paths_${className}.d.ts`)
     fs.writeFileSync(destPath, assetFileContents);
   }
 
@@ -421,6 +422,7 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   return {
     scenes,
     assets,
+    godotDefsPath: path.join(tsgdPath, "godot_defs"),
     tsgdPath,
     tsgdPathWithFilename,
     sourcePath: tsgdJson.source,
@@ -524,6 +526,7 @@ const parseScene = (fsPath: string): ParsedScene => {
     resources: extResources,
     fsPath,
     resPath: fsPathToResPath(fsPath),
+    name: path.basename(fsPath, ".tscn"),
     rootNode: allNodes.find(node => !node.parent)!,
   };
 
@@ -539,7 +542,8 @@ const main = async () => {
     buildNodePathsTypeForScript(script, project);
   }
 
-  generateGodotLibraryDefinitions(tsgdPath);
+  buildSceneImports(project);
+  generateGodotLibraryDefinitions(project);
 
   for (const sourceFile of project.sourceFiles) {
     compile(sourceFile, project);
