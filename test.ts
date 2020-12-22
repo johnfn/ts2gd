@@ -197,6 +197,7 @@ export const runTests = async () => {
   tests = tests.filter(t => t.only).length > 0 ? tests.filter(t => t.only) : tests;
 
   const failures: TestResultFail[] = [];
+  const start = new Date().getTime();
 
   for (const testObj of tests) {
     // mock out console.log to display logs nicer
@@ -213,12 +214,13 @@ export const runTests = async () => {
       failures.push(result);
     }
   }
+  const elapsed = ((new Date().getTime() - start) / 1000) + 's';
 
   if (failures.length === 0) {
     console.log('All', total, 'tests passed!');
   } else if (failures.length > 0 && failures.filter(x => x.expectFail).length === failures.length) {
-    console.log(total, 'tests passed!\n');
-    console.log('Some failed, but they were expected to fail:');
+    console.log(total, 'tests passed, in', elapsed);
+    console.log('\nSome failed, but they were expected to fail:');
     console.log(failures.map(f => '  ' + f.name).join('\n'))
   } else {
     for (let { expected, name, result, fileName, logs } of failures.filter(x => !x.expectFail)) {

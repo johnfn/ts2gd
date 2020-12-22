@@ -61,7 +61,32 @@ export const buildNodePathsTypeForScript = (script: ParsedSourceFile, project: T
 
   // Normal case
 
-  let result = `declare type NodePathToType${className} = {\n`
+  const pathToImport: { [key: string]: string } = {};
+
+  for (const { path, node } of commonRelativePaths) {
+    const script = node.getScript(project.scenes);
+
+    if (script) {
+      const associatedClass = project.sourceFiles.find(source => {
+        return source.className === script.type;
+      })!;
+
+      if (!associatedClass) {
+        throw new Error(`\nCan't find the class for ${script.type}
+script.type=${script.type}
+`)
+      }
+
+      pathToImport[path] = `import("${associatedClass.tsFullPath.slice(0, -'.ts'.length)}").${script.type},`;
+    } else {
+      pathToImport[path] = node.type;
+    }
+  }
+
+  let result = `declare type NodePathToType${className} = {
+${ Object.entries(pathToImport).map(([path, importStr]) => `  "${ path }": ${ importStr },\n`)}
+}    
+`
 
   for (const { path, node } of commonRelativePaths) {
     const script = node.getScript(project.scenes);
@@ -92,6 +117,7 @@ declare module './../${script.tsRelativePath.slice(0, -'.ts'.length)}' {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
   }
+
   namespace ${className} {
     export function _new(): ${className};
 

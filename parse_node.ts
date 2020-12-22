@@ -46,6 +46,7 @@ import { parseClassDeclaration } from "./parse_node/parse_class_declaration";
 import { parseEmptyStatement } from "./parse_node/parse_empty_statement";
 import { parseConditionalExpression } from "./parse_node/parse_conditional_expression";
 import { parseArrowFunction } from "./parse_node/parse_arrow_function";
+import { parseTypeofExpression } from "./parse_node/parse_typeof_expression";
 
 export type ParseState = {
   isConstructor: boolean;
@@ -198,6 +199,8 @@ export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeTyp
       return parseNewExpression(genericNode as ts.NewExpression, props);
     case SyntaxKind.PostfixUnaryExpression:
       return parsePostfixUnaryExpression(genericNode as ts.PostfixUnaryExpression, props);
+    case SyntaxKind.TypeOfExpression:
+      return parseTypeofExpression(genericNode as ts.TypeOfExpression, props);
     case SyntaxKind.IfStatement:
       return parseIfStatement(genericNode as ts.IfStatement, props);
     case SyntaxKind.EmptyStatement:
@@ -299,6 +302,8 @@ export const parseNode = (genericNode: ts.Node, props: ParseState): ParseNodeTyp
       return { content: "/" };
     case SyntaxKind.AmpersandAmpersandToken:
       return { content: "and" };
+    case SyntaxKind.BarBarToken:
+      return { content: "or" };
     case SyntaxKind.EqualsEqualsEqualsToken:
       return { content: "==" };
     case SyntaxKind.LessThanToken:
