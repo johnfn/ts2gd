@@ -96,8 +96,6 @@ export const parseImportDeclaration = (node: ts.ImportDeclaration, props: ParseS
     for (const element of bindings.elements) {
       const type = props.program.getTypeChecker().getTypeAtLocation(element);
 
-      console.log(type.symbol?.name);
-
       if (isEnumType(type)) {
         const {
           resPath,

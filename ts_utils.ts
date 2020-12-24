@@ -220,6 +220,7 @@ export type TsGdProject = {
   scenes: ParsedScene[];
   assets: { resPath: string; fsPath: string; className: string; }[];
   sourcePath: string;
+  autoloads: { resPath: string }[];
 
   /**
    * Like /Users/johnfn/GodotProject.json

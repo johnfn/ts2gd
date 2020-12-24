@@ -11,10 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "@types/xml2js": "^0.4.5",
+    "chokidar": "^3.4.3",
     "esm": "^3.2.25",
-    "ts-node": "^9.1.1",
     "tsutils": "^3.17.1",
-    "typescript": "^4.0.5",
     "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "ts-node": "^9.1.1",
+    "ts-node-dev": "^1.1.1",
+    "typescript": "^4.1.3"
   }
 }

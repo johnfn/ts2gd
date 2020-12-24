@@ -36,6 +36,7 @@ import { parseNode } from "./parse_node";
 import { buildNodePathsTypeForScript } from "./build_paths_for_node";
 import { GodotNode, ParsedScene, TsGdProject } from "./ts_utils";
 import { buildSceneImports } from "./build_scene_imports";
+import { TsGdProjectClass } from "./project";
 
 let verbose = false;
 const inputPath = process.argv[2];
@@ -339,6 +340,37 @@ const getMainScene = () => {
   }
 };
 
+const getSourceFile = (sourceFilePath: string, autoloads: { resPath: string }[]) => {
+  let tsFileContent = fs.readFileSync(sourceFilePath, 'utf-8');
+  // TODO: this is a bit brittle
+  let classNameMatch = [...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /mg)];
+  let className = "";
+  let gdPath = path.join(srcDestPath, sourceFilePath.slice(srcRootPath.length, -path.extname(sourceFilePath).length) + ".gd");
+  let resPath = fsPathToResPath(gdPath);
+
+  if (classNameMatch && classNameMatch.length === 1) {
+    className = classNameMatch[0][1];
+  } else {
+    if (classNameMatch.length > 1) {
+      throw new Error(`Found too many exported classes in ${sourceFilePath}`);
+    } else {
+      throw new Error(`Couldn't find an exported class in ${sourceFilePath}`);
+    }
+  }
+
+  const result: ParsedSourceFile = {
+    className,
+    tsFileContent: '',
+    resPath: fsPathToResPath(gdPath),
+    tsFullPath: sourceFilePath,
+    tsRelativePath: sourceFilePath.slice(tsgdPath.length + 1),
+    gdPath,
+    isAutoload: !!autoloads.find(autoload => autoload.resPath === resPath),
+  };
+
+  return result;
+};
+
 const getProjectProperties = async (): Promise<TsGdProject> => {
   const allFiles = await walk(tsgdPath);
   const autoloads = getAutoloadFiles();
@@ -346,36 +378,7 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
   let scenePaths = allFiles.filter(f => f.endsWith('.tscn'));
 
   const sourceFilePaths = watchProgram.getProgram().getSourceFiles().map(source => source.fileName).filter(path => !path.endsWith('.d.ts') && !path.includes('/test/'));
-  const sourceFiles = sourceFilePaths.map(sourceFilePath => {
-    let tsFileContent = fs.readFileSync(sourceFilePath, 'utf-8');
-    // TODO: this is a bit brittle
-    let classNameMatch = [...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /mg)];
-    let className = "";
-    let gdPath = path.join(srcDestPath, sourceFilePath.slice(srcRootPath.length, -path.extname(sourceFilePath).length) + ".gd");
-    let resPath = fsPathToResPath(gdPath);
-
-    if (classNameMatch && classNameMatch.length === 1) {
-      className = classNameMatch[0][1];
-    } else {
-      if (classNameMatch.length > 1) {
-        throw new Error(`Found too many exported classes in ${sourceFilePath}`);
-      } else {
-        throw new Error(`Couldn't find an exported class in ${sourceFilePath}`);
-      }
-    }
-
-    const result: ParsedSourceFile = {
-      className,
-      tsFileContent: '',
-      resPath: fsPathToResPath(gdPath),
-      tsFullPath: sourceFilePath,
-      tsRelativePath: sourceFilePath.slice(tsgdPath.length + 1),
-      gdPath,
-      isAutoload: !!autoloads.find(autoload => autoload.resPath === resPath),
-    };
-
-    return result;
-  });
+  const sourceFiles = sourceFilePaths.map(sourceFilePath => getSourceFile(sourceFilePath, autoloads));
 
   let scenes = scenePaths.map(scenePath => parseScene(scenePath));
 
@@ -428,6 +431,7 @@ const getProjectProperties = async (): Promise<TsGdProject> => {
     sourcePath: tsgdJson.source,
     mainScene: getMainScene(),
     sourceFiles,
+    autoloads,
   };
 };
 
@@ -534,6 +538,10 @@ const parseScene = (fsPath: string): ParsedScene => {
 };
 
 const main = async () => {
+  const proj = new TsGdProjectClass(tsgdPath);
+
+  const start = new Date().getTime();
+
   project = await getProjectProperties();
 
   buildAssetPathsType(project);
@@ -545,6 +553,7 @@ const main = async () => {
   buildSceneImports(project);
   generateGodotLibraryDefinitions(project);
 
+
   for (const sourceFile of project.sourceFiles) {
     compile(sourceFile, project);
 
@@ -553,9 +562,15 @@ const main = async () => {
         return;
       }
 
+      const compileTs = new Date().getTime();
+
       compile(sourceFile, project);
+
+      console.log(`Compiled ${ sourceFile.tsRelativePath} in`, (new Date().getTime() - compileTs) / 1000 + 's')
     });
   }
+
+  console.log('Initial compilation complete in', (new Date().getTime() - start) / 1000 + 's')
 };
 
 main();

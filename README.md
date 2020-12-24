@@ -8,11 +8,11 @@ Combining the best gamedev experience with the best language.
 
 GDScript is a great language - it's perfectly designed for quick prototyping. But it lacks the type-safety and maturity of a language like TypeScript. By compiling TS into GD, we can get the best of both worlds: a rapid prototyping language that compiles virtually instantaneously, that also comes with excellent typesafety.
 
-We can also get really, really good autocomplete and refactoring support. 
+We can also get really, really good autocomplete and refactoring support.
 
 ## How?!
 
-Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript. 
+Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript.
 
 ## How it works
 
@@ -27,7 +27,7 @@ Add a tsgd.json file to your Godot project root:
 
 Now, run the compiler on tsgd.json:
 
-```ts-node main.ts tsgd.json```
+`ts-node main.ts tsgd.json`
 
 ## Details and Differences
 
@@ -69,13 +69,13 @@ Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal name
 
 ### Vector2 / Vector3 operator overloading
 
-TypeScript sadly has no support for operator overloading. 
+TypeScript sadly has no support for operator overloading.
 
 There are two alternatives:
 
 #### Use my forked TypeScript compiler
 
-I forked TS and added support for Vectors, so you can do `Vector2(1, 1) + Vector(2, 2)` like normal. 
+I forked TS and added support for Vectors, so you can do `Vector2(1, 1) + Vector(2, 2)` like normal.
 
 #### Use replacement methods
 
@@ -107,13 +107,13 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [x] Autocomplete relative node paths as well as absolute ones
 - [x] `extends` must be transpiled before everything else, including enum declarations and other top level things
-- [x] Godot expects methods like _process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
+- [x] Godot expects methods like _process to \_always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] explain tne `enum` thing better
 - [ ] @node annotations to say which node a class belongs to
 - [ ] How come I can't call get_tree() on a class that extends Object?
-- [x] handle parameters to _functions that aren't provided in TS by autofilling them in Godot
-- [ ] `callables`
-- [ ] Handle passing anonymous functions around - probably with funcref for now.
+- [x] handle parameters to \_functions that aren't provided in TS by autofilling them in Godot
+- [x] `callables`
+- [x] Handle passing anonymous functions around - probably with funcref for now.
 - [ ] Handle the thing where if u never yield its never a coroutine
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
@@ -122,7 +122,8 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
 
 ## Road to superior development
-- [x] Mark unused variables with _ to avoid warnings
+
+- [x] Mark unused variables with \_ to avoid warnings
 - [x] parse the bbcode in the XML into markdown that TS can read.
 - [ ] create scripts and attach them to nodes directly through the editor - perhaps with @Node("/blah")
 - [ ] don't hide object autocomplete names
@@ -134,13 +135,13 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] add a way to install ts2gd as a global command
 - [ ] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
-- [ ] Whether to hide away constants into enums or not could be parameterizeable. It is *correct* to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone. 
+- [ ] Whether to hide away constants into enums or not could be parameterizeable. It is _correct_ to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone.
 - [ ] Some sort of error if an autoload class is not entirely static.
 - [ ] yield(this.get_tree(), "idle_frame"); could autocomplete idle_frame? it's possible: just get all the signals on the object.
 - [ ] Fancy TS/JS features
-  * [ ] destructuring
-  * [ ] ... spread operator
-- [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them. 
+  - [ ] destructuring
+  - [ ] ... spread operator
+- [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them.
 - [ ] Skip compiled/
 - [ ] ../ node paths
 - [ ] Break our assumption that filename === classname

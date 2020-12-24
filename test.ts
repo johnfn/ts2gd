@@ -61,6 +61,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       godotDefsPath: '',
       mainScene: { fsPath: "", resPath: "" },
       scenes: [],
+      autoloads: [],
       sourceFiles: [
         {
           className: "",
@@ -260,7 +261,6 @@ export const runTests = async () => {
 
     console.log('\n');
     console.log('Failed', failures.filter(x => !x.expectFail).length, 'tests.');
-
   }
 };
 

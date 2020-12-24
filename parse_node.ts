@@ -85,7 +85,7 @@ export type ParseNodeType = {
 // export function combine(args: { parent: ts.Node, nodes: ts.Node | undefined, props: ParseState, content: (arg: string) => string }): ParseNodeType;
 export function combine(args: {
   parent: ts.Node;
-  nodes: undefined | ts.Node | undefined | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>;
+  nodes: ts.Node | undefined | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>;
   props: ParseState;
   content: (...args: string[]) => string;
 
@@ -93,10 +93,13 @@ export function combine(args: {
 }): ParseNodeType {
   let { parent, nodes, props, content, addIndent } = args;
 
-  if (!Array.isArray(nodes)) {
-    nodes = [nodes];
-  } else {
+  if (Array.isArray(nodes)) {
     nodes = [...nodes]
+  } else if (nodes && ('pos' in nodes && 'find' in nodes)) {
+    // Poor mans hack to check for ts.NodeArray
+    nodes = [...nodes]
+  } else {
+    nodes = [nodes];
   }
 
   const parsedNodes: (Required<ParseNodeType> & { node: ts.Node | undefined })[] = nodes.map(node => {
