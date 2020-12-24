@@ -1,5 +1,11 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   // "typescript.tsserver.experimental.enableProjectDiagnostics": true
   // "typescript.preferences.importModuleSpecifierEnding": "js"
   // "typescript.tsserver.log": "verbose"
