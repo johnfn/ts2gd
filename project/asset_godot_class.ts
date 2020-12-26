@@ -1,4 +1,5 @@
 import { AssetSourceFile } from "./asset_source_file"
+import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
 export class AssetGodotClass {
@@ -14,7 +15,7 @@ export class AssetGodotClass {
 
   sourceFile(): AssetSourceFile {
     const result = this.project.sourceFiles.find(
-      (file) => file.tsFullPath === this.fsPath
+      (file) => file.resPath === this.resPath
     )
 
     if (!result) {
@@ -27,7 +28,7 @@ export class AssetGodotClass {
     return result
   }
 
-  className(): string {
+  tsImportName(): string {
     const sourceFile = this.sourceFile()
 
     return `import('${sourceFile.tsFullPath.slice(0, -".ts".length)}').${

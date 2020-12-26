@@ -1,17 +1,32 @@
 import fs from "fs"
 import path from "path"
+import { BaseAsset } from "./base_asset"
 
 import { TsGdProjectClass } from "./project"
 
-export class AssetSourceFile {
+export class AssetSourceFile extends BaseAsset {
   className: string
+
+  /** Like res://src/main.gd */
   resPath: string
+
+  /** Like main.gd */
+  fsPath: string
+
+  /** Like /Users/johnfn/GodotProject/src/main.ts */
   tsFullPath: string
+
+  /** Like ./src/main.ts */
   tsRelativePath: string
-  gdPath: string
+
   project: TsGdProjectClass
 
+  // Don't use this!
+  _tsImportName: string
+
   constructor(sourceFilePath: string, project: TsGdProjectClass) {
+    super()
+
     let tsFileContent = fs.readFileSync(sourceFilePath, "utf-8")
     // TODO: this is a bit brittle
     let classNameMatch = [
@@ -38,17 +53,30 @@ export class AssetSourceFile {
 
     this.className = className
     this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
+    this.fsPath = gdPath
     this.tsFullPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
       TsGdProjectClass.tsgdPath.length + 1
     )
-    this.gdPath = gdPath
     this.project = project
+
+    this._tsImportName = `import('${this.tsFullPath.slice(
+      0,
+      -".ts".length
+    )}').${this.className}`
+  }
+
+  tsImportName(): string {
+    return this._tsImportName
   }
 
   isAutoload(): boolean {
     return !!this.project.godotProject.autoloads.find(
       (autoload) => autoload.resPath === this.resPath
     )
+  }
+
+  getEnumPath(enumName: string): string {
+    return this.fsPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 }

@@ -1,11 +1,13 @@
 import path from "path"
 import fs from "fs"
 
+// TODO: Do sourceTsPath and destGdPath have to be relative?
+
 export class TsGdJson {
-  /** Where the .ts files live. */
+  /** Where the .ts files live, e.g. ./src */
   sourceTsPath: string
 
-  /** Where the compiled .gd files go. */
+  /** Where the compiled .gd files go, e.g. ./compiled */
   destGdPath: string
 
   constructor() {

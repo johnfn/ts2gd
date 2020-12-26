@@ -1,51 +1,64 @@
-import ts, { SyntaxKind } from "typescript";
-import { parseNode as parseNode, ParseNodeType, ParseState } from "../parse_node";
-import * as utils from 'tsutils';
+import ts, { SyntaxKind } from "typescript"
+import {
+  parseNode as parseNode,
+  ParseNodeType,
+  ParseState,
+} from "../parse_node"
+import * as utils from "tsutils"
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
  * preprocess the class to find them prior to our normal pass.
  */
 const preprocessClassDecl = (node: ts.ClassDeclaration, props: ParseState) => {
-  let extendsFrom = "";
+  let extendsFrom = ""
 
   if (node.heritageClauses) {
     // TODO: Ensure there's only one of each here
 
-    const clause = node.heritageClauses[0] as ts.HeritageClause;
-    const type = clause.types[0];
+    const clause = node.heritageClauses[0] as ts.HeritageClause
+    const type = clause.types[0]
 
-    extendsFrom = type.getText();
+    extendsFrom = type.getText()
   }
 
-  return `${extendsFrom ? `extends ${extendsFrom}` : ''}
-${props.isAutoload ? '' : `class_name ${node.name?.getText()}\n`}`
-};
+  return `${extendsFrom ? `extends ${extendsFrom}` : ""}
+${props.isAutoload ? "" : `class_name ${node.name?.getText()}\n`}`
+}
 
-export const parseSourceFile = (node: ts.SourceFile, props: ParseState): ParseNodeType => {
-  const { statements } = node;
-  const sourceInfo = props.project.sourceFiles.find(file => file.tsFullPath === node.fileName);
+export const parseSourceFile = (
+  node: ts.SourceFile,
+  props: ParseState
+): ParseNodeType => {
+  const { statements } = node
+  const sourceInfo = props.project.sourceFiles.find(
+    (file) => file.tsFullPath === node.fileName
+  )
 
   if (!sourceInfo) {
     throw new Error(`Error!
   Can't find associated sourceInfo
-    for ${node.fileName}`);
+    for ${node.fileName}`)
   }
 
-  props.usages = utils.collectVariableUsage(node);
-  props.isAutoload = sourceInfo.isAutoload;
+  props.usages = utils.collectVariableUsage(node)
+  props.isAutoload = sourceInfo.isAutoload()
 
-  const classDecl = statements.find(statement => statement.kind === SyntaxKind.ClassDeclaration) as ts.ClassDeclaration | null;
-  const parsedStatements = statements.map(statement => parseNode(statement, props));
+  const classDecl = statements.find(
+    (statement) => statement.kind === SyntaxKind.ClassDeclaration
+  ) as ts.ClassDeclaration | null
+  const parsedStatements = statements.map((statement) =>
+    parseNode(statement, props)
+  )
 
   return {
     content: `
-${classDecl ? preprocessClassDecl(classDecl, props) : ''} 
-${parsedStatements.flatMap(x => x.hoistedEnumImports ?? []).join('\n')}
-${parsedStatements.flatMap(x => x.hoistedLibraryFunctions ?? []).join('\n')}
-${parsedStatements.flatMap(x => x.hoistedArrowFunctions ?? []).join('\n')}
-${parsedStatements.map(x => x.content).join('\n')}
+${classDecl ? preprocessClassDecl(classDecl, props) : ""} 
+${parsedStatements.flatMap((x) => x.hoistedEnumImports ?? []).join("\n")}
+${parsedStatements.flatMap((x) => x.hoistedLibraryFunctions ?? []).join("\n")}
+${parsedStatements.flatMap((x) => x.hoistedArrowFunctions ?? []).join("\n")}
+${parsedStatements.map((x) => x.content).join("\n")}
 `.trim(),
-    enums: parsedStatements.flatMap(x => x.enums ?? []),
-  };
+    enums: parsedStatements.flatMap((x) => x.enums ?? []),
+  }
 }

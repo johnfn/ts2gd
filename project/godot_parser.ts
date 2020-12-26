@@ -1,5 +1,4 @@
 import fs from "fs"
-import util from "util"
 
 export const parseGodotConfigFile = (path: string) => {
   const file = fs.readFileSync(path, "utf-8")
@@ -248,8 +247,7 @@ export const parseGodotConfigFile = (path: string) => {
       result[currentSection] = result[currentSection] || {}
       result[currentSection][variableName] = variableValue
     }
-  
+  }
 
-  return result;
-  // console.log(util.inspect(result, false, 6, true))
+  return result
 }

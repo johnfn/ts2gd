@@ -1,12 +1,13 @@
 import chokidar from "chokidar"
 import path from "path"
 
-import { AssetGodotClass } from "./asset_godot_class"
+import { AssetGodotClass as GodotFile } from "./asset_godot_class"
 import { AssetGodotScene } from "./asset_godot_scene"
 import { AssetFont } from "./asset_font"
 import { AssetSourceFile } from "./asset_source_file"
-import { AssetGodotProjectFile } from "./asset_godot_project_file"
+import { GodotProjectFile } from "./godot_project_file"
 import { TsGdJson } from "./tsgd_json"
+import { BaseAsset } from "./base_asset"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -31,18 +32,20 @@ export class TsGdProjectClass {
   tsgdJson: TsGdJson
 
   /** Parsed project.godot file. */
-  godotProject!: AssetGodotProjectFile
+  godotProject!: GodotProjectFile
 
   /** Info about each source file. */
   sourceFiles: AssetSourceFile[] = []
 
   /** Info about each Godot class. */
-  godotClasses: AssetGodotClass[] = []
+  godotClasses: GodotFile[] = []
 
   /** Info about each Godot scene. */
   godotScenes: AssetGodotScene[] = []
 
   mainScene: AssetGodotScene
+
+  assets: BaseAsset[] = []
 
   /** Info about each Godot font. */
   godotFonts: AssetFont[] = []
@@ -64,11 +67,15 @@ export class TsGdProjectClass {
     const initialAssets = initialFilePaths.map((path) => this.getAsset(path))
 
     for (const asset of initialAssets) {
-      if (asset instanceof AssetGodotProjectFile) {
+      if (asset instanceof BaseAsset) {
+        this.assets.push(asset)
+      }
+
+      if (asset instanceof GodotProjectFile) {
         this.godotProject = asset
       } else if (asset instanceof AssetSourceFile) {
         this.sourceFiles.push(asset)
-      } else if (asset instanceof AssetGodotClass) {
+      } else if (asset instanceof GodotFile) {
         this.godotClasses.push(asset)
       } else if (asset instanceof AssetGodotScene) {
         this.godotScenes.push(asset)
@@ -81,6 +88,10 @@ export class TsGdProjectClass {
       }
     }
 
+    this.mainScene = this.godotScenes.find(
+      (scene) => scene.resPath === this.godotProject.mainScene.resPath
+    )!
+
     this.monitor(watcher)
   }
 
@@ -88,11 +99,11 @@ export class TsGdProjectClass {
     if (path.endsWith(".ts")) {
       return new AssetSourceFile(path, this)
     } else if (path.endsWith(".gd")) {
-      return new AssetGodotClass(path, this)
+      return new GodotFile(path, this)
     } else if (path.endsWith(".tscn")) {
       return new AssetGodotScene(path, this)
     } else if (path.endsWith(".godot")) {
-      return new AssetGodotProjectFile(path)
+      return new GodotProjectFile(path)
     } else if (path.endsWith(".ttf")) {
       return new AssetFont(path, this)
     }
@@ -106,8 +117,8 @@ export class TsGdProjectClass {
         console.log("add", path)
         // this.add(this.getAsset(path))
       })
-      .on("change", (path) => console.log("added", path))
-      .on("unlink", (path) => console.log("deleted", path))
+      .on("change", (path) => console.log("updated", path))
+      .on("unlink", (path) => console.log("updated", path))
   }
 
   add(asset: string) {

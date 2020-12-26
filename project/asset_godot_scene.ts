@@ -2,9 +2,10 @@ import fs from "fs"
 import path from "path"
 
 import { GodotNode } from "../ts_utils"
+import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
-export class AssetGodotScene {
+export class AssetGodotScene extends BaseAsset {
   /** e.g. /Users/johnfn/GodotProject/Scenes/my_scene.tscn */
   fsPath: string
 
@@ -27,8 +28,13 @@ export class AssetGodotScene {
 
   rootNode: GodotNode
 
+  project: TsGdProjectClass
+
   constructor(fsPath: string, project: TsGdProjectClass) {
+    super()
+
     this.fsPath = fsPath
+    this.project = project
     this.resPath = TsGdProjectClass.FsPathToResPath(fsPath)
 
     const content = fs.readFileSync(fsPath, "utf-8")
@@ -134,5 +140,29 @@ export class AssetGodotScene {
     this.resources = extResources
     this.name = path.basename(fsPath, ".tscn")
     this.rootNode = allNodes.find((node) => !node.parent)!
+  }
+
+  /** e.g. PackedScene<import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy> */
+  tsImportName(): string {
+    const rootScript = this.rootNode.getScript(this.project.godotScenes)
+
+    if (rootScript) {
+      const rootSourceFile = this.project.sourceFiles.find(
+        (sf) => sf.resPath === rootScript.resPath
+      )
+
+      if (!rootSourceFile) {
+        throw new Error(
+          `Failed to find root source file for ${rootScript.fsPath}`
+        )
+      }
+
+      return `PackedScene<import('${rootSourceFile.tsFullPath.slice(
+        0,
+        -".ts".length
+      )}').${rootSourceFile.className}>`
+    } else {
+      return `PackedScene<${this.rootNode.type}>`
+    }
   }
 }
