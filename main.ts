@@ -637,7 +637,7 @@ const parseScene = (fsPath: string): ParsedScene => {
 const main = async () => {
   // const proj = new TsGdProjectClass(tsgdPath);
 
-  let foo = await makeTsGdProject(tsgdPath)
+  let foo = await makeTsGdProject()
 
   console.log(foo)
   // console.log(util.inspect(foo, { showHidden: true, getters: true }))

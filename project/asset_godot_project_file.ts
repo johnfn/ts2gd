@@ -1,4 +1,5 @@
 import fs from "fs"
+import { TsGdProjectClass } from "./project"
 
 export class AssetGodotProjectFile {
   projectFileContent: string
@@ -7,6 +8,21 @@ export class AssetGodotProjectFile {
   constructor(path: string) {
     this.projectFileContent = fs.readFileSync(path, "utf-8")
     this.autoloads = this.getAutoloadFiles()
+  }
+
+  getMainScene() {
+    const re = /run\/main_scene="([^"]+)"/
+
+    const match = re.exec(this.projectFileContent)
+
+    if (match) {
+      let resPath = match[1]
+      let fsPath = TsGdProjectClass.ResPathToFsPath(resPath)
+
+      return { resPath, fsPath }
+    } else {
+      throw new Error("No main scene found in project.godot!")
+    }
   }
 
   getAutoloadFiles() {

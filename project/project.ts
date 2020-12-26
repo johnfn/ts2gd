@@ -13,8 +13,19 @@ import { TsGdJson } from "./tsgd_json"
 // probably be easier to find the tscn and tres files.
 
 export class TsGdProjectClass {
-  /** Path to the tsgd.json file. */
+  /**
+   * Path to the directory that contains the tsgd.json file.
+   *
+   * @example /Users/johnfn/GodotProject/
+   */
   static tsgdPath: string
+
+  /**
+   * Path to the the tsgd.json file.
+   *
+   * @example /Users/johnfn/GodotProject/tsgd.json
+   */
+  static tsgdPathWithFilename: string
 
   /** Parsed tsgd.json file. */
   tsgdJson: TsGdJson
@@ -31,18 +42,22 @@ export class TsGdProjectClass {
   /** Info about each Godot scene. */
   godotScenes: AssetGodotScene[] = []
 
+  mainScene: AssetGodotScene
+
   /** Info about each Godot font. */
   godotFonts: AssetFont[] = []
 
-  constructor(
-    tsgdPath: string,
-    watcher: chokidar.FSWatcher,
-    initialFilePaths: string[]
-  ) {
+  godotDefsPath: string
+
+  constructor(watcher: chokidar.FSWatcher, initialFilePaths: string[]) {
     // Initial set up
 
+    const { tsgdPath, tsgdPathWithFilename } = getTsgdPath()
+
     TsGdProjectClass.tsgdPath = tsgdPath
+    TsGdProjectClass.tsgdPathWithFilename = tsgdPathWithFilename
     this.tsgdJson = new TsGdJson()
+    this.godotDefsPath = path.join(tsgdPath, "godot_defs")
 
     // Parse assets
 
@@ -114,7 +129,8 @@ export class TsGdProjectClass {
   }
 }
 
-export const makeTsGdProject = async (tsgdPath: string) => {
+export const makeTsGdProject = async () => {
+  const { tsgdPath } = getTsgdPath()
   const initialFiles: string[] = []
 
   let addFn!: (path: string) => void
@@ -137,7 +153,7 @@ export const makeTsGdProject = async (tsgdPath: string) => {
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(tsgdPath, watcher, initialFiles)
+  return new TsGdProjectClass(watcher, initialFiles)
 }
 
 const shouldIncludePath = (path: string): boolean => {
@@ -159,13 +175,13 @@ const shouldIncludePath = (path: string): boolean => {
     return true
   }
 
-  if (path.endsWith(".ts")) {
-    return true
-  }
-
   // Note ordering (re: .ts)
   if (path.endsWith(".d.ts")) {
     return false
+  }
+
+  if (path.endsWith(".ts")) {
+    return true
   }
 
   if (path.endsWith(".tscn")) {
@@ -177,4 +193,35 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   return false
+}
+
+const getTsgdPath = () => {
+  let verbose = false
+  const inputPath = process.argv[2]
+  let tsgdPathWithFilename: string
+  let tsgdPath: string
+
+  if (!inputPath) {
+    console.error(
+      "Please specify a tsgd.json file on the command line. Thanks!"
+    )
+    process.exit(0)
+  }
+
+  if (inputPath.startsWith("/")) {
+    // absolute path
+
+    tsgdPathWithFilename = inputPath
+  } else if (inputPath.startsWith(".")) {
+    // some sort of relative path, so resolve it
+
+    tsgdPathWithFilename = path.join(process.execPath, inputPath)
+  } else {
+    console.error("That appears to be an invalid path.")
+    process.exit(0)
+  }
+
+  tsgdPath = path.dirname(tsgdPathWithFilename)
+
+  return { tsgdPath, tsgdPathWithFilename }
 }
