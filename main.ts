@@ -39,10 +39,8 @@ import { buildNodePathsTypeForScript } from "./build_paths_for_node"
 import { buildSceneImports } from "./build_scene_imports"
 import { makeTsGdProject, TsGdProjectClass } from "./project/project"
 
-let verbose = false
 const inputPath = process.argv[2]
 let tsgdPathWithFilename: string
-let project: TsGdProjectClass // needs to be initialized async
 
 if (!inputPath) {
   console.error("Please specify a tsgd.json file on the command line. Thanks!")
@@ -145,7 +143,8 @@ declare type AssetPath = keyof AssetType;
 }
 
 const main = async () => {
-  let project = await makeTsGdProject()
+  let project = await makeTsGdProject(watchProgram)
+
   const start = new Date().getTime()
 
   buildAssetPathsType(project)

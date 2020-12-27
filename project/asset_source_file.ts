@@ -1,4 +1,5 @@
 import fs from "fs"
+import ts from "typescript"
 import path from "path"
 import { watchProgram } from "../main"
 import { parseNode } from "../parse_node"
@@ -81,12 +82,22 @@ export class AssetSourceFile extends BaseAsset {
     return this.fsPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
-  compile(): void {
-    const sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+  async compile(): Promise<void> {
+    let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
 
     if (!sourceFileAst) {
       console.error("invalid path to source file!")
       process.exit()
+    }
+
+    // Since we use chokidar but TS uses something else to monitor files, sometimes
+    // we can race ahead of the TS compiler. This is a hack to wait for them to
+    // catch up with us.
+    while (
+      fs.readFileSync(this.fsPath, "utf-8") !== sourceFileAst.getFullText()
+    ) {
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
     let id = 0

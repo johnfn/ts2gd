@@ -1,5 +1,6 @@
 import chokidar from "chokidar"
 import path from "path"
+import ts from "typescript"
 
 import { AssetGodotClass as GodotFile } from "./asset_godot_class"
 import { AssetGodotScene } from "./asset_godot_scene"
@@ -52,7 +53,13 @@ export class TsGdProjectClass {
 
   godotDefsPath: string
 
-  constructor(watcher: chokidar.FSWatcher, initialFilePaths: string[]) {
+  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+
+  constructor(
+    watcher: chokidar.FSWatcher,
+    initialFilePaths: string[],
+    program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+  ) {
     // Initial set up
 
     const { tsgdPath, tsgdPathWithFilename } = getTsgdPath()
@@ -60,6 +67,7 @@ export class TsGdProjectClass {
     TsGdProjectClass.tsgdPath = tsgdPath
     TsGdProjectClass.tsgdPathWithFilename = tsgdPathWithFilename
     this.tsgdJson = new TsGdJson()
+    this.program = program
     this.godotDefsPath = path.join(tsgdPath, "godot_defs")
 
     // Parse assets
@@ -121,7 +129,8 @@ export class TsGdProjectClass {
           return
         }
 
-        console.log("-->", path)
+        console.log("Recompiling", path)
+
         if (changedAsset instanceof AssetSourceFile) {
           changedAsset.compile()
         }
@@ -156,7 +165,9 @@ export class TsGdProjectClass {
   }
 }
 
-export const makeTsGdProject = async () => {
+export const makeTsGdProject = async (
+  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+) => {
   const { tsgdPath } = getTsgdPath()
   const initialFiles: string[] = []
 
@@ -180,7 +191,7 @@ export const makeTsGdProject = async () => {
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(watcher, initialFiles)
+  return new TsGdProjectClass(watcher, initialFiles, program)
 }
 
 const shouldIncludePath = (path: string): boolean => {

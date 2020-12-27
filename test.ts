@@ -64,6 +64,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     genUniqueName,
     project: {
       assets: [],
+      program: undefined as any,
       godotDefsPath: "",
       compileAllSourceFiles: () => {},
       mainScene: {
