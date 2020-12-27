@@ -89,10 +89,10 @@ script.type=${script.type}
 `)
       }
 
-      pathToImport[path] = `import("${associatedClass.tsFullPath.slice(
+      pathToImport[path] = `import("${associatedClass.fsPath.slice(
         0,
         -".ts".length
-      )}").${script.type},`
+      )}").${script.type}`
     } else {
       pathToImport[path] = node.type
     }
@@ -108,7 +108,7 @@ ${Object.entries(pathToImport)
   result += `
   
 import ${className} from './../${project.tsgdJson.sourceTsPath}/${path
-    .basename(script.tsFullPath)
+    .basename(script.fsPath)
     .slice(0, -".ts".length)}'
 
 declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {

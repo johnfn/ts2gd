@@ -1,5 +1,4 @@
 import { AssetSourceFile } from "./asset_source_file"
-import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
 export class AssetGodotClass {
@@ -31,7 +30,7 @@ export class AssetGodotClass {
   tsImportName(): string {
     const sourceFile = this.sourceFile()
 
-    return `import('${sourceFile.tsFullPath.slice(0, -".ts".length)}').${
+    return `import('${sourceFile.fsPath.slice(0, -".ts".length)}').${
       sourceFile.className
     }`
   }

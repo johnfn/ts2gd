@@ -12,7 +12,7 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
       continue
     }
     const sourceFile = project.sourceFiles.find(
-      (sf) => sf.fsPath === sceneScript.fsPath
+      (sf) => sf.gdPath === sceneScript.fsPath
     )
 
     if (!sourceFile) {
@@ -22,7 +22,7 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
     result += `export const ${path.basename(
       scene.fsPath,
       ".tscn"
-    )}Tscn: PackedScene<import('${sourceFile.tsFullPath.slice(
+    )}Tscn: PackedScene<import('${sourceFile.fsPath.slice(
       0,
       -".ts".length
     )}').${sourceFile.className}>\n`

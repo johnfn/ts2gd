@@ -47,9 +47,11 @@ export class GodotProjectFile {
     resPath: string
     fsPath: string
   }
+  fsPath: string
 
   constructor(path: string) {
     this.rawConfig = parseGodotConfigFile(path) as any
+    this.fsPath = path
 
     const mainSceneResPath = this.rawConfig.application["run/main_scene"]
     this.autoloads = Object.values(this.rawConfig.autoload).map((x) => ({

@@ -113,12 +113,20 @@ export class TsGdProjectClass {
 
   monitor(watcher: chokidar.FSWatcher) {
     watcher
-      .on("add", (path) => {
-        console.log("add", path)
-        // this.add(this.getAsset(path))
+      .on("add", (path) => {})
+      .on("change", (path) => {
+        const changedAsset = this.assets.find((asset) => asset.fsPath === path)
+
+        if (!changedAsset) {
+          return
+        }
+
+        console.log("-->", path)
+        if (changedAsset instanceof AssetSourceFile) {
+          changedAsset.compile()
+        }
       })
-      .on("change", (path) => console.log("updated", path))
-      .on("unlink", (path) => console.log("updated", path))
+      .on("unlink", (path) => console.log("deleted", path))
   }
 
   add(asset: string) {
@@ -129,6 +137,14 @@ export class TsGdProjectClass {
     //   this.classes.push(new GodotClass(asset.path));
     // }
     // console.log(this)
+  }
+
+  compileAllSourceFiles() {
+    for (const asset of this.assets) {
+      if (asset instanceof AssetSourceFile) {
+        asset.compile()
+      }
+    }
   }
 
   static ResPathToFsPath(resPath: string) {
@@ -180,6 +196,10 @@ const shouldIncludePath = (path: string): boolean => {
 
   if (path.includes(".git")) {
     return false
+  }
+
+  if (path.endsWith(".ttf")) {
+    return true
   }
 
   if (path.endsWith(".gd")) {

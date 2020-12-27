@@ -1,5 +1,7 @@
 import fs from "fs"
 import path from "path"
+import { watchProgram } from "../main"
+import { parseNode } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 
 import { TsGdProjectClass } from "./project"
@@ -11,10 +13,10 @@ export class AssetSourceFile extends BaseAsset {
   resPath: string
 
   /** Like main.gd */
-  fsPath: string
+  gdPath: string
 
   /** Like /Users/johnfn/GodotProject/src/main.ts */
-  tsFullPath: string
+  fsPath: string
 
   /** Like ./src/main.ts */
   tsRelativePath: string
@@ -53,17 +55,16 @@ export class AssetSourceFile extends BaseAsset {
 
     this.className = className
     this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
-    this.fsPath = gdPath
-    this.tsFullPath = sourceFilePath
+    this.gdPath = gdPath
+    this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
       TsGdProjectClass.tsgdPath.length + 1
     )
     this.project = project
 
-    this._tsImportName = `import('${this.tsFullPath.slice(
-      0,
-      -".ts".length
-    )}').${this.className}`
+    this._tsImportName = `import('${this.fsPath.slice(0, -".ts".length)}').${
+      this.className
+    }`
   }
 
   tsImportName(): string {
@@ -78,5 +79,36 @@ export class AssetSourceFile extends BaseAsset {
 
   getEnumPath(enumName: string): string {
     return this.fsPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
+  }
+
+  compile(): void {
+    const sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+
+    if (!sourceFileAst) {
+      console.error("invalid path to source file!")
+      process.exit()
+    }
+
+    let id = 0
+    const genUniqueName = () => `func${++id}`
+
+    const result = parseNode(sourceFileAst, {
+      indent: "",
+      isConstructor: false,
+      genUniqueName,
+      project: this.project,
+      mostRecentControlStructureIsSwitch: false,
+      isAutoload: false,
+      program: watchProgram.getProgram().getProgram(),
+      usages: new Map(),
+    })
+
+    // TODO: Only do this once per program run max!
+    fs.mkdirSync(path.dirname(this.gdPath), { recursive: true })
+    fs.writeFileSync(this.gdPath, result.content)
+
+    for (const { content, name } of result.enums ?? []) {
+      fs.writeFileSync(this.getEnumPath(name), content)
+    }
   }
 }

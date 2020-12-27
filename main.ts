@@ -32,14 +32,12 @@
 import ts from "typescript"
 import fs from "fs"
 import path from "path"
-
 import * as process from "process"
+
 import { generateGodotLibraryDefinitions } from "./generate_library"
-import { parseNode } from "./parse_node"
 import { buildNodePathsTypeForScript } from "./build_paths_for_node"
 import { buildSceneImports } from "./build_scene_imports"
 import { makeTsGdProject, TsGdProjectClass } from "./project/project"
-import { AssetSourceFile } from "./project/asset_source_file"
 
 let verbose = false
 const inputPath = process.argv[2]
@@ -111,8 +109,6 @@ function reportDiagnostic(diagnostic: ts.Diagnostic) {
   // console.log(diagnostic.file?.fileName, diagnostic.start);
 }
 
-export let program: ts.Program
-
 const host = ts.createWatchCompilerHost(
   configPath,
   {},
@@ -121,84 +117,16 @@ const host = ts.createWatchCompilerHost(
   reportDiagnostic,
   reportWatchStatusChanged
 )
-const watchProgram = ts.createWatchProgram(host)
-program = watchProgram.getProgram().getProgram() // This API i tell you...
+export const watchProgram = ts.createWatchProgram(host)
 const configFile = ts.readJsonConfigFile(configPath, ts.sys.readFile)
 const opt = ts.parseConfigFileTextToJson(configPath, configFile.text)
 
 opt.config.useCaseSensitiveFileNames = false
 
 function reportWatchStatusChanged(diagnostic: ts.Diagnostic, newLine: string) {
-  if (!program) {
+  if (!watchProgram) {
     return
   }
-
-  const sourcePath = diagnostic.file?.fileName
-
-  if (sourcePath && !sourcePath.endsWith(".d.ts") && project) {
-    compile(
-      project.sourceFiles.find((file) => file.tsFullPath === sourcePath)!,
-      project
-    )
-  }
-}
-
-function compile(sourceFile: AssetSourceFile, project: TsGdProjectClass): void {
-  const source = watchProgram.getProgram().getSourceFile(sourceFile.tsFullPath)
-
-  if (!source) {
-    console.error("invalid path to source file!")
-    process.exit()
-  }
-
-  let id = 0
-  const genUniqueName = () => `func${++id}`
-
-  const result = parseNode(source, {
-    indent: "",
-    isConstructor: false,
-    genUniqueName,
-    project,
-    mostRecentControlStructureIsSwitch: false,
-    isAutoload: false,
-    program: program,
-    usages: new Map(),
-  })
-
-  fs.mkdirSync(path.dirname(sourceFile.fsPath), { recursive: true })
-  fs.writeFileSync(sourceFile.fsPath, result.content)
-
-  for (const { content, name } of result.enums ?? []) {
-    fs.writeFileSync(sourceFile.getEnumPath(name), content)
-  }
-
-  if (verbose) console.log("[write]:", sourceFile.fsPath)
-}
-
-async function* walkCo(
-  dir: string
-): AsyncGenerator<string, undefined, undefined> {
-  for await (const entry of await fs.promises.opendir(dir)) {
-    const entryPath = path.join(dir, entry.name)
-
-    if (entry.isDirectory()) {
-      yield* walkCo(entryPath)
-    } else if (entry.isFile()) {
-      yield entryPath
-    }
-  }
-
-  return
-}
-
-async function walk(dir: string): Promise<string[]> {
-  const result: string[] = []
-
-  for await (const f of walkCo(dir)) {
-    result.push(f)
-  }
-
-  return result
 }
 
 async function buildAssetPathsType(project: TsGdProjectClass) {
@@ -216,35 +144,9 @@ declare type AssetPath = keyof AssetType;
   fs.writeFileSync(destPath, assetFileContents)
 }
 
-export type ParsedSourceFile = {
-  /** Path like res://src/MyFile.gd */
-  resPath: string
-
-  /** Path like /Users/johnfn/MyGame/src/file.gd */
-  gdPath: string
-
-  /** Name of the class declared in the source file */
-  className: string
-
-  /** Path like /Users/johnfn/MyGame/src/file.ts */
-  tsFullPath: string
-
-  /** Path like src/file.ts, relative to tsgd.json */
-  tsRelativePath: string
-
-  /** Unused? */
-  tsFileContent: string
-
-  /** Is this an autoload class? */
-  isAutoload: boolean
-}
-
 const main = async () => {
   let project = await makeTsGdProject()
-
   const start = new Date().getTime()
-
-  // project = await getProjectProperties()
 
   buildAssetPathsType(project)
 
@@ -255,28 +157,7 @@ const main = async () => {
   buildSceneImports(project)
   generateGodotLibraryDefinitions(project)
 
-  for (const sourceFile of project.sourceFiles) {
-    compile(sourceFile, project)
-
-    fs.watchFile(
-      sourceFile.tsFullPath,
-      { persistent: true, interval: 250 },
-      (curr, prev) => {
-        if (+curr.mtime <= +prev.mtime) {
-          return
-        }
-
-        const compileTs = new Date().getTime()
-
-        compile(sourceFile, project)
-
-        console.log(
-          `Compiled ${sourceFile.tsRelativePath} in`,
-          (new Date().getTime() - compileTs) / 1000 + "s"
-        )
-      }
-    )
-  }
+  project.compileAllSourceFiles()
 
   console.log(
     "Initial compilation complete in",

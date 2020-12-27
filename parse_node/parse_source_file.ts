@@ -32,7 +32,7 @@ export const parseSourceFile = (
 ): ParseNodeType => {
   const { statements } = node
   const sourceInfo = props.project.sourceFiles.find(
-    (file) => file.tsFullPath === node.fileName
+    (file) => file.fsPath === node.fileName
   )
 
   if (!sourceInfo) {

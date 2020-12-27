@@ -52,7 +52,7 @@ export const getImportResPathForEnum = (
   const sourceFile = decl.getSourceFile()
 
   const importedSourceFile = props.project.sourceFiles.find(
-    (sf) => sf.tsFullPath === sourceFile.fileName
+    (sf) => sf.fsPath === sourceFile.fileName
   )
 
   if (!importedSourceFile) {
@@ -134,7 +134,7 @@ export const parseImportDeclaration = (
         })
       } else {
         const importedSourceFile = props.project.sourceFiles.find(
-          (sf) => sf.tsFullPath === pathToImportedTs
+          (sf) => sf.fsPath === pathToImportedTs
         )
 
         if (!importedSourceFile) {
