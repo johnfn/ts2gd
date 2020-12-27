@@ -36,9 +36,9 @@ export const parseSourceFile = (
   )
 
   if (!sourceInfo) {
-    throw new Error(`Error!
-  Can't find associated sourceInfo
-    for ${node.fileName}`)
+    return {
+      content: "",
+    }
   }
 
   props.usages = utils.collectVariableUsage(node)

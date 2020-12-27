@@ -75,6 +75,10 @@ export class TsGdProjectClass {
     const initialAssets = initialFilePaths.map((path) => this.getAsset(path))
 
     for (const asset of initialAssets) {
+      if (asset === null) {
+        continue
+      }
+
       if (asset instanceof BaseAsset) {
         this.assets.push(asset)
       }
@@ -103,9 +107,17 @@ export class TsGdProjectClass {
     this.monitor(watcher)
   }
 
-  getAsset(path: string) {
+  getAsset(
+    path: string
+  ):
+    | AssetSourceFile
+    | GodotFile
+    | AssetGodotScene
+    | AssetFont
+    | GodotProjectFile
+    | null {
     if (path.endsWith(".ts")) {
-      return new AssetSourceFile(path, this)
+      return AssetSourceFile.Create(path, this)
     } else if (path.endsWith(".gd")) {
       return new GodotFile(path, this)
     } else if (path.endsWith(".tscn")) {
@@ -121,31 +133,54 @@ export class TsGdProjectClass {
 
   monitor(watcher: chokidar.FSWatcher) {
     watcher
-      .on("add", (path) => {})
-      .on("change", (path) => {
-        const changedAsset = this.assets.find((asset) => asset.fsPath === path)
-
-        if (!changedAsset) {
-          return
-        }
-
-        console.log("Recompiling", path)
-
-        if (changedAsset instanceof AssetSourceFile) {
-          changedAsset.compile()
-        }
-      })
-      .on("unlink", (path) => console.log("deleted", path))
+      .on("add", (path) => this.onAddAsset(path))
+      .on("change", (path) => this.onChangeAsset(path))
+      .on("unlink", (path) => this.onRemoveAsset(path))
   }
 
-  add(asset: string) {
-    // if (asset.type === "typescript") {
-    //   this.sourceFiles.push(new TsGdSourceFile(asset.path, this));
-    // }
-    // if (asset.type === "godotscript") {
-    //   this.classes.push(new GodotClass(asset.path));
-    // }
-    // console.log(this)
+  onAddAsset(path: string) {
+    const newAsset = this.getAsset(path)
+
+    if (newAsset instanceof AssetSourceFile) {
+      newAsset.compile()
+    }
+  }
+
+  onChangeAsset(path: string) {
+    let changedAsset = this.assets.find((asset) => asset.fsPath === path)
+
+    // NOTE: The initial add can fail (e.g. a TS file w/o a class)
+    // so we need to readd, maybe.
+    // TODO: The initial add shouldn't fail.
+    if (!changedAsset) {
+      const asset = this.getAsset(path)
+
+      if (asset && asset instanceof BaseAsset) {
+        this.assets.push(asset)
+
+        changedAsset = asset
+      } else {
+        return
+      }
+    }
+
+    if (changedAsset instanceof AssetSourceFile) {
+      changedAsset.compile()
+    }
+  }
+
+  onRemoveAsset(path: string) {
+    const changedAsset = this.assets.find((asset) => asset.fsPath === path)
+
+    if (!changedAsset) {
+      return
+    }
+
+    console.log("Deleting", path)
+
+    if (changedAsset instanceof AssetSourceFile) {
+      changedAsset.destroy()
+    }
   }
 
   compileAllSourceFiles() {

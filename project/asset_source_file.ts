@@ -1,8 +1,7 @@
 import fs from "fs"
-import ts from "typescript"
 import path from "path"
 import { watchProgram } from "../main"
-import { parseNode } from "../parse_node"
+import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 
 import { TsGdProjectClass } from "./project"
@@ -27,7 +26,7 @@ export class AssetSourceFile extends BaseAsset {
   // Don't use this!
   _tsImportName: string
 
-  constructor(sourceFilePath: string, project: TsGdProjectClass) {
+  private constructor(sourceFilePath: string, project: TsGdProjectClass) {
     super()
 
     let tsFileContent = fs.readFileSync(sourceFilePath, "utf-8")
@@ -68,6 +67,17 @@ export class AssetSourceFile extends BaseAsset {
     }`
   }
 
+  public static Create(
+    sourceFilePath: string,
+    project: TsGdProjectClass
+  ): AssetSourceFile | null {
+    try {
+      return new AssetSourceFile(sourceFilePath, project)
+    } catch (e) {
+      return null
+    }
+  }
+
   tsImportName(): string {
     return this._tsImportName
   }
@@ -79,8 +89,10 @@ export class AssetSourceFile extends BaseAsset {
   }
 
   getEnumPath(enumName: string): string {
-    return this.fsPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
+    return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
+
+  private _lastCompilationResult: ParseNodeType | undefined = undefined
 
   async compile(): Promise<void> {
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
@@ -114,11 +126,25 @@ export class AssetSourceFile extends BaseAsset {
       usages: new Map(),
     })
 
+    this._lastCompilationResult = result
+
     // TODO: Only do this once per program run max!
     fs.mkdirSync(path.dirname(this.gdPath), { recursive: true })
     fs.writeFileSync(this.gdPath, result.content)
 
     for (const { content, name } of result.enums ?? []) {
+      fs.writeFileSync(this.getEnumPath(name), content)
+    }
+  }
+
+  destroy() {
+    fs.rmSync(this.gdPath)
+
+    if (!this._lastCompilationResult) {
+      return
+    }
+
+    for (const { content, name } of this._lastCompilationResult.enums ?? []) {
       fs.writeFileSync(this.getEnumPath(name), content)
     }
   }
