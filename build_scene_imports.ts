@@ -19,13 +19,17 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
       continue
     }
 
+    if (!sourceFile.className()) {
+      continue
+    }
+
     result += `export const ${path.basename(
       scene.fsPath,
       ".tscn"
     )}Tscn: PackedScene<import('${sourceFile.fsPath.slice(
       0,
       -".ts".length
-    )}').${sourceFile.className}>\n`
+    )}').${sourceFile.className()}>\n`
   }
 
   const destPath = path.join(project.godotDefsPath, "@scenes.d.ts")

@@ -117,7 +117,7 @@ export class TsGdProjectClass {
     | GodotProjectFile
     | null {
     if (path.endsWith(".ts")) {
-      return AssetSourceFile.Create(path, this)
+      return new AssetSourceFile(path, this)
     } else if (path.endsWith(".gd")) {
       return new GodotFile(path, this)
     } else if (path.endsWith(".tscn")) {

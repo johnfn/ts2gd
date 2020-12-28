@@ -1,14 +1,12 @@
 import fs from "fs"
 import path from "path"
+
 import { watchProgram } from "../main"
 import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
-
 import { TsGdProjectClass } from "./project"
 
 export class AssetSourceFile extends BaseAsset {
-  className: string
-
   /** Like res://src/main.gd */
   resPath: string
 
@@ -23,18 +21,9 @@ export class AssetSourceFile extends BaseAsset {
 
   project: TsGdProjectClass
 
-  // Don't use this!
-  _tsImportName: string
-
-  private constructor(sourceFilePath: string, project: TsGdProjectClass) {
+  constructor(sourceFilePath: string, project: TsGdProjectClass) {
     super()
 
-    let tsFileContent = fs.readFileSync(sourceFilePath, "utf-8")
-    // TODO: this is a bit brittle
-    let classNameMatch = [
-      ...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /gm),
-    ]
-    let className = ""
     let gdPath = path.join(
       project.tsgdJson.destGdPath,
       sourceFilePath.slice(
@@ -43,17 +32,6 @@ export class AssetSourceFile extends BaseAsset {
       ) + ".gd"
     )
 
-    if (classNameMatch && classNameMatch.length === 1) {
-      className = classNameMatch[0][1]
-    } else {
-      if (classNameMatch.length > 1) {
-        throw new Error(`Found too many exported classes in ${sourceFilePath}`)
-      } else {
-        throw new Error(`Couldn't find an exported class in ${sourceFilePath}`)
-      }
-    }
-
-    this.className = className
     this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
     this.gdPath = gdPath
     this.fsPath = sourceFilePath
@@ -61,25 +39,48 @@ export class AssetSourceFile extends BaseAsset {
       TsGdProjectClass.tsgdPath.length + 1
     )
     this.project = project
-
-    this._tsImportName = `import('${this.fsPath.slice(0, -".ts".length)}').${
-      this.className
-    }`
   }
 
-  public static Create(
-    sourceFilePath: string,
-    project: TsGdProjectClass
-  ): AssetSourceFile | null {
-    try {
-      return new AssetSourceFile(sourceFilePath, project)
-    } catch (e) {
+  // TODO: Fix up test.ts
+  // DONT USE THIS!
+  _cachedClassName: string | null = null
+
+  className(): string | null {
+    if (this._cachedClassName) {
+      return this._cachedClassName
+    }
+
+    let tsFileContent = fs.readFileSync(this.fsPath, "utf-8")
+    // TODO: this is a bit brittle
+    let classNameMatch = [
+      ...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /gm),
+    ]
+
+    let className: string
+
+    if (classNameMatch && classNameMatch.length === 1) {
+      className = classNameMatch[0][1]
+    } else {
+      if (classNameMatch.length > 1) {
+        throw new Error(`Found too many exported classes in ${this.fsPath}`)
+      } else {
+        return null
+      }
+    }
+
+    this._cachedClassName = className
+
+    return this._cachedClassName
+  }
+
+  tsType(): string | null {
+    const className = this.className()
+
+    if (className) {
+      return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
+    } else {
       return null
     }
-  }
-
-  tsImportName(): string {
-    return this._tsImportName
   }
 
   isAutoload(): boolean {
@@ -92,7 +93,9 @@ export class AssetSourceFile extends BaseAsset {
     return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
-  private _lastCompilationResult: ParseNodeType | undefined = undefined
+  // TODO: Fix up test.ts
+  // DONT USE THIS!
+  _lastCompilationResult: ParseNodeType | undefined = undefined
 
   async compile(): Promise<void> {
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)

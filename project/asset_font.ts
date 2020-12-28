@@ -14,7 +14,7 @@ export class AssetFont extends BaseAsset {
     this.project = project
   }
 
-  tsImportName(): string {
+  tsType(): string {
     return "DynamicFontData"
   }
 }

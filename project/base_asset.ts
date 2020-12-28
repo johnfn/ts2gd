@@ -3,5 +3,5 @@ export abstract class BaseAsset {
 
   abstract fsPath: string
 
-  abstract tsImportName(): string
+  abstract tsType(): string | null
 }

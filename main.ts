@@ -1,4 +1,3 @@
-// TODO: Remove TsGdProject; SourceFile
 // TODO: refactor resPath and tsPath and etc
 
 // TODO: change_scene should accept a AssetPath filtered on tscn
@@ -131,7 +130,8 @@ async function buildAssetPathsType(project: TsGdProjectClass) {
   const assetFileContents = `
 declare type AssetType = {
 ${project.assets
-  .map((obj) => `  '${obj.resPath}': ${obj.tsImportName()}`)
+  .filter((obj) => obj.tsType() !== null)
+  .map((obj) => `  '${obj.resPath}': ${obj.tsType()}`)
   .join(",\n")}
 }
 

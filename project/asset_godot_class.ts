@@ -1,37 +1,54 @@
 import { AssetSourceFile } from "./asset_source_file"
+import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
-export class AssetGodotClass {
+export class AssetGodotClass extends BaseAsset {
   resPath: string
   fsPath: string
   project: TsGdProjectClass
+  isEnum: boolean
 
   constructor(path: string, project: TsGdProjectClass) {
+    super()
+
     this.fsPath = path
     this.resPath = TsGdProjectClass.FsPathToResPath(this.fsPath)
     this.project = project
+    this.isEnum = false
+
+    if (this.fsPath.endsWith("_enum.gd")) {
+      this.isEnum = true
+    }
   }
 
-  sourceFile(): AssetSourceFile {
+  sourceFile(): AssetSourceFile | null {
     const result = this.project.sourceFiles.find(
       (file) => file.resPath === this.resPath
     )
 
     if (!result) {
-      console.log("Can't find a source file for")
-      console.log(`  => ${this.fsPath}`)
-
-      throw new Error("Can't recover from this")
+      return null
     }
 
     return result
   }
 
-  tsImportName(): string {
+  tsType(): string | null {
     const sourceFile = this.sourceFile()
 
-    return `import('${sourceFile.fsPath.slice(0, -".ts".length)}').${
-      sourceFile.className
-    }`
+    if (!sourceFile) {
+      return null
+    }
+
+    const className = sourceFile.className()
+
+    if (!className) {
+      return null
+    }
+
+    return `import('${sourceFile.fsPath.slice(
+      0,
+      -".ts".length
+    )}').${sourceFile.className()}`
   }
 }

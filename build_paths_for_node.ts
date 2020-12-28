@@ -39,7 +39,12 @@ export const buildNodePathsTypeForScript = (
   // For every potential relative path, validate that it can be found
   // in each instantiated node.
 
-  const className = script.className
+  const className = script.className()
+
+  if (!className) {
+    return []
+  }
+
   let commonRelativePaths: {
     path: string
     node: GodotNode
@@ -80,7 +85,7 @@ export const buildNodePathsTypeForScript = (
 
     if (script) {
       const associatedClass = project.sourceFiles.find((source) => {
-        return source.className === script.type
+        return source.className() === script.type
       })!
 
       if (!associatedClass) {
@@ -129,5 +134,6 @@ declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
     project.godotDefsPath,
     `@node_paths_${className}.d.ts`
   )
+
   fs.writeFileSync(destPath, result)
 }

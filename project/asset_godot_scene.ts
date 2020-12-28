@@ -143,7 +143,7 @@ export class AssetGodotScene extends BaseAsset {
   }
 
   /** e.g. PackedScene<import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy> */
-  tsImportName(): string {
+  tsType(): string | null {
     const rootScript = this.rootNode.getScript(this.project.godotScenes)
 
     if (rootScript) {
@@ -157,10 +157,16 @@ export class AssetGodotScene extends BaseAsset {
         )
       }
 
+      const className = rootSourceFile.className()
+
+      if (!className) {
+        return null
+      }
+
       return `PackedScene<import('${rootSourceFile.fsPath.slice(
         0,
         -".ts".length
-      )}').${rootSourceFile.className}>`
+      )}').${rootSourceFile.className()}>`
     } else {
       return `PackedScene<${this.rootNode.type}>`
     }
