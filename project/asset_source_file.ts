@@ -41,6 +41,10 @@ export class AssetSourceFile extends BaseAsset {
     this.project = project
   }
 
+  reload() {
+    this._cachedClassName = null
+  }
+
   // TODO: Fix up test.ts
   // DONT USE THIS!
   _cachedClassName: string | null = null

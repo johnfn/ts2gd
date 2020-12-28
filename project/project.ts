@@ -147,24 +147,12 @@ export class TsGdProjectClass {
   }
 
   onChangeAsset(path: string) {
+    console.log("Change:\t", path)
+
     let changedAsset = this.assets.find((asset) => asset.fsPath === path)
 
-    // NOTE: The initial add can fail (e.g. a TS file w/o a class)
-    // so we need to readd, maybe.
-    // TODO: The initial add shouldn't fail.
-    if (!changedAsset) {
-      const asset = this.getAsset(path)
-
-      if (asset && asset instanceof BaseAsset) {
-        this.assets.push(asset)
-
-        changedAsset = asset
-      } else {
-        return
-      }
-    }
-
     if (changedAsset instanceof AssetSourceFile) {
+      changedAsset.reload()
       changedAsset.compile()
     }
   }
@@ -176,7 +164,7 @@ export class TsGdProjectClass {
       return
     }
 
-    console.log("Deleting", path)
+    console.log("Delete:\t", path)
 
     if (changedAsset instanceof AssetSourceFile) {
       changedAsset.destroy()
