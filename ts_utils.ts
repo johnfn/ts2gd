@@ -175,6 +175,7 @@ export function getGodotType(
   }
 
   // Enum type names are actually not imported!
+  // TODO: They are now!
 
   // if (isEnumType(typecheckerInferredType)) {
   //   return tsTypeName;

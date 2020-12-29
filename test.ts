@@ -83,7 +83,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       godotFonts: [],
       godotProject: {
         fsPath: "",
-        autoloads: [],
+        autoloads: [{ resPath: "autoload.ts" }],
         mainScene: {} as any,
         rawConfig: 0 as any,
       },
@@ -98,8 +98,8 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       sourceFiles: [
         {
           className: () => "",
-          fsPath: "",
-          isAutoload: () => false,
+          fsPath: "autoload.ts",
+          isAutoload: () => true,
           resPath: "",
           tsRelativePath: "",
           getEnumPath: () => "",
@@ -110,11 +110,12 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           tsType: () => "",
           compile: async () => {},
           gdPath: "",
+          reload: () => {},
         },
         {
           className: () => "",
-          fsPath: "",
-          isAutoload: () => true,
+          fsPath: "test.ts",
+          isAutoload: () => false,
           resPath: "",
           gdPath: "",
           tsRelativePath: "",
@@ -125,6 +126,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           project: {} as any,
           tsType: () => "",
           compile: async () => {},
+          reload: () => {},
         },
       ],
     },
@@ -331,12 +333,10 @@ export const runTests = async () => {
       }
     }
 
+    const failureCount = failures.filter((x) => !x.expectFail).length
+
     console.log("\n")
-    console.log(
-      "Failed",
-      failures.filter((x) => !x.expectFail).length,
-      "tests."
-    )
+    console.log("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
   }
 }
 

@@ -35,14 +35,8 @@ export const parseSourceFile = (
     (file) => file.fsPath === node.fileName
   )
 
-  if (!sourceInfo) {
-    return {
-      content: "",
-    }
-  }
-
   props.usages = utils.collectVariableUsage(node)
-  props.isAutoload = sourceInfo.isAutoload()
+  props.isAutoload = sourceInfo?.isAutoload() ?? false
 
   const classDecl = statements.find(
     (statement) => statement.kind === SyntaxKind.ClassDeclaration

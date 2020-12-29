@@ -38,92 +38,95 @@ import { buildNodePathsTypeForScript } from "./build_paths_for_node"
 import { buildSceneImports } from "./build_scene_imports"
 import { makeTsGdProject, TsGdProjectClass } from "./project/project"
 
-const inputPath = process.argv[2]
-let tsgdPathWithFilename: string
+const setup = () => {
+  const inputPath = process.argv[2]
+  let tsgdPathWithFilename: string
 
-if (!inputPath) {
-  console.error("Please specify a tsgd.json file on the command line. Thanks!")
-  process.exit(0)
-}
+  if (!inputPath) {
+    throw new Error(
+      "Please specify a tsgd.json file on the command line. Thanks!"
+    )
+  }
 
-if (inputPath.startsWith("/")) {
-  // absolute path
+  if (inputPath.startsWith("/")) {
+    // absolute path
 
-  tsgdPathWithFilename = inputPath
-} else if (inputPath.startsWith(".")) {
-  // some sort of relative path, so resolve it
+    tsgdPathWithFilename = inputPath
+  } else if (inputPath.startsWith(".")) {
+    // some sort of relative path, so resolve it
 
-  tsgdPathWithFilename = path.join(process.execPath, inputPath)
-} else {
-  console.error("That appears to be an invalid path.")
-  process.exit(0)
-}
+    tsgdPathWithFilename = path.join(process.execPath, inputPath)
+  } else {
+    console.error("That appears to be an invalid path.")
+    process.exit(0)
+  }
 
-const configPath = ts.findConfigFile(
-  path.dirname(tsgdPathWithFilename),
-  ts.sys.fileExists,
-  "tsconfig.json"
-)
-
-if (!configPath) {
-  console.error(
-    "tsconfig.json must be in the same folder as tsgd.json. Thanks!"
-  )
-  process.exit(0)
-}
-
-const formatHost: ts.FormatDiagnosticsHost = {
-  getCanonicalFileName: (path) => path,
-  getCurrentDirectory: ts.sys.getCurrentDirectory,
-  getNewLine: () => ts.sys.newLine,
-}
-
-function reportDiagnostic(diagnostic: ts.Diagnostic) {
-  const errorMessage = ts.flattenDiagnosticMessageText(
-    diagnostic.messageText,
-    formatHost.getNewLine()
+  const configPath = ts.findConfigFile(
+    path.dirname(tsgdPathWithFilename),
+    ts.sys.fileExists,
+    "tsconfig.json"
   )
 
-  // Quiet the errors which are not really errors.
-
-  if (
-    errorMessage.match(
-      /Operator '[+\-*/]=?' cannot be applied to types 'Vector[23]' and '(Vector[23]|number)'/
+  if (!configPath) {
+    console.error(
+      "tsconfig.json must be in the same folder as tsgd.json. Thanks!"
     )
-  ) {
-    return
+    process.exit(0)
   }
 
-  if (
-    errorMessage.match(
-      /The left-hand side of an 'in' expression must be of type/
+  const formatHost: ts.FormatDiagnosticsHost = {
+    getCanonicalFileName: (path) => path,
+    getCurrentDirectory: ts.sys.getCurrentDirectory,
+    getNewLine: () => ts.sys.newLine,
+  }
+
+  function reportDiagnostic(diagnostic: ts.Diagnostic) {
+    const errorMessage = ts.flattenDiagnosticMessageText(
+      diagnostic.messageText,
+      formatHost.getNewLine()
     )
-  ) {
-    return
+
+    // Quiet the errors which are not really errors.
+
+    if (
+      errorMessage.match(
+        /Operator '[+\-*/]=?' cannot be applied to types 'Vector[23]' and '(Vector[23]|number)'/
+      )
+    ) {
+      return
+    }
+
+    if (
+      errorMessage.match(
+        /The left-hand side of an 'in' expression must be of type/
+      )
+    ) {
+      return
+    }
+
+    // console.error("Error", diagnostic.code, ":", errorMessage);
+    // console.log(diagnostic.file?.fileName, diagnostic.start);
   }
 
-  // console.error("Error", diagnostic.code, ":", errorMessage);
-  // console.log(diagnostic.file?.fileName, diagnostic.start);
-}
+  const host = ts.createWatchCompilerHost(
+    configPath,
+    {},
+    ts.sys,
+    ts.createEmitAndSemanticDiagnosticsBuilderProgram,
+    reportDiagnostic,
+    reportWatchStatusChanged
+  )
+  const watchProgram = ts.createWatchProgram(host)
+  const configFile = ts.readJsonConfigFile(configPath, ts.sys.readFile)
+  const opt = ts.parseConfigFileTextToJson(configPath, configFile.text)
+  opt.config.useCaseSensitiveFileNames = false
 
-const host = ts.createWatchCompilerHost(
-  configPath,
-  {},
-  ts.sys,
-  ts.createEmitAndSemanticDiagnosticsBuilderProgram,
-  reportDiagnostic,
-  reportWatchStatusChanged
-)
-export const watchProgram = ts.createWatchProgram(host)
-const configFile = ts.readJsonConfigFile(configPath, ts.sys.readFile)
-const opt = ts.parseConfigFileTextToJson(configPath, configFile.text)
+  function reportWatchStatusChanged(
+    diagnostic: ts.Diagnostic,
+    newLine: string
+  ) {}
 
-opt.config.useCaseSensitiveFileNames = false
-
-function reportWatchStatusChanged(diagnostic: ts.Diagnostic, newLine: string) {
-  if (!watchProgram) {
-    return
-  }
+  return watchProgram
 }
 
 async function buildAssetPathsType(project: TsGdProjectClass) {
@@ -143,6 +146,8 @@ declare type AssetPath = keyof AssetType;
 }
 
 const main = async () => {
+  const watchProgram = setup()
+
   let project = await makeTsGdProject(watchProgram)
 
   const start = new Date().getTime()
@@ -164,4 +169,6 @@ const main = async () => {
   )
 }
 
-main()
+if (process.argv[1] === "main.ts") {
+  main()
+}

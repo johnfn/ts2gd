@@ -1,7 +1,7 @@
 import fs from "fs"
+import ts from "typescript"
 import path from "path"
 
-import { watchProgram } from "../main"
 import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
@@ -101,7 +101,9 @@ export class AssetSourceFile extends BaseAsset {
   // DONT USE THIS!
   _lastCompilationResult: ParseNodeType | undefined = undefined
 
-  async compile(): Promise<void> {
+  async compile(
+    watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+  ): Promise<void> {
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
 
     if (!sourceFileAst) {

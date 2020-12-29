@@ -58,11 +58,11 @@ export class TsGdProjectClass {
   constructor(
     watcher: chokidar.FSWatcher,
     initialFilePaths: string[],
-    program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+    program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
+    tsgdPath: string,
+    tsgdPathWithFilename: string
   ) {
     // Initial set up
-
-    const { tsgdPath, tsgdPathWithFilename } = getTsgdPath()
 
     TsGdProjectClass.tsgdPath = tsgdPath
     TsGdProjectClass.tsgdPathWithFilename = tsgdPathWithFilename
@@ -142,7 +142,7 @@ export class TsGdProjectClass {
     const newAsset = this.getAsset(path)
 
     if (newAsset instanceof AssetSourceFile) {
-      newAsset.compile()
+      newAsset.compile(this.program)
     }
   }
 
@@ -153,7 +153,7 @@ export class TsGdProjectClass {
 
     if (changedAsset instanceof AssetSourceFile) {
       changedAsset.reload()
-      changedAsset.compile()
+      changedAsset.compile(this.program)
     }
   }
 
@@ -174,7 +174,7 @@ export class TsGdProjectClass {
   compileAllSourceFiles() {
     for (const asset of this.assets) {
       if (asset instanceof AssetSourceFile) {
-        asset.compile()
+        asset.compile(this.program)
       }
     }
   }
@@ -191,7 +191,7 @@ export class TsGdProjectClass {
 export const makeTsGdProject = async (
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 ) => {
-  const { tsgdPath } = getTsgdPath()
+  const { tsgdPath, tsgdPathWithFilename } = getTsgdPath()
   const initialFiles: string[] = []
 
   let addFn!: (path: string) => void
@@ -214,7 +214,13 @@ export const makeTsGdProject = async (
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(watcher, initialFiles, program)
+  return new TsGdProjectClass(
+    watcher,
+    initialFiles,
+    program,
+    tsgdPath,
+    tsgdPathWithFilename
+  )
 }
 
 const shouldIncludePath = (path: string): boolean => {
@@ -261,16 +267,14 @@ const shouldIncludePath = (path: string): boolean => {
 }
 
 const getTsgdPath = () => {
-  let verbose = false
   const inputPath = process.argv[2]
   let tsgdPathWithFilename: string
   let tsgdPath: string
 
   if (!inputPath) {
-    console.error(
+    throw new Error(
       "Please specify a tsgd.json file on the command line. Thanks!"
     )
-    process.exit(0)
   }
 
   if (inputPath.startsWith("/")) {
