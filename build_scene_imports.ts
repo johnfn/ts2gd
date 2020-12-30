@@ -5,15 +5,15 @@ import { TsGdProjectClass } from "./project/project"
 export const buildSceneImports = (project: TsGdProjectClass) => {
   let result = ``
 
-  for (const scene of project.godotScenes) {
-    const sceneScript = scene.rootNode.getScript(project.godotScenes)
+  for (const scene of project.godotScenes()) {
+    const sceneScript = scene.rootNode.getScript(project.godotScenes())
 
     if (!sceneScript) {
       continue
     }
-    const sourceFile = project.sourceFiles.find(
-      (sf) => sf.gdPath === sceneScript.fsPath
-    )
+    const sourceFile = project
+      .sourceFiles()
+      .find((sf) => sf.gdPath === sceneScript.fsPath)
 
     if (!sourceFile) {
       continue

@@ -144,12 +144,12 @@ export class AssetGodotScene extends BaseAsset {
 
   /** e.g. PackedScene<import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy> */
   tsType(): string | null {
-    const rootScript = this.rootNode.getScript(this.project.godotScenes)
+    const rootScript = this.rootNode.getScript(this.project.godotScenes())
 
     if (rootScript) {
-      const rootSourceFile = this.project.sourceFiles.find(
-        (sf) => sf.resPath === rootScript.resPath
-      )
+      const rootSourceFile = this.project
+        .sourceFiles()
+        .find((sf) => sf.resPath === rootScript.resPath)
 
       if (!rootSourceFile) {
         throw new Error(

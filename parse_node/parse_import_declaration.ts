@@ -51,9 +51,9 @@ export const getImportResPathForEnum = (
   const decl = declarations[0]
   const sourceFile = decl.getSourceFile()
 
-  const importedSourceFile = props.project.sourceFiles.find(
-    (sf) => sf.fsPath === sourceFile.fileName
-  )
+  const importedSourceFile = props.project
+    .sourceFiles()
+    .find((sf) => sf.fsPath === sourceFile.fileName)
 
   if (!importedSourceFile) {
     throw new Error(
@@ -119,9 +119,9 @@ export const parseImportDeclaration = (
       } else if (type.symbol?.name === "PackedScene") {
         const importedName = bindings.elements[0].name.text
         const className = importedName.slice(0, -"Tscn".length)
-        const resPath = props.project.godotScenes.find(
-          (scene) => scene.name === className
-        )?.resPath
+        const resPath = props.project
+          .godotScenes()
+          .find((scene) => scene.name === className)?.resPath
 
         if (!resPath) {
           continue
@@ -133,9 +133,9 @@ export const parseImportDeclaration = (
           type: "scene",
         })
       } else {
-        const importedSourceFile = props.project.sourceFiles.find(
-          (sf) => sf.fsPath === pathToImportedTs
-        )
+        const importedSourceFile = props.project
+          .sourceFiles()
+          .find((sf) => sf.fsPath === pathToImportedTs)
 
         if (!importedSourceFile) {
           throw new Error(`Error! ${pathToImportedTs} import not found.

@@ -9,6 +9,10 @@ import { AssetSourceFile } from "./asset_source_file"
 import { GodotProjectFile } from "./godot_project_file"
 import { TsGdJson } from "./tsgd_json"
 import { BaseAsset } from "./base_asset"
+import { buildNodePathsTypeForScript } from "../build_paths_for_node"
+import { buildSceneImports } from "../build_scene_imports"
+import { generateGodotLibraryDefinitions } from "../generate_library"
+import { buildAssetPathsType } from "../build_asset_paths"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -32,24 +36,37 @@ export class TsGdProjectClass {
   /** Parsed tsgd.json file. */
   tsgdJson: TsGdJson
 
+  /** Master list of all Godot assets */
+  assets: BaseAsset[] = []
+
   /** Parsed project.godot file. */
   godotProject!: GodotProjectFile
 
   /** Info about each source file. */
-  sourceFiles: AssetSourceFile[] = []
+  sourceFiles(): AssetSourceFile[] {
+    return this.assets.filter(
+      (a): a is AssetSourceFile => a instanceof AssetSourceFile
+    )
+  }
 
   /** Info about each Godot class. */
-  godotClasses: GodotFile[] = []
+  godotClasses(): GodotFile[] {
+    return this.assets.filter((a): a is GodotFile => a instanceof GodotFile)
+  }
 
   /** Info about each Godot scene. */
-  godotScenes: AssetGodotScene[] = []
-
-  mainScene: AssetGodotScene
-
-  assets: BaseAsset[] = []
+  godotScenes(): AssetGodotScene[] {
+    return this.assets.filter(
+      (a): a is AssetGodotScene => a instanceof AssetGodotScene
+    )
+  }
 
   /** Info about each Godot font. */
-  godotFonts: AssetFont[] = []
+  godotFonts(): AssetFont[] {
+    return this.assets.filter((a): a is AssetFont => a instanceof AssetFont)
+  }
+
+  mainScene: AssetGodotScene
 
   godotDefsPath: string
 
@@ -85,22 +102,10 @@ export class TsGdProjectClass {
 
       if (asset instanceof GodotProjectFile) {
         this.godotProject = asset
-      } else if (asset instanceof AssetSourceFile) {
-        this.sourceFiles.push(asset)
-      } else if (asset instanceof GodotFile) {
-        this.godotClasses.push(asset)
-      } else if (asset instanceof AssetGodotScene) {
-        this.godotScenes.push(asset)
-      } else if (asset instanceof AssetFont) {
-        this.godotFonts.push(asset)
-      } else {
-        let x: never = asset
-
-        throw new Error("Unhandled asset type!")
       }
     }
 
-    this.mainScene = this.godotScenes.find(
+    this.mainScene = this.godotScenes().find(
       (scene) => scene.resPath === this.godotProject.mainScene.resPath
     )!
 
@@ -143,28 +148,42 @@ export class TsGdProjectClass {
 
     if (newAsset instanceof AssetSourceFile) {
       newAsset.compile(this.program)
+    } else if (newAsset instanceof AssetGodotScene) {
+      buildSceneImports(this)
     }
+
+    buildAssetPathsType(this)
   }
 
   onChangeAsset(path: string) {
     console.log("Change:\t", path)
 
-    let changedAsset = this.assets.find((asset) => asset.fsPath === path)
+    let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
-    if (changedAsset instanceof AssetSourceFile) {
-      changedAsset.reload()
-      changedAsset.compile(this.program)
+    if (oldAsset) {
+      let newAsset = (this.getAsset(path) as any) as BaseAsset
+
+      this.assets = this.assets.filter((a) => a.fsPath !== path)
+      this.assets.push(newAsset)
+
+      if (newAsset instanceof AssetSourceFile) {
+        newAsset.compile(this.program)
+      } else if (newAsset instanceof AssetGodotScene) {
+        for (const script of this.sourceFiles()) {
+          buildNodePathsTypeForScript(script, this)
+        }
+      }
     }
   }
 
   onRemoveAsset(path: string) {
+    console.log("Delete:\t", path)
+
     const changedAsset = this.assets.find((asset) => asset.fsPath === path)
 
     if (!changedAsset) {
       return
     }
-
-    console.log("Delete:\t", path)
 
     if (changedAsset instanceof AssetSourceFile) {
       changedAsset.destroy()
@@ -177,6 +196,18 @@ export class TsGdProjectClass {
         asset.compile(this.program)
       }
     }
+  }
+
+  buildAllDefinitions() {
+    generateGodotLibraryDefinitions(this)
+
+    buildAssetPathsType(this)
+
+    for (const script of this.sourceFiles()) {
+      buildNodePathsTypeForScript(script, this)
+    }
+
+    buildSceneImports(this)
   }
 
   static ResPathToFsPath(resPath: string) {

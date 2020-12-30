@@ -26,9 +26,9 @@ export const buildNodePathsTypeForScript = (
 
   const instances: GodotNode[] = []
 
-  for (const scene of project.godotScenes) {
+  for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
-      const nodeScript = node.getScript(project.godotScenes)
+      const nodeScript = node.getScript(project.godotScenes())
 
       if (nodeScript && nodeScript.resPath === script.resPath) {
         instances.push(node)
@@ -53,6 +53,7 @@ export const buildNodePathsTypeForScript = (
   if (instances.length === 0) {
     if (script.isAutoload()) {
       // Special logic for autoload classes.
+      // TODO: Should we generate /root/ in the node path too?
 
       const rootScene = project.mainScene
       commonRelativePaths = getAllRelativePaths(rootScene.rootNode)
@@ -64,11 +65,14 @@ export const buildNodePathsTypeForScript = (
       // This class is never instantiated as a node.
 
       commonRelativePaths = []
+
+      console.log("Unused class:", className)
     }
   } else {
     const relativePathsPerNode = instances.map((i) =>
       i.children.flatMap((ch) => getAllRelativePaths(ch))
     )
+
     commonRelativePaths = relativePathsPerNode[0].filter((elem) =>
       relativePathsPerNode.every((pathsList) =>
         pathsList.map((pl) => pl.path).includes(elem.path)
@@ -81,10 +85,10 @@ export const buildNodePathsTypeForScript = (
   const pathToImport: { [key: string]: string } = {}
 
   for (const { path, node } of commonRelativePaths) {
-    const script = node.getScript(project.godotScenes)
+    const script = node.getScript(project.godotScenes())
 
     if (script) {
-      const associatedClass = project.sourceFiles.find((source) => {
+      const associatedClass = project.sourceFiles().find((source) => {
         return source.className() === script.type
       })!
 

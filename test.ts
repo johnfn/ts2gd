@@ -64,6 +64,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     program,
     genUniqueName,
     project: {
+      buildAllDefinitions: () => {},
       assets: [],
       program: undefined as any,
       godotDefsPath: "",
@@ -77,10 +78,10 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         project: {} as any,
         rootNode: {} as any,
       } as any,
-      godotScenes: [],
+      godotScenes: () => [],
       getAsset: () => 0 as any,
-      godotClasses: [],
-      godotFonts: [],
+      godotClasses: () => [],
+      godotFonts: () => [],
       godotProject: {
         fsPath: "",
         autoloads: [{ resPath: "autoload.ts" }],
@@ -95,7 +96,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       onAddAsset: () => {},
       onChangeAsset: () => {},
       onRemoveAsset: () => {},
-      sourceFiles: [
+      sourceFiles: () => [
         {
           className: () => "",
           fsPath: "autoload.ts",

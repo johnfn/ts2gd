@@ -22,9 +22,9 @@ export class AssetGodotClass extends BaseAsset {
   }
 
   sourceFile(): AssetSourceFile | null {
-    const result = this.project.sourceFiles.find(
-      (file) => file.resPath === this.resPath
-    )
+    const result = this.project
+      .sourceFiles()
+      .find((file) => file.resPath === this.resPath)
 
     if (!result) {
       return null

@@ -58,7 +58,6 @@ export class GodotProjectFile {
       // For some reason, the respath strings start with *, e.g. "*res://compiled/Enemy.gd"
       resPath: x.slice(1),
     }))
-    console.log(this.autoloads)
     this.mainScene = {
       resPath: mainSceneResPath,
       fsPath: TsGdProjectClass.ResPathToFsPath(mainSceneResPath),

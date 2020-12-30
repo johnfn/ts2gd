@@ -31,9 +31,9 @@ export const parseSourceFile = (
   props: ParseState
 ): ParseNodeType => {
   const { statements } = node
-  const sourceInfo = props.project.sourceFiles.find(
-    (file) => file.fsPath === node.fileName
-  )
+  const sourceInfo = props.project
+    .sourceFiles()
+    .find((file) => file.fsPath === node.fileName)
 
   props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false

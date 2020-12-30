@@ -24,19 +24,14 @@
 //       using {}, which is kind of lame.
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
-// TODO: Use chokidar rather than my ... thing.
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
 // TODO: Use AST transformers?
 
 import ts from "typescript"
-import fs from "fs"
 import path from "path"
 import * as process from "process"
 
-import { generateGodotLibraryDefinitions } from "./generate_library"
-import { buildNodePathsTypeForScript } from "./build_paths_for_node"
-import { buildSceneImports } from "./build_scene_imports"
-import { makeTsGdProject, TsGdProjectClass } from "./project/project"
+import { makeTsGdProject } from "./project/project"
 
 const setup = () => {
   const inputPath = process.argv[2]
@@ -103,9 +98,6 @@ const setup = () => {
     ) {
       return
     }
-
-    // console.error("Error", diagnostic.code, ":", errorMessage);
-    // console.log(diagnostic.file?.fileName, diagnostic.start);
   }
 
   const host = ts.createWatchCompilerHost(
@@ -129,38 +121,14 @@ const setup = () => {
   return watchProgram
 }
 
-async function buildAssetPathsType(project: TsGdProjectClass) {
-  const assetFileContents = `
-declare type AssetType = {
-${project.assets
-  .filter((obj) => obj.tsType() !== null)
-  .map((obj) => `  '${obj.resPath}': ${obj.tsType()}`)
-  .join(",\n")}
-}
-
-declare type AssetPath = keyof AssetType;
-  `
-
-  const destPath = path.join(project.godotDefsPath, "@asset_paths.d.ts")
-  fs.writeFileSync(destPath, assetFileContents)
-}
-
 const main = async () => {
+  const start = new Date().getTime()
+
   const watchProgram = setup()
 
   let project = await makeTsGdProject(watchProgram)
 
-  const start = new Date().getTime()
-
-  buildAssetPathsType(project)
-
-  for (const script of project.sourceFiles) {
-    buildNodePathsTypeForScript(script, project)
-  }
-
-  buildSceneImports(project)
-  generateGodotLibraryDefinitions(project)
-
+  project.buildAllDefinitions()
   project.compileAllSourceFiles()
 
   console.log(
