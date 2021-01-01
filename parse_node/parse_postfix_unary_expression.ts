@@ -1,10 +1,13 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import { ParseState, combine } from "../parse_node";
+import ts from "typescript"
+const { SyntaxKind } = ts
+import { ParseState, combine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 
-export const parsePostfixUnaryExpression = (node: ts.PostfixUnaryExpression, props: ParseState): ParseNodeType => {
+export const parsePostfixUnaryExpression = (
+  node: ts.PostfixUnaryExpression,
+  props: ParseState
+): ParseNodeType => {
   return combine({
     parent: node,
     nodes: node.operand,
@@ -12,10 +15,10 @@ export const parsePostfixUnaryExpression = (node: ts.PostfixUnaryExpression, pro
     content: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken:
-          return `${operand}++`;
+          return `((${operand} += 1) - 1)`
         case SyntaxKind.MinusMinusToken:
-          return `${operand}--`;
+          return `((${operand} -= 1) + 1)`
       }
-    }
+    },
   })
 }

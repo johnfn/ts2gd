@@ -1,27 +1,33 @@
-import ts from "typescript";
-const { SyntaxKind } = ts;
-import { ParseState, parseNode, combine } from "../parse_node";
+import ts from "typescript"
+const { SyntaxKind } = ts
+import { ParseState, parseNode, combine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 
-export const parsePrefixUnaryExpression = (node: ts.PrefixUnaryExpression, props: ParseState): ParseNodeType => {
+export const parsePrefixUnaryExpression = (
+  node: ts.PrefixUnaryExpression,
+  props: ParseState
+): ParseNodeType => {
   return combine({
-    parent: node, nodes: node.operand, props, content: (operand) => {
+    parent: node,
+    nodes: node.operand,
+    props,
+    content: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken:
-          return `++${operand}`;
+          return `(${operand} += 1)`
         case SyntaxKind.MinusMinusToken:
-          return `--${operand}`;
+          return `(${operand} -= 1)`
         case SyntaxKind.PlusToken:
-          return `+${operand}`;
+          return `+${operand}`
         case SyntaxKind.MinusToken:
-          return `-${operand}`;
+          return `-${operand}`
         case SyntaxKind.TildeToken:
           // TODO: Error?
-          return `~${operand}`;
+          return `~${operand}`
         case SyntaxKind.ExclamationToken:
-          return `not ${operand}`;
+          return `not ${operand}`
       }
-    }
-  });
+    },
+  })
 }

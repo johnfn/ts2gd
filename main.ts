@@ -1,5 +1,6 @@
 // TODO: refactor resPath and tsPath and etc
 
+// TODO: "collision/safe_margin"
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
 // TODO: Modulo expects int instead of float and will error if it sees the wrong one...
