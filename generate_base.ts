@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
-import { ArrayDefinition } from './custom_defs/array_def';
-import { PackedSceneDef } from './custom_defs/packed_scene_def';
+import fs from "fs"
+import path from "path"
+import { ArrayDefinition } from "./custom_defs/array_def"
+import { PackedSceneDef } from "./custom_defs/packed_scene_def"
 
 export const baseFileContent = `
 
@@ -50,8 +50,12 @@ interface RegExp {
 
 }
 
-interface Object extends Dictionary {
-}
+// This puts Dictionary methods on *all* classes, which is incorrect and also
+// causes clashes with Node because they have differenty defined duplicate
+// methods.
+// interface Object extends Dictionary { }
+
+declare function Dict<T>(obj: T): Dictionary & T
 
 interface IteratorYieldResult<TYield> {
   done?: false;
@@ -88,10 +92,10 @@ ${PackedSceneDef}
 declare const len: (obj: any[]) => number;
 declare const range: (length: number) => number[];
 declare const print: (...args: any[]) => void;
-`;
+`
 
 export const buildBase = (basePath: string) => {
-  fs.writeFileSync(path.join(basePath, "@base.d.ts"), baseFileContent);
+  fs.writeFileSync(path.join(basePath, "@base.d.ts"), baseFileContent)
 }
 
 export const baseContentForTests = `
