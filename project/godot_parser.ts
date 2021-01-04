@@ -1,6 +1,11 @@
 import fs from "fs"
+import util from "util"
 
-export const parseGodotConfigFile = (path: string) => {
+/**
+ * Basic Godot configuration file parser.
+ */
+
+export const parseGodotConfigFile = (path: string, initial: any = {}) => {
   const file = fs.readFileSync(path, "utf-8")
 
   let index = 0
@@ -17,6 +22,22 @@ export const parseGodotConfigFile = (path: string) => {
     }
 
     return x
+  }
+
+  const getLineAndCol = () => {
+    let line = 1
+    let col = 0
+
+    for (let i = 0; i < index; i++) {
+      if (file[i] === "\n") {
+        line++
+        col = 0
+      } else {
+        col++
+      }
+    }
+
+    return `line ${line}, col ${col}`
   }
 
   const getCharIncludingWhitespace = (expected?: string) => {
@@ -70,15 +91,30 @@ export const parseGodotConfigFile = (path: string) => {
   }
 
   const getSection = () => {
-    let section = ""
+    getchar("[")
 
-    while (peekcharIncludingWhitespace() !== "\n") {
-      section += getCharIncludingWhitespace()
+    let result: { [key: string]: any } & { identifier: string } = {
+      identifier: getIdentifier(),
     }
 
-    getCharIncludingWhitespace("\n")
+    while (peekchar() !== "]") {
+      const key = getIdentifier()
 
-    return section.slice(1, -1)
+      if (peekchar() !== "=") {
+        throw new Error(
+          `Unexpected token '${peekchar()}' in section after ${key} at ${getLineAndCol()}`
+        )
+      }
+
+      getchar("=")
+      const value = getValue()
+
+      result[key] = value
+    }
+
+    getchar("]")
+
+    return result
   }
 
   const getVariableName = () => {
@@ -134,7 +170,7 @@ export const parseGodotConfigFile = (path: string) => {
   const getNumber = () => {
     let result = ""
 
-    while (/[0-9.]/.exec(peekchar())) {
+    while (/[-0-9.]/.exec(peekchar())) {
       result += getchar()
     }
 
@@ -158,7 +194,7 @@ export const parseGodotConfigFile = (path: string) => {
   const getIdentifier = () => {
     let result = getchar() // note - implicitly advances past any initial whitespace
 
-    while (/[a-zA-Z]/.exec(peekcharIncludingWhitespace())) {
+    while (/[a-zA-Z0-9_]/.exec(peekcharIncludingWhitespace())) {
       result += getchar()
     }
 
@@ -178,12 +214,14 @@ export const parseGodotConfigFile = (path: string) => {
       identifier,
     }
 
+    const start = getLineAndCol()
+
     getchar("(")
 
     while (peekchar() !== ")") {
       const key = getValue()
 
-      if (peekchar() === ",") {
+      if (peekchar() === "," || peekchar() === ")") {
         // This is a single value
         result.args.push(key)
       } else if (peekchar() === ":") {
@@ -193,7 +231,9 @@ export const parseGodotConfigFile = (path: string) => {
 
         result.args.push([key, value])
       } else {
-        throw new Error("Unexpected token in object constructor")
+        throw new Error(
+          `Unexpected token '${peekchar()}' in object constructor after ${key} from ${start} to ${getLineAndCol()}`
+        )
       }
 
       if (peekchar() === ",") {
@@ -213,7 +253,7 @@ export const parseGodotConfigFile = (path: string) => {
       return getJson()
     } else if (peekchar() === '"') {
       return getString()
-    } else if (/[0-9.]/.exec(peekchar())) {
+    } else if (/[-0-9.]/.exec(peekchar())) {
       return getNumber()
     } else {
       const identifier = getIdentifier()
@@ -226,28 +266,58 @@ export const parseGodotConfigFile = (path: string) => {
     }
   }
 
-  let currentSection = "globals"
+  let currentSection = { identifier: "globals" }
+  const result: { [key: string]: any } = {
+    globals: currentSection,
+    ...initial,
+  }
 
-  const result: { [key: string]: any } = {}
+  try {
+    while (!eof()) {
+      const peek = peekchar()
 
-  while (!eof()) {
-    const peek = peekchar()
+      if (peek === ";") {
+        getComment()
+      } else if (peek === "[") {
+        currentSection = getSection()
+        const id = currentSection.identifier
 
-    if (peek === ";") {
-      let c = getComment()
-    } else if (peek === "[") {
-      currentSection = getSection()
-    } else if (peek.trim() !== "") {
-      const variableName = getVariableName()
+        if (result[id]) {
+          if (!Array.isArray(result[id])) {
+            result[id] = [result[id], { $section: currentSection }]
+          } else {
+            result[id].push({ $section: currentSection })
+          }
+        } else {
+          result[id] = { $section: currentSection }
+        }
+      } else if (peek.trim() !== "") {
+        const variableName = getVariableName()
 
-      getchar("=")
+        getchar("=")
 
-      let variableValue = getValue()
+        let variableValue = getValue()
 
-      result[currentSection] = result[currentSection] || {}
-      result[currentSection][variableName] = variableValue
+        if (Array.isArray(result[currentSection.identifier])) {
+          result[currentSection.identifier][
+            result[currentSection.identifier].length - 1
+          ][variableName] = variableValue
+        } else {
+          result[currentSection.identifier][variableName] = variableValue
+        }
+      }
     }
+  } catch (e) {
+    console.log(result)
+
+    throw e
   }
 
   return result
 }
+
+// const result = parseGodotConfigFile(
+//   "/Users/johnfn/GodotProject2/Scenes/MainScene.tscn"
+// )
+
+// console.log(util.inspect(result, false, 8, true))

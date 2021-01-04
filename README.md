@@ -123,6 +123,8 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 
 ## Road to superior development
 
+- [ ] Autoload classes should have an @annotation and then get automatically added to the project
+- [ ] get_nodes_in_group should parse scene to determine a more accurate return type
 - [x] Mark unused variables with \_ to avoid warnings
 - [x] parse the bbcode in the XML into markdown that TS can read.
 - [x] when scenes are updated, update their corresponding definition files
@@ -132,26 +134,24 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
-- [ ] get_nodes_in_group should parse scene to determine a more accurate return type
 - [ ] add a way to install ts2gd as a global command
 - [ ] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
 - [ ] Whether to hide away constants into enums or not could be parameterizeable. It is _correct_ to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone.
 - [ ] Some sort of error if an autoload class is not entirely static.
-- [ ] yield(this.get_tree(), "idle_frame"); could autocomplete idle_frame? it's possible: just get all the signals on the object.
+- [x] yield(this.get_tree(), "idle_frame"); could autocomplete idle_frame? it's possible: just get all the signals on the object.
 - [ ] Fancy TS/JS features
   - [ ] destructuring
   - [ ] ... spread operator
 - [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them.
 - [ ] Skip compiled/
-- [ ] ../ node paths
+- [x] ../ node paths (note: impossible)
 - [ ] Break our assumption that filename === classname
 - [ ] handle actions
 - [ ] Onready vs nonready - maybe we don't have to mark everything as an onready var? Is there an advantage to so doing?
-- [ ] ts2gd: Handle adding new files.
-- [ ] ts2gd: Handle deleting old files.
+- [x] ts2gd: Handle adding new files.
+- [x] ts2gd: Handle deleting old files.
 - [x] ts2gd: Random newlines at beginning of file.
-- [ ] Rewrite the code so you dont even need to add autoload classes bc they just get auto registered.
 - [ ] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???
 - [ ] use LSP to handle operator overloading, sourcemap issues...?!?

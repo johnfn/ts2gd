@@ -3,15 +3,16 @@ import fs from "fs"
 import { GodotNode } from "./ts_utils"
 import { AssetSourceFile } from "./project/asset_source_file"
 import { TsGdProjectClass } from "./project/project"
+import { GodotNode2 } from "./project/asset_godot_scene"
 
 export const getAllRelativePaths = (
-  node: GodotNode,
+  node: GodotNode2,
   prefix = ""
-): { path: string; node: GodotNode }[] => {
+): { path: string; node: GodotNode2 }[] => {
   let myPath = (prefix ? prefix + "/" : "") + node.name
-  let result: { path: string; node: GodotNode }[] = [{ path: myPath, node }]
+  let result: { path: string; node: GodotNode2 }[] = [{ path: myPath, node }]
 
-  for (const child of node.children) {
+  for (const child of node.children()) {
     result = [...result, ...getAllRelativePaths(child, myPath)]
   }
 
@@ -24,11 +25,11 @@ export const buildNodePathsTypeForScript = (
 ) => {
   // Find all instances of this script in all scenes.
 
-  const instances: GodotNode[] = []
+  const instances: GodotNode2[] = []
 
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
-      const nodeScript = node.getScript(project.godotScenes())
+      const nodeScript = node.getScript()
 
       if (nodeScript && nodeScript.resPath === script.resPath) {
         instances.push(node)
@@ -47,7 +48,7 @@ export const buildNodePathsTypeForScript = (
 
   let commonRelativePaths: {
     path: string
-    node: GodotNode
+    node: GodotNode2
   }[] = []
 
   if (instances.length === 0) {
@@ -70,7 +71,7 @@ export const buildNodePathsTypeForScript = (
     }
   } else {
     const relativePathsPerNode = instances.map((i) =>
-      i.children.flatMap((ch) => getAllRelativePaths(ch))
+      i.children().flatMap((ch) => getAllRelativePaths(ch))
     )
 
     commonRelativePaths = relativePathsPerNode[0].filter((elem) =>
@@ -85,23 +86,13 @@ export const buildNodePathsTypeForScript = (
   const pathToImport: { [key: string]: string } = {}
 
   for (const { path, node } of commonRelativePaths) {
-    const script = node.getScript(project.godotScenes())
+    const script = node.getScript()
 
     if (script) {
-      const associatedClass = project.sourceFiles().find((source) => {
-        return source.className() === script.type
-      })!
-
-      if (!associatedClass) {
-        throw new Error(`\nCan't find the class for ${script.type}
-script.type=${script.type}
-`)
-      }
-
-      pathToImport[path] = `import("${associatedClass.fsPath.slice(
+      pathToImport[path] = `import("${script.fsPath.slice(
         0,
         -".ts".length
-      )}").${script.type}`
+      )}").${script.className()}`
     } else {
       pathToImport[path] = node.type
     }

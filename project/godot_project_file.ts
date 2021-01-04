@@ -54,10 +54,12 @@ export class GodotProjectFile {
     this.fsPath = path
 
     const mainSceneResPath = this.rawConfig.application["run/main_scene"]
-    this.autoloads = Object.values(this.rawConfig.autoload).map((x) => ({
-      // For some reason, the respath strings start with *, e.g. "*res://compiled/Enemy.gd"
-      resPath: x.slice(1),
-    }))
+    this.autoloads = Object.values(this.rawConfig.autoload)
+      .filter((x) => typeof x === "string")
+      .map((x) => ({
+        // For some reason, the respath strings start with *, e.g. "*res://compiled/Enemy.gd"
+        resPath: x.slice(1),
+      }))
     this.mainScene = {
       resPath: mainSceneResPath,
       fsPath: TsGdProjectClass.ResPathToFsPath(mainSceneResPath),

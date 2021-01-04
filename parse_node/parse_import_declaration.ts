@@ -138,6 +138,10 @@ export const parseImportDeclaration = (
           .find((sf) => sf.fsPath === pathToImportedTs)
 
         if (!importedSourceFile) {
+          if (pathToImportedTs.includes("@")) {
+            continue
+          }
+
           throw new Error(`Error! ${pathToImportedTs} import not found.
   in ${node.getSourceFile().fileName}`)
         }
