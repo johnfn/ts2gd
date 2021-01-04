@@ -13,6 +13,7 @@ import { buildNodePathsTypeForScript } from "../build_paths_for_node"
 import { buildSceneImports } from "../build_scene_imports"
 import { generateGodotLibraryDefinitions } from "../generate_library"
 import { buildAssetPathsType } from "../build_asset_paths"
+import { buildGroupTypes } from "../build_group_types"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -208,6 +209,7 @@ export class TsGdProjectClass {
     }
 
     buildSceneImports(this)
+    buildGroupTypes(this)
   }
 
   static ResPathToFsPath(resPath: string) {

@@ -153,12 +153,17 @@ export function generateGodotLibraryDefinitions(
       if (args) {
         argumentList = args
           .map((arg: any) => {
-            return (
-              sanitizeName(arg["$"].name) +
-              (arg["$"].default ? "?" : "") +
-              ": " +
-              convertType(arg["$"].type)
-            )
+            let argName = sanitizeName(arg["$"].name)
+            let argType = convertType(arg["$"].type)
+            let isOptional = !!arg["$"].default
+
+            if (argType === "StringName") {
+              if (argName === "group") {
+                argType = "keyof Groups"
+              }
+            }
+
+            return `${argName}${isOptional ? "?" : ""}: ${argType}`
           })
           .join(", ")
       }
@@ -245,6 +250,14 @@ ${methods
   .map((method) => {
     if (method.name === "get_node") {
       return ""
+    }
+
+    if (method.name === "get_nodes_in_group") {
+      return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
+    }
+
+    if (method.name === "has_group") {
+      return `has_group<T extends keyof Groups>(name: T): bool`
     }
 
     // This is a constructor

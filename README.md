@@ -124,7 +124,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 ## Road to superior development
 
 - [ ] Autoload classes should have an @annotation and then get automatically added to the project
-- [ ] get_nodes_in_group should parse scene to determine a more accurate return type
+- [x] get_nodes_in_group should parse scene to determine a more accurate return type
 - [x] Mark unused variables with \_ to avoid warnings
 - [x] parse the bbcode in the XML into markdown that TS can read.
 - [x] when scenes are updated, update their corresponding definition files
@@ -135,7 +135,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
 - [ ] add a way to install ts2gd as a global command
-- [ ] ensure that signal arguments match up
+- [x] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
 - [ ] Whether to hide away constants into enums or not could be parameterizeable. It is _correct_ to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone.
 - [ ] Some sort of error if an autoload class is not entirely static.
@@ -146,8 +146,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them.
 - [ ] Skip compiled/
 - [x] ../ node paths (note: impossible)
-- [ ] Break our assumption that filename === classname
-- [ ] handle actions
+- [x] Break our assumption that filename === classname
 - [ ] Onready vs nonready - maybe we don't have to mark everything as an onready var? Is there an advantage to so doing?
 - [x] ts2gd: Handle adding new files.
 - [x] ts2gd: Handle deleting old files.

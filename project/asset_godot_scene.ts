@@ -1,5 +1,3 @@
-import fs from "fs"
-import util from "util"
 import path from "path"
 
 import { BaseAsset } from "./base_asset"
@@ -61,14 +59,12 @@ export class GodotNode {
   name: string
   type: string
   isRoot: boolean
-  // parent: groups.parent;
   groups: string[]
-
   parent: string | undefined
   $section: IGodotSceneFile["node"][0]["$section"]
   scene: AssetGodotScene
   project: TsGdProjectClass
-  script: IGodotSceneFile["node"][0]["script"] | undefined
+  scriptExtResourceId: number | undefined
 
   constructor(
     props: IGodotSceneFile["node"][0],
@@ -83,7 +79,7 @@ export class GodotNode {
     this.groups = props.$section.groups ?? []
     this.$section = props.$section
     this.parent = props.$section.parent ?? undefined
-    this.script = props.script ?? undefined
+    this.scriptExtResourceId = props.script?.args[0] ?? undefined
   }
 
   /**
@@ -94,13 +90,13 @@ export class GodotNode {
   scenePath(): string {
     if (!this.parent) {
       return "."
-    } else {
-      if (this.parent === ".") {
-        return this.name
-      } else {
-        return this.parent + "/" + this.name
-      }
     }
+
+    if (this.parent === ".") {
+      return this.name
+    }
+
+    return this.parent + "/" + this.name
   }
 
   children(): GodotNode[] {
@@ -130,34 +126,36 @@ export class GodotNode {
   }
 
   getScript(): AssetSourceFile | undefined {
-    let script = this.script
+    let scriptId = this.scriptExtResourceId
     let sceneContainingScript: AssetGodotScene | undefined = this.scene
 
-    if (!script) {
-      script = this.instancedScene()?.rootNode.script
+    if (!scriptId) {
+      // This is made complicated because instanced scenes do not have scripts
+      // stored on them as external resources in the scene in which they are instanced,
+      // but act as if the script on their root node is their script.
+
+      scriptId = this.instancedScene()?.rootNode.scriptExtResourceId
       sceneContainingScript = this.instancedScene()
     }
 
-    if (!script || !sceneContainingScript) {
+    if (!scriptId || !sceneContainingScript) {
       return undefined
     }
 
-    const tempResourceThing = sceneContainingScript.resources.find(
-      (obj) => obj.id === script!.args[0]
+    const externalResource = sceneContainingScript.resources.find(
+      (obj) => obj.id === scriptId
     )
 
-    if (!tempResourceThing) {
+    if (!externalResource) {
       throw new Error(
-        `expected to be able to find a resource for id ${
-          script!.args[0]
-        } in script ${this.scene.fsPath}, but did not.`
+        `expected to be able to find a resource with id ${scriptId} in script ${this.scene.fsPath}, but did not.`
       )
     }
 
     let res = this.scene.project.assets.find(
       (sf) =>
         sf instanceof AssetSourceFile &&
-        sf.resPath === tempResourceThing?.resPath
+        sf.resPath === externalResource?.resPath
     ) as AssetSourceFile
 
     return res

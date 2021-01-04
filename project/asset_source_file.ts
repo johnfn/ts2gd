@@ -6,6 +6,11 @@ import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
+// TODO: We currently allow for invalid states (e.g. className() is undefined)
+// because we only create AssetSourceFiles on a chokidar 'add' operation (we
+// dont make them on edit).
+// Can we just create them on edit as well (if it doesn't exist but is valid)?
+
 export class AssetSourceFile extends BaseAsset {
   /** Like res://src/main.gd */
   resPath: string
