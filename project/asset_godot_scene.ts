@@ -130,18 +130,28 @@ export class GodotNode2 {
   }
 
   getScript(): AssetSourceFile | undefined {
-    const scriptObject = this.script ?? this.instancedScene()?.rootNode.script
+    let script = this.script
+    let sceneContainingScript: AssetGodotScene | undefined = this.scene
 
-    if (!scriptObject) {
+    if (!script) {
+      script = this.instancedScene()?.rootNode.script
+      sceneContainingScript = this.instancedScene()
+    }
+
+    if (!script || !sceneContainingScript) {
       return undefined
     }
 
-    const tempResourceThing = this.scene.resources.find(
-      (obj) => obj.id === scriptObject.args[0]
+    const tempResourceThing = sceneContainingScript.resources.find(
+      (obj) => obj.id === script!.args[0]
     )
 
     if (!tempResourceThing) {
-      throw new Error("expected to be able to find a resource, but did not.")
+      throw new Error(
+        `expected to be able to find a resource for id ${
+          script!.args[0]
+        } in script ${this.scene.fsPath}, but did not.`
+      )
     }
 
     let res = this.scene.project.assets.find(

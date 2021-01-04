@@ -25,14 +25,19 @@ export const buildNodePathsTypeForScript = (
 ) => {
   // Find all instances of this script in all scenes.
 
-  const instances: GodotNode2[] = []
+  const nodesWithScript: GodotNode2[] = []
 
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
       const nodeScript = node.getScript()
 
-      if (nodeScript && nodeScript.resPath === script.resPath) {
-        instances.push(node)
+      if (
+        nodeScript &&
+        nodeScript.resPath === script.resPath &&
+        // Skip instances. Their children are not stored in their scene.
+        !node.instancedScene()
+      ) {
+        nodesWithScript.push(node)
       }
     }
   }
@@ -51,7 +56,7 @@ export const buildNodePathsTypeForScript = (
     node: GodotNode2
   }[] = []
 
-  if (instances.length === 0) {
+  if (nodesWithScript.length === 0) {
     if (script.isAutoload()) {
       // Special logic for autoload classes.
       // TODO: Should we generate /root/ in the node path too?
@@ -70,7 +75,7 @@ export const buildNodePathsTypeForScript = (
       console.log("Unused class:", className)
     }
   } else {
-    const relativePathsPerNode = instances.map((i) =>
+    const relativePathsPerNode = nodesWithScript.map((i) =>
       i.children().flatMap((ch) => getAllRelativePaths(ch))
     )
 
