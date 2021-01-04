@@ -57,7 +57,7 @@ interface IGodotSceneFile {
   }[]
 }
 
-export class GodotNode2 {
+export class GodotNode {
   name: string
   type: string
   isRoot: boolean
@@ -103,7 +103,7 @@ export class GodotNode2 {
     }
   }
 
-  children(): GodotNode2[] {
+  children(): GodotNode[] {
     const path = this.scenePath()
 
     return this.scene.nodes.filter((node) => node.parent === path)
@@ -180,14 +180,14 @@ export class AssetGodotScene extends BaseAsset {
   /** e.g. res://Scenes/my_scene.tscn */
   resPath: string
 
-  nodes: GodotNode2[]
+  nodes: GodotNode[]
 
   resources: ResourceTemp[]
 
   /** e.g. my_scene.tscn */
   name: string
 
-  rootNode: GodotNode2
+  rootNode: GodotNode
 
   project: TsGdProjectClass
 
@@ -212,7 +212,7 @@ export class AssetGodotScene extends BaseAsset {
     })
 
     this.nodes = sceneFile.node.map(
-      (node) => new GodotNode2(node, this, this.project)
+      (node) => new GodotNode(node, this, this.project)
     )
 
     this.name = path.basename(fsPath, ".tscn")

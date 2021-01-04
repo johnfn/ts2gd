@@ -1,5 +1,7 @@
 // TODO: refactor resPath and tsPath and etc
 // TODO: it's hard to compile ++/-- properly.
+// TODO: Resolve node paths even through instances.
+// TODO: Inline gdscript
 
 // TODO: "collision/safe_margin"
 // TODO: change_scene should accept a AssetPath filtered on tscn

@@ -1,16 +1,15 @@
 import path from "path"
 import fs from "fs"
-import { GodotNode } from "./ts_utils"
 import { AssetSourceFile } from "./project/asset_source_file"
 import { TsGdProjectClass } from "./project/project"
-import { GodotNode2 } from "./project/asset_godot_scene"
+import { GodotNode } from "./project/asset_godot_scene"
 
 export const getAllRelativePaths = (
-  node: GodotNode2,
+  node: GodotNode,
   prefix = ""
-): { path: string; node: GodotNode2 }[] => {
+): { path: string; node: GodotNode }[] => {
   let myPath = (prefix ? prefix + "/" : "") + node.name
-  let result: { path: string; node: GodotNode2 }[] = [{ path: myPath, node }]
+  let result: { path: string; node: GodotNode }[] = [{ path: myPath, node }]
 
   for (const child of node.children()) {
     result = [...result, ...getAllRelativePaths(child, myPath)]
@@ -25,7 +24,7 @@ export const buildNodePathsTypeForScript = (
 ) => {
   // Find all instances of this script in all scenes.
 
-  const nodesWithScript: GodotNode2[] = []
+  const nodesWithScript: GodotNode[] = []
 
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
@@ -53,7 +52,7 @@ export const buildNodePathsTypeForScript = (
 
   let commonRelativePaths: {
     path: string
-    node: GodotNode2
+    node: GodotNode
   }[] = []
 
   if (nodesWithScript.length === 0) {
