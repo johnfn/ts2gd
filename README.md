@@ -107,7 +107,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] With int/float, mark down the variables we've determined to be int/float so we can use that information rather than TS telling us that everything is number.
 - [x] Autocomplete relative node paths as well as absolute ones
 - [x] `extends` must be transpiled before everything else, including enum declarations and other top level things
-- [x] Godot expects methods like _process to \_always_ have a float parameter, but TS does not require this. It should be added implicitly.
+- [x] Godot expects methods like \_process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] explain tne `enum` thing better
 - [ ] @node annotations to say which node a class belongs to
 - [ ] How come I can't call get_tree() on a class that extends Object?
@@ -131,7 +131,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [ ] create scripts and attach them to nodes directly through the editor - perhaps with @Node("/blah")
 - [ ] don't hide object autocomplete names
 - [ ] strongly type input action names
-- [ ] handle renames better - delete the old compiled file, etc.
+- [x] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
 - [ ] add a way to install ts2gd as a global command

@@ -48,9 +48,10 @@ export class GodotProjectFile {
     fsPath: string
   }
   fsPath: string
+  actionNames: string[]
 
   constructor(path: string) {
-    this.rawConfig = parseGodotConfigFile(path) as any
+    this.rawConfig = (parseGodotConfigFile(path) as any) as IRawGodotConfig
     this.fsPath = path
 
     const mainSceneResPath = this.rawConfig.application["run/main_scene"]
@@ -60,9 +61,12 @@ export class GodotProjectFile {
         // For some reason, the respath strings start with *, e.g. "*res://compiled/Enemy.gd"
         resPath: x.slice(1),
       }))
+
     this.mainScene = {
       resPath: mainSceneResPath,
       fsPath: TsGdProjectClass.ResPathToFsPath(mainSceneResPath),
     }
+
+    this.actionNames = Object.keys(this.rawConfig.input)
   }
 }

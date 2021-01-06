@@ -161,6 +161,10 @@ export function generateGodotLibraryDefinitions(
               if (argName === "group") {
                 argType = "keyof Groups"
               }
+
+              if (argName === "action") {
+                argType = "Action"
+              }
             }
 
             return `${argName}${isOptional ? "?" : ""}: ${argType}`
