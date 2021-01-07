@@ -17,7 +17,9 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
 
     if (expected) {
       if (expected !== x) {
-        throw new Error(`Expected ${expected} but got ${x}`)
+        throw new Error(
+          `Expected ${expected} but got ${x} at ${getLineAndCol()}`
+        )
       }
     }
 
@@ -168,9 +170,9 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
   }
 
   const getNumber = () => {
-    let result = ""
+    let result = getchar()
 
-    while (/[-0-9.]/.exec(peekchar())) {
+    while (/[-0-9.]/.exec(peekcharIncludingWhitespace())) {
       result += getchar()
     }
 
@@ -178,12 +180,12 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
   }
 
   const getString = () => {
-    let result = ""
-
     getchar('"')
 
-    while (peekchar() !== '"') {
-      result += getchar()
+    let result = ""
+
+    while (peekcharIncludingWhitespace() !== '"') {
+      result += getCharIncludingWhitespace()
     }
 
     getchar('"')
@@ -309,7 +311,7 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
     }
   } catch (e) {
     console.log("Failed to parse godot config file. This is a bug.")
-    console.log(result)
+    console.log(util.inspect(result, false, 10, true))
 
     throw e
   }
