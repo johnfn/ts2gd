@@ -8,7 +8,6 @@ export class AssetFont extends BaseAsset {
 
   constructor(path: string, project: TsGdProjectClass) {
     super()
-
     this.fsPath = path
     this.resPath = TsGdProjectClass.FsPathToResPath(this.fsPath)
     this.project = project

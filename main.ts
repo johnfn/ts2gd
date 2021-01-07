@@ -1,3 +1,5 @@
+#!/usr/bin/env ts-node
+
 // TODO: refactor resPath and tsPath and etc
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
 // TODO: it's hard to compile ++/-- properly.
@@ -33,46 +35,13 @@
 // TODO: Use AST transformers?
 
 import ts from "typescript"
-import path from "path"
 import * as process from "process"
 
 import { makeTsGdProject } from "./project/project"
+import { Paths } from "./project/tsgd_json"
 
 const setup = () => {
-  const inputPath = process.argv[2]
-  let tsgdPathWithFilename: string
-
-  if (!inputPath) {
-    throw new Error(
-      "Please specify a tsgd.json file on the command line. Thanks!"
-    )
-  }
-
-  if (inputPath.startsWith("/")) {
-    // absolute path
-
-    tsgdPathWithFilename = inputPath
-  } else if (inputPath.startsWith(".")) {
-    // some sort of relative path, so resolve it
-
-    tsgdPathWithFilename = path.join(process.execPath, inputPath)
-  } else {
-    console.error("That appears to be an invalid path.")
-    process.exit(0)
-  }
-
-  const configPath = ts.findConfigFile(
-    path.dirname(tsgdPathWithFilename),
-    ts.sys.fileExists,
-    "tsconfig.json"
-  )
-
-  if (!configPath) {
-    console.error(
-      "tsconfig.json must be in the same folder as tsgd.json. Thanks!"
-    )
-    process.exit(0)
-  }
+  const tsgdJson = new Paths()
 
   const formatHost: ts.FormatDiagnosticsHost = {
     getCanonicalFileName: (path) => path,
@@ -106,7 +75,7 @@ const setup = () => {
   }
 
   const host = ts.createWatchCompilerHost(
-    configPath,
+    tsgdJson.tsconfigPath,
     {},
     ts.sys,
     ts.createEmitAndSemanticDiagnosticsBuilderProgram,
@@ -114,8 +83,14 @@ const setup = () => {
     reportWatchStatusChanged
   )
   const watchProgram = ts.createWatchProgram(host)
-  const configFile = ts.readJsonConfigFile(configPath, ts.sys.readFile)
-  const opt = ts.parseConfigFileTextToJson(configPath, configFile.text)
+  const configFile = ts.readJsonConfigFile(
+    tsgdJson.tsconfigPath,
+    ts.sys.readFile
+  )
+  const opt = ts.parseConfigFileTextToJson(
+    tsgdJson.tsconfigPath,
+    configFile.text
+  )
   opt.config.useCaseSensitiveFileNames = false
 
   function reportWatchStatusChanged(
@@ -123,15 +98,15 @@ const setup = () => {
     newLine: string
   ) {}
 
-  return watchProgram
+  return { watchProgram, tsgdJson }
 }
 
 const main = async () => {
   const start = new Date().getTime()
 
-  const watchProgram = setup()
+  const { watchProgram, tsgdJson } = setup()
 
-  let project = await makeTsGdProject(watchProgram)
+  let project = await makeTsGdProject(tsgdJson, watchProgram)
 
   project.buildAllDefinitions()
   project.compileAllSourceFiles()
@@ -142,6 +117,6 @@ const main = async () => {
   )
 }
 
-if (process.argv[1] === "main.ts") {
+if (process.argv[1].endsWith("main.ts") || process.argv[1].endsWith("ts2gd")) {
   main()
 }

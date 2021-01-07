@@ -25,7 +25,10 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
     )}').${sceneScript.className()}>\n`
   }
 
-  const destPath = path.join(project.godotDefsPath, "@scenes.d.ts")
+  const destPath = path.join(
+    TsGdProjectClass.Paths.godotDefsPath,
+    "@scenes.d.ts"
+  )
 
   fs.writeFileSync(destPath, result)
 }

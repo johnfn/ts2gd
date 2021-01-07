@@ -30,7 +30,7 @@ interface IGodotSceneFile {
     }
   }[]
 
-  node: {
+  node?: {
     $section: {
       identifier: "node"
       name: string
@@ -61,13 +61,13 @@ export class GodotNode {
   isRoot: boolean
   groups: string[]
   parent: string | undefined
-  $section: IGodotSceneFile["node"][0]["$section"]
+  $section: Required<IGodotSceneFile>["node"][0]["$section"]
   scene: AssetGodotScene
   project: TsGdProjectClass
   scriptExtResourceId: number | undefined
 
   constructor(
-    props: IGodotSceneFile["node"][0],
+    props: Required<IGodotSceneFile>["node"][0],
     scene: AssetGodotScene,
     project: TsGdProjectClass
   ) {
@@ -194,6 +194,7 @@ export class AssetGodotScene extends BaseAsset {
 
     const sceneFile = parseGodotConfigFile(fsPath, {
       ext_resource: [],
+      node: [],
     }) as IGodotSceneFile
 
     this.fsPath = fsPath
@@ -209,7 +210,7 @@ export class AssetGodotScene extends BaseAsset {
       }
     })
 
-    this.nodes = sceneFile.node.map(
+    this.nodes = (sceneFile.node ?? []).map(
       (node) => new GodotNode(node, this, this.project)
     )
 

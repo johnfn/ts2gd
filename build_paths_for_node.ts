@@ -111,9 +111,9 @@ ${Object.entries(pathToImport)
 
   result += `
   
-import ${className} from './../${project.tsgdJson.sourceTsPath}/${path
-    .basename(script.fsPath)
-    .slice(0, -".ts".length)}'
+import ${className} from './../${
+    TsGdProjectClass.Paths.sourceTsPath
+  }/${path.basename(script.fsPath).slice(0, -".ts".length)}'
 
 declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
@@ -130,7 +130,7 @@ declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
   `
 
   const destPath = path.join(
-    project.godotDefsPath,
+    TsGdProjectClass.Paths.godotDefsPath,
     `@node_paths_${className}.d.ts`
   )
 

@@ -73,11 +73,11 @@ function formatJsDoc(input: string): string {
 export function generateGodotLibraryDefinitions(
   project: TsGdProjectClass
 ): void {
-  const godotDocumentationPath = "./../godot/doc/classes/"
+  // TODO: Refactor this out
+  const godotDocumentationPath = "/Users/johnfn/code/tsgd/godot/doc/classes"
   const contents = fs.readdirSync(godotDocumentationPath)
   const xmlFiles = contents.filter((file) => file.endsWith(".xml"))
-  const destPath = project.godotDefsPath
-  fs.mkdirSync(destPath, { recursive: true })
+  fs.mkdirSync(TsGdProjectClass.Paths.godotDefsPath, { recursive: true })
 
   function convertType(godotType: string): string {
     if (godotType === "int") {
@@ -435,9 +435,12 @@ ${Object.keys(enums)
 
   async function buildGlobals() {
     const result = await parseGlobalScope(
-      godotDocumentationPath + "@GlobalScope.xml"
+      path.join(godotDocumentationPath, "@GlobalScope.xml")
     )
-    fs.writeFileSync(path.join(destPath, "@globals.d.ts"), result)
+    fs.writeFileSync(
+      path.join(TsGdProjectClass.Paths.godotDefsPath, "@globals.d.ts"),
+      result
+    )
   }
 
   async function buildDefinitions() {
@@ -454,10 +457,15 @@ ${Object.keys(enums)
         continue
       }
 
-      const result = await parseFile(godotDocumentationPath + fileName)
+      const result = await parseFile(
+        path.join(godotDocumentationPath, fileName)
+      )
 
       fs.writeFileSync(
-        path.join(destPath, fileName.slice(0, -4) + ".d.ts"),
+        path.join(
+          TsGdProjectClass.Paths.godotDefsPath,
+          fileName.slice(0, -4) + ".d.ts"
+        ),
         result
       )
     }
@@ -465,7 +473,7 @@ ${Object.keys(enums)
 
   async function main() {
     await buildGlobals()
-    await buildBase(destPath)
+    await buildBase(TsGdProjectClass.Paths.godotDefsPath)
     await buildDefinitions()
   }
 

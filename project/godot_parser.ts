@@ -308,6 +308,7 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
       }
     }
   } catch (e) {
+    console.log("Failed to parse godot config file. This is a bug.")
     console.log(result)
 
     throw e

@@ -7,7 +7,7 @@ import { AssetGodotScene } from "./asset_godot_scene"
 import { AssetFont } from "./asset_font"
 import { AssetSourceFile } from "./asset_source_file"
 import { GodotProjectFile } from "./godot_project_file"
-import { TsGdJson } from "./tsgd_json"
+import { Paths } from "./tsgd_json"
 import { BaseAsset } from "./base_asset"
 import { buildNodePathsTypeForScript } from "../build_paths_for_node"
 import { buildSceneImports } from "../build_scene_imports"
@@ -21,22 +21,8 @@ import { buildActionNames } from "../build_action_names"
 // probably be easier to find the tscn and tres files.
 
 export class TsGdProjectClass {
-  /**
-   * Path to the directory that contains the tsgd.json file.
-   *
-   * @example /Users/johnfn/GodotProject/
-   */
-  static tsgdPath: string
-
-  /**
-   * Path to the the tsgd.json file.
-   *
-   * @example /Users/johnfn/GodotProject/tsgd.json
-   */
-  static tsgdPathWithFilename: string
-
   /** Parsed tsgd.json file. */
-  tsgdJson: TsGdJson
+  static Paths: Paths
 
   /** Master list of all Godot assets */
   assets: BaseAsset[] = []
@@ -70,28 +56,22 @@ export class TsGdProjectClass {
 
   mainScene: AssetGodotScene
 
-  godotDefsPath: string
-
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 
   constructor(
     watcher: chokidar.FSWatcher,
     initialFilePaths: string[],
     program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
-    tsgdPath: string,
-    tsgdPathWithFilename: string
+    ts2gdJson: Paths
   ) {
     // Initial set up
 
-    TsGdProjectClass.tsgdPath = tsgdPath
-    TsGdProjectClass.tsgdPathWithFilename = tsgdPathWithFilename
-    this.tsgdJson = new TsGdJson()
+    TsGdProjectClass.Paths = ts2gdJson
     this.program = program
-    this.godotDefsPath = path.join(tsgdPath, "godot_defs")
 
     // Parse assets
 
-    const initialAssets = initialFilePaths.map((path) => this.getAsset(path))
+    const initialAssets = initialFilePaths.map((path) => this.createAsset(path))
 
     for (const asset of initialAssets) {
       if (asset === null) {
@@ -108,13 +88,13 @@ export class TsGdProjectClass {
     }
 
     this.mainScene = this.godotScenes().find(
-      (scene) => scene.resPath === this.godotProject.mainScene.resPath
+      (scene) => scene.resPath === this.godotProject.mainScene().resPath
     )!
 
     this.monitor(watcher)
   }
 
-  getAsset(
+  createAsset(
     path: string
   ):
     | AssetSourceFile
@@ -130,7 +110,7 @@ export class TsGdProjectClass {
     } else if (path.endsWith(".tscn")) {
       return new AssetGodotScene(path, this)
     } else if (path.endsWith(".godot")) {
-      return new GodotProjectFile(path)
+      return new GodotProjectFile(path, this)
     } else if (path.endsWith(".ttf")) {
       return new AssetFont(path, this)
     }
@@ -146,7 +126,7 @@ export class TsGdProjectClass {
   }
 
   onAddAsset(path: string) {
-    const newAsset = this.getAsset(path)
+    const newAsset = this.createAsset(path)
 
     if (newAsset instanceof AssetSourceFile) {
       newAsset.compile(this.program)
@@ -157,6 +137,10 @@ export class TsGdProjectClass {
     }
 
     buildAssetPathsType(this)
+
+    if (newAsset instanceof BaseAsset) {
+      this.assets.push(newAsset)
+    }
   }
 
   onChangeAsset(path: string) {
@@ -165,8 +149,7 @@ export class TsGdProjectClass {
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
     if (oldAsset) {
-      let newAsset = (this.getAsset(path) as any) as BaseAsset
-
+      let newAsset = (this.createAsset(path) as any) as BaseAsset
       this.assets = this.assets.filter((a) => a.fsPath !== path)
       this.assets.push(newAsset)
 
@@ -217,18 +200,21 @@ export class TsGdProjectClass {
   }
 
   static ResPathToFsPath(resPath: string) {
-    return path.join(this.tsgdPath, resPath.slice("res://".length))
+    return path.join(
+      TsGdProjectClass.Paths.rootPath,
+      resPath.slice("res://".length)
+    )
   }
 
   static FsPathToResPath(fsPath: string) {
-    return "res://" + fsPath.slice(this.tsgdPath.length + 1)
+    return "res://" + fsPath.slice(TsGdProjectClass.Paths.rootPath.length + 1)
   }
 }
 
 export const makeTsGdProject = async (
+  ts2gdJson: Paths,
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 ) => {
-  const { tsgdPath, tsgdPathWithFilename } = getTsgdPath()
   const initialFiles: string[] = []
 
   let addFn!: (path: string) => void
@@ -239,7 +225,7 @@ export const makeTsGdProject = async (
     readyFn = () => resolve(watcher)
 
     const watcher: chokidar.FSWatcher = chokidar
-      .watch(tsgdPath, {
+      .watch(ts2gdJson.rootPath, {
         ignored: (path: string, stats: any) => {
           return !shouldIncludePath(path)
         },
@@ -251,13 +237,7 @@ export const makeTsGdProject = async (
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(
-    watcher,
-    initialFiles,
-    program,
-    tsgdPath,
-    tsgdPathWithFilename
-  )
+  return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson)
 }
 
 const shouldIncludePath = (path: string): boolean => {
@@ -301,33 +281,4 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   return false
-}
-
-const getTsgdPath = () => {
-  const inputPath = process.argv[2]
-  let tsgdPathWithFilename: string
-  let tsgdPath: string
-
-  if (!inputPath) {
-    throw new Error(
-      "Please specify a tsgd.json file on the command line. Thanks!"
-    )
-  }
-
-  if (inputPath.startsWith("/")) {
-    // absolute path
-
-    tsgdPathWithFilename = inputPath
-  } else if (inputPath.startsWith(".")) {
-    // some sort of relative path, so resolve it
-
-    tsgdPathWithFilename = path.join(process.execPath, inputPath)
-  } else {
-    console.error("That appears to be an invalid path.")
-    process.exit(0)
-  }
-
-  tsgdPath = path.dirname(tsgdPathWithFilename)
-
-  return { tsgdPath, tsgdPathWithFilename }
 }

@@ -8,7 +8,10 @@ export const buildActionNames = (project: TsGdProjectClass) => {
     .map((name) => `'${name}'`)
     .join(" | ")}`
 
-  const destPath = path.join(project.godotDefsPath, "@actions.d.ts")
+  const destPath = path.join(
+    TsGdProjectClass.Paths.godotDefsPath,
+    "@actions.d.ts"
+  )
 
   fs.writeFileSync(destPath, result)
 }

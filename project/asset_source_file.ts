@@ -30,9 +30,9 @@ export class AssetSourceFile extends BaseAsset {
     super()
 
     let gdPath = path.join(
-      project.tsgdJson.destGdPath,
+      TsGdProjectClass.Paths.destGdPath,
       sourceFilePath.slice(
-        project.tsgdJson.sourceTsPath.length,
+        TsGdProjectClass.Paths.sourceTsPath.length,
         -path.extname(sourceFilePath).length
       ) + ".gd"
     )
@@ -41,7 +41,7 @@ export class AssetSourceFile extends BaseAsset {
     this.gdPath = gdPath
     this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
-      TsGdProjectClass.tsgdPath.length + 1
+      TsGdProjectClass.Paths.rootPath.length + 1
     )
     this.project = project
   }
@@ -110,9 +110,17 @@ export class AssetSourceFile extends BaseAsset {
     watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
   ): Promise<void> {
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+    let tries = 0
+
+    while (!sourceFileAst && ++tries < 10) {
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
+    }
 
     if (!sourceFileAst) {
-      console.error("invalid path to source file!")
+      console.error(
+        `TS can't find source file ${this.fsPath} - this is almost certainly a bug with ts2gd.`
+      )
       process.exit()
     }
 

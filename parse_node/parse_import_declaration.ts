@@ -22,7 +22,7 @@ const getPathWithoutExtension = (
   } else {
     // Handle absolute paths
 
-    pathToImportedTs = path.join(TsGdProjectClass.tsgdPath, importPath)
+    pathToImportedTs = path.join(TsGdProjectClass.Paths.rootPath, importPath)
   }
 
   return pathToImportedTs

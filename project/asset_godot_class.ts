@@ -2,6 +2,9 @@ import { AssetSourceFile } from "./asset_source_file"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 
+// TODO - I don't think this is needed. You should be able to derive it strictly from
+// TS files
+
 export class AssetGodotClass extends BaseAsset {
   resPath: string
   fsPath: string

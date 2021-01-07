@@ -37,7 +37,10 @@ export const buildGroupTypes = (project: TsGdProjectClass) => {
 
   result += `}`
 
-  const destPath = path.join(project.godotDefsPath, "@groups.d.ts")
+  const destPath = path.join(
+    TsGdProjectClass.Paths.godotDefsPath,
+    "@groups.d.ts"
+  )
 
   fs.writeFileSync(destPath, result)
 }

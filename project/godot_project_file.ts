@@ -1,5 +1,5 @@
 import { parseGodotConfigFile } from "./godot_parser"
-import { TsGdProjectClass } from "./project"
+import { TsGdProjectClass as TsGdProject } from "./project"
 
 interface IRawGodotConfig {
   globals: {
@@ -14,7 +14,7 @@ interface IRawGodotConfig {
     _global_script_class_icons: { [key: string]: string }
   }
 
-  application: {
+  application?: {
     "config/name": string
     "run/main_scene": string
     "config/icon": string
@@ -28,7 +28,7 @@ interface IRawGodotConfig {
     "gdscript/warnings/unsafe_call_argument": string
   }
 
-  input: {
+  input?: {
     [name: string]: {
       deadzone: number
       events: any[]
@@ -43,18 +43,18 @@ interface IRawGodotConfig {
 export class GodotProjectFile {
   rawConfig: IRawGodotConfig
   autoloads: { resPath: string }[]
-  mainScene: {
-    resPath: string
-    fsPath: string
-  }
   fsPath: string
   actionNames: string[]
+  project: TsGdProject
 
-  constructor(path: string) {
-    this.rawConfig = (parseGodotConfigFile(path) as any) as IRawGodotConfig
+  constructor(path: string, project: TsGdProject) {
+    this.rawConfig = parseGodotConfigFile(path, {
+      autoload: {},
+    }) as IRawGodotConfig
+
+    this.project = project
     this.fsPath = path
 
-    const mainSceneResPath = this.rawConfig.application["run/main_scene"]
     this.autoloads = Object.values(this.rawConfig.autoload)
       .filter((x) => typeof x === "string")
       .map((x) => ({
@@ -62,11 +62,34 @@ export class GodotProjectFile {
         resPath: x.slice(1),
       }))
 
-    this.mainScene = {
-      resPath: mainSceneResPath,
-      fsPath: TsGdProjectClass.ResPathToFsPath(mainSceneResPath),
+    this.actionNames = Object.keys(this.rawConfig.input ?? {})
+  }
+
+  mainScene() {
+    let mainSceneResPath = this.rawConfig.application?.["run/main_scene"]
+
+    if (!mainSceneResPath) {
+      // If they don't have one, just take the first one
+
+      const allScenes = this.project.godotScenes()
+
+      if (allScenes.length > 1) {
+        console.log(
+          "No main scene defined and more than one scene found! Choosing one arbitrarily."
+        )
+        console.log("Please set a main scene in the Godot project settings.")
+        console.log("\n")
+        console.log("Scenes found:")
+
+        console.log(allScenes.map((s) => s.fsPath))
+      }
+
+      mainSceneResPath = allScenes[0].resPath
     }
 
-    this.actionNames = Object.keys(this.rawConfig.input)
+    return {
+      resPath: mainSceneResPath,
+      fsPath: TsGdProject.ResPathToFsPath(mainSceneResPath),
+    }
   }
 }
