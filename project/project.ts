@@ -155,6 +155,9 @@ export class TsGdProjectClass {
 
       if (newAsset instanceof AssetSourceFile) {
         newAsset.compile(this.program)
+
+        buildAssetPathsType(this)
+        buildNodePathsTypeForScript(newAsset, this)
       } else if (newAsset instanceof AssetGodotScene) {
         for (const script of this.sourceFiles()) {
           buildNodePathsTypeForScript(script, this)

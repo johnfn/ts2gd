@@ -39,7 +39,10 @@ export const parseSourceFile = (
   props.isAutoload = sourceInfo?.isAutoload() ?? false
 
   const classDecl = statements.find(
-    (statement) => statement.kind === SyntaxKind.ClassDeclaration
+    (statement) =>
+      statement.kind === SyntaxKind.ClassDeclaration &&
+      // skip class declarations
+      statement.modifiers?.filter((m) => m.getText() === "declare").length === 0
   ) as ts.ClassDeclaration | null
   const parsedStatements = statements.map((statement) =>
     parseNode(statement, props)
