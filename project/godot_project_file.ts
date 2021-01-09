@@ -49,13 +49,13 @@ export class GodotProjectFile {
 
   constructor(path: string, project: TsGdProject) {
     this.rawConfig = parseGodotConfigFile(path, {
-      autoload: {},
+      autoload: [],
     }) as IRawGodotConfig
 
     this.project = project
     this.fsPath = path
 
-    this.autoloads = Object.values(this.rawConfig.autoload)
+    this.autoloads = Object.values(this.rawConfig.autoload[0])
       .filter((x) => typeof x === "string")
       .map((x) => ({
         // For some reason, the respath strings start with *, e.g. "*res://compiled/Enemy.gd"

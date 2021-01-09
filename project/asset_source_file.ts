@@ -143,7 +143,10 @@ export class AssetSourceFile extends BaseAsset {
       genUniqueName,
       project: this.project,
       mostRecentControlStructureIsSwitch: false,
-      isAutoload: false,
+      isAutoload:
+        this.project.godotProject.autoloads.find(
+          (autoload) => autoload.resPath === this.resPath
+        ) !== undefined,
       program: watchProgram.getProgram().getProgram(),
       usages: new Map(),
     })
