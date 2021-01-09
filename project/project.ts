@@ -133,7 +133,6 @@ export class TsGdProjectClass {
     } else if (newAsset instanceof AssetGodotScene) {
       buildSceneImports(this)
       buildGroupTypes(this)
-      buildActionNames(this)
     }
 
     buildAssetPathsType(this)
@@ -144,7 +143,7 @@ export class TsGdProjectClass {
   }
 
   onChangeAsset(path: string) {
-    console.log("Change:\t", path)
+    console.info("Change:\t", path)
 
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
@@ -162,12 +161,14 @@ export class TsGdProjectClass {
         for (const script of this.sourceFiles()) {
           buildNodePathsTypeForScript(script, this)
         }
+
+        buildSceneImports(this)
       }
     }
   }
 
   onRemoveAsset(path: string) {
-    console.log("Delete:\t", path)
+    console.info("Delete:\t", path)
 
     const changedAsset = this.assets.find((asset) => asset.fsPath === path)
 

@@ -1,6 +1,12 @@
 #!/usr/bin/env ts-node
 
+// TODO: template strings
+// TODO: str()
+// TODO: new Thing() should find the appropriate scene to initialize if there is one.
+// TODO: "a" + 1 doesnt work but prob should
+// TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc
+// TODO: allow redefinition of props in a parent class (e.g. if say you wanna redeclare material as SpatialMaterial)
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
 // TODO: it's hard to compile ++/-- properly.
 // TODO: Resolve node paths even through instances.
@@ -111,7 +117,7 @@ const main = async () => {
   project.buildAllDefinitions()
   project.compileAllSourceFiles()
 
-  console.log(
+  console.info(
     "Initial compilation complete in",
     (new Date().getTime() - start) / 1000 + "s"
   )

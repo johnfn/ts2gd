@@ -71,7 +71,7 @@ export const buildNodePathsTypeForScript = (
 
       commonRelativePaths = []
 
-      console.log("Unused class:", className)
+      console.error("Unused class:", className)
     }
   } else {
     const relativePathsPerNode = nodesWithScript.map((i) =>

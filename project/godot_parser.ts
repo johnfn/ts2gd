@@ -310,8 +310,8 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
       }
     }
   } catch (e) {
-    console.log("Failed to parse godot config file. This is a bug.")
-    console.log(util.inspect(result, false, 10, true))
+    console.error("Failed to parse godot config file. This is a bug.")
+    console.info(util.inspect(result, false, 10, true))
 
     throw e
   }
@@ -323,4 +323,4 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
 //   "/Users/johnfn/GodotProject2/Scenes/MainScene.tscn"
 // )
 
-// console.log(util.inspect(result, false, 8, true))
+// console. log(util.inspect(result, false, 8, true))

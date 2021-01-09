@@ -144,6 +144,14 @@ export const parseCallExpression = (
         expr = "yield"
       }
 
+      if (expr === "emit_signal") {
+        if (args[0].startsWith("this")) {
+          args[0] = args[0].slice("this.".length)
+        }
+
+        args[0] = '"' + args[0] + '"'
+      }
+
       if (isArrowFunction) {
         const { capturedScopeObject } = getCapturedScope(
           decls[0] as ts.ArrowFunction,

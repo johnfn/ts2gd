@@ -74,14 +74,14 @@ export class GodotProjectFile {
       const allScenes = this.project.godotScenes()
 
       if (allScenes.length > 1) {
-        console.log(
+        console.warn(
           "No main scene defined and more than one scene found! Choosing one arbitrarily."
         )
-        console.log("Please set a main scene in the Godot project settings.")
-        console.log("\n")
-        console.log("Scenes found:")
+        console.warn("Please set a main scene in the Godot project settings.")
+        console.warn("\n")
+        console.warn("Scenes found:")
 
-        console.log(allScenes.map((s) => s.fsPath))
+        console.warn(allScenes.map((s) => s.fsPath).join("\n"))
       }
 
       mainSceneResPath = allScenes[0].resPath

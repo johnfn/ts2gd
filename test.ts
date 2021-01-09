@@ -176,7 +176,6 @@ const test = (props: Test, name: string, testFileName: string): TestResult => {
   if (props.expectedFiles) {
     // Go into file comparison mode
     for (const { filename, content } of props.expectedFiles) {
-      console.log(compiled.enums)
       const match = (compiled.enums ?? []).find(
         (e) => e.name + ".gd" === filename
       )
@@ -276,23 +275,23 @@ export const runTests = async () => {
   const elapsed = (new Date().getTime() - start) / 1000 + "s"
 
   if (failures.length === 0) {
-    console.log("All", total, "tests passed!")
+    console.info("All", total, "tests passed!")
   } else if (
     failures.length > 0 &&
     failures.filter((x) => x.expectFail).length === failures.length
   ) {
-    console.log(total, "tests passed, in", elapsed)
-    console.log("\nSome failed, but they were expected to fail:")
-    console.log(failures.map((f) => "  " + f.name).join("\n"))
+    console.info(total, "tests passed, in", elapsed)
+    console.info("\nSome failed, but they were expected to fail:")
+    console.info(failures.map((f) => "  " + f.name).join("\n"))
   } else {
     for (let { expected, name, result, fileName, logs } of failures.filter(
       (x) => !x.expectFail
     )) {
-      console.log("=============================================")
-      console.log(name, "failed:")
-      console.log("  in", `./parse_node/${fileName}`)
-      console.log("=============================================\n")
-      console.log("\x1b[31mExpected:\x1b[0m")
+      console.info("=============================================")
+      console.info(name, "failed:")
+      console.info("  in", `./parse_node/${fileName}`)
+      console.info("=============================================\n")
+      console.info("\x1b[31mExpected:\x1b[0m")
 
       let str = ""
 
@@ -308,14 +307,14 @@ export const runTests = async () => {
         }
       }
 
-      console.log(
+      console.info(
         str
           .split("\n")
           .map((x) => "  " + x + "\n")
           .join("")
       )
-      console.log("\x1b[32mActual:\x1b[0m")
-      console.log(
+      console.info("\x1b[32mActual:\x1b[0m")
+      console.info(
         result
           .split("\n")
           .map((x) => "  " + x + "\n")
@@ -323,18 +322,18 @@ export const runTests = async () => {
       )
 
       if (logs && logs.length > 0) {
-        console.log("Logs:")
+        console.info("Logs:")
 
         for (const log of logs) {
-          console.log(...log)
+          console.info(...log)
         }
       }
     }
 
     const failureCount = failures.filter((x) => !x.expectFail).length
 
-    console.log("\n")
-    console.log("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
+    console.info("\n")
+    console.info("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
   }
 }
 

@@ -74,9 +74,14 @@ export function generateGodotLibraryDefinitions(
   project: TsGdProjectClass
 ): void {
   // TODO: Refactor this out
-  const godotDocumentationPath = "/Users/johnfn/code/tsgd/godot/doc/classes"
-  const contents = fs.readdirSync(godotDocumentationPath)
-  const xmlFiles = contents.filter((file) => file.endsWith(".xml"))
+  let p1 = "/Users/johnfn/code/tsgd/godot/modules/csg/doc_classes"
+  let p2 = "/Users/johnfn/code/tsgd/godot/doc/classes"
+
+  const xmlPaths = [
+    ...fs.readdirSync(p1).map((x) => path.join(p1, x)),
+    ...fs.readdirSync(p2).map((x) => path.join(p2, x)),
+  ].filter((file) => file.endsWith(".xml"))
+
   fs.mkdirSync(TsGdProjectClass.Paths.godotDefsPath, { recursive: true })
 
   function convertType(godotType: string): string {
@@ -135,7 +140,7 @@ export function generateGodotLibraryDefinitions(
   async function parseFile(path: string) {
     const content = fs.readFileSync(path, "utf-8")
     const json = await parseStringPromise(content)
-    const methodsXml: any[] = json.class.methods[0].method ?? []
+    const methodsXml: any[] = json.class.methods?.[0].method ?? []
     const members = (json.class.members ?? [])[0]?.member ?? []
     let className = json.class["$"].name
     const inherits = json.class["$"].inherits
@@ -147,7 +152,7 @@ export function generateGodotLibraryDefinitions(
       const args = method.argument
       const isConstructor = name === className
       const docString = formatJsDoc(method.description[0].trim())
-      let returnType = convertType(method.return[0]["$"].type)
+      let returnType = convertType(method.return?.[0]["$"].type) ?? "any"
       let argumentList: string = ""
 
       if (args) {
@@ -198,7 +203,7 @@ export function generateGodotLibraryDefinitions(
     const constructorInfo = methods.filter((method) => method.isConstructor)
 
     if (className === "Signal") {
-      className = "Signal<T>"
+      className = "Signal<T extends any[]>"
     }
 
     if (singletons.includes(className)) {
@@ -272,6 +277,10 @@ ${methods
     // Special case
     if (method.name === "connect") {
       return ""
+    }
+
+    if (method.name === "emit_signal") {
+      return "emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;"
     }
 
     return `${method.docString}
@@ -354,15 +363,6 @@ ${constants
     })
     .join("\n")}
 }
-
-
-${(() => {
-  if (className.toLowerCase() === "signal<t>") {
-    return ""
-  } else {
-    return ` `
-  }
-})()}
 `
 
     return output
@@ -434,9 +434,7 @@ ${Object.keys(enums)
   }
 
   async function buildGlobals() {
-    const result = await parseGlobalScope(
-      path.join(godotDocumentationPath, "@GlobalScope.xml")
-    )
+    const result = await parseGlobalScope(path.join(p2, "@GlobalScope.xml"))
     fs.writeFileSync(
       path.join(TsGdProjectClass.Paths.godotDefsPath, "@globals.d.ts"),
       result
@@ -444,7 +442,9 @@ ${Object.keys(enums)
   }
 
   async function buildDefinitions() {
-    for (let fileName of xmlFiles) {
+    for (let xmlPath of xmlPaths) {
+      const fileName = path.basename(xmlPath)
+
       if (fileName === "@GlobalScope.xml") {
         continue
       }
@@ -457,9 +457,7 @@ ${Object.keys(enums)
         continue
       }
 
-      const result = await parseFile(
-        path.join(godotDocumentationPath, fileName)
-      )
+      const result = await parseFile(xmlPath)
 
       fs.writeFileSync(
         path.join(

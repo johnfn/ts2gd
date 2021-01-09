@@ -8,21 +8,20 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
   for (const scene of project.godotScenes()) {
     const sceneScript = scene.rootNode.getScript()
 
-    if (!sceneScript) {
-      continue
+    if (sceneScript?.className()) {
+      result += `export const ${path.basename(
+        scene.fsPath,
+        ".tscn"
+      )}Tscn: PackedScene<import('${sceneScript.fsPath.slice(
+        0,
+        -".ts".length
+      )}').${sceneScript.className()}>\n`
+    } else {
+      result += `export const ${path.basename(
+        scene.fsPath,
+        ".tscn"
+      )}Tscn: PackedScene<Node>\n`
     }
-
-    if (!sceneScript.className()) {
-      continue
-    }
-
-    result += `export const ${path.basename(
-      scene.fsPath,
-      ".tscn"
-    )}Tscn: PackedScene<import('${sceneScript.fsPath.slice(
-      0,
-      -".ts".length
-    )}').${sceneScript.className()}>\n`
   }
 
   const destPath = path.join(

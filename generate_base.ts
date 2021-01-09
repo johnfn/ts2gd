@@ -23,6 +23,7 @@ declare type float = number;
 // Used for typing connect()
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
+type SignalArguments<T> = T extends Signal<infer R> ? R : any;
 
 interface FunctionConstructor {
   (...args: string[]): Function;
@@ -92,6 +93,11 @@ ${PackedSceneDef}
 declare const len: (obj: any[]) => number;
 declare const range: (length: number) => number[];
 declare const print: (...args: any[]) => void;
+
+declare class Signal<T extends any[]> {
+  /** Don't use this - it's only to get typechecking working! */
+  private __unused: T;
+}
 `
 
 export const buildBase = (basePath: string) => {

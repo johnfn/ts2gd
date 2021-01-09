@@ -41,8 +41,8 @@ export class Paths {
       const ts2gdInCurrentFolderPath = path.join(process.cwd(), "ts2gd.json")
 
       if (!fs.existsSync(ts2gdInCurrentFolderPath)) {
-        console.log("No ts2gd.json file found.")
-        console.log("Try running ts2gd --init.")
+        console.error("No ts2gd.json file found.")
+        console.error("Try running ts2gd --init.")
 
         process.exit(0)
       }
@@ -118,8 +118,8 @@ export class Paths {
     fs.mkdirSync("compiled")
     fs.mkdirSync("src")
 
-    console.log("ts2gd.json created.")
-    console.log("compiled/ created.")
-    console.log("src/ created.")
+    console.info("ts2gd.json created.")
+    console.info("compiled/ created.")
+    console.info("src/ created.")
   }
 }
