@@ -1,7 +1,14 @@
 #!/usr/bin/env ts-node
 
+// TODO: for loops can redeclare variables!
+// TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: template strings
 // TODO: str()
+// TODO: Godot globals
+// TODO: For autoload classes, create the global variable implicitly ? is this possible?  (b/c namespace problems)
+// TODO: For autoload classes, marking them would then update the config file
+//         - this would require being able to save back config files accurately.
+
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: this.collision.connect("mouseexit", this, () => {})
@@ -21,8 +28,6 @@
 // TODO: Clean up TS errors and output - only output if something is
 // seriously wrong!
 // TODO: this.blah.add() doesnt parse right
-// TODO: Because I consider Dictionary = {}, it considers everything
-// to be a Dictionary... even Node2D
 // TODO: SUbtracting vectors gives a number for some reason
 // TODO: Workout SpontaneousDialog.instance()
 // TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.

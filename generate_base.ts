@@ -93,6 +93,8 @@ ${PackedSceneDef}
 declare const len: (obj: any[]) => number;
 declare const range: (length: number) => number[];
 declare const print: (...args: any[]) => void;
+declare const randi: () => int;
+declare const randf: () => float;
 
 declare class Signal<T extends any[]> {
   /** Don't use this - it's only to get typechecking working! */
