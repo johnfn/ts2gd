@@ -224,7 +224,11 @@ ${(() => {
   let constructors = ""
 
   if (constructorInfo.length === 0) {
-    constructors += `  "new"(): this;\n`
+    // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
+    // Unfortunately by adding this, we also make new Object() not a syntax error - even
+    // though it really should be.
+
+    constructors += `  "new"(): ${className};\n`
   } else {
     constructors += `
 ${constructorInfo
@@ -233,11 +237,7 @@ ${constructorInfo
 `
   }
 
-  // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
-  // Unfortunately by adding this, we also make new Object() not a syntax error - even
-  // though it really should be.
-
-  constructors += `  static "new"(): this;\n`
+  constructors += `  static "new"(): ${className};\n`
 
   return constructors
 })()}

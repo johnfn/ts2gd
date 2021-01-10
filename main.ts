@@ -10,6 +10,7 @@
 //         - this would require being able to save back config files accurately.
 
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
+// TODO: new Something() should compile into Something.new() if possible!
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc

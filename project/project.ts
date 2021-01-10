@@ -15,6 +15,7 @@ import { generateGodotLibraryDefinitions } from "../generate_library"
 import { buildAssetPathsType } from "../build_asset_paths"
 import { buildGroupTypes } from "../build_group_types"
 import { buildActionNames } from "../build_action_names"
+import { AssetImage } from "./asset_image"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -52,6 +53,11 @@ export class TsGdProjectClass {
   /** Info about each Godot font. */
   godotFonts(): AssetFont[] {
     return this.assets.filter((a): a is AssetFont => a instanceof AssetFont)
+  }
+
+  /** Info about each Godot image. */
+  godotImages(): AssetImage[] {
+    return this.assets.filter((a): a is AssetImage => a instanceof AssetImage)
   }
 
   mainScene: AssetGodotScene
@@ -101,6 +107,7 @@ export class TsGdProjectClass {
     | GodotFile
     | AssetGodotScene
     | AssetFont
+    | AssetImage
     | GodotProjectFile
     | null {
     if (path.endsWith(".ts")) {
@@ -113,6 +120,13 @@ export class TsGdProjectClass {
       return new GodotProjectFile(path, this)
     } else if (path.endsWith(".ttf")) {
       return new AssetFont(path, this)
+    } else if (
+      path.endsWith(".png") ||
+      path.endsWith(".gif") ||
+      path.endsWith(".bmp") ||
+      path.endsWith(".jpg")
+    ) {
+      return new AssetImage(path, this)
     }
 
     throw new Error(`unhandled asset type ${path}`)
@@ -260,6 +274,15 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   if (path.endsWith(".ttf")) {
+    return true
+  }
+
+  if (
+    path.endsWith(".img") ||
+    path.endsWith(".png") ||
+    path.endsWith(".gif") ||
+    path.endsWith(".jpg")
+  ) {
     return true
   }
 
