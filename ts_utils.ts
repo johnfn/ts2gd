@@ -1,6 +1,17 @@
 import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
 import { ParseState } from "./parse_node"
 
+export const isNullable = (node: ts.Node, typechecker: ts.TypeChecker) => {
+  const type = typechecker.getTypeAtLocation(node)
+
+  return type.isUnion() &&
+    type.types.find(
+      (type) => type.flags & TypeFlags.Null || type.flags & TypeFlags.Undefined
+    )
+    ? true
+    : false
+}
+
 /**
  * Gets the inheritance tree of the provided type. E.g. if Foo extends Bar
  * extends Baz, and we pass in Foo, then this returns [Bar, Baz].

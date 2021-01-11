@@ -3,6 +3,7 @@ import { parseNode, ParseNodeType } from "./parse_node"
 import { baseContentForTests } from "./generate_base"
 import fs from "fs"
 import path from "path"
+import { DefaultTsconfig } from "./default_tsconfig"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
@@ -23,7 +24,11 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     ts.ScriptKind.TS
   )
 
-  const defaultCompilerHost = ts.createCompilerHost({})
+  const tsconfigOptions: ts.CompilerOptions = {
+    strict: true,
+  }
+
+  const defaultCompilerHost = ts.createCompilerHost(tsconfigOptions)
 
   const customCompilerHost: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
@@ -51,7 +56,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
 
   const program = ts.createProgram(
     ["test.ts", "autoload.ts"],
-    {},
+    tsconfigOptions,
     customCompilerHost
   )
 
@@ -81,6 +86,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       createAsset: () => 0 as any,
       godotClasses: () => [],
       godotFonts: () => [],
+      godotImages: () => [],
       godotProject: {
         fsPath: "",
         autoloads: [{ resPath: "autoload.ts" }],
