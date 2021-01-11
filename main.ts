@@ -1,7 +1,10 @@
 #!/usr/bin/env ts-node
 
+// TODO: foo.bar when bar is optional can cause "invalid property access" because we need to check for it first.
+// TODO: `load` is a godot keyword
 // TODO: String-based enums are not supported currently.
 // TODO: for loops can redeclare variables!
+// TODO: ": float" in parameters is not respected
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: template strings
 // TODO: str()

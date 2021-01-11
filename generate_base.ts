@@ -95,6 +95,8 @@ declare const range: (length: number) => number[];
 declare const print: (...args: any[]) => void;
 declare const randi: () => int;
 declare const randf: () => float;
+declare const to_json: (obj: any) => string;
+declare const parse_json: (str: string) => any; // TODO - probably dictionary?
 
 declare class Signal<T extends any[]> {
   /** Don't use this - it's only to get typechecking working! */

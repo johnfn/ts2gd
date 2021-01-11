@@ -149,6 +149,8 @@ export function getGodotType(
     return "float"
   }
 
+  // TODO: Optionals make this nearly impossible
+
   if (tsTypeName === "string") {
     return "String"
   }
@@ -165,9 +167,9 @@ export function getGodotType(
     return "Array"
   }
 
-  if (tsTypeName.includes("[")) {
-    return "Array"
-  }
+  // if (tsTypeName.includes("[")) {
+  //   return "Array"
+  // }
 
   if (tsTypeName.startsWith("PackedScene")) {
     // This is a generic type in TS, so just return the non-generic Godot type.
