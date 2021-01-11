@@ -3,6 +3,7 @@ import { combine, ParseNodeType, ParseState } from "../parse_node"
 import path from "path"
 import { isEnumType } from "../ts_utils"
 import { TsGdProjectClass } from "../project/project"
+import { UsageDomain } from "tsutils"
 
 const getPathWithoutExtension = (
   node: ts.ImportDeclaration,
@@ -152,7 +153,20 @@ export const parseImportDeclaration = (
           typeString = typeString.slice("typeof ".length)
         }
 
-        if (!importedSourceFile.isAutoload) {
+        const usages = props.usages.get(element.name)
+
+        let usedAsValue = false
+
+        // No import is necessary unless we actually use the identifier as a value. (Circular references
+        // will crash Godot, so we try to avoid them.)
+        for (const use of usages?.uses ?? []) {
+          if (use.domain & UsageDomain.Value) {
+            usedAsValue = true
+            break
+          }
+        }
+
+        if (!importedSourceFile.isAutoload() && usedAsValue) {
           imports.push({
             importedName: typeString,
             resPath: importedSourceFile.resPath,

@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 
+// TODO: String-based enums are not supported currently.
 // TODO: for loops can redeclare variables!
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: template strings

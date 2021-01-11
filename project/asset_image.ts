@@ -8,12 +8,13 @@ export class AssetImage extends BaseAsset {
 
   constructor(path: string, project: TsGdProjectClass) {
     super()
+
     this.fsPath = path
     this.resPath = TsGdProjectClass.FsPathToResPath(this.fsPath)
     this.project = project
   }
 
   tsType(): string {
-    return "Texture"
+    return "StreamTexture"
   }
 }
