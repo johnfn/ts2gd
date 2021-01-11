@@ -104,8 +104,8 @@ export const syntaxToKind = (kind: ts.Node["kind"]) => {
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
  * we can be aboue this type.
  *
- * Note we need actualType because if we have let x: float, TS will infer the
- * type to be number, which isn't very useful.
+ * Note we need actualType because if we have let x: float, TS will say the
+ * type is number (not float!), which isn't very useful.
  *
  * @param typecheckerInferredType This is the type that getTypeAtLocation returns
  * @param actualType This is the actual type node in the program, if there is one

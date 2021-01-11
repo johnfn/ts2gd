@@ -105,6 +105,10 @@ export function generateGodotLibraryDefinitions(
       return "any"
     }
 
+    if (godotType === "String") {
+      return "string"
+    }
+
     if (godotType === "NodePath") {
       // TODO
       return "NodePathType"
