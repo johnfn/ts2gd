@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 
+// TODO: enum with set values also doesn't work.
 // TODO: foo.bar when bar is optional can cause "invalid property access" because we need to check for it first.
 // TODO: `load` is a godot keyword
 // TODO: String-based enums are not supported currently.

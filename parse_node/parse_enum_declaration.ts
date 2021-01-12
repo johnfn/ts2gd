@@ -1,34 +1,47 @@
-import ts from "typescript";
+import ts from "typescript"
 
-import { ParseNodeType, ParseState } from "../parse_node"
-import { Test } from "../test";
-import { getImportResPathForEnum } from "./parse_import_declaration";
+import { combine, ParseNodeType, ParseState } from "../parse_node"
+import { Test } from "../test"
+import { getImportResPathForEnum } from "./parse_import_declaration"
 
-export const parseEnumDeclaration = (node: ts.EnumDeclaration, props: ParseState): ParseNodeType => {
-  let result = `enum ${node.name.text} {\n`;
+export const parseEnumDeclaration = (
+  node: ts.EnumDeclaration,
+  props: ParseState
+): ParseNodeType => {
+  const enumText = combine({
+    parent: node,
+    nodes: node.members.map((member) => member.initializer ?? undefined),
+    props,
+    content: (...initializers) => {
+      let result = `enum ${node.name.text} {\n`
 
-  for (const m of node.members) {
-    result += `  ${m.name.getText()},\n`;
-  }
+      for (let i = 0; i < initializers.length; i++) {
+        result += `  ${node.members[i].name.getText()}${
+          initializers[i] ? ` = ${initializers[i]}` : ``
+        },\n`
+      }
 
-  result += '}';
+      result += "}"
 
-  const enumType = props.program.getTypeChecker().getTypeAtLocation(node);
-  const {
-    resPath,
-    enumName,
-  } = getImportResPathForEnum(enumType, props);
+      return result
+    },
+  })
 
-  const importString = `const ${enumName} = preload("${resPath}").${enumName}`;
+  const enumType = props.program.getTypeChecker().getTypeAtLocation(node)
+  const { resPath, enumName } = getImportResPathForEnum(enumType, props)
+
+  const importString = `const ${enumName} = preload("${resPath}").${enumName}`
 
   return {
-    content: '',
+    content: "",
     hoistedEnumImports: [importString],
-    enums: [{
-      content: result,
-      name: node.name.text,
-    }],
-  };
+    enums: [
+      {
+        content: enumText.content,
+        name: node.name.text,
+      },
+    ],
+  }
 }
 
 export const testEnumDeclaration: Test = {
@@ -51,7 +64,7 @@ enum Test {
   A,
   B,
 }      
-`
-    }
-  ]
-};
+`,
+    },
+  ],
+}
