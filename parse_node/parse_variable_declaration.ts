@@ -4,7 +4,7 @@ import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
 import { getPreciseInitializerType } from "../ts_utils"
 
-const getDestructuredNamesAndExpressions = (
+export const getDestructuredNamesAndAccessStrings = (
   node: ts.BindingName,
   access: string = ""
 ): { id: ts.Identifier; access: string }[] => {
@@ -17,7 +17,7 @@ const getDestructuredNamesAndExpressions = (
 
     return obj.elements
       .map((elem) =>
-        getDestructuredNamesAndExpressions(
+        getDestructuredNamesAndAccessStrings(
           elem.name,
           access + "." + elem.name.getText()
         )
@@ -29,7 +29,7 @@ const getDestructuredNamesAndExpressions = (
     return obj.elements
       .map((elem, i) => {
         if (elem.kind === SyntaxKind.BindingElement) {
-          return getDestructuredNamesAndExpressions(
+          return getDestructuredNamesAndAccessStrings(
             elem.name,
             access + `[${i}]`
           )
@@ -87,7 +87,7 @@ export const parseVariableDeclaration = (
         `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}`,
     })
   } else {
-    let destructuredNames = getDestructuredNamesAndExpressions(node.name)
+    let destructuredNames = getDestructuredNamesAndAccessStrings(node.name)
 
     for (const { id } of destructuredNames) {
       props.scope.addName(id)
@@ -145,6 +145,22 @@ let { a, b } = { a: 1, b: 2 }
 var __gen = { "a": 1, "b": 2 }
 a = __gen.a
 b = __gen.b
+  `,
+}
+
+export const testDestructure4: Test = {
+  ts: `
+let __gen = 1
+let { a, b } = { a: 1, b: 2 }
+
+print(__gen)
+  `,
+  expected: `
+var __gen: int = 1
+var __gen1 = { "a": 1, "b": 2 }
+a = __gen1.a
+b = __gen1.b
+print(__gen)
   `,
 }
 

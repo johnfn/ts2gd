@@ -4,6 +4,7 @@ import { ParseState, combine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
+import { getDestructuredNamesAndAccessStrings } from "./parse_variable_declaration"
 
 export const parseForOfStatement = (
   node: ts.ForOfStatement,
@@ -16,25 +17,62 @@ export const parseForOfStatement = (
 
   if (initializer.kind === SyntaxKind.VariableDeclarationList) {
     const initializerNode = initializer as ts.VariableDeclarationList
-    const decl = initializerNode.declarations[0]
 
     if (initializerNode.declarations.length > 1) {
       throw new Error("Uh oh! For...of with > 1 declaration")
     }
 
-    const usages = props.usages.get(decl.name as ts.Identifier)
-    const isUnused = usages?.uses.length === 0
+    const name = initializerNode.declarations[0].name
 
-    result = combine({
-      parent: node,
-      nodes: [node.expression, node.statement],
-      props,
-      addIndent: true,
-      content: (expr, statement) => `
-for ${isUnused ? "_" : ""}${decl.name.getText()} in ${expr}:
+    if (name.kind === SyntaxKind.Identifier) {
+      // Common case - single variable in for... of
+      // like for (const x of list)
+
+      result = combine({
+        parent: node,
+        nodes: [node.expression, node.statement, name],
+        props,
+        addIndent: true,
+        content: (expr, statement, name) => `
+for ${name} in ${expr}:
   ${statement}
 `,
-    })
+      })
+    } else {
+      // Destructured case
+      // like for (const [a, b] of list)
+
+      const destructuredNames = getDestructuredNamesAndAccessStrings(
+        initializerNode.declarations[0].name
+      )
+
+      for (const { id } of destructuredNames) {
+        props.scope.addName(id)
+      }
+
+      const genName = props.scope.createName()
+
+      // const usages = props.usages.get(decl.name as ts.Identifier)
+      // const isUnused = usages?.uses.length === 0
+
+      result = combine({
+        parent: node,
+        nodes: [
+          node.expression,
+          node.statement,
+          ...destructuredNames.map((d) => d.id),
+        ],
+        props,
+        addIndent: true,
+        content: (expr, statement, ...nodes) => `
+for ${genName} in ${expr}:
+${nodes
+  .map((node, i) => `  ${node} = ${genName}${destructuredNames[i].access}\n`)
+  .join("")}
+  ${statement}
+`,
+      })
+    }
   } else {
     const initExpr = initializer as ts.Expression
 
@@ -55,12 +93,24 @@ for ${initExpr} in ${expr}:
   return result
 }
 
-export const testPass1: Test = {
+export const testBasicForOf: Test = {
   ts: `
 for (let x of []) print(1)
   `,
   expected: `
-for _x in []:
+for x in []:
   print(1)
+  `,
+}
+
+export const testForOfDestructuring: Test = {
+  ts: `
+for (let [a, b] of [[1, 2]]) print(a, b)
+  `,
+  expected: `
+for __gen in [[1, 2]]:
+  a = __gen[0]
+  b = __gen[1]
+  print(a, b)
   `,
 }
