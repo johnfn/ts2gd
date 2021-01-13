@@ -1,11 +1,7 @@
-import ts, {
-  collapseTextChangeRangesAcrossMultipleVersions,
-  SyntaxKind,
-} from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
-import { syntaxToKind } from "../ts_utils"
 
 export const parseEmptyStatement = (
   node: ts.EmptyStatement,

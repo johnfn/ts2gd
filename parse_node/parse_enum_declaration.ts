@@ -75,3 +75,31 @@ const Test = {
     },
   ],
 }
+
+export const testEnumDeclaration2: Test = {
+  ts: `
+export enum Test { 
+  A = "A", 
+  B = "B"
+}
+
+print(Test.A)
+  `,
+  expected: `
+const Test = preload("_Test.gd").Test
+
+print(Test.A)
+  `,
+
+  expectedFiles: [
+    {
+      filename: "Test.gd",
+      content: `
+const Test = {
+  "A": "A",
+  "B": "B",
+}      
+`,
+    },
+  ],
+}
