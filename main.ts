@@ -1,9 +1,7 @@
 #!/usr/bin/env ts-node
 
-// TODO: enum with set values also doesn't work.
-// TODO: foo.bar when bar is optional can cause "invalid property access" because we need to check for it first.
 // TODO: `load` is a godot keyword
-// TODO: String-based enums are not supported currently.
+// TODO: clash between this.foo and foo() since this is removed by godot
 // TODO: for loops can redeclare variables!
 // TODO: ": float" in parameters is not respected
 // TODO: we need to clean up old node_paths when we delete or rename a class.
@@ -14,12 +12,13 @@
 // TODO: For autoload classes, marking them would then update the config file
 //         - this would require being able to save back config files accurately.
 
+// TODO: For loop destructuring
+
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: new Something() should compile into Something.new() if possible!
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc
-// TODO: allow redefinition of props in a parent class (e.g. if say you wanna redeclare material as SpatialMaterial)
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
 // TODO: it's hard to compile ++/-- properly.
 // TODO: Resolve node paths even through instances.

@@ -358,6 +358,10 @@ export const parseNode = (
       return { content: "!=" }
     case SyntaxKind.ExclamationEqualsToken:
       return { content: "!=" }
+    case SyntaxKind.GreaterThanEqualsToken:
+      return { content: ">=" }
+    case SyntaxKind.LessThanEqualsToken:
+      return { content: "<=" }
     case SyntaxKind.EqualsEqualsToken:
       return { content: "==" }
     case SyntaxKind.AsteriskToken:

@@ -13,12 +13,19 @@ export const parseEnumDeclaration = (
     nodes: node.members.map((member) => member.initializer ?? undefined),
     props,
     content: (...initializers) => {
-      let result = `enum ${node.name.text} {\n`
+      let result = `const ${node.name.text} = {\n`
+      let initializedValue = 0
 
       for (let i = 0; i < initializers.length; i++) {
-        result += `  ${node.members[i].name.getText()}${
-          initializers[i] ? ` = ${initializers[i]}` : ``
+        result += `  "${node.members[i].name.getText()}": ${
+          initializers[i] ? initializers[i] : initializedValue
         },\n`
+
+        if (initializers[i] && !isNaN(Number(initializers[i]))) {
+          initializedValue = Number(initializers[i]) + 1
+        } else {
+          initializedValue++
+        }
       }
 
       result += "}"
