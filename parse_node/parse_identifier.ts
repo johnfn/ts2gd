@@ -22,7 +22,15 @@ export const parseIdentifier = (
     parent: node,
     nodes: [],
     props,
-    content: () => node.text,
+    content: () => {
+      const name = props.scope.getName(node)
+
+      if (!name) {
+        return node.text
+      }
+
+      return name
+    },
   })
 }
 

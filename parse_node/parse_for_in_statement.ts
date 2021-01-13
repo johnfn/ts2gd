@@ -1,18 +1,25 @@
-import ts, { SyntaxKind } from "typescript";
-import { ParseState, combine } from "../parse_node";
+import ts, { SyntaxKind } from "typescript"
+import { ParseState, combine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test";
+import { Test } from "../test"
 
-export const parseForInStatement = (node: ts.ForInStatement, props: ParseState): ParseNodeType => {
+export const parseForInStatement = (
+  node: ts.ForInStatement,
+  props: ParseState
+): ParseNodeType => {
+  let result: ParseNodeType
+
+  props.scope.enterScope()
+
   if (node.initializer.kind === SyntaxKind.VariableDeclarationList) {
-    const vdl = node.initializer as ts.VariableDeclarationList;
+    const vdl = node.initializer as ts.VariableDeclarationList
 
     if (vdl.declarations.length > 1 || vdl.declarations.length === 0) {
-      throw new Error("non-1 length of declarations in for...in");
+      throw new Error("non-1 length of declarations in for...in")
     }
 
-    return combine({
+    result = combine({
       parent: node,
       nodes: [vdl.declarations[0].name, node.expression, node.statement],
       props,
@@ -20,11 +27,12 @@ export const parseForInStatement = (node: ts.ForInStatement, props: ParseState):
       content: (name, expr, statement) => `
 for ${name} in ${expr}:
   ${statement}
-` });
+`,
+    })
   } else {
-    const initExpr = node.initializer as ts.Expression;
+    const initExpr = node.initializer as ts.Expression
 
-    return combine({
+    result = combine({
       parent: node,
       nodes: [initExpr, node.expression, node.statement],
       props,
@@ -32,8 +40,13 @@ for ${name} in ${expr}:
       content: (initExpr, expr, statement) => `
 for ${initExpr} in ${expr}:
   ${statement}
-` });
+`,
+    })
   }
+
+  props.scope.leaveScope()
+
+  return result
 }
 
 export const testForIn1: Test = {
@@ -44,7 +57,7 @@ for (let x in []);
 for x in []:
   pass
   `,
-};
+}
 
 export const testForIn2: Test = {
   ts: `
@@ -56,4 +69,4 @@ var x
 for x in []:
   pass
   `,
-};
+}

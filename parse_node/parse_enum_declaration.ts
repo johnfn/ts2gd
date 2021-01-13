@@ -67,9 +67,9 @@ print(Test.A)
     {
       filename: "Test.gd",
       content: `
-enum Test {
-  A,
-  B,
+const Test = {
+  "A": 0,
+  "B": 1,
 }      
 `,
     },

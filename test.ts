@@ -4,6 +4,7 @@ import { baseContentForTests } from "./generate_base"
 import fs from "fs"
 import path from "path"
 import { DefaultTsconfig } from "./default_tsconfig"
+import { Scope } from "./scope"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
@@ -65,6 +66,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   // TODO: Make this less silly.
   const godotFile = parseNode(sourceFile, {
     indent: "",
+    scope: new Scope(program),
     isConstructor: false,
     program,
     genUniqueName,

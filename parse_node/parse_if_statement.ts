@@ -1,19 +1,33 @@
-import ts from "typescript";
-import { ParseState, combine } from "../parse_node";
+import ts from "typescript"
+import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test";
+import { Test } from "../test"
 
-export const parseIfStatement = (node: ts.IfStatement, props: ParseState): ParseNodeType => {
-  return combine({
+export const parseIfStatement = (
+  node: ts.IfStatement,
+  props: ParseState
+): ParseNodeType => {
+  props.scope.enterScope()
+
+  let result = combine({
     addIndent: true,
-    parent: node, nodes: [node.expression, node.thenStatement, node.elseStatement],
+    parent: node,
+    nodes: [node.expression, node.thenStatement, node.elseStatement],
     props,
     content: (expression, thenStatement, elseStatement) => `
 if ${expression}:
-  ${thenStatement}${elseStatement ? `
+  ${thenStatement}${
+      elseStatement
+        ? `
 else:
-  ${elseStatement}` : ''}`
-  });
+  ${elseStatement}`
+        : ""
+    }`,
+  })
+
+  props.scope.leaveScope()
+
+  return result
 }
 
 export const testIf: Test = {
@@ -30,7 +44,7 @@ if true:
 else:
   print(0)
   `,
-};
+}
 
 export const testElseIf: Test = {
   ts: `
@@ -51,4 +65,4 @@ else:
   else:
     print(0)
   `,
-};
+}

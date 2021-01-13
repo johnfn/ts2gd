@@ -17,6 +17,7 @@ export const parseVariableDeclaration = (
     .getTypeChecker()
     .getTypeAtLocation(node)
     .getSymbol()?.declarations[0]
+
   const isAutoload =
     props.isAutoload &&
     decl?.kind === SyntaxKind.ClassDeclaration &&
@@ -30,15 +31,17 @@ export const parseVariableDeclaration = (
       props,
       content: (nodeName, init) => ``,
     })
-  } else {
-    return combine({
-      parent: node,
-      nodes: [node.name, node.initializer],
-      props,
-      content: (nodeName, init) =>
-        `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}`,
-    })
   }
+
+  props.scope.addName(node.name)
+
+  return combine({
+    parent: node,
+    nodes: [node.name, node.initializer],
+    props,
+    content: (nodeName, init) =>
+      `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}`,
+  })
 }
 
 export const testNormalVariableDeclaration: Test = {

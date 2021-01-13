@@ -53,12 +53,14 @@ import { parseConditionalExpression } from "./parse_node/parse_conditional_expre
 import { parseArrowFunction } from "./parse_node/parse_arrow_function"
 import { parseTypeofExpression } from "./parse_node/parse_typeof_expression"
 import { TsGdProjectClass } from "./project/project"
+import { Scope } from "./scope"
 
 export type ParseState = {
   isConstructor: boolean
   indent: string
   project: TsGdProjectClass
   program: ts.Program
+  scope: Scope
   genUniqueName: () => string
 
   /**

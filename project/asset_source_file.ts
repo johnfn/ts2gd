@@ -2,9 +2,11 @@ import fs from "fs"
 import ts from "typescript"
 import path from "path"
 
-import { parseNode, ParseNodeType } from "../parse_node"
+import { parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
+import { Scope } from "../scope"
+import { watch } from "chokidar"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
@@ -141,6 +143,7 @@ export class AssetSourceFile extends BaseAsset {
       indent: "",
       isConstructor: false,
       genUniqueName,
+      scope: new Scope(watchProgram.getProgram().getProgram()),
       project: this.project,
       mostRecentControlStructureIsSwitch: false,
       isAutoload:

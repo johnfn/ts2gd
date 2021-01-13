@@ -1,7 +1,11 @@
-import ts, { SyntaxKind } from "typescript"
+import ts, {
+  collapseTextChangeRangesAcrossMultipleVersions,
+  SyntaxKind,
+} from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
+import { syntaxToKind } from "../ts_utils"
 
 export const parseEmptyStatement = (
   node: ts.EmptyStatement,
@@ -21,14 +25,14 @@ export const parseEmptyStatement = (
       content: () => "pass",
       props,
     })
-  } else {
-    return combine({
-      parent: node,
-      nodes: [],
-      content: () => "",
-      props,
-    })
   }
+
+  return combine({
+    parent: node,
+    nodes: [],
+    content: () => "",
+    props,
+  })
 }
 
 export const testPass1: Test = {
@@ -39,27 +43,6 @@ for (let x = 0; x < 10; x++);
 var x: int = 0
 while x < 10:
   ((x += 1) - 1)
-  `,
-}
-
-export const testPass2: Test = {
-  ts: `
-for (let x = 0; x < 10; );
-  `,
-  expected: `
-var x: int = 0
-while x < 10:
-  pass
-  `,
-}
-
-export const testPassWhile: Test = {
-  ts: `
-while (true);
-  `,
-  expected: `
-while true:
-  pass
   `,
 }
 
