@@ -67,7 +67,9 @@ for ${name} in ${expr}:
         content: (expr, statement, ...nodes) => `
 for ${genName} in ${expr}:
 ${nodes
-  .map((node, i) => `  ${node} = ${genName}${destructuredNames[i].access}\n`)
+  .map(
+    (node, i) => `  var ${node} = ${genName}${destructuredNames[i].access}\n`
+  )
   .join("")}
   ${statement}
 `,
@@ -109,8 +111,8 @@ for (let [a, b] of [[1, 2]]) print(a, b)
   `,
   expected: `
 for __gen in [[1, 2]]:
-  a = __gen[0]
-  b = __gen[1]
+  var a = __gen[0]
+  var b = __gen[1]
   print(a, b)
   `,
 }

@@ -103,7 +103,7 @@ export const parseVariableDeclaration = (
         return `
 var ${genName} = ${initializer}
 ${nodes
-  .map((node, i) => `${node} = ${genName}${destructuredNames[i].access}`)
+  .map((node, i) => `var ${node} = ${genName}${destructuredNames[i].access}`)
   .join("\n")}
 `
       },
@@ -118,9 +118,9 @@ let [a, [b, c]] = [1, [2, 3]]
   `,
   expected: `
 var __gen = [1, [2, 3]]
-a = __gen[0]
-b = __gen[1][0]
-c = __gen[1][1]
+var a = __gen[0]
+var b = __gen[1][0]
+var c = __gen[1][1]
   `,
 }
 
@@ -131,9 +131,9 @@ let [b] = [1]
   `,
   expected: `
 var __gen = [1]
-a = __gen[0]
+var a = __gen[0]
 var __gen1 = [1]
-b = __gen1[0]
+var b = __gen1[0]
   `,
 }
 
@@ -143,8 +143,8 @@ let { a, b } = { a: 1, b: 2 }
   `,
   expected: `
 var __gen = { "a": 1, "b": 2 }
-a = __gen.a
-b = __gen.b
+var a = __gen.a
+var b = __gen.b
   `,
 }
 
@@ -158,8 +158,8 @@ print(__gen)
   expected: `
 var __gen: int = 1
 var __gen1 = { "a": 1, "b": 2 }
-a = __gen1.a
-b = __gen1.b
+var a = __gen1.a
+var b = __gen1.b
 print(__gen)
   `,
 }
