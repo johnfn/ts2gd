@@ -130,7 +130,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] when scenes are updated, update their corresponding definition files
 - [ ] create scripts and attach them to nodes directly through the editor - perhaps with @Node("/blah")
 - [ ] don't hide object autocomplete names
-- [ ] strongly type input action names
+- [x] strongly type input action names
 - [x] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
