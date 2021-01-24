@@ -17,4 +17,8 @@ export class AssetImage extends BaseAsset {
   tsType(): string {
     return "StreamTexture"
   }
+
+  static extensions() {
+    return [".gif", ".png", ".jpg", ".bmp"]
+  }
 }

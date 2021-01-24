@@ -34,7 +34,7 @@ export const buildNodePathsTypeForScript = (
         nodeScript &&
         nodeScript.resPath === script.resPath &&
         // Skip instances. Their children are not stored in their scene.
-        !node.instancedScene()
+        !node.instance()
       ) {
         nodesWithScript.push(node)
       }
@@ -98,7 +98,7 @@ export const buildNodePathsTypeForScript = (
         -".ts".length
       )}").${script.className()}`
     } else {
-      pathToImport[path] = node.type
+      pathToImport[path] = node.tsType()
     }
   }
 

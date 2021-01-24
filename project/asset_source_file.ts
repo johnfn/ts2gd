@@ -176,4 +176,8 @@ export class AssetSourceFile extends BaseAsset {
       fs.writeFileSync(this.getEnumPath(name), content)
     }
   }
+
+  static extensions() {
+    return [".ts"]
+  }
 }

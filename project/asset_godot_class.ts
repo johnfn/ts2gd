@@ -54,4 +54,8 @@ export class AssetGodotClass extends BaseAsset {
       -".ts".length
     )}').${sourceFile.className()}`
   }
+
+  static extensions() {
+    return [".gd"]
+  }
 }

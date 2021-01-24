@@ -4,6 +4,7 @@ import { BaseAsset } from "./base_asset"
 import { parseGodotConfigFile } from "./godot_parser"
 import { TsGdProjectClass } from "./project"
 import { AssetSourceFile } from "./asset_source_file"
+import { AssetGlb } from "./asset_glb"
 
 interface IGodotSceneFile {
   gd_scene: {
@@ -57,7 +58,7 @@ interface IGodotSceneFile {
 
 export class GodotNode {
   name: string
-  type: string
+  private _type: string
   isRoot: boolean
   groups: string[]
   parent: string | undefined
@@ -74,7 +75,7 @@ export class GodotNode {
     this.name = props.$section.name
     this.project = project
     this.scene = scene
-    this.type = props.$section.type
+    this._type = props.$section.type
     this.isRoot = props.$section.parent ? false : true
     this.groups = props.$section.groups ?? []
     this.$section = props.$section
@@ -105,7 +106,7 @@ export class GodotNode {
     return this.scene.nodes.filter((node) => node.parent === path)
   }
 
-  instancedScene(): AssetGodotScene | undefined {
+  instance(): AssetGodotScene | AssetGlb | undefined {
     let instanceId = this.$section.instance?.args[0]
 
     if (!instanceId && instanceId !== 0) {
@@ -120,9 +121,37 @@ export class GodotNode {
       )
     }
 
-    return this.project
+    const matchingScene = this.project
       .godotScenes()
       .find((scene) => scene.fsPath === res?.fsPath)
+
+    if (matchingScene) {
+      return matchingScene
+    }
+
+    const matchingGlb = this.project
+      .godotGlbs()
+      .find((glb) => glb.fsPath === res?.fsPath)
+
+    if (matchingGlb) {
+      return matchingGlb
+    }
+
+    return undefined
+  }
+
+  tsType(): string {
+    if (this._type) {
+      return this._type
+    }
+
+    const instancedSceneType = this.instance()?.tsType()
+
+    if (instancedSceneType) {
+      return instancedSceneType
+    }
+
+    throw new Error("I dont know the type of that thing.")
   }
 
   getScript(): AssetSourceFile | undefined {
@@ -134,8 +163,12 @@ export class GodotNode {
       // stored on them as external resources in the scene in which they are instanced,
       // but act as if the script on their root node is their script.
 
-      scriptId = this.instancedScene()?.rootNode.scriptExtResourceId
-      sceneContainingScript = this.instancedScene()
+      let instance = this.instance()
+
+      if (instance && instance instanceof AssetGodotScene) {
+        scriptId = instance.rootNode.scriptExtResourceId
+        sceneContainingScript = instance
+      }
     }
 
     if (!scriptId || !sceneContainingScript) {
@@ -218,7 +251,7 @@ export class AssetGodotScene extends BaseAsset {
     this.rootNode = this.nodes.find((node) => !node.parent)!
   }
 
-  /** e.g. PackedScene<import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy> */
+  /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
   tsType(): string | null {
     const rootScript = this.rootNode.getScript()
 
@@ -239,12 +272,16 @@ export class AssetGodotScene extends BaseAsset {
         return null
       }
 
-      return `PackedScene<import('${rootSourceFile.fsPath.slice(
+      return `import('${rootSourceFile.fsPath.slice(
         0,
         -".ts".length
-      )}').${rootSourceFile.className()}>`
+      )}').${rootSourceFile.className()}`
     } else {
-      return `PackedScene<${this.rootNode.type}>`
+      return `${this.rootNode.tsType()}`
     }
+  }
+
+  static extensions() {
+    return [".tscn"]
   }
 }

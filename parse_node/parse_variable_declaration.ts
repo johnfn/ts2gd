@@ -108,7 +108,6 @@ ${nodes
 `
       },
     })
-    // props.scope.addName(node.name)
   }
 }
 

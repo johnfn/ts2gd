@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 
+// TODO: new assets aren't immediately imported.
 // TODO: `load` is a godot keyword
 // TODO: clash between this.foo and foo() since this is removed by godot
 // TODO: for loops can redeclare variables!

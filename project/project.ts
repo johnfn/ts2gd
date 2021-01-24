@@ -16,6 +16,7 @@ import { buildAssetPathsType } from "../build_asset_paths"
 import { buildGroupTypes } from "../build_group_types"
 import { buildActionNames } from "../build_action_names"
 import { AssetImage } from "./asset_image"
+import { AssetGlb } from "./asset_glb"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -53,6 +54,11 @@ export class TsGdProjectClass {
   /** Info about each Godot font. */
   godotFonts(): AssetFont[] {
     return this.assets.filter((a): a is AssetFont => a instanceof AssetFont)
+  }
+
+  /** Info about each .glb file. */
+  godotGlbs(): AssetGlb[] {
+    return this.assets.filter((a): a is AssetGlb => a instanceof AssetGlb)
   }
 
   /** Info about each Godot image. */
@@ -109,6 +115,7 @@ export class TsGdProjectClass {
     | AssetFont
     | AssetImage
     | GodotProjectFile
+    | AssetGlb
     | null {
     if (path.endsWith(".ts")) {
       return new AssetSourceFile(path, this)
@@ -120,6 +127,8 @@ export class TsGdProjectClass {
       return new GodotProjectFile(path, this)
     } else if (path.endsWith(".ttf")) {
       return new AssetFont(path, this)
+    } else if (path.endsWith(".glb")) {
+      return new AssetGlb(path, this)
     } else if (
       path.endsWith(".png") ||
       path.endsWith(".gif") ||
@@ -273,16 +282,11 @@ const shouldIncludePath = (path: string): boolean => {
     return false
   }
 
-  if (path.endsWith(".ttf")) {
+  if (AssetFont.extensions().some((ext) => path.endsWith(ext))) {
     return true
   }
 
-  if (
-    path.endsWith(".img") ||
-    path.endsWith(".png") ||
-    path.endsWith(".gif") ||
-    path.endsWith(".jpg")
-  ) {
+  if (AssetImage.extensions().some((ext) => path.endsWith(ext))) {
     return true
   }
 
@@ -299,7 +303,11 @@ const shouldIncludePath = (path: string): boolean => {
     return true
   }
 
-  if (path.endsWith(".tscn")) {
+  if (AssetGodotScene.extensions().some((ext) => path.endsWith(ext))) {
+    return true
+  }
+
+  if (AssetGlb.extensions().some((ext) => path.endsWith(ext))) {
     return true
   }
 

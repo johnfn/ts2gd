@@ -104,7 +104,7 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
 
       if (peekchar() !== "=") {
         throw new Error(
-          `Unexpected token '${peekchar()}' in section after ${key} at ${getLineAndCol()}`
+          `Unexpected token '${peekchar()}' in section after ${key} at ${getLineAndCol()}\nIn ${path}`
         )
       }
 
@@ -172,7 +172,7 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
   const getNumber = () => {
     let result = getchar()
 
-    while (/[-0-9.]/.exec(peekcharIncludingWhitespace())) {
+    while (/[-e0-9.]/.exec(peekcharIncludingWhitespace())) {
       result += getchar()
     }
 
@@ -234,7 +234,8 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
         result.args.push([key, value])
       } else {
         throw new Error(
-          `Unexpected token '${peekchar()}' in object constructor after ${key} from ${start} to ${getLineAndCol()}`
+          `Unexpected token '${peekchar()}' in object constructor after ${key} from ${start} to ${getLineAndCol()}
+  In file ${path}`
         )
       }
 

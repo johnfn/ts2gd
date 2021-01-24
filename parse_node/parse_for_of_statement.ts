@@ -52,9 +52,6 @@ for ${name} in ${expr}:
 
       const genName = props.scope.createName()
 
-      // const usages = props.usages.get(decl.name as ts.Identifier)
-      // const isUnused = usages?.uses.length === 0
-
       result = combine({
         parent: node,
         nodes: [

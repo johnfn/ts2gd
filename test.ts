@@ -89,6 +89,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       godotClasses: () => [],
       godotFonts: () => [],
       godotImages: () => [],
+      godotGlbs: () => [],
       godotProject: {
         fsPath: "",
         autoloads: [{ resPath: "autoload.ts" }],

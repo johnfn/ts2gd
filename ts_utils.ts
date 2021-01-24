@@ -182,10 +182,10 @@ export function getGodotType(
   //   return "Array"
   // }
 
-  if (tsTypeName.startsWith("PackedScene")) {
-    // This is a generic type in TS, so just return the non-generic Godot type.
-    return "PackedScene"
-  }
+  // if (tsTypeName.startsWith("PackedScene")) {
+  // This is a generic type in TS, so just return the non-generic Godot type.
+  //   return "PackedScene"
+  // }
 
   // Enum type names are actually not imported!
   // TODO: They are now!
