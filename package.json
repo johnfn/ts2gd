@@ -20,6 +20,7 @@
     "chokidar": "^3.4.3",
     "esm": "^3.2.25",
     "tsutils": "^3.17.1",
+    "typescript": "^4.1.3",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
