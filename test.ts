@@ -71,7 +71,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     program,
     genUniqueName,
     project: {
-      buildAllDefinitions: () => {},
+      buildAllDefinitions: async () => {},
       assets: [],
       program: undefined as any,
       compileAllSourceFiles: () => {},

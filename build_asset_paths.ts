@@ -2,7 +2,7 @@ import { TsGdProjectClass } from "./project/project"
 import fs from "fs"
 import path from "path"
 
-export async function buildAssetPathsType(project: TsGdProjectClass) {
+export function buildAssetPathsType(project: TsGdProjectClass) {
   const assetFileContents = `
 declare type AssetType = {
 ${project.assets

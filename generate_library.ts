@@ -1,8 +1,9 @@
 import fs from "fs"
 import path from "path"
 import { parseStringPromise } from "xml2js"
-import { buildBase } from "./generate_base"
+import { buildBase as writeBaseDefinitions } from "./generate_base"
 import { TsGdProjectClass } from "./project/project"
+import { copyFolderRecursiveSync } from "./ts_utils"
 
 function formatJsDoc(input: string): string {
   if (!input) {
@@ -70,17 +71,18 @@ function formatJsDoc(input: string): string {
   return result
 }
 
-export function generateGodotLibraryDefinitions(
+export async function generateGodotLibraryDefinitions(
   project: TsGdProjectClass
-): void {
+): Promise<void> {
   // TODO: Refactor this out
-  let p1 = "/Users/johnfn/code/tsgd/godot/modules/csg/doc_classes"
-  let p2 = "/Users/johnfn/code/tsgd/godot/doc/classes"
-
-  const xmlPaths = [
-    ...fs.readdirSync(p1).map((x) => path.join(p1, x)),
-    ...fs.readdirSync(p2).map((x) => path.join(p2, x)),
-  ].filter((file) => file.endsWith(".xml"))
+  let p1 = path.join(
+    TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
+    "modules/csg/doc_classes"
+  )
+  let p2 = path.join(
+    TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
+    "doc/classes"
+  )
 
   fs.mkdirSync(TsGdProjectClass.Paths.godotDefsPath, { recursive: true })
 
@@ -437,15 +439,33 @@ ${Object.keys(enums)
     return result
   }
 
-  async function buildGlobals() {
+  async function writeLibraryDefinitions() {
+    if (!fs.existsSync(p1) || !fs.existsSync(p2)) {
+      console.info("No Godot source installation found, writing from backup...")
+
+      let localGodotDefs = path.join(__dirname, "..", "godot_defs")
+
+      copyFolderRecursiveSync(localGodotDefs, TsGdProjectClass.Paths.rootPath)
+
+      console.info("Done.")
+
+      return
+    }
+
+    // This must come first because it parses out singletons
+    // TODO - clean that up.
+    // @GlobalScope is a special case.
     const result = await parseGlobalScope(path.join(p2, "@GlobalScope.xml"))
     fs.writeFileSync(
       path.join(TsGdProjectClass.Paths.godotDefsPath, "@globals.d.ts"),
       result
     )
-  }
 
-  async function buildDefinitions() {
+    const xmlPaths = [
+      ...fs.readdirSync(p1).map((x) => path.join(p1, x)),
+      ...fs.readdirSync(p2).map((x) => path.join(p2, x)),
+    ].filter((file) => file.endsWith(".xml"))
+
     for (let xmlPath of xmlPaths) {
       const fileName = path.basename(xmlPath)
 
@@ -474,9 +494,8 @@ ${Object.keys(enums)
   }
 
   async function main() {
-    await buildGlobals()
-    await buildBase(TsGdProjectClass.Paths.godotDefsPath)
-    await buildDefinitions()
+    await writeBaseDefinitions(TsGdProjectClass.Paths.godotDefsPath)
+    await writeLibraryDefinitions()
   }
 
   // async function debug() {
@@ -486,5 +505,5 @@ ${Object.keys(enums)
   //   console.log(result);
   // }
 
-  main()
+  await main()
 }

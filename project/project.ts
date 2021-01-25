@@ -232,9 +232,8 @@ export class TsGdProjectClass {
     }
   }
 
-  buildAllDefinitions() {
-    generateGodotLibraryDefinitions(this)
-
+  async buildAllDefinitions() {
+    await generateGodotLibraryDefinitions(this)
     buildAssetPathsType(this)
 
     for (const script of this.sourceFiles()) {

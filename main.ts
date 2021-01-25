@@ -1,9 +1,11 @@
 #!/usr/bin/env ts-node
 
+// TODO: Rename "@globals" to globals or something
+//   There is a clash betweeh us using @ to mean "generated d.ts based on project"
+//   and Godot's somewhat-random use of @
 // TODO: new assets aren't immediately imported.
 // TODO: `load` is a godot keyword
 // TODO: clash between this.foo and foo() since this is removed by godot
-// TODO: for loops can redeclare variables!
 // TODO: ": float" in parameters is not respected
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: template strings
@@ -12,8 +14,6 @@
 // TODO: For autoload classes, create the global variable implicitly ? is this possible?  (b/c namespace problems)
 // TODO: For autoload classes, marking them would then update the config file
 //         - this would require being able to save back config files accurately.
-
-// TODO: For loop destructuring
 
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: new Something() should compile into Something.new() if possible!
@@ -91,6 +91,17 @@ const setup = () => {
     }
   }
 
+  const onTsUpdate = {
+    resolve: () => {},
+  }
+
+  const reportWatchStatusChanged = (
+    diagnostic: ts.Diagnostic,
+    newLine: string
+  ) => {
+    onTsUpdate.resolve()
+  }
+
   const host = ts.createWatchCompilerHost(
     tsgdJson.tsconfigPath,
     {},
@@ -110,22 +121,32 @@ const setup = () => {
   )
   opt.config.useCaseSensitiveFileNames = false
 
-  function reportWatchStatusChanged(
-    diagnostic: ts.Diagnostic,
-    newLine: string
-  ) {}
-
-  return { watchProgram, tsgdJson }
+  return {
+    watchProgram,
+    tsgdJson,
+    reportWatchStatusChanged,
+    onTsUpdate,
+  }
 }
 
 const main = async () => {
   const start = new Date().getTime()
 
-  const { watchProgram, tsgdJson } = setup()
+  const { watchProgram, tsgdJson, onTsUpdate } = setup()
 
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
-  project.buildAllDefinitions()
+  await project.buildAllDefinitions()
+
+  // This resolves a race condition where TS would not be aware of all the files
+  // we just saved in buildAllDefinitions().
+  await Promise.race([
+    new Promise<void>((resolve) => setTimeout(resolve, 500)),
+    new Promise<void>((resolve) => {
+      onTsUpdate.resolve = resolve
+    }),
+  ])
+
   project.compileAllSourceFiles()
 
   console.info(

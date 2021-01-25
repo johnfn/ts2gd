@@ -22,6 +22,9 @@ export class Paths {
   /** The path to the Godot definitions folder. e.g. /Users/johnfn/GodotProject/godot_defs */
   godotDefsPath: string
 
+  /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
+  godotSourceRepoPath: string | undefined
+
   constructor() {
     let commandLineArgument = process.argv[2]
 
@@ -83,6 +86,8 @@ export class Paths {
     this.destGdPath = path.join(fullyQualifiedTs2gdPath, tsgdJson.destination)
     this.rootPath = fullyQualifiedTs2gdPath
     this.godotDefsPath = path.join(this.rootPath, "godot_defs")
+
+    this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
 
     let tsconfigPath = ts.findConfigFile(
       path.dirname(fullyQualifiedTs2gdPathWithFilename),
