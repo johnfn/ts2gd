@@ -1,16 +1,22 @@
 {
-  "name": "tsgd",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "name": "ts2gd",
+  "version": "0.0.1",
+  "description": "TypeScript to GDScript transpiler.",
+  "main": "dist/main.js",
   "scripts": {
     "dev": "ts-node-dev --respawn main.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "prepublish": "tsc",
+  "bin": {
+    "ts2gd": "js/main.js"
+  },
+  "author": "johnfn",
+  "license": "MIT",
   "dependencies": {
+    "@types/chalk": "^2.2.0",
     "@types/xml2js": "^0.4.5",
+    "chalk": "^4.1.0",
     "chokidar": "^3.4.3",
     "esm": "^3.2.25",
     "tsutils": "^3.17.1",

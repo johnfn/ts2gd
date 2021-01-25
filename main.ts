@@ -134,6 +134,10 @@ const main = async () => {
   )
 }
 
-if (process.argv[1].endsWith("main.ts") || process.argv[1].endsWith("ts2gd")) {
+if (
+  process.argv[1].endsWith("main.ts") ||
+  process.argv[1].includes("index") ||
+  process.argv[1].endsWith("ts2gd")
+) {
   main()
 }

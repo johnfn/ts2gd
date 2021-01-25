@@ -53,6 +53,7 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
   "exclude": [
-    "./gd_project/**"
+    "./gd_project/**",
+    "./godot_defs/**"
   ]
 }

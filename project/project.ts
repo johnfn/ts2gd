@@ -1,6 +1,7 @@
 import chokidar from "chokidar"
 import path from "path"
 import ts from "typescript"
+import chalk from "chalk"
 
 import { AssetGodotClass as GodotFile } from "./asset_godot_class"
 import { AssetGodotScene } from "./asset_godot_scene"
@@ -166,7 +167,21 @@ export class TsGdProjectClass {
   }
 
   onChangeAsset(path: string) {
-    console.info("Change:\t", path)
+    let start = new Date().getTime()
+    let showTime = false
+
+    // Just noisy, since it's not caused by a user action
+    if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
+      console.clear()
+
+      if (path.endsWith(".ts")) {
+        console.info("Compile:", chalk.blueBright(path))
+
+        showTime = true
+      } else {
+        console.info("Change:", chalk.blueBright(path))
+      }
+    }
 
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
@@ -187,6 +202,11 @@ export class TsGdProjectClass {
 
         buildSceneImports(this)
       }
+    }
+
+    if (showTime) {
+      console.info()
+      console.info("Done in", (new Date().getTime() - start) / 1000 + "s")
     }
   }
 
@@ -268,6 +288,10 @@ export const makeTsGdProject = async (
 }
 
 const shouldIncludePath = (path: string): boolean => {
+  if (path.includes("node_modules")) {
+    return false
+  }
+
   if (!path.includes(".")) {
     // Folder (i hope)
     // TODO: Might be able to check stat to be more sure about this

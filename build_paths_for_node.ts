@@ -71,7 +71,10 @@ export const buildNodePathsTypeForScript = (
 
       commonRelativePaths = []
 
-      console.error("Unused class:", className)
+      // TODO: Maybe flag it if it's also never used as a class.
+      // Currently, this is just noise.
+
+      // console.error("Unused class:", className)
     }
   } else {
     const relativePathsPerNode = nodesWithScript.map((i) =>

@@ -1,5 +1,6 @@
 import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
 import { ParseState } from "./parse_node"
+import chalk from "chalk"
 
 export const isNullable = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)
@@ -155,8 +156,22 @@ export function getGodotType(
   }
 
   if (tsTypeName === "number") {
-    console.warn(`Unknown number type, writing float for ${node.getText()}`)
-    console.warn("  ->", node.getSourceFile().fileName)
+    const {
+      line,
+      character,
+    } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart())
+    console.warn(
+      `${chalk.blueBright(node.getSourceFile().fileName)}:${chalk.yellow(
+        line + 1
+      )}:${chalk.yellow(character + 1)}`
+    )
+    console.warn(
+      chalk.redBright(`Please add either "int" or "float" here (not number)`)
+    )
+
+    console.warn()
+    console.warn(node.parent.getText())
+
     return "float"
   }
 
