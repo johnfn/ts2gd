@@ -16,12 +16,13 @@ Compiling GDScript to TypeScript is actually pretty straightforward. Almost ever
 
 ## How it works
 
-Add a tsgd.json file to your Godot project root:
+Add a ts2gd.json file to your Godot project root:
 
 ```
 {
   "destination": "./compiled",
-  "source": "./src"
+  "source": "./src",
+  "godotSourceRepoPath": "/Users/johnfn/Godot"
 }
 ```
 

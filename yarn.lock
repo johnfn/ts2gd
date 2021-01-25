@@ -660,19 +660,6 @@
     "source-map-support" "^0.5.17"
     "yn" "3.1.1"
 
-"ts2gd@file:":
-  "resolved" "file:"
-  "version" "0.0.1"
-  dependencies:
-    "@types/chalk" "^2.2.0"
-    "@types/xml2js" "^0.4.5"
-    "chalk" "^4.1.0"
-    "chokidar" "^3.4.3"
-    "esm" "^3.2.25"
-    "ts2gd" "file:"
-    "tsutils" "^3.17.1"
-    "xml2js" "^0.4.23"
-
 "tsconfig@^7.0.0":
   "integrity" "sha512-vZXmzPrL+EmC4T/4rVlT2jNVMWCi/O4DIiSj3UHg1OE5kCKbk4mfrXc6dZksLgRM/TZlKnousKH9bbTazUWRRw=="
   "resolved" "https://registry.npmjs.org/tsconfig/-/tsconfig-7.0.0.tgz"
