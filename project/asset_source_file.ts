@@ -6,7 +6,6 @@ import { parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 import { Scope } from "../scope"
-import { watch } from "chokidar"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we

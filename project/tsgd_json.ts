@@ -67,7 +67,7 @@ export class Paths {
       // some sort of relative path, so resolve it
 
       fullyQualifiedTs2gdPathWithFilename = path.join(
-        process.execPath,
+        __dirname,
         commandLineArgument
       )
     } else {
