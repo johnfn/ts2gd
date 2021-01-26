@@ -32,13 +32,13 @@ export const parsePropertyAccessExpression = (
   node: ts.PropertyAccessExpression,
   props: ParseState
 ): ParseNodeType => {
-  const leftType = props.program
+  const exprType = props.program
     .getTypeChecker()
     .getTypeAtLocation(node.expression)
 
   // Compile things like KeyList.KEY_SPACE into KEY_SPACE
-  if (isEnumType(leftType)) {
-    const symbol = leftType.getSymbol()!
+  if (isEnumType(exprType)) {
+    const symbol = exprType.getSymbol()!
     const declarations = symbol.declarations
     const sourceFiles = declarations.map((d) => d.getSourceFile().fileName)
     const isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"))
@@ -63,7 +63,7 @@ export const parsePropertyAccessExpression = (
       // However, Godot is fine with bar.baz = foo even if baz is not a key.
 
       if (
-        isDictionary(leftType) &&
+        isDictionary(exprType) &&
         isNullable(node.name, props.program.getTypeChecker()) &&
         isRhs(node)
       ) {

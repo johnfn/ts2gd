@@ -35,6 +35,13 @@ export const getTypeHierarchy = (type: ts.Type): ts.Type[] => {
 // I can not for the life of me figure out a clear way to
 // ask TS if a type is an object literal type.
 export const isDictionary = (type: ts.Type): boolean => {
+  if (type.getSymbol()?.name.startsWith("Dictionary")) {
+    // Note: startsWith necessary because it could be
+    // * Dictionary
+    // * Dictionary<K, V>
+    return true
+  }
+
   if (type.flags & TypeFlags.Object) {
     const objectType = type as ts.ObjectType
 

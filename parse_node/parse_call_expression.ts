@@ -1,8 +1,12 @@
-import ts, { SyntaxKind, TypeFlags } from "typescript"
+import ts, {
+  isExpressionWithTypeArguments,
+  SyntaxKind,
+  TypeFlags,
+} from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
-import { isArrayType } from "../ts_utils"
+import { isArrayType, isDictionary } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
 type LibraryFunctionName = "map" | "filter"
@@ -127,6 +131,25 @@ export const parseCallExpression = (
     }
   }
 
+  // This compiles dict.put(a, b) into dict[a] = b
+  if (expression.kind === SyntaxKind.PropertyAccessExpression) {
+    const propAccess = expression as ts.PropertyAccessExpression
+
+    if (
+      isDictionary(
+        props.program.getTypeChecker().getTypeAtLocation(propAccess.expression)
+      ) &&
+      propAccess.name.escapedText === "put"
+    ) {
+      return combine({
+        parent: node,
+        nodes: [propAccess.expression, args[0], args[1]],
+        props,
+        content: (dict, key, val) => `${dict}[${key}] = ${val}`,
+      })
+    }
+  }
+
   const decls = props.program
     .getTypeChecker()
     .getTypeAtLocation(node.expression).symbol?.declarations
@@ -134,6 +157,13 @@ export const parseCallExpression = (
     decls &&
     decls[0].kind === SyntaxKind.ArrowFunction &&
     decls[0].getSourceFile() === node.getSourceFile()
+
+  console.log(expression.getText())
+  // console.log(isDictionary(exprType))
+  // console.log(props.program.getTypeChecker().typeToString(exprType))
+  // if (rhs === "put") {
+  //   rhs = "put!"
+  // }
 
   return combine({
     parent: node,
@@ -255,3 +285,25 @@ __map(x, funcref(self, "func1"), {"z": z, "big": big})
 
 // TODO this also fails bc it's double quoted.
 // let big = { "a" : 6 }
+
+export const testRewriteDictPut: Test = {
+  ts: `
+let d = todict({ 'a': 1 })
+d.put('b', 2)
+  `,
+  expected: `
+var d = todict({ "a": 1 })
+d["b"] = 2
+`,
+}
+
+export const testRewriteDictPut2: Test = {
+  ts: `
+let d = todict({ 'a': 1 })
+d.put([1, 2], 2)
+  `,
+  expected: `
+var d = todict({ "a": 1 })
+d[[1, 2]] = 2
+`,
+}
