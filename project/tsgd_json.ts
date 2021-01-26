@@ -70,10 +70,9 @@ export class Paths {
         __dirname,
         commandLineArgument
       )
-    } else {
-      console.error(`${ts2gdPath} appears to be an invalid path.`)
-      process.exit(0)
     }
+
+    fullyQualifiedTs2gdPathWithFilename = ts2gdPath
 
     fullyQualifiedTs2gdPath = path.dirname(fullyQualifiedTs2gdPathWithFilename)
 
