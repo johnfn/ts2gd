@@ -3,8 +3,8 @@ import { parseNode, ParseNodeType } from "./parse_node"
 import { baseContentForTests } from "./generate_base"
 import fs from "fs"
 import path from "path"
-import { DefaultTsconfig } from "./default_tsconfig"
 import { Scope } from "./scope"
+import chalk from "chalk"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
@@ -164,7 +164,9 @@ type TestResultFail = {
   name: string
   expected: string
   expectFail?: boolean
+  // TODO: can prob remove this
   fileName: string
+  path: string
   logs?: any[][]
 }
 
@@ -176,7 +178,12 @@ const trim = (s: string) => {
     .join("\n")
 }
 
-const test = (props: Test, name: string, testFileName: string): TestResult => {
+const test = (
+  props: Test,
+  name: string,
+  testFileName: string,
+  path: string
+): TestResult => {
   const { ts, expected } = props
 
   const compiled = compileTs(ts, props.isAutoload ?? false)
@@ -197,6 +204,7 @@ const test = (props: Test, name: string, testFileName: string): TestResult => {
           name,
           expectFail: props.expectFail ?? false,
           fileName: testFileName,
+          path: "[generated]/" + testFileName,
         }
       }
 
@@ -208,6 +216,7 @@ const test = (props: Test, name: string, testFileName: string): TestResult => {
           name,
           expectFail: props.expectFail ?? false,
           fileName: testFileName,
+          path: "[generated]/" + testFileName,
         }
       }
     }
@@ -224,10 +233,13 @@ const test = (props: Test, name: string, testFileName: string): TestResult => {
     name,
     expectFail: props.expectFail ?? false,
     fileName: testFileName,
+    path,
   }
 }
 
-const getAllFiles = async () => {
+const getAllFiles = async (): Promise<{
+  [key: string]: { path: string; content: any }
+}> => {
   const files = fs.readdirSync("./parse_node")
   const results: { [key: string]: any } = {}
 
@@ -238,9 +250,14 @@ const getAllFiles = async () => {
       continue
     }
 
-    const obj = await import("./parse_node/" + f)
+    let relativePath = "./parse_node/" + f
 
-    results[f] = obj
+    const obj = await import(relativePath)
+
+    results[f] = {
+      content: obj,
+      path: path.resolve(relativePath),
+    }
   }
 
   return results
@@ -248,14 +265,18 @@ const getAllFiles = async () => {
 
 export const runTests = async () => {
   let total = 0
-  let tests: (Test & { testName: string; fileName: string })[] = []
+  let tests: (Test & {
+    testName: string
+    fileName: string
+    path: string
+  })[] = []
 
   const everything = await getAllFiles()
 
-  for (const [fileName, mod] of Object.entries(everything)) {
-    for (const [testName, testObj] of Object.entries(mod)) {
+  for (const [fileName, { path, content }] of Object.entries(everything)) {
+    for (const [testName, testObj] of Object.entries(content)) {
       if (testName.startsWith("test")) {
-        tests.push({ ...(testObj as any), testName, fileName })
+        tests.push({ ...(testObj as any), testName, fileName, path })
       }
     }
   }
@@ -272,7 +293,12 @@ export const runTests = async () => {
     const logged: any[][] = []
     const oldConsoleLog = console.log
     console.log = (...args: any[]) => logged.push(args)
-    const result = test(testObj, testObj.testName, testObj.fileName)
+    const result = test(
+      testObj,
+      testObj.testName,
+      testObj.fileName,
+      testObj.path
+    )
     console.log = oldConsoleLog
 
     total++
@@ -293,12 +319,21 @@ export const runTests = async () => {
     console.info("\nSome failed, but they were expected to fail:")
     console.info(failures.map((f) => "  " + f.name).join("\n"))
   } else {
-    for (let { expected, name, result, fileName, logs } of failures.filter(
+    for (let { expected, name, result, logs, path } of failures.filter(
       (x) => !x.expectFail
     )) {
+      const fileContents = fs.readFileSync(path, "utf-8")
+      const lines = fileContents.split("\n")
+      // Take a guess at line
+      let line =
+        (lines.findIndex((l) => l.includes(`export const ${name}`)) ?? -1) + 1
+
       console.info("=============================================")
       console.info(name, "failed:")
-      console.info("  in", `./parse_node/${fileName}`)
+      console.info(
+        `  in`,
+        chalk.yellowBright(`${path}${line ? `:${line}:0` : ``}`)
+      )
       console.info("=============================================\n")
       console.info("\x1b[31mExpected:\x1b[0m")
 

@@ -26,25 +26,30 @@ const parseBinaryExpression = (node, props) => {
         parent: node,
         nodes: [node.left, node.operatorToken, node.right],
         props,
-        content: (left, operatorToken, right) => `${left}${needsLeftHandSpace ? ' ' : ''}${operatorToken} ${right}`
+        content: (left, operatorToken, right) => {
+            if (operatorToken === "??") {
+                return `(${left} if (${left}) != null else ${right})`;
+            }
+            return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`;
+        },
     });
 };
 exports.parseBinaryExpression = parseBinaryExpression;
 // Tests
 exports.testAdd = {
-    ts: '1 + 2',
-    expected: '1 + 2',
+    ts: "1 + 2",
+    expected: "1 + 2",
 };
 exports.testMultiply = {
-    ts: '1 * 2',
-    expected: '1 * 2',
+    ts: "1 * 2",
+    expected: "1 * 2",
 };
 exports.testAssignmentToDict = {
     ts: `const foo = {};
 foo.bar = 1`,
     expected: `var foo = {}
 foo.bar = 1
-`
+`,
 };
 exports.testNestedAssignmentToDict = {
     expectFail: false,

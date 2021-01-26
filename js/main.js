@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 "use strict";
+// TODO: Dictionary<> should be Dictionary<K, V>
 // TODO: Rename "@globals" to globals or something
 //   There is a clash betweeh us using @ to mean "generated d.ts based on project"
 //   and Godot's somewhat-random use of @

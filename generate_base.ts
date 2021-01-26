@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import { ArrayDefinition } from "./custom_defs/array_def"
+import { DictionaryDefinition } from "./custom_defs/dictionary_def"
 import { PackedSceneDef } from "./custom_defs/packed_scene_def"
 
 export const baseFileContent = `
@@ -88,6 +89,7 @@ interface IterableIterator<T> extends Iterator<T> {
 }
 
 ${ArrayDefinition}
+${DictionaryDefinition}
 ${PackedSceneDef}
 
 declare const len: (obj: any[]) => number;

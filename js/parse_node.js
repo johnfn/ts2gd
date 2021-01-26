@@ -237,6 +237,9 @@ const parseNode = (genericNode, props) => {
             return parse_get_accessor_1.parseGetAccessor(genericNode, props);
         case typescript_1.SyntaxKind.MinusEqualsToken:
             return { content: "-=" };
+        // Only used in BinaryExpression, I think
+        case typescript_1.SyntaxKind.QuestionQuestionToken:
+            return { content: "??" };
         case typescript_1.SyntaxKind.PlusEqualsToken:
             return { content: "+=" };
         case typescript_1.SyntaxKind.AsteriskEqualsToken:

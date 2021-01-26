@@ -172,6 +172,7 @@ export function getGodotType(
     )
 
     console.warn()
+    console.warn(node.getText())
     console.warn(node.parent.getText())
 
     return "float"

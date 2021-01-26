@@ -39,6 +39,7 @@ const getImportResPathForEnum = (node, props) => {
         .sourceFiles()
         .find((sf) => sf.fsPath === sourceFile.fileName);
     if (!importedSourceFile) {
+        console.log("All source files:\n", props.project.sourceFiles().map((f) => f.fsPath + "\n"));
         throw new Error(`Can't find associated sourcefile for ${sourceFile.fileName}`);
     }
     let enumTypeString = props.program.getTypeChecker().typeToString(node);

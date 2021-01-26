@@ -159,9 +159,9 @@ export const parseCallExpression = (
         )
 
         return `${expr}.call_func(${[...args, capturedScopeObject].join(", ")})`
-      } else {
-        return `${expr}(${args.join(", ")})`
       }
+
+      return `${expr}(${args.join(", ")})`
     },
   })
 }
@@ -213,14 +213,14 @@ test.call_func({})
 
 export const testMap: Test = {
   ts: `
-let x = [1, 2, 3]
-x.map(y => y * 3)
+let x: string[] = ['a', 'b', 'c']
+x.map(y => y + '1')
   `,
   expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y: float, captures):
-  return y * 3
-var x = [1, 2, 3]
+func func1(y: String, captures):
+  return y + "1"
+var x = ["a", "b", "c"]
 __map(x, funcref(self, "func1"), {})
 `,
 }
@@ -230,13 +230,13 @@ export const testMapCapture: Test = {
 let x = [1, 2, 3]
 let z = 5
 let big = { a : 6 }
-x.map(y => {
+x.map((y: int) => {
   return z + big.a + y * 3
 })
   `,
   expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y: float, captures):
+func func1(y, captures):
   var z = captures.z
   var big = captures.big
   return z + big.a + y * 3

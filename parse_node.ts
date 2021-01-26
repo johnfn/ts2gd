@@ -350,6 +350,10 @@ export const parseNode = (
       return parseGetAccessor(genericNode as ts.GetAccessorDeclaration, props)
     case SyntaxKind.MinusEqualsToken:
       return { content: "-=" }
+
+    // Only used in BinaryExpression, I think
+    case SyntaxKind.QuestionQuestionToken:
+      return { content: "??" }
     case SyntaxKind.PlusEqualsToken:
       return { content: "+=" }
     case SyntaxKind.AsteriskEqualsToken:

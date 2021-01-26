@@ -7,6 +7,7 @@ exports.baseContentForTests = exports.buildBase = exports.baseFileContent = void
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const array_def_1 = require("./custom_defs/array_def");
+const dictionary_def_1 = require("./custom_defs/dictionary_def");
 const packed_scene_def_1 = require("./custom_defs/packed_scene_def");
 exports.baseFileContent = `
 
@@ -93,6 +94,7 @@ interface IterableIterator<T> extends Iterator<T> {
 }
 
 ${array_def_1.ArrayDefinition}
+${dictionary_def_1.DictionaryDefinition}
 ${packed_scene_def_1.PackedSceneDef}
 
 declare const len: (obj: any[]) => number;

@@ -27,7 +27,7 @@ export const parseParameter = (
 export const testParameter: Test = {
   ts: `
 class Test {
-  test(a: number, b: string) {
+  test(a: int, b: string) {
     print(a);
   }
 }
@@ -35,7 +35,7 @@ class Test {
   expected: `
 class_name Test
 
-func test(a: float, _b: String):
+func test(a, _b: String):
   print(a)
   `,
 }

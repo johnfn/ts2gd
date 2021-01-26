@@ -387,6 +387,9 @@ ${Object.keys(enums)
             if (fileName === "Array.xml") {
                 continue;
             }
+            if (fileName === "Dictionary.xml") {
+                continue;
+            }
             if (fileName === "PackedScene.xml") {
                 continue;
             }
