@@ -41,12 +41,9 @@ class Paths {
         }
         else if (ts2gdPath.startsWith(".")) {
             // some sort of relative path, so resolve it
-            fullyQualifiedTs2gdPathWithFilename = path_1.default.join(process_1.default.execPath, commandLineArgument);
+            fullyQualifiedTs2gdPathWithFilename = path_1.default.join(__dirname, commandLineArgument);
         }
-        else {
-            console.error(`${ts2gdPath} appears to be an invalid path.`);
-            process_1.default.exit(0);
-        }
+        fullyQualifiedTs2gdPathWithFilename = ts2gdPath;
         fullyQualifiedTs2gdPath = path_1.default.dirname(fullyQualifiedTs2gdPathWithFilename);
         const tsgdJson = JSON.parse(fs_1.default.readFileSync(fullyQualifiedTs2gdPathWithFilename, "utf-8"));
         // TODO: Assert that these are found on the json object
