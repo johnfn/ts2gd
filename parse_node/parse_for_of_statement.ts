@@ -50,7 +50,7 @@ for ${name} in ${expr}:
         props.scope.addName(id)
       }
 
-      const genName = props.scope.createName()
+      const genName = props.scope.createUniqueName()
 
       result = combine({
         parent: node,

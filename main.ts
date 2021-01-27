@@ -1,11 +1,10 @@
 #!/usr/bin/env ts-node
 
-// TODO: Dictionary<> should be Dictionary<K, V>
+// TODO: There are bugs when you have both a constructor and an _init() method.
 // TODO: Rename "@globals" to globals or something
 //   There is a clash betweeh us using @ to mean "generated d.ts based on project"
 //   and Godot's somewhat-random use of @
 // TODO: new assets aren't immediately imported.
-// TODO: `load` is a godot keyword
 // TODO: clash between this.foo and foo() since this is removed by godot
 // TODO: ": float" in parameters is not respected
 // TODO: we need to clean up old node_paths when we delete or rename a class.

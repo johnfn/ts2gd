@@ -93,7 +93,7 @@ export const parseVariableDeclaration = (
       props.scope.addName(id)
     }
 
-    const genName = props.scope.createName()
+    const genName = props.scope.createUniqueName()
 
     return combine({
       parent: node,
@@ -230,5 +230,16 @@ const x: Blah = new Blah();
   expected: `
 func test():
   var _blah = Blah.new()
+  `,
+}
+
+export const testKeyword: Test = {
+  ts: `
+let preload = 123
+print(preload)
+  `,
+  expected: `
+var preload_: int = 123
+print(preload_)
   `,
 }

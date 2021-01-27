@@ -22,6 +22,7 @@ export class Scope {
   getName(node: ts.BindingName): string | null {
     let ourSymbol = this.program.getTypeChecker().getSymbolAtLocation(node)
 
+    // Match the provided node to an existing name in scope by symbol reference.
     for (const scope of this.namesInScope.slice().reverse()) {
       for (const [otherNode, name] of scope) {
         if (!otherNode) {
@@ -52,6 +53,11 @@ export class Scope {
       throw new Error(" Havent handled destructuring yet")
     }
 
+    // Don't use a keyword as a name
+    if (keywords.includes(declaredVariableName)) {
+      declaredVariableName = declaredVariableName + "_"
+    }
+
     const matchingNames = this.namesInScope.flat()
     let newName = declaredVariableName
     let increment = 0
@@ -63,7 +69,7 @@ export class Scope {
     this.namesInScope[this.namesInScope.length - 1].push([node, newName])
   }
 
-  createName(): string {
+  createUniqueName(): string {
     let declaredVariableName = "__gen"
 
     const matchingNames = this.namesInScope.flat()
@@ -79,3 +85,142 @@ export class Scope {
     return newName
   }
 }
+
+const keywords = [
+  // Godot keywords
+  "if",
+  "elif",
+  "else",
+  "for",
+  "while",
+  "match",
+  "break",
+  "continue",
+  "pass",
+  "return",
+  "class",
+  "class_name",
+  "extends",
+  "is",
+  "as",
+  "self",
+  "tool",
+  "signal",
+  "func",
+  "static",
+  "const",
+  "enum",
+  "var",
+  "onready",
+  "export",
+  "setget",
+  "breakpoint",
+  "preload",
+  "yield",
+  "assert",
+  "remote",
+  "master",
+  "puppet",
+  "remotesync",
+  "mastersync",
+  "puppetsync",
+  "PI",
+  "TAU",
+  "INF",
+  "NAN",
+
+  // GDScript global variables
+  "Color8",
+  "ColorN",
+  "abs",
+  "acos",
+  "asin",
+  "assert",
+  "atan",
+  "atan2",
+  "bytes2var",
+  "cartesian2polar",
+  "ceil",
+  "char",
+  "clamp",
+  "convert",
+  "cos",
+  "cosh",
+  "db2linear",
+  "decimals",
+  "dectime",
+  "deg2rad",
+  "dict2inst",
+  "ease",
+  "exp",
+  "floor",
+  "fmod",
+  "fposmod",
+  "funcref",
+  "get_stack",
+  "hash",
+  "inst2dict",
+  "instance_from_id",
+  "inverse_lerp",
+  "is_equal_approx",
+  "is_inf",
+  "is_instance_valid",
+  "is_nan",
+  "is_zero_approx",
+  "len",
+  "lerp",
+  "lerp_angle",
+  "linear2db",
+  "load",
+  "log",
+  "max",
+  "min",
+  "move_toward",
+  "nearest_po2",
+  "ord",
+  "parse_json",
+  "polar2cartesian",
+  "posmod",
+  "pow",
+  "preload",
+  "print",
+  "print_debug",
+  "print_stack",
+  "printerr",
+  "printraw",
+  "prints",
+  "printt",
+  "push_error",
+  "push_warning",
+  "rad2deg",
+  "rand_range",
+  "rand_seed",
+  "randf",
+  "randi",
+  "randomize",
+  "range",
+  "range_lerp",
+  "round",
+  "seed",
+  "sign",
+  "sin",
+  "sinh",
+  "smoothstep",
+  "sqrt",
+  "step_decimals",
+  "stepify",
+  "str",
+  "str2var",
+  "tan",
+  "tanh",
+  "to_json",
+  "type_exists",
+  "typeof",
+  "validate_json",
+  "var2bytes",
+  "var2str",
+  "weakref",
+  "wrapf",
+  "wrapi",
+  "yield",
+]
