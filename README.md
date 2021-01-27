@@ -60,15 +60,25 @@ In the future, this could become a configuration setting on tsgd.json.
 
 ### Autoloads
 
-Autoloads are a little quirky in ts2gd because TS has no way to support only-static classes.
+In order to use an autoload class:
 
-Be sure to mark all properties and methods of an autoload class `static`. If you don't, you'll probably run into errors.
+1. Marking it as autoload in Godot.
+2. Declare the class as normal, but do not export it.
+3. Instead, export an instance of the class. ts2gd will figure out what you mean.
 
-We really should have a way to provide an error for this case.
+Here's an example:
+
+```
+class MyAutoloadClass extends Node2D {
+  public string hello = "hi"
+}
+
+export const MyAutoload = new MyAutoloadClass()
+```
 
 #### Autoload node resolution
 
-Note that `get_node()` on an autoloaded class will autocomplete to nodes found in the main scene (the scene that Godot launches at the start of the game). Since the autoload class initializes when the game starts, this is accurate.
+`get_node()` on an autoloaded class will autocomplete to nodes found in the main scene (the scene that Godot launches at the start of the game). This is generally accurate... unless you start a different scene in Godot.
 
 ### yield
 
@@ -99,6 +109,16 @@ v1.div(v2); // v1 / v2
 ```
 
 The add/sub/mul/div gets compiled into the corresponding arithmatic.
+
+### Dictionary
+
+The default TS dictionary (e.g. `const dict = { a: 1 }`) only supports string, number and symbol as keys. If you want anything else, you can just use the Dictionary type, and use `.put` instead of square bracket access.
+
+```
+const myComplexDict: Dictionary<Node2D, int> = todict({})
+
+myComplexDict.put(myNode, 5)
+```
 
 # Roadmap
 
@@ -136,7 +156,7 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] parse the bbcode in the XML into markdown that TS can read.
 - [x] when scenes are updated, update their corresponding definition files
 - [ ] create scripts and attach them to nodes directly through the editor - perhaps with @Node("/blah")
-- [ ] don't hide object autocomplete names
+- [x] don't hide object autocomplete names
 - [x] strongly type input action names
 - [x] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
@@ -158,6 +178,6 @@ The add/sub/mul/div gets compiled into the corresponding arithmatic.
 - [x] ts2gd: Handle adding new files.
 - [x] ts2gd: Handle deleting old files.
 - [x] ts2gd: Random newlines at beginning of file.
-- [ ] Is there a better way to do Dictionary, with strongly typed k/v?
+- [x] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???
 - [ ] use LSP to handle operator overloading, sourcemap issues...?!?
