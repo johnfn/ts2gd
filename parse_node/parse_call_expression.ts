@@ -204,12 +204,11 @@ v1 + v2
 }
 
 export const testAddVec2: Test = {
-  expectFail: true,
   ts: `const foo: { v: Vector2; }; const v2: Vector2; foo.v.add(v2)`,
   expected: `
 var foo
 var v2
-foo['v'] + v2
+foo.v + v2
 `,
 }
 
@@ -285,7 +284,7 @@ let d = todict({ 'a': 1 })
 d.put('b', 2)
   `,
   expected: `
-var d = todict({ "a": 1 })
+var d = { "a": 1 }
 d["b"] = 2
 `,
 }
@@ -296,7 +295,7 @@ let d = todict({ 'a': 1 })
 d.put([1, 2], 2)
   `,
   expected: `
-var d = todict({ "a": 1 })
+var d = { "a": 1 }
 d[[1, 2]] = 2
 `,
 }

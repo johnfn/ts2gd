@@ -166,7 +166,7 @@ const x: Blah = new Blah();
     expected: `
 class_name Blah
 
-var _x = Blah()
+var _x = Blah.new()
   `,
 };
 exports.testAutoloadVariableDeclaration2 = {
@@ -194,7 +194,7 @@ const x: Blah = new Blah();
   `,
     expected: `
 func test():
-  var _blah = Blah()
+  var _blah = Blah.new()
   `,
 };
 //# sourceMappingURL=parse_variable_declaration.js.map

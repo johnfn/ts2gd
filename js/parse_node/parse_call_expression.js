@@ -229,7 +229,7 @@ let d = todict({ 'a': 1 })
 d.put('b', 2)
   `,
     expected: `
-var d = todict({ "a": 1 })
+var d = { "a": 1 }
 d["b"] = 2
 `,
 };
@@ -239,7 +239,7 @@ let d = todict({ 'a': 1 })
 d.put([1, 2], 2)
   `,
     expected: `
-var d = todict({ "a": 1 })
+var d = { "a": 1 }
 d[[1, 2]] = 2
 `,
 };

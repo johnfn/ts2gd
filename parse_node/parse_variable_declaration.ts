@@ -198,7 +198,7 @@ const x: Blah = new Blah();
   expected: `
 class_name Blah
 
-var _x = Blah()
+var _x = Blah.new()
   `,
 }
 
@@ -229,6 +229,6 @@ const x: Blah = new Blah();
   `,
   expected: `
 func test():
-  var _blah = Blah()
+  var _blah = Blah.new()
   `,
 }
