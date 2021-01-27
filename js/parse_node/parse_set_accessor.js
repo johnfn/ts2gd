@@ -9,24 +9,24 @@ const parseSetAccessor = (node, props) => {
         props,
         addIndent: true,
         content: (name, body, ...params) => `
-func ${name}_set(${params.join(', ')}):
+func ${name}_set(${params.join(", ")}):
   ${body}
-`
+`,
     });
 };
 exports.parseSetAccessor = parseSetAccessor;
 exports.testGet = {
     ts: `
 class Foo {
-  _x: number;
-  set x(value: number) { _x = value; }
+  _x: float;
+  set x(value: float) { _x = value; }
 }
   `,
     expected: `
 class_name Foo
 var x setget x_set,
-var _x: float
-func x_set(value: float):
+var _x
+func x_set(value):
   _x = value
   `,
 };

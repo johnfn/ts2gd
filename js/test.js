@@ -29,6 +29,7 @@ const generate_base_1 = require("./generate_base");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const scope_1 = require("./scope");
+const chalk_1 = __importDefault(require("chalk"));
 const compileTs = (code, isAutoload) => {
     const filename = isAutoload ? "autoload.ts" : "test.ts";
     const sourceFile = ts.createSourceFile(filename, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
@@ -153,7 +154,7 @@ const trim = (s) => {
         .filter((x) => x.trim() !== "")
         .join("\n");
 };
-const test = (props, name, testFileName) => {
+const test = (props, name, testFileName, path) => {
     const { ts, expected } = props;
     const compiled = exports.compileTs(ts, props.isAutoload ?? false);
     const output = compiled.content;
@@ -169,6 +170,7 @@ const test = (props, name, testFileName) => {
                     name,
                     expectFail: props.expectFail ?? false,
                     fileName: testFileName,
+                    path: "[generated]/" + testFileName,
                 };
             }
             if (trim(content) !== trim(match.content)) {
@@ -179,6 +181,7 @@ const test = (props, name, testFileName) => {
                     name,
                     expectFail: props.expectFail ?? false,
                     fileName: testFileName,
+                    path: "[generated]/" + testFileName,
                 };
             }
         }
@@ -193,6 +196,7 @@ const test = (props, name, testFileName) => {
         name,
         expectFail: props.expectFail ?? false,
         fileName: testFileName,
+        path,
     };
 };
 const getAllFiles = async () => {
@@ -203,8 +207,12 @@ const getAllFiles = async () => {
         if (f === "index") {
             continue;
         }
-        const obj = await Promise.resolve().then(() => __importStar(require("./parse_node/" + f)));
-        results[f] = obj;
+        let relativePath = "./parse_node/" + f;
+        const obj = await Promise.resolve().then(() => __importStar(require(relativePath)));
+        results[f] = {
+            content: obj,
+            path: path_1.default.resolve(relativePath),
+        };
     }
     return results;
 };
@@ -212,10 +220,10 @@ const runTests = async () => {
     let total = 0;
     let tests = [];
     const everything = await getAllFiles();
-    for (const [fileName, mod] of Object.entries(everything)) {
-        for (const [testName, testObj] of Object.entries(mod)) {
+    for (const [fileName, { path, content }] of Object.entries(everything)) {
+        for (const [testName, testObj] of Object.entries(content)) {
             if (testName.startsWith("test")) {
-                tests.push({ ...testObj, testName, fileName });
+                tests.push({ ...testObj, testName, fileName, path });
             }
         }
     }
@@ -228,7 +236,7 @@ const runTests = async () => {
         const logged = [];
         const oldConsoleLog = console.log;
         console.log = (...args) => logged.push(args);
-        const result = test(testObj, testObj.testName, testObj.fileName);
+        const result = test(testObj, testObj.testName, testObj.fileName, testObj.path);
         console.log = oldConsoleLog;
         total++;
         if (result.type === "fail") {
@@ -247,10 +255,14 @@ const runTests = async () => {
         console.info(failures.map((f) => "  " + f.name).join("\n"));
     }
     else {
-        for (let { expected, name, result, fileName, logs } of failures.filter((x) => !x.expectFail)) {
+        for (let { expected, name, result, logs, path } of failures.filter((x) => !x.expectFail)) {
+            const fileContents = fs_1.default.readFileSync(path, "utf-8");
+            const lines = fileContents.split("\n");
+            // Take a guess at line
+            let line = (lines.findIndex((l) => l.includes(`export const ${name}`)) ?? -1) + 1;
             console.info("=============================================");
             console.info(name, "failed:");
-            console.info("  in", `./parse_node/${fileName}`);
+            console.info(`  in`, chalk_1.default.yellowBright(`${path}${line ? `:${line}:0` : ``}`));
             console.info("=============================================\n");
             console.info("\x1b[31mExpected:\x1b[0m");
             let str = "";

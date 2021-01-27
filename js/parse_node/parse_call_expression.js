@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
+exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -98,6 +98,19 @@ const parseCallExpression = (node, props) => {
             }
         }
     }
+    // This compiles dict.put(a, b) into dict[a] = b
+    if (expression.kind === typescript_1.SyntaxKind.PropertyAccessExpression) {
+        const propAccess = expression;
+        if (ts_utils_1.isDictionary(props.program.getTypeChecker().getTypeAtLocation(propAccess.expression)) &&
+            propAccess.name.escapedText === "put") {
+            return parse_node_1.combine({
+                parent: node,
+                nodes: [propAccess.expression, args[0], args[1]],
+                props,
+                content: (dict, key, val) => `${dict}[${key}] = ${val}`,
+            });
+        }
+    }
     const decls = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression).symbol?.declarations;
@@ -118,13 +131,14 @@ const parseCallExpression = (node, props) => {
                 }
                 args[0] = '"' + args[0] + '"';
             }
+            if (expr === "todict") {
+                return args[0];
+            }
             if (isArrowFunction) {
                 const { capturedScopeObject } = parse_arrow_function_1.getCapturedScope(decls[0], props.program.getTypeChecker());
                 return `${expr}.call_func(${[...args, capturedScopeObject].join(", ")})`;
             }
-            else {
-                return `${expr}(${args.join(", ")})`;
-            }
+            return `${expr}(${args.join(", ")})`;
         },
     });
 };
@@ -171,14 +185,14 @@ test.call_func({})
 };
 exports.testMap = {
     ts: `
-let x = [1, 2, 3]
-x.map(y => y * 3)
+let x: string[] = ['a', 'b', 'c']
+x.map(y => y + '1')
   `,
     expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y: float, captures):
-  return y * 3
-var x = [1, 2, 3]
+func func1(y: String, captures):
+  return y + "1"
+var x = ["a", "b", "c"]
 __map(x, funcref(self, "func1"), {})
 `,
 };
@@ -187,13 +201,13 @@ exports.testMapCapture = {
 let x = [1, 2, 3]
 let z = 5
 let big = { a : 6 }
-x.map(y => {
+x.map((y: int) => {
   return z + big.a + y * 3
 })
   `,
     expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y: float, captures):
+func func1(y, captures):
   var z = captures.z
   var big = captures.big
   return z + big.a + y * 3
@@ -209,4 +223,24 @@ __map(x, funcref(self, "func1"), {"z": z, "big": big})
 // return z + big.a + y * 3
 // TODO this also fails bc it's double quoted.
 // let big = { "a" : 6 }
+exports.testRewriteDictPut = {
+    ts: `
+let d = todict({ 'a': 1 })
+d.put('b', 2)
+  `,
+    expected: `
+var d = todict({ "a": 1 })
+d["b"] = 2
+`,
+};
+exports.testRewriteDictPut2 = {
+    ts: `
+let d = todict({ 'a': 1 })
+d.put([1, 2], 2)
+  `,
+    expected: `
+var d = todict({ "a": 1 })
+d[[1, 2]] = 2
+`,
+};
 //# sourceMappingURL=parse_call_expression.js.map

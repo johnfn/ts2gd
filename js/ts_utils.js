@@ -53,6 +53,12 @@ exports.getTypeHierarchy = getTypeHierarchy;
 // I can not for the life of me figure out a clear way to
 // ask TS if a type is an object literal type.
 const isDictionary = (type) => {
+    if (type.getSymbol()?.name.startsWith("Dictionary")) {
+        // Note: startsWith necessary because it could be
+        // * Dictionary
+        // * Dictionary<K, V>
+        return true;
+    }
     if (type.flags & typescript_1.TypeFlags.Object) {
         const objectType = type;
         for (const decl of type.symbol?.declarations ?? []) {
@@ -153,6 +159,7 @@ function getGodotType(node, props, initializer, actualType) {
         console.warn(`${chalk_1.default.blueBright(node.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
         console.warn(chalk_1.default.redBright(`Please add either "int" or "float" here (not number)`));
         console.warn();
+        console.warn(node.getText());
         console.warn(node.parent.getText());
         return "float";
     }

@@ -1,8 +1,4 @@
-import ts, {
-  isExpressionWithTypeArguments,
-  SyntaxKind,
-  TypeFlags,
-} from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
@@ -158,13 +154,6 @@ export const parseCallExpression = (
     decls[0].kind === SyntaxKind.ArrowFunction &&
     decls[0].getSourceFile() === node.getSourceFile()
 
-  console.log(expression.getText())
-  // console.log(isDictionary(exprType))
-  // console.log(props.program.getTypeChecker().typeToString(exprType))
-  // if (rhs === "put") {
-  //   rhs = "put!"
-  // }
-
   return combine({
     parent: node,
     nodes: [expression, ...args],
@@ -180,6 +169,10 @@ export const parseCallExpression = (
         }
 
         args[0] = '"' + args[0] + '"'
+      }
+
+      if (expr === "todict") {
+        return args[0]
       }
 
       if (isArrowFunction) {

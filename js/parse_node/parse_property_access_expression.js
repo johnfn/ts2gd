@@ -25,12 +25,12 @@ const isRhs = (node) => {
     }
 };
 const parsePropertyAccessExpression = (node, props) => {
-    const leftType = props.program
+    const exprType = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression);
     // Compile things like KeyList.KEY_SPACE into KEY_SPACE
-    if (ts_utils_1.isEnumType(leftType)) {
-        const symbol = leftType.getSymbol();
+    if (ts_utils_1.isEnumType(exprType)) {
+        const symbol = exprType.getSymbol();
         const declarations = symbol.declarations;
         const sourceFiles = declarations.map((d) => d.getSourceFile().fileName);
         const isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"));
@@ -50,7 +50,7 @@ const parsePropertyAccessExpression = (node, props) => {
             }
             // Godot does not like var foo = bar.baz when baz is not a key of bar
             // However, Godot is fine with bar.baz = foo even if baz is not a key.
-            if (ts_utils_1.isDictionary(leftType) &&
+            if (ts_utils_1.isDictionary(exprType) &&
                 ts_utils_1.isNullable(node.name, props.program.getTypeChecker()) &&
                 isRhs(node)) {
                 return `(${lhs}.${rhs} if ${lhs}.has("${rhs}") else null)`;
