@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
+exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -28,6 +28,7 @@ const parsePropertyAccessExpression = (node, props) => {
     const exprType = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression);
+    const type = props.program.getTypeChecker().getTypeAtLocation(node);
     // Compile things like KeyList.KEY_SPACE into KEY_SPACE
     if (ts_utils_1.isEnumType(exprType)) {
         const symbol = exprType.getSymbol();
@@ -45,7 +46,7 @@ const parsePropertyAccessExpression = (node, props) => {
         content: (lhs, rhs) => {
             // TS requires you to write this.blah everywhere, but Godot does not, and in fact
             // even generates a warning since it cant prove that self.blah is real.
-            if (lhs === "self") {
+            if (lhs === "self" && type.symbol?.name?.startsWith("Signal")) {
                 return rhs;
             }
             // Godot does not like var foo = bar.baz when baz is not a key of bar
@@ -135,5 +136,44 @@ foo[0].bar = 2
 var foo = [{ "bar": 1 }]
 foo[0].bar = 2
   `,
+};
+exports.testNoSelfForSignal = {
+    ts: `
+export class Test {
+  mouseenter!: Signal<[]>;
+
+  test() {
+    this.emit_signal(this.mouseenter)
+  }
+}
+  `,
+    expected: `
+class_name Test
+signal mouseenter
+
+func test():
+  self.emit_signal(mouseenter)
+`,
+};
+exports.testAddSelfForParams = {
+    ts: `
+export class Test {
+  a: float
+  b: string
+
+  test(a: float, b: string) {
+    this.a = a;
+    this.b = b;
+  }
+}
+  `,
+    expected: `
+class_name Test
+var a
+var b: String
+func test(a, b: String):
+  self.a = a
+  self.b = b
+`,
 };
 //# sourceMappingURL=parse_property_access_expression.js.map

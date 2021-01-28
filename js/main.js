@@ -1,11 +1,10 @@
 #!/usr/bin/env ts-node
 "use strict";
-// TODO: Dictionary<> should be Dictionary<K, V>
+// TODO: There are bugs when you have both a constructor and an _init() method.
 // TODO: Rename "@globals" to globals or something
 //   There is a clash betweeh us using @ to mean "generated d.ts based on project"
 //   and Godot's somewhat-random use of @
 // TODO: new assets aren't immediately imported.
-// TODO: `load` is a godot keyword
 // TODO: clash between this.foo and foo() since this is removed by godot
 // TODO: ": float" in parameters is not respected
 // TODO: we need to clean up old node_paths when we delete or rename a class.
@@ -39,7 +38,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
-// TODO: new Something() should compile into Something.new() if possible!
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc
@@ -65,8 +63,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Discarded return values from function calls?
 // TODO: The whole Class() thing is clearly possible - see String() for
 //       an example!
-// TODO: I don't know how to do { [key: Vector2]: value }. except maybe not
-//       using {}, which is kind of lame.
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example

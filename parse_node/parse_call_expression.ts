@@ -163,9 +163,11 @@ export const parseCallExpression = (
         expr = "yield"
       }
 
-      if (expr === "emit_signal") {
-        if (args[0].startsWith("this")) {
-          args[0] = args[0].slice("this.".length)
+      // Translate `this.emit_signal(this.signal)`
+      // into `this.emit_signal("signal")`
+      if (expr === "self.emit_signal") {
+        if (args[0].startsWith("self")) {
+          args[0] = args[0].slice("self.".length)
         }
 
         args[0] = '"' + args[0] + '"'
@@ -297,5 +299,23 @@ d.put([1, 2], 2)
   expected: `
 var d = { "a": 1 }
 d[[1, 2]] = 2
+`,
+}
+
+export const testEmitSignal: Test = {
+  ts: `
+export class CityGridCollision extends Area {
+  mouseenter!: Signal<[]>;
+  test() {
+    this.emit_signal(this.mouseenter)
+  }
+}
+  `,
+  expected: `
+extends Area
+class_name CityGridCollision
+signal mouseenter
+func test():
+  self.emit_signal("mouseenter")
 `,
 }

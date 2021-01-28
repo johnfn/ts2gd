@@ -156,12 +156,11 @@ v1 + v2
 `,
 };
 exports.testAddVec2 = {
-    expectFail: true,
     ts: `const foo: { v: Vector2; }; const v2: Vector2; foo.v.add(v2)`,
     expected: `
 var foo
 var v2
-foo['v'] + v2
+foo.v + v2
 `,
 };
 exports.testNormalVec = {

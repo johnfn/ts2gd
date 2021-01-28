@@ -16,7 +16,6 @@
 //         - this would require being able to save back config files accurately.
 
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
-// TODO: new Something() should compile into Something.new() if possible!
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc
@@ -44,8 +43,6 @@
 // TODO: Discarded return values from function calls?
 // TODO: The whole Class() thing is clearly possible - see String() for
 //       an example!
-// TODO: I don't know how to do { [key: Vector2]: value }. except maybe not
-//       using {}, which is kind of lame.
 // TODO: Node2D has a size() property.
 // TODO: tile_get_shapes is any[] when it shouldn't be
 // TODO: Labeled break??? See SpontaneousDialog.ts say() for an example

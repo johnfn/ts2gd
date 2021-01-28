@@ -36,6 +36,8 @@ export const parsePropertyAccessExpression = (
     .getTypeChecker()
     .getTypeAtLocation(node.expression)
 
+  const type = props.program.getTypeChecker().getTypeAtLocation(node)
+
   // Compile things like KeyList.KEY_SPACE into KEY_SPACE
   if (isEnumType(exprType)) {
     const symbol = exprType.getSymbol()!
@@ -53,12 +55,6 @@ export const parsePropertyAccessExpression = (
     nodes: [node.expression, node.name],
     props,
     content: (lhs, rhs) => {
-      // TS requires you to write this.blah everywhere, but Godot does not, and in fact
-      // even generates a warning since it cant prove that self.blah is real.
-      if (lhs === "self") {
-        return rhs
-      }
-
       // Godot does not like var foo = bar.baz when baz is not a key of bar
       // However, Godot is fine with bar.baz = foo even if baz is not a key.
 
@@ -156,4 +152,45 @@ foo[0].bar = 2
 var foo = [{ "bar": 1 }]
 foo[0].bar = 2
   `,
+}
+
+export const testNoSelfForSignal: Test = {
+  ts: `
+export class Test {
+  mouseenter!: Signal<[]>;
+
+  test() {
+    this.emit_signal(this.mouseenter)
+  }
+}
+  `,
+  expected: `
+class_name Test
+signal mouseenter
+
+func test():
+  self.emit_signal("mouseenter")
+`,
+}
+
+export const testAddSelfForParams: Test = {
+  ts: `
+export class Test {
+  a: float
+  b: string
+
+  test(a: float, b: string) {
+    this.a = a;
+    this.b = b;
+  }
+}
+  `,
+  expected: `
+class_name Test
+var a
+var b: String
+func test(a, b: String):
+  self.a = a
+  self.b = b
+`,
 }

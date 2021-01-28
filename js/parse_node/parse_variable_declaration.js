@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
+exports.testKeyword = exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -68,7 +68,7 @@ const parseVariableDeclaration = (node, props) => {
         for (const { id } of destructuredNames) {
             props.scope.addName(id);
         }
-        const genName = props.scope.createName();
+        const genName = props.scope.createUniqueName();
         return parse_node_1.combine({
             parent: node,
             nodes: [node.initializer, ...destructuredNames.map((d) => d.id)],
@@ -195,6 +195,16 @@ const x: Blah = new Blah();
     expected: `
 func test():
   var _blah = Blah.new()
+  `,
+};
+exports.testKeyword = {
+    ts: `
+let preload = 123
+print(preload)
+  `,
+    expected: `
+var preload_: int = 123
+print(preload_)
   `,
 };
 //# sourceMappingURL=parse_variable_declaration.js.map

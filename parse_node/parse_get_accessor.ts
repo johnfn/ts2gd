@@ -32,6 +32,6 @@ class_name Foo
 var x setget , x_get
 var _x
 func x_get():
-  return _x
+  return self._x
   `,
 }

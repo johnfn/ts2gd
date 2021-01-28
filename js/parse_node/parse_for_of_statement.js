@@ -39,7 +39,7 @@ for ${name} in ${expr}:
             for (const { id } of destructuredNames) {
                 props.scope.addName(id);
             }
-            const genName = props.scope.createName();
+            const genName = props.scope.createUniqueName();
             result = parse_node_1.combine({
                 parent: node,
                 nodes: [
