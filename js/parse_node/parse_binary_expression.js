@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testDoubleEqualDifferentTypes = exports.testDoubleEqual = exports.testNestedAssignmentToDict = exports.testAssignmentToDict = exports.testMultiply = exports.testAdd = exports.parseBinaryExpression = void 0;
+exports.testDoubleNotEqualDifferentTypes = exports.testDoubleEqualDifferentTypes = exports.testDoubleEqual = exports.testNestedAssignmentToDict = exports.testAssignmentToDict = exports.testMultiply = exports.testAdd = exports.parseBinaryExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const parseBinaryExpression = (node, props) => {
@@ -44,7 +44,7 @@ const parseBinaryExpression = (node, props) => {
             if (operatorToken === "!=" || operatorToken === "!==") {
                 if (leftTypeString !== rightTypeString) {
                     // TODO: We should cache the left and right expressions - we evaluate them twice rn
-                    return `((typeof(${left}) == typeof(${right})) and (${left} != ${right}))`;
+                    return `((typeof(${left}) != typeof(${right})) or ((typeof(${left}) == typeof(${right})) and (${left} != ${right})))`;
                 }
             }
             return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`;
@@ -92,6 +92,19 @@ a == b
 var a
 var b  
 ((typeof(a) == typeof(b)) and (a == b))
+`,
+};
+exports.testDoubleNotEqualDifferentTypes = {
+    ts: `
+let a: { a: number; } | string
+let b: string
+
+a != b
+  `,
+    expected: `
+var a
+var b  
+((typeof(a) == typeof(b)) and (a != b))
 `,
 };
 //# sourceMappingURL=parse_binary_expression.js.map
