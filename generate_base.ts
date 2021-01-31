@@ -103,7 +103,9 @@ declare const print: (...args: any[]) => void;
 declare const randi: () => int;
 declare const randf: () => float;
 declare const to_json: (obj: any) => string;
-declare const parse_json: (str: string) => any; // TODO - probably dictionary?
+declare const parse_json: (str: string) => Dictionary<unknown, unknown>;
+declare const floor: (val: float) => int;
+declare const abs: (val: float) => float;
 
 declare class Signal<T extends any[]> {
   /** Don't use this - it's only to get typechecking working! */

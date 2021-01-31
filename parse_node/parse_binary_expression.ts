@@ -52,6 +52,14 @@ export const parseBinaryExpression = (
         }
       }
 
+      if (operatorToken === "!=" || operatorToken === "!==") {
+        if (leftTypeString !== rightTypeString) {
+          // TODO: We should cache the left and right expressions - we evaluate them twice rn
+
+          return `((typeof(${left}) == typeof(${right})) and (${left} != ${right}))`
+        }
+      }
+
       return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`
     },
   })
@@ -105,5 +113,19 @@ a == b
 var a
 var b  
 ((typeof(a) == typeof(b)) and (a == b))
+`,
+}
+
+export const testDoubleNotEqualDifferentTypes: Test = {
+  ts: `
+let a: { a: number; } | string
+let b: string
+
+a != b
+  `,
+  expected: `
+var a
+var b  
+((typeof(a) == typeof(b)) and (a != b))
 `,
 }

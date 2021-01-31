@@ -41,6 +41,12 @@ const parseBinaryExpression = (node, props) => {
                     return `((typeof(${left}) == typeof(${right})) and (${left} == ${right}))`;
                 }
             }
+            if (operatorToken === "!=" || operatorToken === "!==") {
+                if (leftTypeString !== rightTypeString) {
+                    // TODO: We should cache the left and right expressions - we evaluate them twice rn
+                    return `((typeof(${left}) == typeof(${right})) and (${left} != ${right}))`;
+                }
+            }
             return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`;
         },
     });
