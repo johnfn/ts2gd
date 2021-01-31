@@ -44,11 +44,6 @@ const parsePropertyAccessExpression = (node, props) => {
         nodes: [node.expression, node.name],
         props,
         content: (lhs, rhs) => {
-            // TS requires you to write this.blah everywhere, but Godot does not, and in fact
-            // even generates a warning since it cant prove that self.blah is real.
-            if (lhs === "self" && type.symbol?.name?.startsWith("Signal")) {
-                return rhs;
-            }
             // Godot does not like var foo = bar.baz when baz is not a key of bar
             // However, Godot is fine with bar.baz = foo even if baz is not a key.
             if (ts_utils_1.isDictionary(exprType) &&
@@ -86,14 +81,14 @@ if foo.bar:
 };
 exports.testAccessRewriting2 = {
     ts: `
-let foo: { bar?: number } = { bar: 1 }
-if (foo.bar === 1) {
+let foo: { bar?: int } = { bar: 1 as int }
+if (foo.bar === 1 as int) {
   print (foo.bar)
 }
   `,
     expected: `
 var foo = { "bar": 1 }
-if (foo.bar if foo.has("bar") else null) == 1:
+if ((typeof((foo.bar if foo.has("bar") else null)) == typeof(1)) and ((foo.bar if foo.has("bar") else null) == 1)):
   print(foo.bar)
   `,
 };
@@ -152,7 +147,7 @@ class_name Test
 signal mouseenter
 
 func test():
-  self.emit_signal(mouseenter)
+  self.emit_signal("mouseenter")
 `,
 };
 exports.testAddSelfForParams = {

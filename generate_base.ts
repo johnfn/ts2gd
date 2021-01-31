@@ -86,6 +86,11 @@ interface Iterable<T> {
 
 interface IterableIterator<T> extends Iterator<T> {
   [Symbol.iterator](): IterableIterator<T>;
+
+  // Generator functions found on GDScriptFunctionState
+
+  is_valid(extended_check: bool = false);
+  resume(arg?: any);
 }
 
 ${ArrayDefinition}

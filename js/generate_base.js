@@ -91,6 +91,8 @@ interface Iterable<T> {
 
 interface IterableIterator<T> extends Iterator<T> {
   [Symbol.iterator](): IterableIterator<T>;
+  is_valid(extended_check: bool = false);
+  resume(arg?: any);
 }
 
 ${array_def_1.ArrayDefinition}

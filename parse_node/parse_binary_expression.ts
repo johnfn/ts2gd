@@ -28,6 +28,13 @@ export const parseBinaryExpression = (
   //   }
   // }
 
+  const checker = props.program.getTypeChecker()
+
+  const leftType = checker.getTypeAtLocation(node.left)
+  const rightType = checker.getTypeAtLocation(node.right)
+  const leftTypeString = checker.typeToString(leftType)
+  const rightTypeString = checker.typeToString(rightType)
+
   return combine({
     parent: node,
     nodes: [node.left, node.operatorToken, node.right],
@@ -35,6 +42,14 @@ export const parseBinaryExpression = (
     content: (left, operatorToken, right) => {
       if (operatorToken === "??") {
         return `(${left} if (${left}) != null else ${right})`
+      }
+
+      if (operatorToken === "==" || operatorToken === "===") {
+        if (leftTypeString !== rightTypeString) {
+          // TODO: We should cache the left and right expressions - we evaluate them twice rn
+
+          return `((typeof(${left}) == typeof(${right})) and (${left} == ${right}))`
+        }
       }
 
       return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`
@@ -71,5 +86,24 @@ foo.bar.baz = 1`,
   expected: `
 var foo = { "bar": {} }
 foo.bar.baz = 1
+`,
+}
+
+export const testDoubleEqual: Test = {
+  ts: "(1 as int) == (2 as int)",
+  expected: "(1) == (2)",
+}
+
+export const testDoubleEqualDifferentTypes: Test = {
+  ts: `
+let a: { a: number; } | string
+let b: string
+
+a == b
+  `,
+  expected: `
+var a
+var b  
+((typeof(a) == typeof(b)) and (a == b))
 `,
 }

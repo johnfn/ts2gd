@@ -1,5 +1,6 @@
 #!/usr/bin/env ts-node
 
+// TODO: Why is car.tscn a Node, not a Spatial?
 // TODO: There are bugs when you have both a constructor and an _init() method.
 // TODO: Rename "@globals" to globals or something
 //   There is a clash betweeh us using @ to mean "generated d.ts based on project"

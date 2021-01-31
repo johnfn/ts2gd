@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
+exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -125,9 +125,11 @@ const parseCallExpression = (node, props) => {
             if (expr === "Yield") {
                 expr = "yield";
             }
-            if (expr === "emit_signal") {
-                if (args[0].startsWith("this")) {
-                    args[0] = args[0].slice("this.".length);
+            // Translate `this.emit_signal(this.signal)`
+            // into `this.emit_signal("signal")`
+            if (expr === "self.emit_signal") {
+                if (args[0].startsWith("self")) {
+                    args[0] = args[0].slice("self.".length);
                 }
                 args[0] = '"' + args[0] + '"';
             }
@@ -240,6 +242,23 @@ d.put([1, 2], 2)
     expected: `
 var d = { "a": 1 }
 d[[1, 2]] = 2
+`,
+};
+exports.testEmitSignal = {
+    ts: `
+export class CityGridCollision extends Area {
+  mouseenter!: Signal<[]>;
+  test() {
+    this.emit_signal(this.mouseenter)
+  }
+}
+  `,
+    expected: `
+extends Area
+class_name CityGridCollision
+signal mouseenter
+func test():
+  self.emit_signal("mouseenter")
 `,
 };
 //# sourceMappingURL=parse_call_expression.js.map

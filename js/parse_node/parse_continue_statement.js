@@ -28,15 +28,15 @@ while x < 10:
 };
 exports.testContinue2 = {
     ts: `
-for (let x = 0; x < 10; x++) {
-  if (x == 0) continue;
+for (let x: int = 0; x < 10; x++) {
+  if (x == (0 as int)) continue;
   print(x);
 }
   `,
     expected: `
 var x: int = 0
 while x < 10:
-  if x == 0:
+  if x == (0):
     continue
   print(x)
   ((x += 1) - 1)
