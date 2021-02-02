@@ -1,53 +1,45 @@
 #!/usr/bin/env ts-node
 
+// HIGH
+
+// TODO: Renaming files crashes (because imports are not found)
+// TODO: new assets aren't immediately imported.
+// TODO: There are bugs when you have both a constructor and an _ready() method.
+// TODO: we need to clean up old node_paths when we delete or rename a class.
+// TODO: Godot globals
+// TODO: this.collision.connect("mouseexit", this, () => {})
+// TODO: it's hard to compile ++/-- properly.
+// TODO: Inline gdscript
+// TODO: Resolve node paths even through instances.
+
+// MED
+
+// TODO: new Thing() should find the appropriate scene to initialize if there is one.
+// TODO: template strings
+// TODO: str()
+// TODO: ": float" in parameters is not respected
+// TODO: change_scene should accept a AssetPath filtered on tscn
+// TODO: parse_json return type.
 // TODO: Why is car.tscn a Node, not a Spatial?
-// TODO: There are bugs when you have both a constructor and an _init() method.
+// TODO: Can prob autowrite "extends Object" if we dont write an explicit extends
+// TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
+// TODO: better support for int and float types.
+//   TODO: Modulo expects int instead of float and will error if it sees the wrong one...
 // TODO: Rename "@globals" to globals or something
 //   There is a clash betweeh us using @ to mean "generated d.ts based on project"
 //   and Godot's somewhat-random use of @
-// TODO: new assets aren't immediately imported.
-// TODO: clash between this.foo and foo() since this is removed by godot
-// TODO: ": float" in parameters is not respected
-// TODO: we need to clean up old node_paths when we delete or rename a class.
-// TODO: template strings
-// TODO: str()
-// TODO: Godot globals
-// TODO: For autoload classes, create the global variable implicitly ? is this possible?  (b/c namespace problems)
-// TODO: For autoload classes, marking them would then update the config file
-//         - this would require being able to save back config files accurately.
-
-// TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: "a" + 1 doesnt work but prob should
-// TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: refactor resPath and tsPath and etc
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
-// TODO: it's hard to compile ++/-- properly.
-// TODO: Resolve node paths even through instances.
-// TODO: Inline gdscript
-
-// TODO: "collision/safe_margin"
-// TODO: change_scene should accept a AssetPath filtered on tscn
-// TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
-// TODO: Modulo expects int instead of float and will error if it sees the wrong one...
-// TODO: sanitize variable and function name generation
-// TODO: There's a bug where cleaning up self. can cause variable name collisions.
-// TODO: Clean up TS errors and output - only output if something is
-// seriously wrong!
-// TODO: this.blah.add() doesnt parse right
-// TODO: SUbtracting vectors gives a number for some reason
-// TODO: Workout SpontaneousDialog.instance()
-// TODO: Handle the case when a class exists in multiple scenes - probably just error at this point.
-// TODO: Mark things as onready with @onready
-
-// TODO: You can have _ready() and constructor
-// TODO: _prefixed names could possibly clash
-// TODO: Discarded return values from function calls?
 // TODO: The whole Class() thing is clearly possible - see String() for
 //       an example!
-// TODO: Node2D has a size() property.
-// TODO: tile_get_shapes is any[] when it shouldn't be
-// TODO: Labeled break??? See SpontaneousDialog.ts say() for an example
-// TODO: Use AST transformers?
+// TODO: SUbtracting vectors gives a number for some reason
+
+// LOW
+
+// TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
+// TODO: For autoload classes, marking them @autoload would then update the config file
+//         - this would require being able to save back config files accurately.
 
 import ts from "typescript"
 import * as process from "process"
