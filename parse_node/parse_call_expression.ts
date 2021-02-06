@@ -5,7 +5,7 @@ import { Test } from "../test"
 import { isArrayType, isDictionary } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
-type LibraryFunctionName = "map" | "filter"
+type LibraryFunctionName = "map" | "filter" | "max_by" | "min_by"
 const LibraryFunctions: {
   [key in LibraryFunctionName]: {
     name: LibraryFunctionName
@@ -36,6 +36,44 @@ func ${name}(list, fn, captures):
       result.append(item)
 
   return result
+    `,
+  },
+
+  max_by: {
+    name: "max_by",
+    definition: (name: string) => `
+func ${name}(list, fn, captures):
+  var result = []
+  var best = null
+  var best_score = -INF
+
+  for item in list:
+    var score = fn.call_func(item, captures)
+
+    if score > best_score:
+      best_score = score
+      best = item
+
+  return best
+    `,
+  },
+
+  min_by: {
+    name: "min_by",
+    definition: (name: string) => `
+func ${name}(list, fn, captures):
+  var result = []
+  var best = null
+  var best_score = INF
+
+  for item in list:
+    var score = fn.call_func(item, captures)
+
+    if score < best_score:
+      best_score = score
+      best = item
+
+  return best
     `,
   },
 }

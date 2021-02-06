@@ -309,6 +309,8 @@ export const parseNode = (
         genericNode as ts.ExpressionStatement,
         props
       )
+    case SyntaxKind.NonNullExpression:
+      return parseNode((genericNode as ts.NonNullExpression).expression, props)
     case SyntaxKind.VariableStatement:
       return parseVariableStatement(genericNode as ts.VariableStatement, props)
     case SyntaxKind.VariableDeclaration:

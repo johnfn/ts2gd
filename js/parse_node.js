@@ -211,6 +211,8 @@ const parseNode = (genericNode, props) => {
             return parse_conditional_expression_1.parseConditionalExpression(genericNode, props);
         case typescript_1.SyntaxKind.ExpressionStatement:
             return parse_expression_statement_1.parseExpressionStatement(genericNode, props);
+        case typescript_1.SyntaxKind.NonNullExpression:
+            return exports.parseNode(genericNode.expression, props);
         case typescript_1.SyntaxKind.VariableStatement:
             return parse_variable_statement_1.parseVariableStatement(genericNode, props);
         case typescript_1.SyntaxKind.VariableDeclaration:

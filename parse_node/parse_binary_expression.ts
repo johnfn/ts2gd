@@ -45,7 +45,11 @@ export const parseBinaryExpression = (
       }
 
       if (operatorToken === "==" || operatorToken === "===") {
-        if (leftTypeString !== rightTypeString) {
+        if (
+          leftTypeString !== rightTypeString ||
+          // Even if two variables have the same union type they could be different variants of that union
+          leftTypeString.includes("|")
+        ) {
           // TODO: We should cache the left and right expressions - we evaluate them twice rn
 
           return `((typeof(${left}) == typeof(${right})) and (${left} == ${right}))`

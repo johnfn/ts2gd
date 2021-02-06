@@ -31,6 +31,42 @@ func ${name}(list, fn, captures):
   return result
     `,
     },
+    max_by: {
+        name: "max_by",
+        definition: (name) => `
+func ${name}(list, fn, captures):
+  var result = []
+  var best = null
+  var best_score = -INF
+
+  for item in list:
+    var score = fn.call_func(item, captures)
+
+    if score > best_score:
+      best_score = score
+      best = item
+
+  return best
+    `,
+    },
+    min_by: {
+        name: "min_by",
+        definition: (name) => `
+func ${name}(list, fn, captures):
+  var result = []
+  var best = null
+  var best_score = INF
+
+  for item in list:
+    var score = fn.call_func(item, captures)
+
+    if score < best_score:
+      best_score = score
+      best = item
+
+  return best
+    `,
+    },
 };
 const parseCallExpression = (node, props) => {
     let expression = node.expression;

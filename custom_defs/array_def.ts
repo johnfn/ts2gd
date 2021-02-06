@@ -92,8 +92,12 @@ interface Array<T> {
   /** Returns the maximum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
   max(): T;
 
+  max_by<T, U>(fn: (elem: number) => U): T
+
   /** Returns the minimum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
   min(): T;
+
+  min_by<T, U>(fn: (elem: number) => U): T
 
   /** Removes and returns the last element of the array. Returns [code]null[/code] if the array is empty, without printing an error message. */
   pop_back(): T;
