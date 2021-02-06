@@ -2,8 +2,6 @@
 
 // HIGH
 
-// TODO: filter() doesnt work?
-// TODO: Multiple variables on same line
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: max_by()
 // TODO: Renaming files crashes (because imports are not found)
