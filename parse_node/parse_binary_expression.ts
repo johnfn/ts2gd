@@ -103,7 +103,7 @@ foo.bar.baz = 1
 
 export const testDoubleEqual: Test = {
   ts: "(1 as int) == (2 as int)",
-  expected: "(1) == (2)",
+  expected: "1 == 2",
 }
 
 export const testDoubleEqualDifferentTypes: Test = {

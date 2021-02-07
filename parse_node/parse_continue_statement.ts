@@ -42,7 +42,7 @@ for (let x: int = 0; x < 10; x++) {
   expected: `
 var x: int = 0
 while x < 10:
-  if x == (0):
+  if x == 0:
     continue
   print(x)
   ((x += 1) - 1)
