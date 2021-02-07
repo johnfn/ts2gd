@@ -3,7 +3,6 @@
 // HIGH
 
 // TODO: Godot doesnt allow shadowing tho TS does.
-// TODO: max_by()
 // TODO: Renaming files crashes (because imports are not found)
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
@@ -16,7 +15,6 @@
 // TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing
 //   Eh it wouldnt typecheck though...
 //   Might be possible if an array had 2 index signatures and it was something like array["1:1"]
-// TODO: Renaming in destructuring
 
 // MED
 

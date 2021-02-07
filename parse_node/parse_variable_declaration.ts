@@ -19,7 +19,7 @@ export const getDestructuredNamesAndAccessStrings = (
       .map((elem) =>
         getDestructuredNamesAndAccessStrings(
           elem.name,
-          access + "." + elem.name.getText()
+          access + "." + (elem.propertyName?.getText() ?? elem.name.getText())
         )
       )
       .flat()
@@ -160,6 +160,17 @@ var __gen1 = { "a": 1, "b": 2 }
 var a = __gen1.a
 var b = __gen1.b
 print(__gen)
+  `,
+}
+
+export const testDestructureRename: Test = {
+  ts: `
+let { a: a1, b: b1 } = { a: 1, b: 2 }
+  `,
+  expected: `
+var __gen = { "a": 1, "b": 2 }
+var a1 = __gen.a
+var b1 = __gen.b
   `,
 }
 
