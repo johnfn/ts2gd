@@ -92,11 +92,13 @@ interface Array<T> {
   /** Returns the maximum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
   max(): T;
 
+  /** Returns the element in the array for which calling the passed in function on returns the largest value. */
   max_by(fn: (elem: T) => number): T
 
   /** Returns the minimum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
   min(): T;
 
+  /** Returns the element in the array for which calling the passed in function on returns the smallest value. */
   min_by(fn: (elem: T) => number): T
 
   /** Removes and returns the last element of the array. Returns [code]null[/code] if the array is empty, without printing an error message. */
