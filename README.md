@@ -2,6 +2,12 @@
 
 Combining the best gamedev experience with the best language.
 
+## Install:
+
+`npm install --global ts2gd`
+
+Then just run `ts2gd` in your favorite Godot project folder.
+
 ![](output.gif)
 
 ## Why?
@@ -9,12 +15,6 @@ Combining the best gamedev experience with the best language.
 GDScript is a great language - it's perfectly designed for quick prototyping. But it lacks the type-safety and maturity of a language like TypeScript. By compiling TS into GD, we can get the best of both worlds: a rapid prototyping language that compiles virtually instantaneously, that also comes with excellent typesafety.
 
 We can also get really, really good autocomplete and refactoring support.
-
-## How do I get started?
-
-`npm install --global ts2gd`
-
-Then just run `ts2gd` in your favorite Godot project folder.
 
 ## How?!
 
