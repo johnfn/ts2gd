@@ -106,7 +106,7 @@ a != b
     expected: `
 var a
 var b  
-((typeof(a) == typeof(b)) and (a != b))
+((typeof(a) != typeof(b)) or ((typeof(a) == typeof(b)) and (a != b)))
 `,
 };
 //# sourceMappingURL=parse_binary_expression.js.map

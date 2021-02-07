@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testKeyword = exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
+exports.testKeyword = exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructureRename = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -12,7 +12,7 @@ const getDestructuredNamesAndAccessStrings = (node, access = "") => {
     else if (node.kind === typescript_1.SyntaxKind.ObjectBindingPattern) {
         const obj = node;
         return obj.elements
-            .map((elem) => exports.getDestructuredNamesAndAccessStrings(elem.name, access + "." + elem.name.getText()))
+            .map((elem) => exports.getDestructuredNamesAndAccessStrings(elem.name, access + "." + (elem.propertyName?.getText() ?? elem.name.getText())))
             .flat();
     }
     else if (node.kind === typescript_1.SyntaxKind.ArrayBindingPattern) {
@@ -131,6 +131,16 @@ var __gen1 = { "a": 1, "b": 2 }
 var a = __gen1.a
 var b = __gen1.b
 print(__gen)
+  `,
+};
+exports.testDestructureRename = {
+    ts: `
+let { a: a1, b: b1 } = { a: 1, b: 2 }
+  `,
+    expected: `
+var __gen = { "a": 1, "b": 2 }
+var a1 = __gen.a
+var b1 = __gen.b
   `,
 };
 exports.testNormalVariableDeclaration = {

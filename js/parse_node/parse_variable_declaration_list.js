@@ -1,17 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseVariableDeclarationList = void 0;
+exports.testKeyword = exports.parseVariableDeclarationList = void 0;
 const parse_node_1 = require("../parse_node");
 const parseVariableDeclarationList = (node, props) => {
-    if (node.declarations.length > 1) {
-        console.error("Cant handle so many declarations!");
-    }
     return parse_node_1.combine({
         parent: node,
         nodes: node.declarations,
         props,
-        content: (...decls) => decls.join(""),
+        content: (...decls) => decls.join("\n"),
     });
 };
 exports.parseVariableDeclarationList = parseVariableDeclarationList;
+exports.testKeyword = {
+    ts: `
+let a = 1, b = 2
+print(a)
+print(b)
+  `,
+    expected: `
+var a: int = 1
+var b: int = 2
+print(a)
+print(b)
+  `,
+};
 //# sourceMappingURL=parse_variable_declaration_list.js.map
