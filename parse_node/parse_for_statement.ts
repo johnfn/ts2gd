@@ -19,13 +19,25 @@ export const parseForStatement = (
 
   props.scope.enterScope()
 
+  const increment = combine({
+    parent: node,
+    addIndent: true,
+    nodes: [node.incrementor],
+    props,
+    content: (inc) => inc,
+  }).content
+
+  props.mostRecentForStatement = {
+    incrementor: increment,
+  }
+
   const result = combine({
     parent: node,
     addIndent: true,
-    nodes: [node.condition, node.statement, node.incrementor],
+    nodes: [node.condition, node.statement],
     props,
-    content: (cond, statement, inc) => {
-      if (statement.trim().length === 0 && inc.trim().length === 0) {
+    content: (cond, statement) => {
+      if (statement.trim().length === 0 && increment.trim().length === 0) {
         statement = "pass"
       }
 
@@ -33,7 +45,7 @@ export const parseForStatement = (
 ${initializer || ""}
 while ${cond || "true"}:
   ${statement}
-  ${inc ? inc : ""}
+  ${increment ?? ""}
 `
     },
   })

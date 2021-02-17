@@ -68,6 +68,9 @@ export type ParseState = {
    */
   isAutoload: boolean
   mostRecentControlStructureIsSwitch: boolean
+  mostRecentForStatement?: {
+    incrementor: string
+  }
   usages: Map<ts.Identifier, utils.VariableInfo>
 }
 

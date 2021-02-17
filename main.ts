@@ -2,17 +2,9 @@
 
 // HIGH
 
-// TODO: Continue in for loops doesnt work b/c it doesnt increment the var
-
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
-
-// TODO: This is a bug
-//   const relevant_people = people
-//   .filter((p) => p.house === queried_cell)
-//   .map((p) => p.name)
-// because it makes the second one p1 for some reason.
 
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
