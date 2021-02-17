@@ -24,6 +24,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: This is a bug
+//   const relevant_people = people
+//   .filter((p) => p.house === queried_cell)
+//   .map((p) => p.name)
+// because it makes the second one p1 for some reason.
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes (because imports are not found)
 // TODO: new assets aren't immediately imported.

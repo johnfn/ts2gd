@@ -24,6 +24,7 @@ export const parseIdentifier = (
     props,
     content: () => {
       const name = props.scope.getName(node)
+      console.log(name)
 
       if (!name) {
         return node.text

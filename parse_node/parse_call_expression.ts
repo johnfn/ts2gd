@@ -5,7 +5,13 @@ import { Test } from "../test"
 import { isArrayType, isDictionary } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
-type LibraryFunctionName = "map" | "filter" | "max_by" | "min_by"
+type LibraryFunctionName =
+  | "map"
+  | "filter"
+  | "max_by"
+  | "min_by"
+  | "join"
+  | "random_element"
 const LibraryFunctions: {
   [key in LibraryFunctionName]: {
     name: LibraryFunctionName
@@ -43,6 +49,9 @@ func ${name}(list, fn, captures):
     name: "max_by",
     definition: (name: string) => `
 func ${name}(list, fn, captures):
+  if len(list) == 0: 
+    return null
+
   var result = []
   var best = null
   var best_score = -INF
@@ -62,6 +71,9 @@ func ${name}(list, fn, captures):
     name: "min_by",
     definition: (name: string) => `
 func ${name}(list, fn, captures):
+  if len(list) == 0: 
+    return null
+
   var result = []
   var best = null
   var best_score = INF
@@ -74,6 +86,32 @@ func ${name}(list, fn, captures):
       best = item
 
   return best
+    `,
+  },
+
+  join: {
+    name: "join",
+    definition: (name: string) => `
+func ${name}(list, join_str):
+  var result = ""
+
+  for i in range(len(list)):
+    result += str(list[i])
+
+    if i != len(list) - 1:
+      result += join_str
+
+  return result
+    `,
+  },
+
+  random_element: {
+    name: "random_element",
+    definition: (name: string) => `
+func ${name}(list):
+  if len(list) == 0: 
+    return null
+  return list[randi() % len(list)]
     `,
   },
 }
@@ -110,30 +148,42 @@ export const parseCallExpression = (
     if (isArrayType(type)) {
       if (functionName in LibraryFunctions) {
         const libFunctionName = functionName as LibraryFunctionName
+        let result: ParseNodeType
 
-        if (node.arguments[0].kind !== SyntaxKind.ArrowFunction) {
-          throw new Error("Can't do map w/o an arrow function!")
+        if (
+          node.arguments.length > 0 &&
+          node.arguments[0].kind === SyntaxKind.ArrowFunction
+        ) {
+          const arrowFunction = node.arguments[0] as ts.ArrowFunction
+
+          const { capturedScopeObject } = getCapturedScope(
+            arrowFunction,
+            props.program.getTypeChecker()
+          )
+
+          result = combine({
+            parent: node,
+            nodes: [prop.expression, ...args],
+            props,
+            content: (expr, ...args) => {
+              return `__${libFunctionName}(${[expr, ...args].join(
+                ", "
+              )}, ${capturedScopeObject})`
+            },
+          })
+        } else {
+          result = combine({
+            parent: node,
+            nodes: [prop.expression, ...args],
+            props,
+            content: (expr, ...args) => {
+              return `__${libFunctionName}(${[expr, ...args].join(", ")})`
+            },
+          })
         }
 
-        const arrowFunction = node.arguments[0] as ts.ArrowFunction
-
-        const { capturedScopeObject } = getCapturedScope(
-          arrowFunction,
-          props.program.getTypeChecker()
-        )
-
-        const result = combine({
-          parent: node,
-          nodes: [prop.expression, ...args],
-          props,
-          content: (expr, ...args) => {
-            return `__${libFunctionName}(${[expr, ...args].join(
-              ", "
-            )}, ${capturedScopeObject})`
-          },
-        })
-
         result.hoistedLibraryFunctions = [
+          ...(result.hoistedLibraryFunctions ?? []),
           LibraryFunctions[libFunctionName].definition("__" + libFunctionName),
         ]
 
@@ -355,5 +405,22 @@ class_name CityGridCollision
 signal mouseenter
 func test():
   self.emit_signal("mouseenter")
+`,
+}
+
+export const testDoubleMap: Test = {
+  ts: `
+let a: string[] = []
+a.filter(x => x).map(x => x)
+  `,
+  expected: `
+${LibraryFunctions.filter.definition("__filter")}
+${LibraryFunctions.map.definition("__map")}
+func func1(x: String, captures):
+  return x
+func func2(x: String, captures):
+  return x
+var a = []
+__map(__filter(a, funcref(self, "func1"), {}), funcref(self, "func2"), {})
 `,
 }

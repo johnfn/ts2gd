@@ -90,22 +90,26 @@ interface Array<T> {
   filter(fn: (elem: T) => boolean): T[];
 
   /** Returns the maximum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
-  max(): T;
+  max(): T | null;
 
   /** Returns the element in the array for which calling the passed in function on returns the largest value. */
-  max_by(fn: (elem: T) => number): T
+  max_by(fn: (elem: T) => number): T | null
 
   /** Returns the minimum value contained in the array if all elements are of comparable types. If the elements can't be compared, [code]null[/code] is returned. */
-  min(): T;
+  min(): T | null;
 
   /** Returns the element in the array for which calling the passed in function on returns the smallest value. */
-  min_by(fn: (elem: T) => number): T
+  min_by(fn: (elem: T) => number): T | null;
+
+  random_element(): T | null;
+
+  join(join_str: string): string;
 
   /** Removes and returns the last element of the array. Returns [code]null[/code] if the array is empty, without printing an error message. */
-  pop_back(): T;
+  pop_back(): T | null;
 
   /** Removes and returns the first element of the array. Returns [code]null[/code] if the array is empty, without printing an error message. */
-  pop_front(): T;
+  pop_front(): T | null;
 
   /** Appends an element at the end of the array. */
   push_back(value: T): void;

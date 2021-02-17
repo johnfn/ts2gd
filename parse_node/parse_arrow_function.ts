@@ -113,6 +113,8 @@ export const parseArrowFunction = (
     props.program.getTypeChecker()
   )
 
+  props.scope.enterScope()
+
   let parsed = combine({
     parent: node,
     nodes: [node.body, ...node.parameters],
@@ -136,6 +138,8 @@ ${unwrapCapturedScope}
       }
     },
   })
+
+  props.scope.leaveScope()
 
   return {
     content: `funcref(self, "${name}")`,

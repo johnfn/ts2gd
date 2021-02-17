@@ -35,6 +35,9 @@ func ${name}(list, fn, captures):
         name: "max_by",
         definition: (name) => `
 func ${name}(list, fn, captures):
+  if len(list) == 0: 
+    return null
+
   var result = []
   var best = null
   var best_score = -INF
@@ -53,6 +56,9 @@ func ${name}(list, fn, captures):
         name: "min_by",
         definition: (name) => `
 func ${name}(list, fn, captures):
+  if len(list) == 0: 
+    return null
+
   var result = []
   var best = null
   var best_score = INF
@@ -65,6 +71,30 @@ func ${name}(list, fn, captures):
       best = item
 
   return best
+    `,
+    },
+    join: {
+        name: "join",
+        definition: (name) => `
+func ${name}(list, join_str):
+  var result = ""
+
+  for i in range(len(list)):
+    result += str(list[i])
+
+    if i != len(list) - 1:
+      result += join_str
+
+  return result
+    `,
+    },
+    random_element: {
+        name: "random_element",
+        definition: (name) => `
+func ${name}(list):
+  if len(list) == 0: 
+    return null
+  return list[randi() % len(list)]
     `,
     },
 };
@@ -92,20 +122,32 @@ const parseCallExpression = (node, props) => {
         if (ts_utils_1.isArrayType(type)) {
             if (functionName in LibraryFunctions) {
                 const libFunctionName = functionName;
-                if (node.arguments[0].kind !== typescript_1.SyntaxKind.ArrowFunction) {
-                    throw new Error("Can't do map w/o an arrow function!");
+                let result;
+                if (node.arguments.length > 0 &&
+                    node.arguments[0].kind === typescript_1.SyntaxKind.ArrowFunction) {
+                    const arrowFunction = node.arguments[0];
+                    const { capturedScopeObject } = parse_arrow_function_1.getCapturedScope(arrowFunction, props.program.getTypeChecker());
+                    result = parse_node_1.combine({
+                        parent: node,
+                        nodes: [prop.expression, ...args],
+                        props,
+                        content: (expr, ...args) => {
+                            return `__${libFunctionName}(${[expr, ...args].join(", ")}, ${capturedScopeObject})`;
+                        },
+                    });
                 }
-                const arrowFunction = node.arguments[0];
-                const { capturedScopeObject } = parse_arrow_function_1.getCapturedScope(arrowFunction, props.program.getTypeChecker());
-                const result = parse_node_1.combine({
-                    parent: node,
-                    nodes: [prop.expression, ...args],
-                    props,
-                    content: (expr, ...args) => {
-                        return `__${libFunctionName}(${[expr, ...args].join(", ")}, ${capturedScopeObject})`;
-                    },
-                });
+                else {
+                    result = parse_node_1.combine({
+                        parent: node,
+                        nodes: [prop.expression, ...args],
+                        props,
+                        content: (expr, ...args) => {
+                            return `__${libFunctionName}(${[expr, ...args].join(", ")})`;
+                        },
+                    });
+                }
                 result.hoistedLibraryFunctions = [
+                    ...(result.hoistedLibraryFunctions ?? []),
                     LibraryFunctions[libFunctionName].definition("__" + libFunctionName),
                 ];
                 return result;
