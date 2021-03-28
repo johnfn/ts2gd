@@ -12,20 +12,30 @@ const parseForStatement = (node, props) => {
         content: (init) => init,
     }).content;
     props.scope.enterScope();
+    const increment = parse_node_1.combine({
+        parent: node,
+        addIndent: true,
+        nodes: [node.incrementor],
+        props,
+        content: (inc) => inc,
+    }).content;
+    props.mostRecentForStatement = {
+        incrementor: increment,
+    };
     const result = parse_node_1.combine({
         parent: node,
         addIndent: true,
-        nodes: [node.condition, node.statement, node.incrementor],
+        nodes: [node.condition, node.statement],
         props,
-        content: (cond, statement, inc) => {
-            if (statement.trim().length === 0 && inc.trim().length === 0) {
+        content: (cond, statement) => {
+            if (statement.trim().length === 0 && increment.trim().length === 0) {
                 statement = "pass";
             }
             return `
 ${initializer || ""}
 while ${cond || "true"}:
   ${statement}
-  ${inc ? inc : ""}
+  ${increment ?? ""}
 `;
         },
     });
@@ -34,6 +44,7 @@ while ${cond || "true"}:
 };
 exports.parseForStatement = parseForStatement;
 exports.testIf = {
+    expectFail: true,
     ts: `
 
 for (let i = 0; i < 6; ++i) {

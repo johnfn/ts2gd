@@ -1,9 +1,12 @@
 import * as utils from "tsutils"
-import ts, { SyntaxKind } from "typescript"
+import ts, { SyntaxKind, tokenToString } from "typescript"
 import { parseImportDeclaration } from "./parse_node/parse_import_declaration"
 import { parseBinaryExpression } from "./parse_node/parse_binary_expression"
 import { parseSourceFile } from "./parse_node/parse_source_file"
-import { generatePrecedingNewlines, syntaxToKind } from "./ts_utils"
+import {
+  generatePrecedingNewlines,
+  syntaxToKind as kindToString,
+} from "./ts_utils"
 import { parseTypeReference } from "./parse_node/parse_type_reference"
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal"
 import { parseArrayLiteralExpression } from "./parse_node/parse_array_literal_expression"
@@ -79,6 +82,10 @@ export type ParseNodeType = {
   hoistedEnumImports?: string[]
   hoistedArrowFunctions?: string[]
   hoistedLibraryFunctions?: string[]
+  incrementState?: {
+    type: "preincrement" | "postincrement" | "predecrement" | "postdecrement"
+    variable: string
+  }[]
   enums?: {
     /** Content of the enum */
     content: string
@@ -90,10 +97,11 @@ export type ParseNodeType = {
   }[]
 }
 
-// export function combine(parent: ts.Node, nodes: ts.Node[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(parent: ts.Node, nodes: (ts.Node | undefined)[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(parent: ts.Node, nodes: ts.NodeArray<ts.Node>, props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(args: { parent: ts.Node, nodes: ts.Node | undefined, props: ParseState, content: (arg: string) => string }): ParseNodeType;
+const isTsNodeArray = <T extends ts.Node>(x: any): x is ts.NodeArray<T> => {
+  // Poor mans hack
+  return x && "pos" in x && "find" in x
+}
+
 export function combine(args: {
   parent: ts.Node
   nodes: ts.Node | undefined | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>
@@ -106,8 +114,7 @@ export function combine(args: {
 
   if (Array.isArray(nodes)) {
     nodes = [...nodes]
-  } else if (nodes && "pos" in nodes && "find" in nodes) {
-    // Poor mans hack to check for ts.NodeArray
+  } else if (isTsNodeArray(nodes)) {
     nodes = [...nodes]
   } else {
     nodes = [nodes]
@@ -122,6 +129,7 @@ export function combine(args: {
         node: undefined,
         content: "",
         enums: [],
+        incrementState: [],
         hoistedEnumImports: [],
         hoistedArrowFunctions: [],
         hoistedLibraryFunctions: [],
@@ -134,6 +142,7 @@ export function combine(args: {
       node,
       content: parsed.content,
       enums: parsed.enums ?? [],
+      incrementState: parsed.incrementState ?? [],
       hoistedEnumImports: parsed.hoistedEnumImports ?? [],
       hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
       hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
@@ -147,14 +156,38 @@ export function combine(args: {
       return ""
     }
 
-    let isStandAloneLine =
-      (node.kind >= SyntaxKind.FirstStatement &&
-        node.kind <= SyntaxKind.LastStatement) ||
+    const isStatement =
+      node.kind >= SyntaxKind.FirstStatement &&
+      node.kind <= SyntaxKind.LastStatement
+
+    const isStandAloneLine =
+      isStatement ||
       node.kind === SyntaxKind.PropertyDeclaration ||
       node.kind === SyntaxKind.ImportDeclaration ||
       node.kind === SyntaxKind.EnumDeclaration
+
     let result = content
-    const lines = content.split("\n") // .filter(x => x !== '');
+    let lines = content.split("\n") // .filter(x => x !== '');
+
+    if (isStatement) {
+      console.log("hello")
+      if (parsed.incrementState.length > 0) {
+        console.log("hello2")
+        for (const inc of parsed.incrementState) {
+          if (inc.type === "predecrement") {
+            result = `${inc.variable} -= 1\n` + result
+          } else if (inc.type === "preincrement") {
+            result = `${inc.variable} += 1\n` + result
+          } else if (inc.type === "postdecrement") {
+            result = result + `\n${inc.variable} -= 1\n`
+          } else if (inc.type === "postincrement") {
+            result = result + `\n${inc.variable} += 1\n`
+          }
+
+          parsed.incrementState = []
+        }
+      }
+    }
 
     if (addIndent) {
       if (lines.length > 1) {
@@ -177,8 +210,9 @@ export function combine(args: {
     return result
   })
 
-  let stringResult = content(...strings)
+  // TODO: This causes a mess of things
   let dummy = content(...strings.map((s) => "x"))
+  let stringResult = content(...strings)
   let initialWhitespaceLength = dummy.length - dummy.trimLeft().length
   stringResult =
     stringResult.slice(initialWhitespaceLength).trimRight() +
@@ -196,6 +230,7 @@ export function combine(args: {
     hoistedArrowFunctions: parsedNodes.flatMap(
       (node) => node.hoistedArrowFunctions ?? []
     ),
+    incrementState: parsedNodes.flatMap((node) => node.incrementState ?? []),
   }
 }
 
@@ -417,7 +452,7 @@ export const parseNode = (
 
   throw new Error(
     "uh oh!: " +
-      syntaxToKind(genericNode.kind) +
+      kindToString(genericNode.kind) +
       " " +
       (genericNode.getText ? genericNode.getText() : genericNode)
   )

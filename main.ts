@@ -2,6 +2,8 @@
 
 // HIGH
 
+// TODO: we need to clean up old node_paths when we delete or rename a class.
+
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
@@ -10,10 +12,8 @@
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
-// TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Godot globals
 // TODO: this.collision.connect("mouseexit", this, () => {})
-// TODO: it's hard to compile ++/-- properly.
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
 // TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing

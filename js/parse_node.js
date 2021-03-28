@@ -49,17 +49,16 @@ const parse_empty_statement_1 = require("./parse_node/parse_empty_statement");
 const parse_conditional_expression_1 = require("./parse_node/parse_conditional_expression");
 const parse_arrow_function_1 = require("./parse_node/parse_arrow_function");
 const parse_typeof_expression_1 = require("./parse_node/parse_typeof_expression");
-// export function combine(parent: ts.Node, nodes: ts.Node[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(parent: ts.Node, nodes: (ts.Node | undefined)[], props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(parent: ts.Node, nodes: ts.NodeArray<ts.Node>, props: ParseState, content: (...args: string[]) => string): ParseNodeType;
-// export function combine(args: { parent: ts.Node, nodes: ts.Node | undefined, props: ParseState, content: (arg: string) => string }): ParseNodeType;
+const isTsNodeArray = (x) => {
+    // Poor mans hack
+    return x && "pos" in x && "find" in x;
+};
 function combine(args) {
     let { parent, nodes, props, content, addIndent } = args;
     if (Array.isArray(nodes)) {
         nodes = [...nodes];
     }
-    else if (nodes && "pos" in nodes && "find" in nodes) {
-        // Poor mans hack to check for ts.NodeArray
+    else if (isTsNodeArray(nodes)) {
         nodes = [...nodes];
     }
     else {
@@ -72,6 +71,7 @@ function combine(args) {
                 node: undefined,
                 content: "",
                 enums: [],
+                incrementState: [],
                 hoistedEnumImports: [],
                 hoistedArrowFunctions: [],
                 hoistedLibraryFunctions: [],
@@ -82,6 +82,7 @@ function combine(args) {
             node,
             content: parsed.content,
             enums: parsed.enums ?? [],
+            incrementState: parsed.incrementState ?? [],
             hoistedEnumImports: parsed.hoistedEnumImports ?? [],
             hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
             hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
@@ -92,13 +93,29 @@ function combine(args) {
         if (!node) {
             return "";
         }
-        let isStandAloneLine = (node.kind >= typescript_1.SyntaxKind.FirstStatement &&
-            node.kind <= typescript_1.SyntaxKind.LastStatement) ||
+        const isStatement = node.kind >= typescript_1.SyntaxKind.FirstStatement &&
+            node.kind <= typescript_1.SyntaxKind.LastStatement;
+        const isStandAloneLine = isStatement ||
             node.kind === typescript_1.SyntaxKind.PropertyDeclaration ||
             node.kind === typescript_1.SyntaxKind.ImportDeclaration ||
             node.kind === typescript_1.SyntaxKind.EnumDeclaration;
         let result = content;
-        const lines = content.split("\n"); // .filter(x => x !== '');
+        let lines = content.split("\n"); // .filter(x => x !== '');
+        if (isStatement) {
+            console.log("hello");
+            if (parsed.incrementState.length > 0) {
+                console.log("hello2");
+                for (const inc of parsed.incrementState) {
+                    if (inc.type === "decrement") {
+                        result = `${inc.variable} -= 1\n` + result;
+                    }
+                    else if (inc.type === "increment") {
+                        result = `${inc.variable} += 1\n` + result;
+                    }
+                    parsed.incrementState = [];
+                }
+            }
+        }
         if (addIndent) {
             if (lines.length > 1) {
                 // indent all but the first line.
@@ -128,6 +145,7 @@ function combine(args) {
         hoistedEnumImports: parsedNodes.flatMap((node) => node.hoistedEnumImports ?? []),
         hoistedLibraryFunctions: parsedNodes.flatMap((node) => node.hoistedLibraryFunctions ?? []),
         hoistedArrowFunctions: parsedNodes.flatMap((node) => node.hoistedArrowFunctions ?? []),
+        incrementState: parsedNodes.flatMap((node) => node.incrementState ?? []),
     };
 }
 exports.combine = combine;

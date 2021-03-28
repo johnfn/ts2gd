@@ -24,25 +24,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// TODO: This is a bug
-//   const relevant_people = people
-//   .filter((p) => p.house === queried_cell)
-//   .map((p) => p.name)
-// because it makes the second one p1 for some reason.
+// TODO: it's hard to compile ++/-- properly.
+// TODO: we need to clean up old node_paths when we delete or rename a class.
+// TODO: Import constants from other files.
+// TODO: Taking in funcrefs and calling them.
+//   specifically for mapping over my 2d board.
 // TODO: Godot doesnt allow shadowing tho TS does.
-// TODO: Renaming files crashes (because imports are not found)
+// TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
-// TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Godot globals
 // TODO: this.collision.connect("mouseexit", this, () => {})
-// TODO: it's hard to compile ++/-- properly.
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
 // TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing
 //   Eh it wouldnt typecheck though...
 //   Might be possible if an array had 2 index signatures and it was something like array["1:1"]
 // MED
+// TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: template strings
 // TODO: str()

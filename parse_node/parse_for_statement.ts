@@ -25,10 +25,26 @@ export const parseForStatement = (
     nodes: [node.incrementor],
     props,
     content: (inc) => inc,
-  }).content
+  })
+
+  let incrementText = ""
+  let incVar = increment.incrementState?.find(
+    (x) => x.type === "preincrement" || x.type === "postincrement"
+  )?.variable
+  let decVar = increment.incrementState?.find(
+    (x) => x.type === "predecrement" || x.type === "postdecrement"
+  )?.variable
+
+  if (incVar) {
+    incrementText += `${incVar} += 1\n`
+  }
+
+  if (decVar) {
+    incrementText += `${decVar} -= 1\n`
+  }
 
   props.mostRecentForStatement = {
-    incrementor: increment,
+    incrementor: incrementText,
   }
 
   const result = combine({
@@ -37,7 +53,10 @@ export const parseForStatement = (
     nodes: [node.condition, node.statement],
     props,
     content: (cond, statement) => {
-      if (statement.trim().length === 0 && increment.trim().length === 0) {
+      if (
+        statement.trim().length === 0 &&
+        increment.content.trim().length === 0
+      ) {
         statement = "pass"
       }
 
@@ -45,7 +64,7 @@ export const parseForStatement = (
 ${initializer || ""}
 while ${cond || "true"}:
   ${statement}
-  ${increment ?? ""}
+  ${incrementText}
 `
     },
   })
@@ -55,7 +74,7 @@ while ${cond || "true"}:
   return result
 }
 
-export const testIf: Test = {
+export const testMultipleSameNameVars: Test = {
   ts: `
 
 for (let i = 0; i < 6; ++i) {
@@ -72,15 +91,15 @@ for (let i = 0; i < 5; ++i) {
 var i: int = 0
 while i < 6:
   print(i)
-  (i += 1)
+  i += 1
 var i1: int = 0
 while i1 < 5:
   print(i1)
-  (i1 += 1)
+  i1 += 1
 var i2: int = 0
 while i2 < 5:
   print(i2)
-  (i2 += 1)
+  i2 += 1
   `,
 }
 

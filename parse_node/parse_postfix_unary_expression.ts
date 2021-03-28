@@ -8,17 +8,35 @@ export const parsePostfixUnaryExpression = (
   node: ts.PostfixUnaryExpression,
   props: ParseState
 ): ParseNodeType => {
-  return combine({
+  let newIncrements: {
+    type: "postincrement" | "postdecrement"
+    variable: string
+  } | null = null
+
+  const result = combine({
     parent: node,
     nodes: node.operand,
     props,
     content: (operand) => {
       switch (node.operator) {
-        case SyntaxKind.PlusPlusToken:
-          return `((${operand} += 1) - 1)`
-        case SyntaxKind.MinusMinusToken:
-          return `((${operand} -= 1) + 1)`
+        case SyntaxKind.PlusPlusToken: {
+          newIncrements = { type: "postincrement", variable: operand }
+
+          return `${operand}`
+        }
+        case SyntaxKind.MinusMinusToken: {
+          newIncrements = { type: "postdecrement", variable: operand }
+
+          return `${operand}`
+        }
       }
     },
   })
+
+  result.incrementState = [
+    ...(newIncrements ? [newIncrements] : []),
+    ...(result.incrementState ?? []),
+  ]
+
+  return result
 }

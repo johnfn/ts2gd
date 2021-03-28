@@ -29,10 +29,10 @@ for (let x = 0; x < 10; x++) {
   expected: `
 var x: int = 0
 while x < 10:
-  ((x += 1) - 1)
+  x += 1
   continue
   print(x)  
-  ((x += 1) - 1)
+  x += 1
   `,
 }
 
@@ -47,9 +47,9 @@ for (let x: int = 0; x < 10; x++) {
 var x: int = 0
 while x < 10:
   if x == 0:
-    ((x += 1) - 1)
+    x += 1
     continue
   print(x)
-  ((x += 1) - 1)
+  x += 1
   `,
 }

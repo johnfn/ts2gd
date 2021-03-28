@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
+exports.testDoubleMap = exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -337,6 +337,22 @@ class_name CityGridCollision
 signal mouseenter
 func test():
   self.emit_signal("mouseenter")
+`,
+};
+exports.testDoubleMap = {
+    ts: `
+let a: string[] = []
+a.filter(x => x).map(x => x)
+  `,
+    expected: `
+${LibraryFunctions.filter.definition("__filter")}
+${LibraryFunctions.map.definition("__map")}
+func func1(x: String, captures):
+  return x
+func func2(x: String, captures):
+  return x
+var a = []
+__map(__filter(a, funcref(self, "func1"), {}), funcref(self, "func2"), {})
 `,
 };
 //# sourceMappingURL=parse_call_expression.js.map

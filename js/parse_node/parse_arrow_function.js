@@ -77,6 +77,7 @@ exports.getCapturedScope = getCapturedScope;
 const parseArrowFunction = (node, props) => {
     const name = props.genUniqueName();
     const { unwrapCapturedScope } = exports.getCapturedScope(node, props.program.getTypeChecker());
+    props.scope.enterScope();
     let parsed = parse_node_1.combine({
         parent: node,
         nodes: [node.body, ...node.parameters],
@@ -100,6 +101,7 @@ ${unwrapCapturedScope}
             }
         },
     });
+    props.scope.leaveScope();
     return {
         content: `funcref(self, "${name}")`,
         hoistedArrowFunctions: [
