@@ -398,6 +398,8 @@ export const parseNode = (
       return { content: "*=" }
     case SyntaxKind.SlashEqualsToken:
       return { content: "/=" }
+    case SyntaxKind.PercentEqualsToken:
+      return { content: "%=" }
     case SyntaxKind.ExclamationEqualsEqualsToken:
       return { content: "!=" }
     case SyntaxKind.ExclamationEqualsToken:

@@ -2,6 +2,9 @@
 
 // HIGH
 
+// TODO: vy: float = 0 translates to vy: int = 0
+// TODO: change_scene should autocomplete .tscn files only
+
 // TODO: "unhandled asset type" is FAR too severe
 // TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
