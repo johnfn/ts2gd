@@ -2,7 +2,9 @@
 
 // HIGH
 
+// TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
+// and we need to generate one for the skipping library stuff
 
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 
