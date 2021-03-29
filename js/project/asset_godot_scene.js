@@ -19,7 +19,7 @@ class GodotNode {
         this.groups = props.$section.groups ?? [];
         this.$section = props.$section;
         this.parent = props.$section.parent ?? undefined;
-        this.scriptExtResourceId = props.script?.args[0] ?? undefined;
+        this.scriptExtResourceId = props.script?.args?.[0] ?? undefined;
     }
     /**
      * e.g. "Player" for a node on the root
