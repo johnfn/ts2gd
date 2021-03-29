@@ -96,7 +96,8 @@ class TsGdProjectClass {
             path.endsWith(".jpg")) {
             return new asset_image_1.AssetImage(path, this);
         }
-        throw new Error(`unhandled asset type ${path}`);
+        console.log(`unhandled asset type ${path}`);
+        return null;
     }
     monitor(watcher) {
         watcher

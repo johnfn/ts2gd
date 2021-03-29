@@ -57,7 +57,10 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
   const peekchar = () => {
     let nextNonemptyIndex = index
 
-    while (file[nextNonemptyIndex].trim() === "") {
+    while (
+      nextNonemptyIndex < file.length &&
+      file[nextNonemptyIndex].trim() === ""
+    ) {
       ++nextNonemptyIndex
     }
 
@@ -311,7 +314,7 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
       }
     }
   } catch (e) {
-    console.error("Failed to parse godot config file. This is a bug.")
+    console.error(`Failed to parse godot config file ${path}. This is a bug.`)
     console.info(util.inspect(result, false, 10, true))
 
     throw e

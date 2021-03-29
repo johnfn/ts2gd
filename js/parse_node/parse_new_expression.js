@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testVectorNoNew = exports.testNormalNew = exports.parseNewExpression = void 0;
+exports.testColorNoNew = exports.testVectorNoNew = exports.testNormalNew = exports.parseNewExpression = void 0;
 const parse_node_1 = require("../parse_node");
 const parseNewExpression = (node, props) => {
     return parse_node_1.combine({
@@ -10,6 +10,7 @@ const parseNewExpression = (node, props) => {
         content: (expr, ...args) => {
             if (expr === "Vector2" ||
                 expr === "Vector3" ||
+                expr === "Color" ||
                 expr === "Vector2i" ||
                 expr === "Vector3i") {
                 // Special cases that do not require .new
@@ -34,6 +35,14 @@ let foo = new Vector2()
   `,
     expected: `
 var _foo = Vector2()
+  `,
+};
+exports.testColorNoNew = {
+    ts: `
+let foo = new Color()
+  `,
+    expected: `
+var _foo = Color()
   `,
 };
 //# sourceMappingURL=parse_new_expression.js.map

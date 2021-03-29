@@ -271,6 +271,8 @@ const parseNode = (genericNode, props) => {
             return { content: "*=" };
         case typescript_1.SyntaxKind.SlashEqualsToken:
             return { content: "/=" };
+        case typescript_1.SyntaxKind.PercentEqualsToken:
+            return { content: "%=" };
         case typescript_1.SyntaxKind.ExclamationEqualsEqualsToken:
             return { content: "!=" };
         case typescript_1.SyntaxKind.ExclamationEqualsToken:

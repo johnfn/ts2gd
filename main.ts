@@ -2,9 +2,12 @@
 
 // HIGH
 
+// TODO: max()
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
 // TODO: Color() rather than new Color()
+
+// TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g. merge conflicts. should just retry after a while.
 
 // TODO: vy: float = 0 translates to vy: int = 0
 // TODO: change_scene should autocomplete .tscn files only

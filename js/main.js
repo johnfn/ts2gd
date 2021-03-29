@@ -24,7 +24,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: max()
+// TODO: Better print() output, with spacing
+// TODO: Document @exports
+// TODO: Color() rather than new Color()
+// TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g. merge conflicts. should just retry after a while.
+// TODO: vy: float = 0 translates to vy: int = 0
+// TODO: change_scene should autocomplete .tscn files only
+// TODO: "unhandled asset type" is FAR too severe
+// TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
+// and we need to generate one for the skipping library stuff
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
