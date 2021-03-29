@@ -2,6 +2,8 @@
 
 // HIGH
 
+// TODO: if you dont have a tsconfig.json it just goes into an infinite loop
+
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 
 // TODO: Import constants from other files.
@@ -60,7 +62,7 @@ const setup = () => {
   const tsgdJson = new Paths()
 
   const formatHost: ts.FormatDiagnosticsHost = {
-    getCanonicalFileName: (path) => path,
+    getCanonicalFileName: (path: string) => path,
     getCurrentDirectory: ts.sys.getCurrentDirectory,
     getNewLine: () => ts.sys.newLine,
   }

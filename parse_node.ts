@@ -170,9 +170,7 @@ export function combine(args: {
     let lines = content.split("\n") // .filter(x => x !== '');
 
     if (isStatement) {
-      console.log("hello")
       if (parsed.incrementState.length > 0) {
-        console.log("hello2")
         for (const inc of parsed.incrementState) {
           if (inc.type === "predecrement") {
             result = `${inc.variable} -= 1\n` + result
@@ -210,7 +208,7 @@ export function combine(args: {
     return result
   })
 
-  // TODO: This causes a mess of things
+  // TODO: This causes a mess of things - refactor it to work a different way.
   let dummy = content(...strings.map((s) => "x"))
   let stringResult = content(...strings)
   let initialWhitespaceLength = dummy.length - dummy.trimLeft().length

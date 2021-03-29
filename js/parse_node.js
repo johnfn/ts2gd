@@ -102,15 +102,19 @@ function combine(args) {
         let result = content;
         let lines = content.split("\n"); // .filter(x => x !== '');
         if (isStatement) {
-            console.log("hello");
             if (parsed.incrementState.length > 0) {
-                console.log("hello2");
                 for (const inc of parsed.incrementState) {
-                    if (inc.type === "decrement") {
+                    if (inc.type === "predecrement") {
                         result = `${inc.variable} -= 1\n` + result;
                     }
-                    else if (inc.type === "increment") {
+                    else if (inc.type === "preincrement") {
                         result = `${inc.variable} += 1\n` + result;
+                    }
+                    else if (inc.type === "postdecrement") {
+                        result = result + `\n${inc.variable} -= 1\n`;
+                    }
+                    else if (inc.type === "postincrement") {
+                        result = result + `\n${inc.variable} += 1\n`;
                     }
                     parsed.incrementState = [];
                 }
@@ -133,8 +137,9 @@ function combine(args) {
         }
         return result;
     });
-    let stringResult = content(...strings);
+    // TODO: This causes a mess of things - refactor it to work a different way.
     let dummy = content(...strings.map((s) => "x"));
+    let stringResult = content(...strings);
     let initialWhitespaceLength = dummy.length - dummy.trimLeft().length;
     stringResult =
         stringResult.slice(initialWhitespaceLength).trimRight() +

@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// TODO: it's hard to compile ++/-- properly.
+// TODO: if you dont have a tsconfig.json it just goes into an infinite loop
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testPass2 = exports.testIf = exports.parseForStatement = void 0;
+exports.testPass2 = exports.testMultipleSameNameVars = exports.parseForStatement = void 0;
 const parse_node_1 = require("../parse_node");
 const parseForStatement = (node, props) => {
     props = { ...props, mostRecentControlStructureIsSwitch: false };
@@ -18,9 +18,18 @@ const parseForStatement = (node, props) => {
         nodes: [node.incrementor],
         props,
         content: (inc) => inc,
-    }).content;
+    });
+    let incrementText = "";
+    let incVar = increment.incrementState?.find((x) => x.type === "preincrement" || x.type === "postincrement")?.variable;
+    let decVar = increment.incrementState?.find((x) => x.type === "predecrement" || x.type === "postdecrement")?.variable;
+    if (incVar) {
+        incrementText += `${incVar} += 1\n`;
+    }
+    if (decVar) {
+        incrementText += `${decVar} -= 1\n`;
+    }
     props.mostRecentForStatement = {
-        incrementor: increment,
+        incrementor: incrementText,
     };
     const result = parse_node_1.combine({
         parent: node,
@@ -28,14 +37,15 @@ const parseForStatement = (node, props) => {
         nodes: [node.condition, node.statement],
         props,
         content: (cond, statement) => {
-            if (statement.trim().length === 0 && increment.trim().length === 0) {
+            if (statement.trim().length === 0 &&
+                increment.content.trim().length === 0) {
                 statement = "pass";
             }
             return `
 ${initializer || ""}
 while ${cond || "true"}:
   ${statement}
-  ${increment ?? ""}
+  ${incrementText}
 `;
         },
     });
@@ -43,8 +53,7 @@ while ${cond || "true"}:
     return result;
 };
 exports.parseForStatement = parseForStatement;
-exports.testIf = {
-    expectFail: true,
+exports.testMultipleSameNameVars = {
     ts: `
 
 for (let i = 0; i < 6; ++i) {
@@ -61,15 +70,15 @@ for (let i = 0; i < 5; ++i) {
 var i: int = 0
 while i < 6:
   print(i)
-  (i += 1)
+  i += 1
 var i1: int = 0
 while i1 < 5:
   print(i1)
-  (i1 += 1)
+  i1 += 1
 var i2: int = 0
 while i2 < 5:
   print(i2)
-  (i2 += 1)
+  i2 += 1
   `,
 };
 exports.testPass2 = {
