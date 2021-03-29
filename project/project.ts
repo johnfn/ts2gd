@@ -139,7 +139,9 @@ export class TsGdProjectClass {
       return new AssetImage(path, this)
     }
 
-    throw new Error(`unhandled asset type ${path}`)
+    console.log(`unhandled asset type ${path}`)
+
+    return null
   }
 
   monitor(watcher: chokidar.FSWatcher) {

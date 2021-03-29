@@ -2,6 +2,7 @@
 
 // HIGH
 
+// TODO: "unhandled asset type" is FAR too severe
 // TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
 // and we need to generate one for the skipping library stuff

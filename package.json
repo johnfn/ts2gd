@@ -1,6 +1,6 @@
 {
   "name": "ts2gd",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "TypeScript to GDScript transpiler.",
   "main": "dist/main.js",
   "scripts": {
