@@ -2,6 +2,10 @@
 
 // HIGH
 
+// TODO: Better print() output, with spacing
+// TODO: Document @exports
+// TODO: Color() rather than new Color()
+
 // TODO: vy: float = 0 translates to vy: int = 0
 // TODO: change_scene should autocomplete .tscn files only
 

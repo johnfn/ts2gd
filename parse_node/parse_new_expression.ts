@@ -15,6 +15,7 @@ export const parseNewExpression = (
       if (
         expr === "Vector2" ||
         expr === "Vector3" ||
+        expr === "Color" ||
         expr === "Vector2i" ||
         expr === "Vector3i"
       ) {
@@ -42,5 +43,14 @@ let foo = new Vector2()
   `,
   expected: `
 var _foo = Vector2()
+  `,
+}
+
+export const testColorNoNew: Test = {
+  ts: `
+let foo = new Color()
+  `,
+  expected: `
+var _foo = Color()
   `,
 }
