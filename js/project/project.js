@@ -199,11 +199,9 @@ const makeTsGdProject = async (ts2gdJson, program) => {
     const initialFiles = [];
     let addFn;
     let readyFn;
-    console.log("start");
     const watcher = await new Promise((resolve) => {
         addFn = (path) => initialFiles.push(path);
         readyFn = () => resolve(watcher);
-        console.log(initialFiles);
         const watcher = chokidar_1.default
             .watch(ts2gdJson.rootPath, {
             ignored: (path, stats) => {
@@ -213,7 +211,6 @@ const makeTsGdProject = async (ts2gdJson, program) => {
             .on("add", addFn)
             .on("ready", readyFn);
     });
-    console.log("end");
     watcher.off("add", addFn);
     watcher.off("ready", readyFn);
     return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson);

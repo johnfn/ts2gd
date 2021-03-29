@@ -24,12 +24,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: print version
+// TODO: vy: float = 0 translates to vy: int = 0
 // TODO: max()
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
-// TODO: Color() rather than new Color()
-// TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g. merge conflicts. should just retry after a while.
-// TODO: vy: float = 0 translates to vy: int = 0
+// TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g.
+// merge conflicts. should just retry after a while.
 // TODO: change_scene should autocomplete .tscn files only
 // TODO: "unhandled asset type" is FAR too severe
 // TODO: "cannot find module typescript"
@@ -76,10 +77,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
 // TODO: For autoload classes, marking them @autoload would then update the config file
 //         - this would require being able to save back config files accurately.
+const package_json_1 = __importDefault(require("./package.json"));
 const typescript_1 = __importDefault(require("typescript"));
 const process = __importStar(require("process"));
 const project_1 = require("./project/project");
 const tsgd_json_1 = require("./project/tsgd_json");
+const https_1 = __importDefault(require("https"));
+const chalk_1 = __importDefault(require("chalk"));
 const setup = () => {
     const tsgdJson = new tsgd_json_1.Paths();
     const formatHost = {
@@ -131,7 +135,44 @@ const main = async () => {
     project.compileAllSourceFiles();
     console.info("Initial compilation complete in", (new Date().getTime() - start) / 1000 + "s");
 };
+const checkVersionAsync = async () => {
+    chalk_1.default.blue("ts2gd", "v" + package_json_1.default.version);
+    const options = {
+        hostname: "registry.npmjs.org",
+        path: "/ts2gd",
+    };
+    let response = "";
+    await new Promise((resolve) => {
+        const req = https_1.default.request(options, (res) => {
+            res.on("data", (d) => {
+                response += d;
+            });
+            res.on("end", () => {
+                resolve();
+            });
+        });
+        req.end();
+    });
+    const versionNameDate = Object.entries(JSON.parse(response).time)
+        .sort((first, second) => new Date(second[1]).getTime() - new Date(first[1]).getTime())
+        .map(([a, b]) => [a, new Date(b)]);
+    let latestPublishedVersion = "";
+    for (const [versionName, date] of versionNameDate) {
+        if (versionName === "modified") {
+            continue;
+        }
+        latestPublishedVersion = versionName;
+        break;
+    }
+    if (latestPublishedVersion !== package_json_1.default.version) {
+        console.log(`There is a new version of ts2gd: ${latestPublishedVersion}`);
+        console.log(`install it with`);
+        console.log(``);
+        chalk_1.default.blue(`npm install --global ts2gd`);
+    }
+};
 if (!process.argv[1].includes("test")) {
+    checkVersionAsync();
     main();
 }
 //# sourceMappingURL=main.js.map

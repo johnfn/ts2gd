@@ -275,12 +275,9 @@ export const makeTsGdProject = async (
   let addFn!: (path: string) => void
   let readyFn!: () => void
 
-  console.log("start")
   const watcher = await new Promise<chokidar.FSWatcher>((resolve) => {
     addFn = (path) => initialFiles.push(path)
     readyFn = () => resolve(watcher)
-
-    console.log(initialFiles)
 
     const watcher: chokidar.FSWatcher = chokidar
       .watch(ts2gdJson.rootPath, {
@@ -291,7 +288,6 @@ export const makeTsGdProject = async (
       .on("add", addFn)
       .on("ready", readyFn)
   })
-  console.log("end")
 
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
