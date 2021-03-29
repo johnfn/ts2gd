@@ -133,6 +133,11 @@ class TsGdProjectClass {
                 console.info("Change:", chalk_1.default.blueBright(path));
             }
         }
+        if (path.endsWith(".godot")) {
+            this.godotProject = new godot_project_file_1.GodotProjectFile(path, this);
+            console.log(this.godotProject.autoloads);
+            return;
+        }
         let oldAsset = this.assets.find((asset) => asset.fsPath === path);
         if (oldAsset) {
             let newAsset = this.createAsset(path);

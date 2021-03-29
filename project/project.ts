@@ -185,6 +185,13 @@ export class TsGdProjectClass {
       }
     }
 
+    if (path.endsWith(".godot")) {
+      this.godotProject = new GodotProjectFile(path, this)
+      console.log(this.godotProject.autoloads)
+
+      return
+    }
+
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
     if (oldAsset) {
