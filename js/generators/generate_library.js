@@ -3,13 +3,60 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateGodotLibraryDefinitions = void 0;
+exports.generateGodotLibraryDefinitions = exports.formatJsDoc = exports.godotTypeToTsType = exports.sanitizeGodotNameForTs = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const xml2js_1 = require("xml2js");
+const project_1 = require("../project/project");
+const ts_utils_1 = require("../ts_utils");
 const generate_base_1 = require("./generate_base");
-const project_1 = require("./project/project");
-const ts_utils_1 = require("./ts_utils");
+const generate_gdscript_lib_1 = require("./generate_gdscript_lib");
+function sanitizeGodotNameForTs(name) {
+    if (name === "with" ||
+        name === "var" ||
+        name === "class" ||
+        name === "default" ||
+        name === "in") {
+        return "_" + name;
+    }
+    // for enum names in @GlobalScope
+    name = name.replace(".", "_");
+    // Bizarre case in SliderJoint3D.xml
+    if (name.includes("/")) {
+        name = '"' + name + '"';
+    }
+    return name;
+}
+exports.sanitizeGodotNameForTs = sanitizeGodotNameForTs;
+function godotTypeToTsType(godotType) {
+    if (!godotType) {
+        return undefined;
+    }
+    if (godotType === "int") {
+        return "int";
+    }
+    if (godotType === "float") {
+        return "float";
+    }
+    if (godotType === "bool") {
+        return "boolean";
+    }
+    if (godotType === "Array") {
+        return "any[]";
+    }
+    if (godotType === "Variant") {
+        return "any";
+    }
+    if (godotType === "String") {
+        return "string";
+    }
+    if (godotType === "NodePath") {
+        // TODO
+        return "NodePathType";
+    }
+    return godotType;
+}
+exports.godotTypeToTsType = godotTypeToTsType;
 function formatJsDoc(input) {
     if (!input) {
         return `/** No documentation provided. */`;
@@ -63,52 +110,14 @@ function formatJsDoc(input) {
     result += "*/";
     return result;
 }
+exports.formatJsDoc = formatJsDoc;
 async function generateGodotLibraryDefinitions(project) {
     // TODO: Refactor this out
     let csgClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/csg/doc_classes");
     let normalClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "doc/classes");
-    fs_1.default.mkdirSync(project_1.TsGdProjectClass.Paths.godotDefsPath, { recursive: true });
-    function convertType(godotType) {
-        if (godotType === "int") {
-            return "int";
-        }
-        if (godotType === "float") {
-            return "float";
-        }
-        if (godotType === "bool") {
-            return "boolean";
-        }
-        if (godotType === "Array") {
-            return "any[]";
-        }
-        if (godotType === "Variant") {
-            return "any";
-        }
-        if (godotType === "String") {
-            return "string";
-        }
-        if (godotType === "NodePath") {
-            // TODO
-            return "NodePathType";
-        }
-        return godotType;
-    }
-    function sanitizeName(name) {
-        if (name === "with" ||
-            name === "var" ||
-            name === "class" ||
-            name === "default" ||
-            name === "in") {
-            return "_" + name;
-        }
-        // for enum names in @GlobalScope
-        name = name.replace(".", "_");
-        // Bizarre case in SliderJoint3D.xml
-        if (name.includes("/")) {
-            name = '"' + name + '"';
-        }
-        return name;
-    }
+    let gdscriptPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/gdscript/doc_classes");
+    fs_1.default.mkdirSync(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, { recursive: true });
+    fs_1.default.mkdirSync(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, { recursive: true });
     const singletons = [];
     async function parseFile(path) {
         const content = fs_1.default.readFileSync(path, "utf-8");
@@ -119,51 +128,7 @@ async function generateGodotLibraryDefinitions(project) {
         const inherits = json.class["$"].inherits;
         const constants = (json.class.constants ?? [])[0]?.constant ?? [];
         const signals = (json.class.signals ?? [])[0]?.signal ?? [];
-        const methods = methodsXml.map((method) => {
-            const name = method["$"].name;
-            const args = method.argument;
-            const isConstructor = name === className;
-            const docString = formatJsDoc(method.description[0].trim());
-            let returnType = convertType(method.return?.[0]["$"].type) ?? "any";
-            let argumentList = "";
-            if (args) {
-                argumentList = args
-                    .map((arg) => {
-                    let argName = sanitizeName(arg["$"].name);
-                    let argType = convertType(arg["$"].type);
-                    let isOptional = !!arg["$"].default;
-                    if (argType === "StringName") {
-                        if (argName === "group") {
-                            argType = "keyof Groups";
-                        }
-                        if (argName === "action") {
-                            argType = "Action";
-                        }
-                    }
-                    return `${argName}${isOptional ? "?" : ""}: ${argType}`;
-                })
-                    .join(", ");
-            }
-            // Special case for TileSet#tile_get_shapes
-            if (name === "tile_get_shapes") {
-                returnType = `{
-  autotile_coord: Vector2,
-  one_way: bool,
-  one_way_margin: int,
-  shape: CollisionShape2D,
-  shape_transform: Transform2D,
-}[]`;
-            }
-            const isAbstract = name.startsWith("_");
-            return {
-                name,
-                argumentList,
-                isConstructor,
-                docString,
-                returnType,
-                isAbstract,
-            };
-        });
+        const methods = methodsXml.map((method) => generate_gdscript_lib_1.parseMethod(method, className));
         const constructorInfo = methods.filter((method) => method.isConstructor);
         if (className === "Signal") {
             className = "Signal<T extends any[]>";
@@ -207,7 +172,7 @@ ${members
             }
             return `
 ${formatJsDoc(member["_"].trim())}
-${sanitizeName(member["$"].name)}: ${convertType(member["$"].type)};`;
+${sanitizeGodotNameForTs(member["$"].name)}: ${godotTypeToTsType(member["$"].type)};`;
         })
             .join("\n")}
 
@@ -300,7 +265,7 @@ ${constants
   ${signals
             .map((signal) => {
             return `${formatJsDoc(signal.description[0])}\n${signal["$"].name}: Signal<(${(signal.argument || [])
-                .map((arg) => arg["$"].name + ": " + convertType(arg["$"].type))
+                .map((arg) => arg["$"].name + ": " + godotTypeToTsType(arg["$"].type))
                 .join(", ")}) => void>\n`;
         })
             .join("\n")}
@@ -331,7 +296,7 @@ ${constants
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
 ${members
             .map((member) => {
-            const name = sanitizeName(member["$"].name);
+            const name = sanitizeGodotNameForTs(member["$"].name);
             // these dont have .xml files
             const commentOut = name === "VisualScriptEditor" || name === "GodotSharp";
             singletons.push(name);
@@ -340,14 +305,14 @@ ${members
             }
             return `
 ${formatJsDoc(member["_"].trim())}
-${commentOut ? "//" : ""}declare const ${name}: ${convertType(member["$"].type)}Class;`;
+${commentOut ? "//" : ""}declare const ${name}: ${godotTypeToTsType(member["$"].type)}Class;`;
         })
             .join("\n")}
 
 ${Object.keys(enums)
             .map((key) => {
             return `
-    declare enum ${sanitizeName(key)} {
+    declare enum ${sanitizeGodotNameForTs(key)} {
       ${enums[key]
                 .map((enumItem) => {
                 return `${formatJsDoc(enumItem.doc)}\n${enumItem.name} = ${/^-?\d+$/.test(enumItem.value)
@@ -372,9 +337,10 @@ ${Object.keys(enums)
         }
         // This must come first because it parses out singletons
         // TODO - clean that up.
-        // @GlobalScope is a special case.
         const globalScope = await parseGlobalScope(path_1.default.join(normalClassesPath, "@GlobalScope.xml"));
-        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, "@globals.d.ts"), globalScope);
+        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@globals.d.ts"), globalScope);
+        const globalFunctions = await generate_gdscript_lib_1.generateGdscriptLib(path_1.default.join(gdscriptPath, "@GDScript.xml"));
+        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@global_functions.d.ts"), globalFunctions);
         const xmlPaths = [
             ...fs_1.default
                 .readdirSync(csgClassesPath)
@@ -383,14 +349,11 @@ ${Object.keys(enums)
                 .readdirSync(normalClassesPath)
                 .map((x) => path_1.default.join(normalClassesPath, x)),
         ].filter((file) => file.endsWith(".xml"));
-        let gdscriptPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/gdscript/doc_classes/@GDScript.xml");
-        console.log(await parseFile(gdscriptPath));
         for (let fullPath of xmlPaths) {
             const fileName = path_1.default.basename(fullPath);
-            // if (fileName === "@GlobalScope.xml") {
-            //   console.log(await parseFile(fullPath))
-            //   continue
-            // }
+            if (fileName === "@GlobalScope.xml") {
+                continue;
+            }
             if (fileName === "Array.xml") {
                 continue;
             }
@@ -401,11 +364,11 @@ ${Object.keys(enums)
                 continue;
             }
             const result = await parseFile(fullPath);
-            fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, fileName.slice(0, -4) + ".d.ts"), result);
+            fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, fileName.slice(0, -4) + ".d.ts"), result);
         }
     }
     async function main() {
-        await generate_base_1.buildBase(project_1.TsGdProjectClass.Paths.godotDefsPath);
+        generate_base_1.buildBase(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath);
         await writeLibraryDefinitions();
     }
     // async function debug() {

@@ -1,11 +1,77 @@
 import fs from "fs"
 import path from "path"
 import { parseStringPromise } from "xml2js"
+import { TsGdProjectClass } from "../project/project"
+import { copyFolderRecursiveSync } from "../ts_utils"
 import { buildBase as writeBaseDefinitions } from "./generate_base"
-import { TsGdProjectClass } from "./project/project"
-import { copyFolderRecursiveSync } from "./ts_utils"
+import {
+  generateGdscriptLib,
+  GodotXMLMethod,
+  parseMethod,
+} from "./generate_gdscript_lib"
 
-function formatJsDoc(input: string): string {
+export function sanitizeGodotNameForTs(name: string): string {
+  if (
+    name === "with" ||
+    name === "var" ||
+    name === "class" ||
+    name === "default" ||
+    name === "in"
+  ) {
+    return "_" + name
+  }
+
+  // for enum names in @GlobalScope
+  name = name.replace(".", "_")
+
+  // Bizarre case in SliderJoint3D.xml
+  if (name.includes("/")) {
+    name = '"' + name + '"'
+  }
+
+  return name
+}
+
+export function godotTypeToTsType(
+  godotType: string | undefined
+): string | undefined {
+  if (!godotType) {
+    return undefined
+  }
+
+  if (godotType === "int") {
+    return "int"
+  }
+
+  if (godotType === "float") {
+    return "float"
+  }
+
+  if (godotType === "bool") {
+    return "boolean"
+  }
+
+  if (godotType === "Array") {
+    return "any[]"
+  }
+
+  if (godotType === "Variant") {
+    return "any"
+  }
+
+  if (godotType === "String") {
+    return "string"
+  }
+
+  if (godotType === "NodePath") {
+    // TODO
+    return "NodePathType"
+  }
+
+  return godotType
+}
+
+export function formatJsDoc(input: string): string {
   if (!input) {
     return `/** No documentation provided. */`
   }
@@ -35,14 +101,17 @@ function formatJsDoc(input: string): string {
       result += " * @example \n"
       insideCodeBlock = true
     }
+
     if (line.includes("[/codeblock]")) {
       result += " * @summary \n"
       insideCodeBlock = false
     }
+
     if (line.includes("[codeblocks]")) {
       result += " * @example \n"
       insideCodeBlock = true
     }
+
     if (line.includes("[/codeblocks]")) {
       result += " * @summary \n"
       insideCodeBlock = false
@@ -75,136 +144,35 @@ export async function generateGodotLibraryDefinitions(
   project: TsGdProjectClass
 ): Promise<void> {
   // TODO: Refactor this out
-  let p1 = path.join(
+  let csgClassesPath = path.join(
     TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
     "modules/csg/doc_classes"
   )
-  let p2 = path.join(
+  let normalClassesPath = path.join(
     TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
     "doc/classes"
   )
+  let gdscriptPath = path.join(
+    TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
+    "modules/gdscript/doc_classes"
+  )
 
-  fs.mkdirSync(TsGdProjectClass.Paths.godotDefsPath, { recursive: true })
-
-  function convertType(godotType: string): string {
-    if (godotType === "int") {
-      return "int"
-    }
-
-    if (godotType === "float") {
-      return "float"
-    }
-
-    if (godotType === "bool") {
-      return "boolean"
-    }
-
-    if (godotType === "Array") {
-      return "any[]"
-    }
-
-    if (godotType === "Variant") {
-      return "any"
-    }
-
-    if (godotType === "String") {
-      return "string"
-    }
-
-    if (godotType === "NodePath") {
-      // TODO
-      return "NodePathType"
-    }
-
-    return godotType
-  }
-
-  function sanitizeName(name: string): string {
-    if (
-      name === "with" ||
-      name === "var" ||
-      name === "class" ||
-      name === "default" ||
-      name === "in"
-    ) {
-      return "_" + name
-    }
-
-    // for enum names in @GlobalScope
-    name = name.replace(".", "_")
-
-    // Bizarre case in SliderJoint3D.xml
-    if (name.includes("/")) {
-      name = '"' + name + '"'
-    }
-
-    return name
-  }
+  fs.mkdirSync(TsGdProjectClass.Paths.staticGodotDefsPath, { recursive: true })
+  fs.mkdirSync(TsGdProjectClass.Paths.dynamicGodotDefsPath, { recursive: true })
 
   const singletons: string[] = []
 
   async function parseFile(path: string) {
     const content = fs.readFileSync(path, "utf-8")
     const json = await parseStringPromise(content)
-    const methodsXml: any[] = json.class.methods?.[0].method ?? []
+    const methodsXml: GodotXMLMethod[] = json.class.methods?.[0].method ?? []
     const members = (json.class.members ?? [])[0]?.member ?? []
     let className = json.class["$"].name
     const inherits = json.class["$"].inherits
     const constants = (json.class.constants ?? [])[0]?.constant ?? []
     const signals = (json.class.signals ?? [])[0]?.signal ?? []
 
-    const methods = methodsXml.map((method: any) => {
-      const name = method["$"].name as string
-      const args = method.argument
-      const isConstructor = name === className
-      const docString = formatJsDoc(method.description[0].trim())
-      let returnType = convertType(method.return?.[0]["$"].type) ?? "any"
-      let argumentList: string = ""
-
-      if (args) {
-        argumentList = args
-          .map((arg: any) => {
-            let argName = sanitizeName(arg["$"].name)
-            let argType = convertType(arg["$"].type)
-            let isOptional = !!arg["$"].default
-
-            if (argType === "StringName") {
-              if (argName === "group") {
-                argType = "keyof Groups"
-              }
-
-              if (argName === "action") {
-                argType = "Action"
-              }
-            }
-
-            return `${argName}${isOptional ? "?" : ""}: ${argType}`
-          })
-          .join(", ")
-      }
-
-      // Special case for TileSet#tile_get_shapes
-      if (name === "tile_get_shapes") {
-        returnType = `{
-  autotile_coord: Vector2,
-  one_way: bool,
-  one_way_margin: int,
-  shape: CollisionShape2D,
-  shape_transform: Transform2D,
-}[]`
-      }
-
-      const isAbstract = name.startsWith("_")
-
-      return {
-        name,
-        argumentList,
-        isConstructor,
-        docString,
-        returnType,
-        isAbstract,
-      }
-    })
+    const methods = methodsXml.map((method) => parseMethod(method, className))
 
     const constructorInfo = methods.filter((method) => method.isConstructor)
 
@@ -257,7 +225,9 @@ ${members
 
     return `
 ${formatJsDoc(member["_"].trim())}
-${sanitizeName(member["$"].name)}: ${convertType(member["$"].type)};`
+${sanitizeGodotNameForTs(member["$"].name)}: ${godotTypeToTsType(
+      member["$"].type
+    )};`
   })
   .join("\n")}
 
@@ -364,7 +334,9 @@ ${constants
       return `${formatJsDoc(signal.description[0])}\n${
         signal["$"].name
       }: Signal<(${(signal.argument || [])
-        .map((arg: any) => arg["$"].name + ": " + convertType(arg["$"].type))
+        .map(
+          (arg: any) => arg["$"].name + ": " + godotTypeToTsType(arg["$"].type)
+        )
         .join(", ")}) => void>\n`
     })
     .join("\n")}
@@ -400,7 +372,7 @@ ${constants
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
 ${members
   .map((member: any) => {
-    const name = sanitizeName(member["$"].name)
+    const name = sanitizeGodotNameForTs(member["$"].name)
     // these dont have .xml files
     const commentOut = name === "VisualScriptEditor" || name === "GodotSharp"
 
@@ -411,7 +383,7 @@ ${members
 
     return `
 ${formatJsDoc(member["_"].trim())}
-${commentOut ? "//" : ""}declare const ${name}: ${convertType(
+${commentOut ? "//" : ""}declare const ${name}: ${godotTypeToTsType(
       member["$"].type
     )}Class;`
   })
@@ -420,7 +392,7 @@ ${commentOut ? "//" : ""}declare const ${name}: ${convertType(
 ${Object.keys(enums)
   .map((key) => {
     return `
-    declare enum ${sanitizeName(key)} {
+    declare enum ${sanitizeGodotNameForTs(key)} {
       ${enums[key]
         .map((enumItem: any) => {
           return `${formatJsDoc(enumItem.doc)}\n${enumItem.name} = ${
@@ -440,7 +412,7 @@ ${Object.keys(enums)
   }
 
   async function writeLibraryDefinitions() {
-    if (!fs.existsSync(p1) || !fs.existsSync(p2)) {
+    if (!fs.existsSync(csgClassesPath) || !fs.existsSync(normalClassesPath)) {
       console.info("No Godot source installation found, writing from backup...")
 
       let localGodotDefs = path.join(__dirname, "..", "godot_defs")
@@ -454,20 +426,38 @@ ${Object.keys(enums)
 
     // This must come first because it parses out singletons
     // TODO - clean that up.
-    // @GlobalScope is a special case.
-    const result = await parseGlobalScope(path.join(p2, "@GlobalScope.xml"))
+    const globalScope = await parseGlobalScope(
+      path.join(normalClassesPath, "@GlobalScope.xml")
+    )
+
     fs.writeFileSync(
-      path.join(TsGdProjectClass.Paths.godotDefsPath, "@globals.d.ts"),
-      result
+      path.join(TsGdProjectClass.Paths.dynamicGodotDefsPath, "@globals.d.ts"),
+      globalScope
+    )
+
+    const globalFunctions = await generateGdscriptLib(
+      path.join(gdscriptPath, "@GDScript.xml")
+    )
+
+    fs.writeFileSync(
+      path.join(
+        TsGdProjectClass.Paths.dynamicGodotDefsPath,
+        "@global_functions.d.ts"
+      ),
+      globalFunctions
     )
 
     const xmlPaths = [
-      ...fs.readdirSync(p1).map((x) => path.join(p1, x)),
-      ...fs.readdirSync(p2).map((x) => path.join(p2, x)),
+      ...fs
+        .readdirSync(csgClassesPath)
+        .map((x) => path.join(csgClassesPath, x)),
+      ...fs
+        .readdirSync(normalClassesPath)
+        .map((x) => path.join(normalClassesPath, x)),
     ].filter((file) => file.endsWith(".xml"))
 
-    for (let xmlPath of xmlPaths) {
-      const fileName = path.basename(xmlPath)
+    for (let fullPath of xmlPaths) {
+      const fileName = path.basename(fullPath)
 
       if (fileName === "@GlobalScope.xml") {
         continue
@@ -485,11 +475,11 @@ ${Object.keys(enums)
         continue
       }
 
-      const result = await parseFile(xmlPath)
+      const result = await parseFile(fullPath)
 
       fs.writeFileSync(
         path.join(
-          TsGdProjectClass.Paths.godotDefsPath,
+          TsGdProjectClass.Paths.staticGodotDefsPath,
           fileName.slice(0, -4) + ".d.ts"
         ),
         result
@@ -498,7 +488,7 @@ ${Object.keys(enums)
   }
 
   async function main() {
-    await writeBaseDefinitions(TsGdProjectClass.Paths.godotDefsPath)
+    writeBaseDefinitions()
     await writeLibraryDefinitions()
   }
 

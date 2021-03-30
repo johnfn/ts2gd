@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testKeyword = exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructureRename = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
+exports.testIntFloat4 = exports.testIntFloat3 = exports.testIntFloat2 = exports.testIntFloat1 = exports.testKeyword = exports.testAutoloadVariableDeclaration3 = exports.testAutoloadVariableDeclaration2 = exports.testClassNameWithoutAutoload = exports.testAutoloadVariableDeclaration = exports.testNormalVariableDeclaration = exports.testDestructureRename = exports.testDestructure4 = exports.testDestructure3 = exports.testDestructure2 = exports.testDestructure = exports.parseVariableDeclaration = exports.getDestructuredNamesAndAccessStrings = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -32,7 +32,13 @@ const getDestructuredNamesAndAccessStrings = (node, access = "") => {
 };
 exports.getDestructuredNamesAndAccessStrings = getDestructuredNamesAndAccessStrings;
 const parseVariableDeclaration = (node, props) => {
-    const type = ts_utils_1.getPreciseInitializerType(node.initializer);
+    let declaredType = node.type?.getText();
+    // TODO: maybe error for number
+    if (declaredType !== "int" && declaredType !== "float") {
+        declaredType = undefined;
+    }
+    let inferredType = ts_utils_1.getPreciseInitializerType(node.initializer);
+    const type = declaredType ?? inferredType;
     const usages = props.usages.get(node.name);
     const unused = usages?.uses.length === 0 ? "_" : "";
     const typeString = type ? `: ${type}` : "";
@@ -215,6 +221,38 @@ print(preload)
     expected: `
 var preload_: int = 123
 print(preload_)
+  `,
+};
+exports.testIntFloat1 = {
+    ts: `
+let int = 1
+  `,
+    expected: `
+var _int: int = 1
+  `,
+};
+exports.testIntFloat2 = {
+    ts: `
+let float = 1.0
+  `,
+    expected: `
+var _float: float = 1.0
+  `,
+};
+exports.testIntFloat3 = {
+    ts: `
+let float: int = 1.0
+  `,
+    expected: `
+var _float: int = 1.0
+  `,
+};
+exports.testIntFloat4 = {
+    ts: `
+let float: float = 0
+  `,
+    expected: `
+var _float: float = 0
   `,
 };
 //# sourceMappingURL=parse_variable_declaration.js.map

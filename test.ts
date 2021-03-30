@@ -1,6 +1,6 @@
 import * as ts from "typescript"
 import { parseNode, ParseNodeType } from "./parse_node"
-import { baseContentForTests } from "./generate_base"
+import { baseContentForTests } from "./generators/generate_base"
 import fs from "fs"
 import path from "path"
 import { Scope } from "./scope"

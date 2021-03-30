@@ -12,7 +12,7 @@ const buildActionNames = (project) => {
         .filter((name) => name !== "$section")
         .map((name) => `'${name}'`)
         .join(" | ")}`;
-    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, "@actions.d.ts");
+    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@actions.d.ts");
     fs_1.default.writeFileSync(destPath, result);
 };
 exports.buildActionNames = buildActionNames;

@@ -2,9 +2,6 @@
 
 // HIGH
 
-// TODO: print version
-
-// TODO: vy: float = 0 translates to vy: int = 0
 // TODO: max()
 // TODO: Better print() output, with spacing
 // TODO: Document @exports

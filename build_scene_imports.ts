@@ -25,7 +25,7 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
   }
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.godotDefsPath,
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
     "@scenes.d.ts"
   )
 

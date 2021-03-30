@@ -28,7 +28,6 @@ const parsePropertyAccessExpression = (node, props) => {
     const exprType = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression);
-    const type = props.program.getTypeChecker().getTypeAtLocation(node);
     // Compile things like KeyList.KEY_SPACE into KEY_SPACE
     if (ts_utils_1.isEnumType(exprType)) {
         const symbol = exprType.getSymbol();

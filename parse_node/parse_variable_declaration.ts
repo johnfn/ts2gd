@@ -2,7 +2,7 @@ import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
-import { getPreciseInitializerType } from "../ts_utils"
+import { getPreciseInitializerType as inferInitializerType } from "../ts_utils"
 
 export const getDestructuredNamesAndAccessStrings = (
   node: ts.BindingName,
@@ -49,7 +49,16 @@ export const parseVariableDeclaration = (
   node: ts.VariableDeclaration,
   props: ParseState
 ): ParseNodeType => {
-  const type = getPreciseInitializerType(node.initializer)
+  let declaredType = node.type?.getText()
+
+  // TODO: maybe error for number
+  if (declaredType !== "int" && declaredType !== "float") {
+    declaredType = undefined
+  }
+
+  let inferredType = inferInitializerType(node.initializer)
+
+  const type = declaredType ?? inferredType
   const usages = props.usages.get(node.name as ts.Identifier)
   const unused = usages?.uses.length === 0 ? "_" : ""
   const typeString = type ? `: ${type}` : ""
@@ -252,5 +261,41 @@ print(preload)
   expected: `
 var preload_: int = 123
 print(preload_)
+  `,
+}
+
+export const testIntFloat1: Test = {
+  ts: `
+let int = 1
+  `,
+  expected: `
+var _int: int = 1
+  `,
+}
+
+export const testIntFloat2: Test = {
+  ts: `
+let float = 1.0
+  `,
+  expected: `
+var _float: float = 1.0
+  `,
+}
+
+export const testIntFloat3: Test = {
+  ts: `
+let float: int = 1.0
+  `,
+  expected: `
+var _float: int = 1.0
+  `,
+}
+
+export const testIntFloat4: Test = {
+  ts: `
+let float: float = 0
+  `,
+  expected: `
+var _float: float = 0
   `,
 }

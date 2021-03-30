@@ -24,8 +24,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// TODO: print version
-// TODO: vy: float = 0 translates to vy: int = 0
 // TODO: max()
 // TODO: Better print() output, with spacing
 // TODO: Document @exports

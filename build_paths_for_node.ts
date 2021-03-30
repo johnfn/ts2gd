@@ -133,7 +133,7 @@ declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
   `
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.godotDefsPath,
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
     `@node_paths_${className}.d.ts`
   )
 

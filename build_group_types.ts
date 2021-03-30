@@ -38,7 +38,7 @@ export const buildGroupTypes = (project: TsGdProjectClass) => {
   result += `}`
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.godotDefsPath,
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
     "@groups.d.ts"
   )
 

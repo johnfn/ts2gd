@@ -9,7 +9,7 @@ export const buildActionNames = (project: TsGdProjectClass) => {
     .join(" | ")}`
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.godotDefsPath,
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
     "@actions.d.ts"
   )
 

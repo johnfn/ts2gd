@@ -15,7 +15,7 @@ declare type AssetPath = keyof AssetType;
   `
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.godotDefsPath,
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
     "@asset_paths.d.ts"
   )
   fs.writeFileSync(destPath, assetFileContents)

@@ -18,7 +18,7 @@ const buildSceneImports = (project) => {
             result += `export const ${path_1.default.basename(scene.fsPath, ".tscn")}Tscn: PackedScene<Node>\n`;
         }
     }
-    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, "@scenes.d.ts");
+    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@scenes.d.ts");
     fs_1.default.writeFileSync(destPath, result);
 };
 exports.buildSceneImports = buildSceneImports;

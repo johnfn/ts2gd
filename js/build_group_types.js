@@ -31,7 +31,7 @@ const buildGroupTypes = (project) => {
             .join(" | ")}\n`;
     }
     result += `}`;
-    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, "@groups.d.ts");
+    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@groups.d.ts");
     fs_1.default.writeFileSync(destPath, result);
 };
 exports.buildGroupTypes = buildGroupTypes;

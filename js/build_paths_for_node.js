@@ -94,7 +94,7 @@ declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
   }
 }
   `;
-    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, `@node_paths_${className}.d.ts`);
+    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, `@node_paths_${className}.d.ts`);
     fs_1.default.writeFileSync(destPath, result);
 };
 exports.buildNodePathsTypeForScript = buildNodePathsTypeForScript;

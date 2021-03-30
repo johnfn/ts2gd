@@ -15,12 +15,12 @@ const godot_project_file_1 = require("./godot_project_file");
 const base_asset_1 = require("./base_asset");
 const build_paths_for_node_1 = require("../build_paths_for_node");
 const build_scene_imports_1 = require("../build_scene_imports");
-const generate_library_1 = require("../generate_library");
 const build_asset_paths_1 = require("../build_asset_paths");
 const build_group_types_1 = require("../build_group_types");
 const build_action_names_1 = require("../build_action_names");
 const asset_image_1 = require("./asset_image");
 const asset_glb_1 = require("./asset_glb");
+const generate_library_1 = require("../generators/generate_library");
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.

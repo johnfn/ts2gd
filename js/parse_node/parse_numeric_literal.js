@@ -4,7 +4,12 @@ exports.testFloat = exports.testInt = exports.parseNumericLiteral = void 0;
 const parse_node_1 = require("../parse_node");
 const parseNumericLiteral = (node, props) => {
     // node.text has some weird edge cases e.g. "6.1" gives "6"!
-    return parse_node_1.combine({ parent: node, nodes: [], props, content: () => node.getText() });
+    return parse_node_1.combine({
+        parent: node,
+        nodes: [],
+        props,
+        content: () => node.getText(),
+    });
 };
 exports.parseNumericLiteral = parseNumericLiteral;
 exports.testInt = {

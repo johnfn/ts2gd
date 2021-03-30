@@ -1,8 +1,9 @@
 import fs from "fs"
 import path from "path"
-import { ArrayDefinition } from "./custom_defs/array_def"
-import { DictionaryDefinition } from "./custom_defs/dictionary_def"
-import { PackedSceneDef } from "./custom_defs/packed_scene_def"
+import { ArrayDefinition } from "../custom_defs/array_def"
+import { DictionaryDefinition } from "../custom_defs/dictionary_def"
+import { PackedSceneDef } from "../custom_defs/packed_scene_def"
+import { TsGdProjectClass } from "../project/project"
 
 export const baseFileContent = `
 
@@ -97,26 +98,17 @@ ${ArrayDefinition}
 ${DictionaryDefinition}
 ${PackedSceneDef}
 
-declare const len: (obj: any[]) => number;
-declare const range: (length: number) => number[];
-declare const print: (...args: any[]) => void;
-declare const randi: () => int;
-declare const randf: () => float;
-declare const to_json: (obj: any) => string;
-declare const parse_json: (str: string) => Dictionary<unknown, unknown>;
-declare const floor: (val: float) => int;
-declare const abs: (val: float) => float;
-declare const round: (val: float) => float;
-declare const deg2rad: (val: float) => float;
-
 declare class Signal<T extends any[]> {
   /** Don't use this - it's only to get typechecking working! */
   private __unused: T;
 }
 `
 
-export const buildBase = (basePath: string) => {
-  fs.writeFileSync(path.join(basePath, "@base.d.ts"), baseFileContent)
+export const buildBase = () => {
+  fs.writeFileSync(
+    path.join(TsGdProjectClass.Paths.staticGodotDefsPath, "@base.d.ts"),
+    baseFileContent
+  )
 }
 
 export const baseContentForTests = `

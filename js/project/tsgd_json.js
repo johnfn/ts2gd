@@ -50,7 +50,8 @@ class Paths {
         this.sourceTsPath = path_1.default.join(fullyQualifiedTs2gdPath, tsgdJson.source);
         this.destGdPath = path_1.default.join(fullyQualifiedTs2gdPath, tsgdJson.destination);
         this.rootPath = fullyQualifiedTs2gdPath;
-        this.godotDefsPath = path_1.default.join(this.rootPath, "godot_defs");
+        this.staticGodotDefsPath = path_1.default.join(this.rootPath, "godot_defs", "static");
+        this.dynamicGodotDefsPath = path_1.default.join(this.rootPath, "godot_defs", "dynamic");
         this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined;
         let tsconfigPath = typescript_1.default.findConfigFile(path_1.default.dirname(fullyQualifiedTs2gdPathWithFilename), typescript_1.default.sys.fileExists, "tsconfig.json");
         if (!tsconfigPath) {

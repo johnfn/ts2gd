@@ -18,7 +18,7 @@ ${project.assets
 
 declare type AssetPath = keyof AssetType;
   `;
-    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotDefsPath, "@asset_paths.d.ts");
+    const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@asset_paths.d.ts");
     fs_1.default.writeFileSync(destPath, assetFileContents);
 }
 exports.buildAssetPathsType = buildAssetPathsType;

@@ -12,12 +12,12 @@ import { Paths } from "./tsgd_json"
 import { BaseAsset } from "./base_asset"
 import { buildNodePathsTypeForScript } from "../build_paths_for_node"
 import { buildSceneImports } from "../build_scene_imports"
-import { generateGodotLibraryDefinitions } from "../generate_library"
 import { buildAssetPathsType } from "../build_asset_paths"
 import { buildGroupTypes } from "../build_group_types"
 import { buildActionNames } from "../build_action_names"
 import { AssetImage } from "./asset_image"
 import { AssetGlb } from "./asset_glb"
+import { generateGodotLibraryDefinitions } from "../generators/generate_library"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would

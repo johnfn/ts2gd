@@ -19,8 +19,13 @@ export class Paths {
   /** The full path to the tsconfig file. e.g. /Users/johnfn/GodotProject/tsconfig.json */
   tsconfigPath: string
 
-  /** The path to the Godot definitions folder. e.g. /Users/johnfn/GodotProject/godot_defs */
-  godotDefsPath: string
+  /** The path to the Godot definitions folder for unchanging library definitions.
+   * e.g. /Users/johnfn/GodotProject/godot_defs/static */
+  staticGodotDefsPath: string
+
+  /** The path to the Godot definitions folder for definitions based off user files.
+   * e.g. /Users/johnfn/GodotProject/godot_defs/dynamic */
+  dynamicGodotDefsPath: string
 
   /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
   godotSourceRepoPath: string | undefined
@@ -84,7 +89,12 @@ export class Paths {
     this.sourceTsPath = path.join(fullyQualifiedTs2gdPath, tsgdJson.source)
     this.destGdPath = path.join(fullyQualifiedTs2gdPath, tsgdJson.destination)
     this.rootPath = fullyQualifiedTs2gdPath
-    this.godotDefsPath = path.join(this.rootPath, "godot_defs")
+    this.staticGodotDefsPath = path.join(this.rootPath, "godot_defs", "static")
+    this.dynamicGodotDefsPath = path.join(
+      this.rootPath,
+      "godot_defs",
+      "dynamic"
+    )
 
     this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
 
