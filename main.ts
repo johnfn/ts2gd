@@ -169,7 +169,7 @@ const main = async () => {
 }
 
 const checkVersionAsync = async () => {
-  chalk.blue("ts2gd", "v" + packageJson.version)
+  console.log(chalk.blue("ts2gd", "v" + packageJson.version))
 
   const options = {
     hostname: "registry.npmjs.org",
@@ -215,7 +215,7 @@ const checkVersionAsync = async () => {
     console.log(`There is a new version of ts2gd: ${latestPublishedVersion}`)
     console.log(`install it with`)
     console.log(``)
-    chalk.blue(`npm install --global ts2gd`)
+    console.log(chalk.blue(`npm install --global ts2gd`))
   }
 }
 
