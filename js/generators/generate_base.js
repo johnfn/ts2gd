@@ -9,6 +9,7 @@ const path_1 = __importDefault(require("path"));
 const array_def_1 = require("../custom_defs/array_def");
 const dictionary_def_1 = require("../custom_defs/dictionary_def");
 const packed_scene_def_1 = require("../custom_defs/packed_scene_def");
+const project_1 = require("../project/project");
 exports.baseFileContent = `
 
 declare interface Boolean {
@@ -74,6 +75,8 @@ interface IteratorReturnResult<TReturn> {
   value: TReturn;
 }
 
+declare const print: (...args: any[]) => void;
+
 type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
 
 interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
@@ -107,8 +110,8 @@ declare class Signal<T extends any[]> {
   private __unused: T;
 }
 `;
-const buildBase = (basePath) => {
-    fs_1.default.writeFileSync(path_1.default.join(basePath, "@base.d.ts"), exports.baseFileContent);
+const buildBase = () => {
+    fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, "@base.d.ts"), exports.baseFileContent);
 };
 exports.buildBase = buildBase;
 exports.baseContentForTests = `

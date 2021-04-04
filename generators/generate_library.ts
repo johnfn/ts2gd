@@ -167,13 +167,13 @@ export async function generateGodotLibraryDefinitions(
     const json = await parseStringPromise(content)
     const methodsXml: GodotXMLMethod[] = json.class.methods?.[0].method ?? []
     const members = (json.class.members ?? [])[0]?.member ?? []
-    let className = json.class["$"].name
+    let className: string = json.class["$"].name
     const inherits = json.class["$"].inherits
     const constants = (json.class.constants ?? [])[0]?.constant ?? []
     const signals = (json.class.signals ?? [])[0]?.signal ?? []
-
-    const methods = methodsXml.map((method) => parseMethod(method, className))
-
+    const methods = methodsXml.map((method) =>
+      parseMethod(method, { containgClassName: className })
+    )
     const constructorInfo = methods.filter((method) => method.isConstructor)
 
     if (className === "Signal") {
@@ -233,36 +233,7 @@ ${sanitizeGodotNameForTs(member["$"].name)}: ${godotTypeToTsType(
 
 ${methods
   .map((method) => {
-    if (method.name === "get_node") {
-      return ""
-    }
-
-    if (method.name === "get_nodes_in_group") {
-      return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
-    }
-
-    if (method.name === "has_group") {
-      return `has_group<T extends keyof Groups>(name: T): bool`
-    }
-
-    // This is a constructor
-    if (method.isConstructor) {
-      return ""
-    }
-
-    // Special case
-    if (method.name === "connect") {
-      return ""
-    }
-
-    if (method.name === "emit_signal") {
-      return "emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;"
-    }
-
-    return `${method.docString}
-${method.isAbstract ? "protected " : ""}${method.name}(${
-      method.argumentList
-    }): ${method.returnType};`
+    return method.codegen
   })
   .join("\n\n")}
 

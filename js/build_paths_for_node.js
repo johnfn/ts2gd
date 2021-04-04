@@ -37,12 +37,16 @@ const buildNodePathsTypeForScript = (script, project) => {
         return [];
     }
     let commonRelativePaths = [];
+    let allPaths = [];
     if (nodesWithScript.length === 0) {
         if (script.isAutoload()) {
             // Special logic for autoload classes.
             // TODO: Should we generate /root/ in the node path too?
             const rootScene = project.mainScene;
             commonRelativePaths = exports.getAllRelativePaths(rootScene.rootNode);
+            allPaths = [
+                `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
+            ];
             commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({
                 path: `/root/${path}`,
                 node,
@@ -51,6 +55,7 @@ const buildNodePathsTypeForScript = (script, project) => {
         else {
             // This class is never instantiated as a node.
             commonRelativePaths = [];
+            allPaths = [];
             // TODO: Maybe flag it if it's also never used as a class.
             // Currently, this is just noise.
             // console.error("Unused class:", className)
@@ -58,6 +63,7 @@ const buildNodePathsTypeForScript = (script, project) => {
     }
     else {
         const relativePathsPerNode = nodesWithScript.map((i) => i.children().flatMap((ch) => exports.getAllRelativePaths(ch)));
+        allPaths = nodesWithScript.map((node) => node.scene.resPath + ":" + node.scenePath());
         commonRelativePaths = relativePathsPerNode[0].filter((elem) => relativePathsPerNode.every((pathsList) => pathsList.map((pl) => pl.path).includes(elem.path)));
     }
     // Normal case
@@ -71,7 +77,9 @@ const buildNodePathsTypeForScript = (script, project) => {
             pathToImport[path] = node.tsType();
         }
     }
-    let result = `declare type NodePathToType${className} = {
+    let result = `${allPaths.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""}
+${allPaths.map((x) => "// " + x).join("\n")}
+declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
         .map(([path, importStr]) => `  "${path}": ${importStr},`)
         .join("\n")}
@@ -79,9 +87,9 @@ ${Object.entries(pathToImport)
 `;
     result += `
   
-import ${className} from './../${project_1.TsGdProjectClass.Paths.sourceTsPath}/${path_1.default.basename(script.fsPath).slice(0, -".ts".length)}'
+import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
-declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
+declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;

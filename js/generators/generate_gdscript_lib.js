@@ -14,6 +14,7 @@ const getCodeForMethod = (generateAsGlobals, props) => {
         case "connect":
         case "yield":
         case "typeof":
+        case "print":
             return "";
         case "get_nodes_in_group":
             return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`;
@@ -94,9 +95,7 @@ const generateGdscriptLib = async (path) => {
     const json = await xml2js_1.parseStringPromise(content);
     let result = "";
     const globalMethods = json["class"].methods[0].method;
-    const parsedMethods = globalMethods.map((m) => exports.parseMethod(m, {
-        generateAsGlobals: true,
-    }));
+    const parsedMethods = globalMethods.map((m) => exports.parseMethod(m, { generateAsGlobals: true }));
     for (const parsedMethod of parsedMethods) {
         result += `
 ${parsedMethod.codegen}

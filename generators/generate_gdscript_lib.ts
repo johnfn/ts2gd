@@ -45,6 +45,7 @@ export const getCodeForMethod = (
     case "connect":
     case "yield":
     case "typeof":
+    case "print":
       return ""
     case "get_nodes_in_group":
       return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
@@ -143,9 +144,7 @@ export const generateGdscriptLib = async (path: string) => {
 
   const globalMethods: GodotXMLMethod[] = json["class"].methods[0].method
   const parsedMethods = globalMethods.map((m) =>
-    parseMethod(m, {
-      generateAsGlobals: true,
-    })
+    parseMethod(m, { generateAsGlobals: true })
   )
 
   for (const parsedMethod of parsedMethods) {

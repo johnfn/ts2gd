@@ -70,6 +70,8 @@ interface IteratorReturnResult<TReturn> {
   value: TReturn;
 }
 
+declare const print: (...args: any[]) => void;
+
 type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
 
 interface Iterator<T, TReturn = any, TNext = undefined> extends Object {

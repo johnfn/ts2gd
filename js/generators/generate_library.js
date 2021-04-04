@@ -128,7 +128,7 @@ async function generateGodotLibraryDefinitions(project) {
         const inherits = json.class["$"].inherits;
         const constants = (json.class.constants ?? [])[0]?.constant ?? [];
         const signals = (json.class.signals ?? [])[0]?.signal ?? [];
-        const methods = methodsXml.map((method) => generate_gdscript_lib_1.parseMethod(method, className));
+        const methods = methodsXml.map((method) => generate_gdscript_lib_1.parseMethod(method, { containgClassName: className }));
         const constructorInfo = methods.filter((method) => method.isConstructor);
         if (className === "Signal") {
             className = "Signal<T extends any[]>";
@@ -178,28 +178,7 @@ ${sanitizeGodotNameForTs(member["$"].name)}: ${godotTypeToTsType(member["$"].typ
 
 ${methods
             .map((method) => {
-            if (method.name === "get_node") {
-                return "";
-            }
-            if (method.name === "get_nodes_in_group") {
-                return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`;
-            }
-            if (method.name === "has_group") {
-                return `has_group<T extends keyof Groups>(name: T): bool`;
-            }
-            // This is a constructor
-            if (method.isConstructor) {
-                return "";
-            }
-            // Special case
-            if (method.name === "connect") {
-                return "";
-            }
-            if (method.name === "emit_signal") {
-                return "emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;";
-            }
-            return `${method.docString}
-${method.isAbstract ? "protected " : ""}${method.name}(${method.argumentList}): ${method.returnType};`;
+            return method.codegen;
         })
             .join("\n\n")}
 
@@ -368,7 +347,7 @@ ${Object.keys(enums)
         }
     }
     async function main() {
-        generate_base_1.buildBase(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath);
+        generate_base_1.buildBase();
         await writeLibraryDefinitions();
     }
     // async function debug() {

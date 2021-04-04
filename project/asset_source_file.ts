@@ -2,7 +2,7 @@ import fs from "fs"
 import ts from "typescript"
 import path from "path"
 
-import { parseNode, ParseNodeType, ParseState } from "../parse_node"
+import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 import { Scope } from "../scope"
@@ -13,16 +13,16 @@ import { Scope } from "../scope"
 // Can we just create them on edit as well (if it doesn't exist but is valid)?
 
 export class AssetSourceFile extends BaseAsset {
-  /** Like res://src/main.gd */
+  /** Like "res://src/main.gd" */
   resPath: string
 
-  /** Like main.gd */
+  /** Like "/Users/johnfn/GodotProject/compiled/Hud.gd" */
   gdPath: string
 
-  /** Like /Users/johnfn/GodotProject/src/main.ts */
+  /** Like "/Users/johnfn/GodotProject/src/main.ts" */
   fsPath: string
 
-  /** Like ./src/main.ts */
+  /** Like "src/main.ts" */
   tsRelativePath: string
 
   project: TsGdProjectClass

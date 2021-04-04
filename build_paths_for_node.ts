@@ -55,6 +55,8 @@ export const buildNodePathsTypeForScript = (
     node: GodotNode
   }[] = []
 
+  let allPaths: string[] = []
+
   if (nodesWithScript.length === 0) {
     if (script.isAutoload()) {
       // Special logic for autoload classes.
@@ -62,6 +64,9 @@ export const buildNodePathsTypeForScript = (
 
       const rootScene = project.mainScene
       commonRelativePaths = getAllRelativePaths(rootScene.rootNode)
+      allPaths = [
+        `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
+      ]
       commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({
         path: `/root/${path}`,
         node,
@@ -70,6 +75,7 @@ export const buildNodePathsTypeForScript = (
       // This class is never instantiated as a node.
 
       commonRelativePaths = []
+      allPaths = []
 
       // TODO: Maybe flag it if it's also never used as a class.
       // Currently, this is just noise.
@@ -79,6 +85,9 @@ export const buildNodePathsTypeForScript = (
   } else {
     const relativePathsPerNode = nodesWithScript.map((i) =>
       i.children().flatMap((ch) => getAllRelativePaths(ch))
+    )
+    allPaths = nodesWithScript.map(
+      (node) => node.scene.resPath + ":" + node.scenePath()
     )
 
     commonRelativePaths = relativePathsPerNode[0].filter((elem) =>
@@ -105,7 +114,11 @@ export const buildNodePathsTypeForScript = (
     }
   }
 
-  let result = `declare type NodePathToType${className} = {
+  let result = `${
+    allPaths.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""
+  }
+${allPaths.map((x) => "// " + x).join("\n")}
+declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
   .map(([path, importStr]) => `  "${path}": ${importStr},`)
   .join("\n")}
@@ -114,11 +127,9 @@ ${Object.entries(pathToImport)
 
   result += `
   
-import ${className} from './../${
-    TsGdProjectClass.Paths.sourceTsPath
-  }/${path.basename(script.fsPath).slice(0, -".ts".length)}'
+import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
-declare module './../${script.tsRelativePath.slice(0, -".ts".length)}' {
+declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;

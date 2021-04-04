@@ -2,7 +2,6 @@
 
 // HIGH
 
-// TODO: max()
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
 
@@ -11,7 +10,6 @@
 
 // TODO: change_scene should autocomplete .tscn files only
 
-// TODO: "unhandled asset type" is FAR too severe
 // TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
 // and we need to generate one for the skipping library stuff
@@ -26,7 +24,6 @@
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
-// TODO: Godot globals
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
