@@ -1,6 +1,7 @@
 #!/usr/bin/env ts-node
 "use strict";
-// HIGH
+// how do u access global label
+// str()
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -24,13 +25,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// TODO: max()
+// HIGH
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
 // TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g.
 // merge conflicts. should just retry after a while.
 // TODO: change_scene should autocomplete .tscn files only
-// TODO: "unhandled asset type" is FAR too severe
 // TODO: "cannot find module typescript"
 // TODO: if you dont have a tsconfig.json it just goes into an infinite loop
 // and we need to generate one for the skipping library stuff
@@ -42,7 +42,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
-// TODO: Godot globals
 // TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
@@ -134,7 +133,7 @@ const main = async () => {
     console.info("Initial compilation complete in", (new Date().getTime() - start) / 1000 + "s");
 };
 const checkVersionAsync = async () => {
-    chalk_1.default.blue("ts2gd", "v" + package_json_1.default.version);
+    console.log(chalk_1.default.blue("ts2gd", "v" + package_json_1.default.version));
     const options = {
         hostname: "registry.npmjs.org",
         path: "/ts2gd",
@@ -166,7 +165,7 @@ const checkVersionAsync = async () => {
         console.log(`There is a new version of ts2gd: ${latestPublishedVersion}`);
         console.log(`install it with`);
         console.log(``);
-        chalk_1.default.blue(`npm install --global ts2gd`);
+        console.log(chalk_1.default.blue(`npm install --global ts2gd`));
     }
 };
 if (!process.argv[1].includes("test")) {

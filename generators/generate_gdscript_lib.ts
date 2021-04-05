@@ -7,7 +7,10 @@ import {
 } from "./generate_library"
 
 export type GodotXMLMethod = {
-  $: { name: string }
+  $: {
+    name: string
+    qualifiers?: string
+  }
   return?: [{ $: { type: string } }]
   argument: {
     $: {
@@ -80,32 +83,41 @@ export const parseMethod = (
   const generateAsGlobal = props?.generateAsGlobals ?? false
   const name = method.$.name
   const args = method.argument
+  const isVarArgs = method.$.qualifiers === "vararg"
   const isConstructor =
     containingClassName !== undefined && name === containingClassName
   const docString = formatJsDoc(method.description[0].trim())
-  let returnType = godotTypeToTsType(method.return?.[0]["$"].type) ?? "any"
+  let returnType = godotTypeToTsType(method.return?.[0]["$"].type ?? "Variant")
   let argumentList: string = ""
 
-  if (args) {
-    argumentList = args
-      .map((arg) => {
-        let argName = sanitizeGodotNameForTs(arg["$"].name)
-        let argType = godotTypeToTsType(arg["$"].type)
-        let isOptional = !!arg["$"].default
+  if (name === "str") {
+    console.log(method)
+  }
 
-        if (argType === "StringName") {
-          if (argName === "group") {
-            argType = "keyof Groups"
+  if (args || isVarArgs) {
+    if (isVarArgs) {
+      argumentList = "...args: any[]"
+    } else {
+      argumentList = args
+        .map((arg) => {
+          let argName = sanitizeGodotNameForTs(arg["$"].name)
+          let argType = godotTypeToTsType(arg["$"].type)
+          let isOptional = !!arg["$"].default
+
+          if (argType === "StringName") {
+            if (argName === "group") {
+              argType = "keyof Groups"
+            }
+
+            if (argName === "action") {
+              argType = "Action"
+            }
           }
 
-          if (argName === "action") {
-            argType = "Action"
-          }
-        }
-
-        return `${argName}${isOptional ? "?" : ""}: ${argType}`
-      })
-      .join(", ")
+          return `${argName}${isOptional ? "?" : ""}: ${argType}`
+        })
+        .join(", ")
+    }
   }
 
   // Special case for TileSet#tile_get_shapes

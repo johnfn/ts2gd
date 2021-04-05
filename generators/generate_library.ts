@@ -32,13 +32,7 @@ export function sanitizeGodotNameForTs(name: string): string {
   return name
 }
 
-export function godotTypeToTsType(
-  godotType: string | undefined
-): string | undefined {
-  if (!godotType) {
-    return undefined
-  }
-
+export function godotTypeToTsType(godotType: string): string {
   if (godotType === "int") {
     return "int"
   }

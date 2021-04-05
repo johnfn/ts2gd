@@ -29,9 +29,6 @@ function sanitizeGodotNameForTs(name) {
 }
 exports.sanitizeGodotNameForTs = sanitizeGodotNameForTs;
 function godotTypeToTsType(godotType) {
-    if (!godotType) {
-        return undefined;
-    }
     if (godotType === "int") {
         return "int";
     }
@@ -309,7 +306,7 @@ ${Object.keys(enums)
     async function writeLibraryDefinitions() {
         if (!fs_1.default.existsSync(csgClassesPath) || !fs_1.default.existsSync(normalClassesPath)) {
             console.info("No Godot source installation found, writing from backup...");
-            let localGodotDefs = path_1.default.join(__dirname, "..", "godot_defs");
+            let localGodotDefs = path_1.default.join(__dirname, "..", "..", "godot_defs");
             ts_utils_1.copyFolderRecursiveSync(localGodotDefs, project_1.TsGdProjectClass.Paths.rootPath);
             console.info("Done.");
             return;

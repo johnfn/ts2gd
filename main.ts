@@ -1,5 +1,17 @@
 #!/usr/bin/env ts-node
 
+// how do u access global label
+// str()
+
+/*
+/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77
+    while (file[nextNonemptyIndex].trim() === "") {
+                                   ^
+TypeError: Cannot read property 'trim' of undefined
+    at eof (/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77:36)
+    at Object.parseGodotConfigFile (/Users/johnfn/code/tsgd/ts2gd/project/godot
+*/
+
 // HIGH
 
 // TODO: Better print() output, with spacing
