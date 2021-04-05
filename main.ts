@@ -170,7 +170,7 @@ const setup = () => {
 
 const showLoadingMessage = (msg: string) => {
   console.clear()
-  console.log(chalk.blueBright(packageJson.version), "-", msg)
+  console.log(chalk.blueBright("ts2gd v" + packageJson.version), "-", msg)
 }
 
 const main = async (flags: Flags) => {

@@ -59,8 +59,6 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: template strings
-// TODO: str()
-// TODO: ": float" in parameters is not respected
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: parse_json return type.
 // TODO: Why is car.tscn a Node, not a Spatial?
@@ -83,10 +81,12 @@ TypeError: Cannot read property 'trim' of undefined
 //         - this would require being able to save back config files accurately.
 const typescript_1 = __importDefault(require("typescript"));
 const process = __importStar(require("process"));
+const package_json_1 = __importDefault(require("./package.json"));
 const project_1 = require("./project/project");
 const tsgd_json_1 = require("./project/tsgd_json");
 const check_version_1 = require("./check_version");
 const parse_args_1 = require("./parse_args");
+const chalk_1 = __importDefault(require("chalk"));
 const setup = () => {
     const tsgdJson = new tsgd_json_1.Paths();
     const formatHost = {
@@ -95,7 +95,7 @@ const setup = () => {
         getNewLine: () => typescript_1.default.sys.newLine,
     };
     let tsUpdateResolve;
-    const tsUpdate = new Promise((resolve) => {
+    const tsInitialLoad = new Promise((resolve) => {
         tsUpdateResolve = resolve;
     });
     let watchProgram;
@@ -130,21 +130,30 @@ const setup = () => {
         watchProgram,
         tsgdJson,
         reportWatchStatusChanged,
-        tsUpdate,
+        tsInitialLoad,
     };
+};
+const showLoadingMessage = (msg) => {
+    console.clear();
+    console.log(chalk_1.default.blueBright("ts2gd " + package_json_1.default.version), "-", msg);
 };
 const main = async (flags) => {
     const start = new Date().getTime();
-    const { watchProgram, tsgdJson, tsUpdate } = setup();
+    showLoadingMessage("Initializing TypeScript...");
+    const { watchProgram, tsgdJson, tsInitialLoad } = setup();
+    showLoadingMessage("Scanning project...");
     let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
     if (project.shouldBuildDefinitions(flags)) {
+        showLoadingMessage("Building definition files...");
         await project.buildAllDefinitions();
     }
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
-    await tsUpdate;
+    showLoadingMessage("Waiting for TypeScript to finish...");
+    await tsInitialLoad;
+    showLoadingMessage("Compiling all source files...");
     project.compileAllSourceFiles();
-    console.info("Initial compilation complete in", (new Date().getTime() - start) / 1000 + "s");
+    showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`);
 };
 if (!process.argv[1].includes("test")) {
     const flags = parse_args_1.parseArgs();
