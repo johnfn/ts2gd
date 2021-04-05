@@ -1,7 +1,6 @@
 #!/usr/bin/env ts-node
 
 // how do u access global label
-// str()
 
 /*
 /Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77
@@ -90,6 +89,14 @@ const setup = () => {
     getNewLine: () => ts.sys.newLine,
   }
 
+  let tsUpdateResolve!: (value: void | PromiseLike<void>) => void
+
+  const tsUpdate = new Promise<void>((resolve) => {
+    tsUpdateResolve = resolve
+  })
+
+  let watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+
   function reportDiagnostic(diagnostic: ts.Diagnostic) {
     const errorMessage = ts.flattenDiagnosticMessageText(
       diagnostic.messageText,
@@ -115,16 +122,24 @@ const setup = () => {
     }
   }
 
-  const onTsUpdate = {
-    resolve: () => {},
-  }
-
   const reportWatchStatusChanged = (
     diagnostic: ts.Diagnostic,
     newLine: string
-  ) => {
-    onTsUpdate.resolve()
-  }
+  ) => {}
+
+  // Wait until we've definitely loaded in the definitions
+  let interval = setInterval(() => {
+    let allSourceFiles =
+      watchProgram
+        ?.getProgram()
+        .getSourceFiles()
+        .map((x) => x.fileName) ?? []
+
+    if (allSourceFiles.find((name) => name.includes("@globals.d.ts"))) {
+      clearInterval(interval)
+      tsUpdateResolve()
+    }
+  }, 100)
 
   const host = ts.createWatchCompilerHost(
     tsgdJson.tsconfigPath,
@@ -134,7 +149,7 @@ const setup = () => {
     reportDiagnostic,
     reportWatchStatusChanged
   )
-  const watchProgram = ts.createWatchProgram(host)
+  watchProgram = ts.createWatchProgram(host)
   const configFile = ts.readJsonConfigFile(
     tsgdJson.tsconfigPath,
     ts.sys.readFile
@@ -149,14 +164,14 @@ const setup = () => {
     watchProgram,
     tsgdJson,
     reportWatchStatusChanged,
-    onTsUpdate,
+    tsUpdate,
   }
 }
 
 const main = async (flags: Flags) => {
   const start = new Date().getTime()
 
-  const { watchProgram, tsgdJson, onTsUpdate } = setup()
+  const { watchProgram, tsgdJson, tsUpdate } = setup()
 
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
@@ -166,12 +181,7 @@ const main = async (flags: Flags) => {
 
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
-  await Promise.race([
-    new Promise<void>((resolve) => setTimeout(resolve, 500)),
-    new Promise<void>((resolve) => {
-      onTsUpdate.resolve = resolve
-    }),
-  ])
+  await tsUpdate
 
   project.compileAllSourceFiles()
 

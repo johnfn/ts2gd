@@ -1,7 +1,6 @@
 #!/usr/bin/env ts-node
 "use strict";
 // how do u access global label
-// str()
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -95,6 +94,11 @@ const setup = () => {
         getCurrentDirectory: typescript_1.default.sys.getCurrentDirectory,
         getNewLine: () => typescript_1.default.sys.newLine,
     };
+    let tsUpdateResolve;
+    const tsUpdate = new Promise((resolve) => {
+        tsUpdateResolve = resolve;
+    });
+    let watchProgram;
     function reportDiagnostic(diagnostic) {
         const errorMessage = typescript_1.default.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine());
         // Quiet the errors which are not really errors.
@@ -105,14 +109,20 @@ const setup = () => {
             return;
         }
     }
-    const onTsUpdate = {
-        resolve: () => { },
-    };
-    const reportWatchStatusChanged = (diagnostic, newLine) => {
-        onTsUpdate.resolve();
-    };
+    const reportWatchStatusChanged = (diagnostic, newLine) => { };
+    // Wait until we've definitely loaded in the definitions
+    let interval = setInterval(() => {
+        let allSourceFiles = watchProgram
+            ?.getProgram()
+            .getSourceFiles()
+            .map((x) => x.fileName) ?? [];
+        if (allSourceFiles.find((name) => name.includes("@globals.d.ts"))) {
+            clearInterval(interval);
+            tsUpdateResolve();
+        }
+    }, 100);
     const host = typescript_1.default.createWatchCompilerHost(tsgdJson.tsconfigPath, {}, typescript_1.default.sys, typescript_1.default.createEmitAndSemanticDiagnosticsBuilderProgram, reportDiagnostic, reportWatchStatusChanged);
-    const watchProgram = typescript_1.default.createWatchProgram(host);
+    watchProgram = typescript_1.default.createWatchProgram(host);
     const configFile = typescript_1.default.readJsonConfigFile(tsgdJson.tsconfigPath, typescript_1.default.sys.readFile);
     const opt = typescript_1.default.parseConfigFileTextToJson(tsgdJson.tsconfigPath, configFile.text);
     opt.config.useCaseSensitiveFileNames = false;
@@ -120,24 +130,19 @@ const setup = () => {
         watchProgram,
         tsgdJson,
         reportWatchStatusChanged,
-        onTsUpdate,
+        tsUpdate,
     };
 };
 const main = async (flags) => {
     const start = new Date().getTime();
-    const { watchProgram, tsgdJson, onTsUpdate } = setup();
+    const { watchProgram, tsgdJson, tsUpdate } = setup();
     let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
     if (project.shouldBuildDefinitions(flags)) {
         await project.buildAllDefinitions();
     }
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
-    await Promise.race([
-        new Promise((resolve) => setTimeout(resolve, 500)),
-        new Promise((resolve) => {
-            onTsUpdate.resolve = resolve;
-        }),
-    ]);
+    await tsUpdate;
     project.compileAllSourceFiles();
     console.info("Initial compilation complete in", (new Date().getTime() - start) / 1000 + "s");
 };

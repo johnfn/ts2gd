@@ -293,6 +293,7 @@ export const makeTsGdProject = async (
   let addFn!: (path: string) => void
   let readyFn!: () => void
 
+  // TODO: This takes too long to forcibly do it
   const watcher = await new Promise<chokidar.FSWatcher>((resolve) => {
     addFn = (path) => initialFiles.push(path)
     readyFn = () => resolve(watcher)
@@ -318,6 +319,10 @@ const shouldIncludePath = (path: string): boolean => {
     return false
   }
 
+  if (path.includes(".git")) {
+    return false
+  }
+
   if (!path.includes(".")) {
     // Folder (i hope)
     // TODO: Might be able to check stat to be more sure about this
@@ -325,10 +330,6 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   if (path.includes("godot_defs")) {
-    return false
-  }
-
-  if (path.includes(".git")) {
     return false
   }
 

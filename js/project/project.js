@@ -212,6 +212,7 @@ const makeTsGdProject = async (ts2gdJson, program) => {
     const initialFiles = [];
     let addFn;
     let readyFn;
+    // TODO: This takes too long to forcibly do it
     const watcher = await new Promise((resolve) => {
         addFn = (path) => initialFiles.push(path);
         readyFn = () => resolve(watcher);
@@ -233,15 +234,15 @@ const shouldIncludePath = (path) => {
     if (path.includes("node_modules")) {
         return false;
     }
+    if (path.includes(".git")) {
+        return false;
+    }
     if (!path.includes(".")) {
         // Folder (i hope)
         // TODO: Might be able to check stat to be more sure about this
         return true;
     }
     if (path.includes("godot_defs")) {
-        return false;
-    }
-    if (path.includes(".git")) {
         return false;
     }
     if (asset_font_1.AssetFont.extensions().some((ext) => path.endsWith(ext))) {
