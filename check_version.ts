@@ -46,6 +46,7 @@ export const checkVersionAsync = async () => {
   }
 
   if (latestPublishedVersion !== packageJson.version) {
+    console.log(``)
     console.log(`There is a new version (${latestPublishedVersion}) of ts2gd.`)
     console.log(`Install it with`)
     console.log(``)

@@ -47,8 +47,6 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: template strings
-// TODO: str()
-// TODO: ": float" in parameters is not respected
 // TODO: change_scene should accept a AssetPath filtered on tscn
 // TODO: parse_json return type.
 // TODO: Why is car.tscn a Node, not a Spatial?
@@ -75,10 +73,12 @@ TypeError: Cannot read property 'trim' of undefined
 import ts from "typescript"
 import * as process from "process"
 
+import packageJson from "./package.json"
 import { makeTsGdProject } from "./project/project"
 import { Paths } from "./project/tsgd_json"
 import { checkVersionAsync } from "./check_version"
 import { Flags, parseArgs, printHelp } from "./parse_args"
+import chalk from "chalk"
 
 const setup = () => {
   const tsgdJson = new Paths()
@@ -91,7 +91,7 @@ const setup = () => {
 
   let tsUpdateResolve!: (value: void | PromiseLike<void>) => void
 
-  const tsUpdate = new Promise<void>((resolve) => {
+  const tsInitialLoad = new Promise<void>((resolve) => {
     tsUpdateResolve = resolve
   })
 
@@ -164,30 +164,39 @@ const setup = () => {
     watchProgram,
     tsgdJson,
     reportWatchStatusChanged,
-    tsUpdate,
+    tsInitialLoad,
   }
+}
+
+const showLoadingMessage = (msg: string) => {
+  console.clear()
+  console.log(chalk.blueBright(packageJson.version), "-", msg)
 }
 
 const main = async (flags: Flags) => {
   const start = new Date().getTime()
 
-  const { watchProgram, tsgdJson, tsUpdate } = setup()
+  showLoadingMessage("Initializing TypeScript...")
+  const { watchProgram, tsgdJson, tsInitialLoad } = setup()
 
+  showLoadingMessage("Scanning project...")
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
   if (project.shouldBuildDefinitions(flags)) {
+    showLoadingMessage("Building definition files...")
     await project.buildAllDefinitions()
   }
 
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
-  await tsUpdate
+  showLoadingMessage("Waiting for TypeScript to finish...")
+  await tsInitialLoad
 
+  showLoadingMessage("Compiling all source files...")
   project.compileAllSourceFiles()
 
-  console.info(
-    "Initial compilation complete in",
-    (new Date().getTime() - start) / 1000 + "s"
+  showLoadingMessage(
+    `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`
   )
 }
 
