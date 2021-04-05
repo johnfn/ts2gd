@@ -7,6 +7,7 @@ exports.makeTsGdProject = exports.TsGdProjectClass = void 0;
 const chokidar_1 = __importDefault(require("chokidar"));
 const path_1 = __importDefault(require("path"));
 const chalk_1 = __importDefault(require("chalk"));
+const fs_1 = __importDefault(require("fs"));
 const asset_godot_class_1 = require("./asset_godot_class");
 const asset_godot_scene_1 = require("./asset_godot_scene");
 const asset_font_1 = require("./asset_font");
@@ -177,8 +178,20 @@ class TsGdProjectClass {
             }
         }
     }
+    shouldBuildDefinitions(flags) {
+        if (flags.buildLibraries) {
+            return true;
+        }
+        if (!fs_1.default.existsSync(TsGdProjectClass.Paths.staticGodotDefsPath)) {
+            return true;
+        }
+        if (!fs_1.default.existsSync(TsGdProjectClass.Paths.dynamicGodotDefsPath)) {
+            return true;
+        }
+        return false;
+    }
     async buildAllDefinitions() {
-        await generate_library_1.generateGodotLibraryDefinitions(this);
+        await generate_library_1.generateGodotLibraryDefinitions();
         build_asset_paths_1.buildAssetPathsType(this);
         for (const script of this.sourceFiles()) {
             build_paths_for_node_1.buildNodePathsTypeForScript(script, this);

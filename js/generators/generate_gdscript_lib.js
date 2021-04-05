@@ -43,12 +43,12 @@ const parseMethod = (method, props) => {
     const generateAsGlobal = props?.generateAsGlobals ?? false;
     const name = method.$.name;
     const args = method.argument;
-    const isVarArgs = method.$.qualifiers === "varargs";
+    const isVarArgs = method.$.qualifiers === "vararg";
     const isConstructor = containingClassName !== undefined && name === containingClassName;
     const docString = generate_library_1.formatJsDoc(method.description[0].trim());
     let returnType = generate_library_1.godotTypeToTsType(method.return?.[0]["$"].type ?? "Variant");
     let argumentList = "";
-    if (args) {
+    if (args || isVarArgs) {
         if (isVarArgs) {
             argumentList = "...args: any[]";
         }

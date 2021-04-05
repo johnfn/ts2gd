@@ -90,10 +90,6 @@ export const parseMethod = (
   let returnType = godotTypeToTsType(method.return?.[0]["$"].type ?? "Variant")
   let argumentList: string = ""
 
-  if (name === "str") {
-    console.log(method)
-  }
-
   if (args || isVarArgs) {
     if (isVarArgs) {
       argumentList = "...args: any[]"

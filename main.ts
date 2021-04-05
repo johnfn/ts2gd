@@ -73,14 +73,13 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: For autoload classes, marking them @autoload would then update the config file
 //         - this would require being able to save back config files accurately.
 
-import packageJson from "./package.json"
 import ts from "typescript"
 import * as process from "process"
 
 import { makeTsGdProject } from "./project/project"
 import { Paths } from "./project/tsgd_json"
-import https from "https"
-import chalk from "chalk"
+import { checkVersionAsync } from "./check_version"
+import { Flags, parseArgs, printHelp } from "./parse_args"
 
 const setup = () => {
   const tsgdJson = new Paths()
@@ -154,14 +153,16 @@ const setup = () => {
   }
 }
 
-const main = async () => {
+const main = async (flags: Flags) => {
   const start = new Date().getTime()
 
   const { watchProgram, tsgdJson, onTsUpdate } = setup()
 
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
-  await project.buildAllDefinitions()
+  if (project.shouldBuildDefinitions(flags)) {
+    await project.buildAllDefinitions()
+  }
 
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
@@ -180,58 +181,14 @@ const main = async () => {
   )
 }
 
-const checkVersionAsync = async () => {
-  console.log(chalk.blue("ts2gd", "v" + packageJson.version))
-
-  const options = {
-    hostname: "registry.npmjs.org",
-    path: "/ts2gd",
-  }
-
-  let response = ""
-
-  await new Promise<void>((resolve) => {
-    const req = https.request(options, (res) => {
-      res.on("data", (d: Buffer) => {
-        response += d
-      })
-
-      res.on("end", () => {
-        resolve()
-      })
-    })
-
-    req.end()
-  })
-
-  const versionNameDate: [string, Date][] = Object.entries(
-    JSON.parse(response).time as { [key: string]: string }
-  )
-    .sort(
-      (first: [string, string], second: [string, string]) =>
-        new Date(second[1]).getTime() - new Date(first[1]).getTime()
-    )
-    .map(([a, b]) => [a, new Date(b)])
-
-  let latestPublishedVersion = ""
-  for (const [versionName, date] of versionNameDate) {
-    if (versionName === "modified") {
-      continue
-    }
-
-    latestPublishedVersion = versionName
-    break
-  }
-
-  if (latestPublishedVersion !== packageJson.version) {
-    console.log(`There is a new version of ts2gd: ${latestPublishedVersion}`)
-    console.log(`install it with`)
-    console.log(``)
-    console.log(chalk.blue(`npm install --global ts2gd`))
-  }
-}
-
 if (!process.argv[1].includes("test")) {
+  const flags = parseArgs()
+
   checkVersionAsync()
-  main()
+
+  if (flags.help) {
+    printHelp()
+  } else {
+    main(flags)
+  }
 }

@@ -2,6 +2,7 @@ import chokidar from "chokidar"
 import path from "path"
 import ts from "typescript"
 import chalk from "chalk"
+import fs from "fs"
 
 import { AssetGodotClass as GodotFile } from "./asset_godot_class"
 import { AssetGodotScene } from "./asset_godot_scene"
@@ -18,6 +19,7 @@ import { buildActionNames } from "../build_action_names"
 import { AssetImage } from "./asset_image"
 import { AssetGlb } from "./asset_glb"
 import { generateGodotLibraryDefinitions } from "../generators/generate_library"
+import { Flags } from "../parse_args"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -241,8 +243,24 @@ export class TsGdProjectClass {
     }
   }
 
+  shouldBuildDefinitions(flags: Flags) {
+    if (flags.buildLibraries) {
+      return true
+    }
+
+    if (!fs.existsSync(TsGdProjectClass.Paths.staticGodotDefsPath)) {
+      return true
+    }
+
+    if (!fs.existsSync(TsGdProjectClass.Paths.dynamicGodotDefsPath)) {
+      return true
+    }
+
+    return false
+  }
+
   async buildAllDefinitions() {
-    await generateGodotLibraryDefinitions(this)
+    await generateGodotLibraryDefinitions()
     buildAssetPathsType(this)
 
     for (const script of this.sourceFiles()) {

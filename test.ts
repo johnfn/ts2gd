@@ -75,6 +75,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       assets: [],
       program: undefined as any,
       compileAllSourceFiles: () => {},
+      shouldBuildDefinitions: () => false,
       mainScene: {
         fsPath: "",
         resPath: "",

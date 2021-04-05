@@ -134,9 +134,7 @@ export function formatJsDoc(input: string): string {
   return result
 }
 
-export async function generateGodotLibraryDefinitions(
-  project: TsGdProjectClass
-): Promise<void> {
+export async function generateGodotLibraryDefinitions(): Promise<void> {
   // TODO: Refactor this out
   let csgClassesPath = path.join(
     TsGdProjectClass.Paths.godotSourceRepoPath ?? "",

@@ -78,6 +78,7 @@ const compileTs = (code, isAutoload) => {
             assets: [],
             program: undefined,
             compileAllSourceFiles: () => { },
+            shouldBuildDefinitions: () => false,
             mainScene: {
                 fsPath: "",
                 resPath: "",

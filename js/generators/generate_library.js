@@ -108,7 +108,7 @@ function formatJsDoc(input) {
     return result;
 }
 exports.formatJsDoc = formatJsDoc;
-async function generateGodotLibraryDefinitions(project) {
+async function generateGodotLibraryDefinitions() {
     // TODO: Refactor this out
     let csgClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/csg/doc_classes");
     let normalClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "doc/classes");
