@@ -303,3 +303,16 @@ export function copyFolderRecursiveSync(source: string, target: string) {
     })
   }
 }
+
+export const getCommonElements = <T>(
+  lists: T[][],
+  eq: (a: T, b: T) => boolean
+) => {
+  if (lists.length === 0) {
+    return []
+  }
+
+  return lists[0].filter((elem) =>
+    lists.every((list) => list.find((listElem) => eq(listElem, elem)))
+  )
+}

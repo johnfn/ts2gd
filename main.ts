@@ -2,8 +2,6 @@
 
 // HIGH
 
-// rename godot_defs to sort to the top of the list e.g. .godot_defs
-
 // Autocreate tsconfig.json
 // * set up a local autobuilder to HTML5 so we can use liveshare
 
@@ -14,6 +12,23 @@
 // have a way to compile all files, and collate all errors.
 
 // Convert "throw new Error()" into a better failure
+
+// Adding a new autoload updates project.godot, but doesn't
+// recompile the files
+
+/*
+When deleting a scene:
+
+/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154
+    throw new Error("I dont know the type of that thing.")
+          ^
+Error: I dont know the type of that thing.
+    at GodotNode.tsType (/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154:11)
+    at Object.buildNodePathsTypeForScript (/Users/johnfn/code/tsgd/ts2gd/build_paths_for_node.ts:137:33)
+    at TsGdProjectClass.onChangeAsset (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:212:11)
+    at FSWatcher.<anonymous> (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:152:36)
+    at FSWatcher.emit (node:events:376:20)
+*/
 
 /*
 /Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77

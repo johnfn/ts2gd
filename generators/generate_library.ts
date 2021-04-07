@@ -378,7 +378,7 @@ ${Object.keys(enums)
     if (!fs.existsSync(csgClassesPath) || !fs.existsSync(normalClassesPath)) {
       console.info("No Godot source installation found, writing from backup...")
 
-      let localGodotDefs = path.join(__dirname, "..", "..", "godot_defs")
+      let localGodotDefs = path.join(__dirname, "..", "..", "_godot_defs")
 
       copyFolderRecursiveSync(localGodotDefs, TsGdProjectClass.Paths.rootPath)
 

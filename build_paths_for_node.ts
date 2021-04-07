@@ -2,7 +2,8 @@ import path from "path"
 import fs from "fs"
 import { AssetSourceFile } from "./project/asset_source_file"
 import { TsGdProjectClass } from "./project/project"
-import { GodotNode } from "./project/asset_godot_scene"
+import { AssetGodotScene, GodotNode } from "./project/asset_godot_scene"
+import { getCommonElements } from "./ts_utils"
 
 /**
  * Returns the paths to all children below this node, including grandchildren
@@ -62,7 +63,11 @@ export const buildNodePathsTypeForScript = (
     node: GodotNode
   }[] = []
 
-  let allPaths: [use: string, children: string[]][] = []
+  let references: (
+    | { use: string; children: string[]; type: "script" }
+    | { use: string; type: "instance" }
+    | { type: "autoload" }
+  )[] = []
 
   if (nodesWithScript.length === 0) {
     if (script.isAutoload()) {
@@ -71,12 +76,7 @@ export const buildNodePathsTypeForScript = (
 
       const rootScene = project.mainScene
       commonRelativePaths = getAllChildPaths(rootScene.rootNode)
-      allPaths = [
-        [
-          `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
-          [],
-        ],
-      ]
+      references = [{ type: "autoload" }]
       commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({
         path: `/root/${path}`,
         node,
@@ -85,7 +85,7 @@ export const buildNodePathsTypeForScript = (
       // This class is never instantiated as a node.
 
       commonRelativePaths = []
-      allPaths = []
+      references = []
 
       // TODO: Maybe flag it if it's also never used as a class.
       // Currently, this is just noise.
@@ -97,16 +97,61 @@ export const buildNodePathsTypeForScript = (
       i.children().flatMap((ch) => getAllChildPaths(ch))
     )
 
-    allPaths = nodesWithScript.map((node) => [
-      node.scene.resPath + ":" + node.scenePath(),
-      getAllChildPaths(node).map((o) => o.path),
-    ])
+    references = nodesWithScript.map((node) => ({
+      type: "script",
+      use: node.scene.resPath + ":" + node.scenePath(),
+      children: getAllChildPaths(node).map((o) => o.path),
+    }))
 
-    commonRelativePaths = relativePathsPerNode[0].filter((elem) =>
-      relativePathsPerNode.every((pathsList) =>
-        pathsList.map((pl) => pl.path).includes(elem.path)
-      )
+    commonRelativePaths = getCommonElements(
+      relativePathsPerNode,
+      (a, b) => a.path === b.path
     )
+
+    const instancedScene = nodesWithScript.find((node) => node.isRoot)?.scene
+
+    if (instancedScene) {
+      const allScenes = project.godotScenes()
+      let scenesThatContainInstance: AssetGodotScene[] = []
+
+      let moreReferences: {
+        type: "instance"
+        use: string
+      }[] = []
+
+      for (const scene of allScenes) {
+        for (const node of scene.nodes) {
+          if (node.instance() === instancedScene) {
+            moreReferences.push({
+              type: "instance",
+              use: scene.resPath + ":" + node.scenePath(),
+            })
+            scenesThatContainInstance.push(scene)
+          }
+        }
+      }
+
+      references = [...references, ...moreReferences]
+
+      scenesThatContainInstance = [...new Set(scenesThatContainInstance)]
+
+      const allScenePaths = scenesThatContainInstance.map((scene) =>
+        getAllChildPaths(scene.rootNode)
+      )
+
+      const commonScenePaths = getCommonElements(
+        allScenePaths,
+        (a, b) => a.path === b.path
+      )
+
+      commonRelativePaths = [
+        ...commonRelativePaths,
+        ...commonScenePaths.map((obj) => ({
+          node: obj.node,
+          path: "/root/" + obj.path,
+        })),
+      ]
+    }
   }
 
   // Normal case
@@ -127,13 +172,23 @@ export const buildNodePathsTypeForScript = (
   }
 
   let result = `${
-    allPaths.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""
+    references.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""
   }
-${allPaths
-  .map(
-    ([use, children]) =>
-      "// " + use + "\n" + children.map((c) => "//  - " + c + " \n").join("")
-  )
+${references
+  .map((ref) => {
+    if (ref.type === "autoload") {
+      return "// This is an autoload class\n"
+    } else if (ref.type === "script") {
+      return (
+        "// script: " +
+        ref.use +
+        "\n" +
+        ref.children.map((c) => "//  - " + c + " \n").join("")
+      )
+    } else if (ref.type === "instance") {
+      return "// instance: " + ref.use + "\n"
+    }
+  })
   .join("")}
 declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)

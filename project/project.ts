@@ -332,7 +332,7 @@ const shouldIncludePath = (path: string): boolean => {
     return true
   }
 
-  if (path.includes("godot_defs")) {
+  if (path.includes("_godot_defs")) {
     return false
   }
 
