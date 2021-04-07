@@ -2,19 +2,15 @@
 
 // HIGH
 
-// Autocreate tsconfig.json
 // * set up a local autobuilder to HTML5 so we can use liveshare
-
-// how do u access global label
-// - I think i should have get_node and get_node_safe()
-
-// Do I even handle nested folders?
-// have a way to compile all files, and collate all errors.
 
 // Convert "throw new Error()" into a better failure
 
 // Adding a new autoload updates project.godot, but doesn't
 // recompile the files
+
+// change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
+// regenerate asset_paths on restart
 
 /*
 When deleting a scene:
@@ -42,14 +38,14 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
 
+// have a way to compile all files, and collate all errors.
+
 // TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g.
 // merge conflicts. should just retry after a while.
 
 // TODO: change_scene should autocomplete .tscn files only
 
 // TODO: "cannot find module typescript"
-// TODO: if you dont have a tsconfig.json it just goes into an infinite loop
-// and we need to generate one for the skipping library stuff
 
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 
@@ -70,6 +66,7 @@ TypeError: Cannot read property 'trim' of undefined
 
 // MED
 
+// Do I even handle nested folders?
 // TODO: str() with no arguments is technically an error
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
@@ -106,6 +103,8 @@ import { Paths } from "./project/tsgd_json"
 import { checkVersionAsync } from "./check_version"
 import { Flags, parseArgs, printHelp } from "./parse_args"
 import chalk from "chalk"
+import fs from "fs"
+import { defaultTsconfig } from "./generators/generate_tsconfig"
 
 const setup = () => {
   const tsgdJson = new Paths()
@@ -195,31 +194,35 @@ const setup = () => {
   }
 }
 
-const showLoadingMessage = (msg: string) => {
+export const showLoadingMessage = (msg: string) => {
   console.clear()
-  console.info(chalk.blueBright("ts2gd v" + packageJson.version), "-", msg)
+  console.info(
+    chalk.blueBright("ts2gd v" + packageJson.version),
+    "-",
+    msg + "..."
+  )
 }
 
 const main = async (flags: Flags) => {
   const start = new Date().getTime()
 
-  showLoadingMessage("Initializing TypeScript...")
+  showLoadingMessage("Initializing TypeScript")
   const { watchProgram, tsgdJson, tsInitialLoad } = setup()
 
-  showLoadingMessage("Scanning project...")
+  showLoadingMessage("Scanning project")
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
   if (project.shouldBuildDefinitions(flags)) {
-    showLoadingMessage("Building definition files...")
+    showLoadingMessage("Building definition files")
     await project.buildAllDefinitions()
   }
 
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
-  showLoadingMessage("Waiting for TypeScript to finish...")
+  showLoadingMessage("Waiting for TypeScript to finish")
   await tsInitialLoad
 
-  showLoadingMessage("Compiling all source files...")
+  showLoadingMessage("Compiling all source files")
   project.compileAllSourceFiles()
 
   showLoadingMessage(

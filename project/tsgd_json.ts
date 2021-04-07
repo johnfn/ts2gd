@@ -1,10 +1,10 @@
 import path from "path"
-import ts from "typescript"
 import fs from "fs"
 import process from "process"
+import { showLoadingMessage } from "../main"
+import { defaultTsconfig } from "../generators/generate_tsconfig"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
-// TODO: rename this to something like "paths"
 
 export class Paths {
   /** Where the .ts files live, e.g. ./src */
@@ -98,19 +98,15 @@ export class Paths {
 
     this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
 
-    let tsconfigPath = ts.findConfigFile(
+    this.tsconfigPath = path.join(
       path.dirname(fullyQualifiedTs2gdPathWithFilename),
-      ts.sys.fileExists,
       "tsconfig.json"
     )
 
-    if (!tsconfigPath) {
-      console.error(
-        "tsconfig.json must be in the same folder as tsgd.json. Thanks!"
-      )
-      process.exit(0)
-    } else {
-      this.tsconfigPath = tsconfigPath
+    if (!fs.existsSync(this.tsconfigPath)) {
+      showLoadingMessage("Creating tsconfig.json")
+
+      fs.writeFileSync(this.tsconfigPath, defaultTsconfig)
     }
   }
 

@@ -1,6 +1,7 @@
 import { TsGdProjectClass } from "./project/project"
 import fs from "fs"
 import path from "path"
+import { AssetGodotScene } from "./project/asset_godot_scene"
 
 export function buildAssetPathsType(project: TsGdProjectClass) {
   const assetFileContents = `
@@ -10,6 +11,12 @@ ${project.assets
   .map((obj) => `  '${obj.resPath}': ${obj.tsType()}`)
   .join(",\n")}
 }
+
+declare type SceneName =
+${project.assets
+  .filter((obj): obj is AssetGodotScene => obj instanceof AssetGodotScene)
+  .map((obj) => `  | '${obj.resPath}'`)
+  .join("\n")}
 
 declare type AssetPath = keyof AssetType;
   `

@@ -49,6 +49,8 @@ export const getCodeForMethod = (
     case "typeof":
     case "print":
       return ""
+    case "change_scene":
+      return `change_scene(path: SceneName): int`
     case "get_nodes_in_group":
       return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
     case "has_group":
