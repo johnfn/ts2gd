@@ -251,6 +251,10 @@ export const parseCallExpression = (
         expr = "yield"
       }
 
+      if (expr === "self.get_node_safe") {
+        expr = "self.get_node"
+      }
+
       // Translate `this.emit_signal(this.signal)`
       // into `this.emit_signal("signal")`
       if (expr === "self.emit_signal") {
@@ -422,5 +426,37 @@ func func2(x: String, captures):
   return x
 var a = []
 __map(__filter(a, funcref(self, "func1"), {}), funcref(self, "func2"), {})
+`,
+}
+
+export const testRewriteGetNode: Test = {
+  ts: `
+export class Test {
+  foo() {
+    this.get_node_safe('hello')
+  }
+}
+  `,
+  expected: `
+class_name Test
+
+func foo():
+  self.get_node("hello")
+`,
+}
+
+export const testRewriteGetNode2: Test = {
+  ts: `
+export class Test {
+  foo() {
+    this.get_node('hello')
+  }
+}
+  `,
+  expected: `
+class_name Test
+
+func foo():
+  self.get_node("hello")
 `,
 }

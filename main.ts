@@ -1,6 +1,19 @@
 #!/usr/bin/env ts-node
 
+// HIGH
+
+// rename godot_defs to sort to the top of the list e.g. .godot_defs
+
+// Autocreate tsconfig.json
+// * set up a local autobuilder to HTML5 so we can use liveshare
+
 // how do u access global label
+// - I think i should have get_node and get_node_safe()
+
+// Do I even handle nested folders?
+// have a way to compile all files, and collate all errors.
+
+// Convert "throw new Error()" into a better failure
 
 /*
 /Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77
@@ -10,8 +23,6 @@ TypeError: Cannot read property 'trim' of undefined
     at eof (/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77:36)
     at Object.parseGodotConfigFile (/Users/johnfn/code/tsgd/ts2gd/project/godot
 */
-
-// HIGH
 
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
@@ -44,6 +55,7 @@ TypeError: Cannot read property 'trim' of undefined
 
 // MED
 
+// TODO: str() with no arguments is technically an error
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: template strings
@@ -170,7 +182,7 @@ const setup = () => {
 
 const showLoadingMessage = (msg: string) => {
   console.clear()
-  console.log(chalk.blueBright("ts2gd v" + packageJson.version), "-", msg)
+  console.info(chalk.blueBright("ts2gd v" + packageJson.version), "-", msg)
 }
 
 const main = async (flags: Flags) => {

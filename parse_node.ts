@@ -5,7 +5,7 @@ import { parseBinaryExpression } from "./parse_node/parse_binary_expression"
 import { parseSourceFile } from "./parse_node/parse_source_file"
 import {
   generatePrecedingNewlines,
-  syntaxToKind as kindToString,
+  syntaxKindToString as kindToString,
 } from "./ts_utils"
 import { parseTypeReference } from "./parse_node/parse_type_reference"
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal"

@@ -117,13 +117,28 @@ export function isEnumType(type: ts.Type) {
   )
 }
 
-export const syntaxToKind = (kind: ts.Node["kind"]) => {
+export const syntaxKindToString = (kind: ts.Node["kind"]) => {
   return ts.SyntaxKind[kind]
+}
+
+export const logErrorAtNode = (node: ts.Node, error: string) => {
+  const {
+    line,
+    character,
+  } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart())
+  console.warn()
+  console.warn(
+    "Error at",
+    `${chalk.blueBright(node.getSourceFile().fileName)}:${chalk.yellow(
+      line + 1
+    )}:${chalk.yellow(character + 1)}`
+  )
+  console.warn(chalk.redBright(error))
 }
 
 /**
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
- * we can be aboue this type.
+ * we can be about this type.
  *
  * Note we need actualType because if we have let x: float, TS will say the
  * type is number (not float!), which isn't very useful.
@@ -165,22 +180,9 @@ export function getGodotType(
   }
 
   if (tsTypeName === "number") {
-    const {
-      line,
-      character,
-    } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart())
-    console.warn(
-      `${chalk.blueBright(node.getSourceFile().fileName)}:${chalk.yellow(
-        line + 1
-      )}:${chalk.yellow(character + 1)}`
-    )
-    console.warn(
-      chalk.redBright(`Please add either "int" or "float" here (not number)`)
-    )
+    logErrorAtNode(node, `Please add either "int" or "float" here (not number)`)
 
     console.warn()
-    console.warn(node.getText())
-    console.warn(node.parent.getText())
 
     return "float"
   }

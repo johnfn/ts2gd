@@ -4,7 +4,14 @@ import { AssetSourceFile } from "./project/asset_source_file"
 import { TsGdProjectClass } from "./project/project"
 import { GodotNode } from "./project/asset_godot_scene"
 
-export const getAllRelativePaths = (
+/**
+ * Returns the paths to all children below this node, including grandchildren
+ * etc.
+ *
+ * @param node
+ * @param prefix
+ */
+export const getAllChildPaths = (
   node: GodotNode,
   prefix = ""
 ): { path: string; node: GodotNode }[] => {
@@ -12,7 +19,7 @@ export const getAllRelativePaths = (
   let result: { path: string; node: GodotNode }[] = [{ path: myPath, node }]
 
   for (const child of node.children()) {
-    result = [...result, ...getAllRelativePaths(child, myPath)]
+    result = [...result, ...getAllChildPaths(child, myPath)]
   }
 
   return result
@@ -55,7 +62,7 @@ export const buildNodePathsTypeForScript = (
     node: GodotNode
   }[] = []
 
-  let allPaths: string[] = []
+  let allPaths: [use: string, children: string[]][] = []
 
   if (nodesWithScript.length === 0) {
     if (script.isAutoload()) {
@@ -63,9 +70,12 @@ export const buildNodePathsTypeForScript = (
       // TODO: Should we generate /root/ in the node path too?
 
       const rootScene = project.mainScene
-      commonRelativePaths = getAllRelativePaths(rootScene.rootNode)
+      commonRelativePaths = getAllChildPaths(rootScene.rootNode)
       allPaths = [
-        `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
+        [
+          `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
+          [],
+        ],
       ]
       commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({
         path: `/root/${path}`,
@@ -84,11 +94,13 @@ export const buildNodePathsTypeForScript = (
     }
   } else {
     const relativePathsPerNode = nodesWithScript.map((i) =>
-      i.children().flatMap((ch) => getAllRelativePaths(ch))
+      i.children().flatMap((ch) => getAllChildPaths(ch))
     )
-    allPaths = nodesWithScript.map(
-      (node) => node.scene.resPath + ":" + node.scenePath()
-    )
+
+    allPaths = nodesWithScript.map((node) => [
+      node.scene.resPath + ":" + node.scenePath(),
+      getAllChildPaths(node).map((o) => o.path),
+    ])
 
     commonRelativePaths = relativePathsPerNode[0].filter((elem) =>
       relativePathsPerNode.every((pathsList) =>
@@ -117,7 +129,12 @@ export const buildNodePathsTypeForScript = (
   let result = `${
     allPaths.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""
   }
-${allPaths.map((x) => "// " + x).join("\n")}
+${allPaths
+  .map(
+    ([use, children]) =>
+      "// " + use + "\n" + children.map((c) => "//  - " + c + " \n").join("")
+  )
+  .join("")}
 declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
   .map(([path, importStr]) => `  "${path}": ${importStr},`)
@@ -131,7 +148,8 @@ import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
-    get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    get_node(path: string): Node
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
   }
 

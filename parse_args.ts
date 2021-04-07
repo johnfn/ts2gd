@@ -23,15 +23,15 @@ export const parseArgs = () => {
 }
 
 export const printHelp = () => {
-  console.log()
-  console.log("Arguments:")
-  console.log("-help              Print this help.")
-  console.log(
+  console.info()
+  console.info("Arguments:")
+  console.info("-help              Print this help.")
+  console.info(
     "-buildLibraries    Force ts2gd to regenerate the TypeScript definitions for Godot."
   )
-  console.log()
-  console.log()
-  console.log(
+  console.info()
+  console.info()
+  console.info(
     "See README on GitHub for much more detail: https://github.com/johnfn/ts2gd"
   )
 }

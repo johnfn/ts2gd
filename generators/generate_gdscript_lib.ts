@@ -44,7 +44,6 @@ export const getCodeForMethod = (
   } = props
 
   switch (name) {
-    case "get_node":
     case "connect":
     case "yield":
     case "typeof":
@@ -162,8 +161,6 @@ ${parsedMethod.codegen}
   }
 
   return result
-
-  // console.log(result)
 }
 
 // generateGdscriptLib(

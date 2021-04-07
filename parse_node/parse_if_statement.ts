@@ -18,8 +18,7 @@ export const parseIfStatement = (
 if ${expression}:
   ${thenStatement}${
       elseStatement
-        ? `
-else:
+        ? `else:
   ${elseStatement}`
         : ""
     }`,

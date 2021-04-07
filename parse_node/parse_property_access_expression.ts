@@ -1,7 +1,12 @@
 import ts, { SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript"
 import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { Test } from "../test"
-import { isDictionary, isEnumType, isNullable, syntaxToKind } from "../ts_utils"
+import {
+  isDictionary,
+  isEnumType,
+  isNullable,
+  syntaxKindToString,
+} from "../ts_utils"
 
 const isRhs = (node: ts.PropertyAccessExpression) => {
   let parentExpression: ts.Node = node

@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript"
 import { combine, ParseNodeType, ParseState } from "../parse_node"
 import path from "path"
-import { isEnumType } from "../ts_utils"
+import { isEnumType, logErrorAtNode } from "../ts_utils"
 import { TsGdProjectClass } from "../project/project"
 import { UsageDomain } from "tsutils"
 
@@ -37,33 +37,30 @@ export const getImportResPathForEnum = (
   resPath: string
   enumName: string
 } => {
-  const symbol = node.getSymbol()
+  const enumSymbol = node.getSymbol()
 
-  if (!symbol) {
+  if (!enumSymbol) {
     throw new Error("Can't find symbol for node.")
   }
 
-  const declarations = symbol.declarations
+  const enumDeclarations = enumSymbol.declarations
 
-  if (declarations.length === 0 || declarations.length > 1) {
-    throw new Error(`Invalid length for declarations: ${declarations.length}`)
+  if (enumDeclarations.length === 0 || enumDeclarations.length > 1) {
+    throw new Error(
+      `Invalid length for declarations: ${enumDeclarations.length}`
+    )
   }
 
-  const decl = declarations[0]
-  const sourceFile = decl.getSourceFile()
+  const enumDeclaration = enumDeclarations[0]
+  const enumSourceFile = enumDeclaration.getSourceFile()
 
-  const importedSourceFile = props.project
+  const enumSourceFileAsset = props.project
     .sourceFiles()
-    .find((sf) => sf.fsPath === sourceFile.fileName)
+    .find((sf) => sf.fsPath === enumSourceFile.fileName)
 
-  if (!importedSourceFile) {
-    console.log(
-      "All source files:\n",
-      props.project.sourceFiles().map((f) => f.fsPath + "\n")
-    )
-
+  if (!enumSourceFileAsset) {
     throw new Error(
-      `Can't find associated sourcefile for ${sourceFile.fileName}`
+      `Can't find associated sourcefile for ${enumSourceFile.fileName}`
     )
   }
 
@@ -73,13 +70,13 @@ export const getImportResPathForEnum = (
     enumTypeString = enumTypeString.slice("typeof ".length)
   }
 
-  const pathWithoutEnum = importedSourceFile.resPath
+  const pathWithoutEnum = enumSourceFileAsset.resPath
   const importPath =
     pathWithoutEnum.slice(0, -".gd".length) + "_" + enumTypeString + ".gd"
 
   return {
     resPath: importPath,
-    sourceFile,
+    sourceFile: enumSourceFile,
     enumName: enumTypeString,
   }
 }
@@ -148,8 +145,9 @@ export const parseImportDeclaration = (
             continue
           }
 
-          throw new Error(`Error! ${pathToImportedTs} import not found.
-  in ${node.getSourceFile().fileName}`)
+          logErrorAtNode(node, `Import ${pathToImportedTs} not found.`)
+
+          continue
         }
 
         let typeString = props.program.getTypeChecker().typeToString(type)

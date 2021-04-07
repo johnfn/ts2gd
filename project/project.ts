@@ -156,6 +156,12 @@ export class TsGdProjectClass {
   onAddAsset(path: string) {
     const newAsset = this.createAsset(path)
 
+    // Do this first because some assets expect themselves to exist - e.g.
+    // an enum inside a source file.
+    if (newAsset instanceof BaseAsset) {
+      this.assets.push(newAsset)
+    }
+
     if (newAsset instanceof AssetSourceFile) {
       newAsset.compile(this.program)
     } else if (newAsset instanceof AssetGodotScene) {
@@ -164,10 +170,6 @@ export class TsGdProjectClass {
     }
 
     buildAssetPathsType(this)
-
-    if (newAsset instanceof BaseAsset) {
-      this.assets.push(newAsset)
-    }
   }
 
   onChangeAsset(path: string) {
@@ -189,7 +191,6 @@ export class TsGdProjectClass {
 
     if (path.endsWith(".godot")) {
       this.godotProject = new GodotProjectFile(path, this)
-      console.log(this.godotProject.autoloads)
 
       return
     }
@@ -233,6 +234,8 @@ export class TsGdProjectClass {
     if (changedAsset instanceof AssetSourceFile) {
       changedAsset.destroy()
     }
+
+    this.assets = this.assets.filter((asset) => asset !== changedAsset)
   }
 
   compileAllSourceFiles() {

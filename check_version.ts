@@ -3,7 +3,7 @@ import https from "https"
 import chalk from "chalk"
 
 export const checkVersionAsync = async () => {
-  console.log(chalk.blueBright("ts2gd", "v" + packageJson.version))
+  console.info(chalk.blueBright("ts2gd", "v" + packageJson.version))
 
   const options = {
     hostname: "registry.npmjs.org",
@@ -46,10 +46,10 @@ export const checkVersionAsync = async () => {
   }
 
   if (latestPublishedVersion !== packageJson.version) {
-    console.log(``)
-    console.log(`There is a new version (${latestPublishedVersion}) of ts2gd.`)
-    console.log(`Install it with`)
-    console.log(``)
-    console.log(chalk.blue(`npm install --global ts2gd`))
+    console.info(``)
+    console.info(`There is a new version (${latestPublishedVersion}) of ts2gd.`)
+    console.info(`Install it with`)
+    console.info(``)
+    console.info(chalk.blue(`npm install --global ts2gd`))
   }
 }

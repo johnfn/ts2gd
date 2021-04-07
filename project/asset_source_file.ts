@@ -1,11 +1,12 @@
 import fs from "fs"
-import ts from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import path from "path"
 
 import { parseNode, ParseNodeType } from "../parse_node"
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "./project"
 import { Scope } from "../scope"
+import { logErrorAtNode } from "../ts_utils"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
@@ -16,8 +17,11 @@ export class AssetSourceFile extends BaseAsset {
   /** Like "res://src/main.gd" */
   resPath: string
 
-  /** Like "/Users/johnfn/GodotProject/compiled/Hud.gd" */
+  /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
   gdPath: string
+
+  /** Like "/Users/johnfn/GodotProject/compiled/ " */
+  gdContainingDirectory: string
 
   /** Like "/Users/johnfn/GodotProject/src/main.ts" */
   fsPath: string
@@ -40,6 +44,7 @@ export class AssetSourceFile extends BaseAsset {
 
     this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
     this.gdPath = gdPath
+    this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1)
     this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
       TsGdProjectClass.Paths.rootPath.length + 1
@@ -47,40 +52,42 @@ export class AssetSourceFile extends BaseAsset {
     this.project = project
   }
 
-  reload() {
-    this._cachedClassName = null
-  }
-
-  // TODO: Fix up test.ts
-  // DONT USE THIS!
-  _cachedClassName: string | null = null
+  reload() {}
 
   className(): string | null {
-    if (this._cachedClassName) {
-      return this._cachedClassName
+    let ast = this.project.program.getProgram().getSourceFile(this.fsPath)
+
+    if (!ast) {
+      console.error(`Referenced file ${this.fsPath} does not exist.`)
+      console.error(
+        `This is a ts2gd bug. Please create an issue on GitHub for it.`
+      )
+
+      return null
     }
 
-    let tsFileContent = fs.readFileSync(this.fsPath, "utf-8")
-    // TODO: this is a bit brittle
-    let classNameMatch = [
-      ...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /gm),
-    ]
+    const topLevelClasses = ast
+      .getChildren()[0] // SyntaxList
+      .getChildren()
+      .filter(
+        (node): node is ts.ClassDeclaration =>
+          node.kind === SyntaxKind.ClassDeclaration
+      )
 
-    let className: string
-
-    if (classNameMatch && classNameMatch.length === 1) {
-      className = classNameMatch[0][1]
-    } else {
-      if (classNameMatch.length > 1) {
-        throw new Error(`Found too many exported classes in ${this.fsPath}`)
-      } else {
-        return null
-      }
+    if (topLevelClasses.length > 1) {
+      logErrorAtNode(
+        topLevelClasses[1],
+        "You can't declare more than one class per file."
+      )
     }
 
-    this._cachedClassName = className
+    const name = topLevelClasses[0].name
 
-    return this._cachedClassName
+    if (!name) {
+      logErrorAtNode(topLevelClasses[0], "This class cannot be anonymous.")
+    }
+
+    return name?.text ?? null
   }
 
   tsType(): string | null {
@@ -145,10 +152,7 @@ export class AssetSourceFile extends BaseAsset {
       scope: new Scope(watchProgram.getProgram().getProgram()),
       project: this.project,
       mostRecentControlStructureIsSwitch: false,
-      isAutoload:
-        this.project.godotProject.autoloads.find(
-          (autoload) => autoload.resPath === this.resPath
-        ) !== undefined,
+      isAutoload: this.isAutoload(),
       program: watchProgram.getProgram().getProgram(),
       usages: new Map(),
     })
@@ -165,18 +169,20 @@ export class AssetSourceFile extends BaseAsset {
   }
 
   destroy() {
+    // Delete the .gd file
     fs.rmSync(this.gdPath)
 
-    if (!this._lastCompilationResult) {
-      return
-    }
+    // Delete the generated enum files
 
-    for (const { content, name } of this._lastCompilationResult.enums ?? []) {
-      fs.writeFileSync(this.getEnumPath(name), content)
-    }
-  }
+    const filesInDirectory = fs.readdirSync(this.gdContainingDirectory)
+    const nameWithoutExtension = this.gdPath.slice(0, -".gd".length)
 
-  static extensions() {
-    return [".ts"]
+    for (const fileName of filesInDirectory) {
+      const fullPath = this.gdContainingDirectory + fileName
+
+      if (fullPath.startsWith(nameWithoutExtension)) {
+        fs.rmSync(fullPath)
+      }
+    }
   }
 }
