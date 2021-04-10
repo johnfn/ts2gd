@@ -5,11 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetSourceFile = void 0;
 const fs_1 = __importDefault(require("fs"));
+const typescript_1 = require("typescript");
 const path_1 = __importDefault(require("path"));
 const parse_node_1 = require("../parse_node");
 const base_asset_1 = require("./base_asset");
 const project_1 = require("./project");
 const scope_1 = require("../scope");
+const ts_utils_1 = require("../ts_utils");
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
 // dont make them on edit).
@@ -19,43 +21,35 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         super();
         // TODO: Fix up test.ts
         // DONT USE THIS!
-        this._cachedClassName = null;
-        // TODO: Fix up test.ts
-        // DONT USE THIS!
         this._lastCompilationResult = undefined;
         let gdPath = path_1.default.join(project_1.TsGdProjectClass.Paths.destGdPath, sourceFilePath.slice(project_1.TsGdProjectClass.Paths.sourceTsPath.length, -path_1.default.extname(sourceFilePath).length) + ".gd");
         this.resPath = project_1.TsGdProjectClass.FsPathToResPath(gdPath);
         this.gdPath = gdPath;
+        this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1);
         this.fsPath = sourceFilePath;
         this.tsRelativePath = sourceFilePath.slice(project_1.TsGdProjectClass.Paths.rootPath.length + 1);
         this.project = project;
     }
-    reload() {
-        this._cachedClassName = null;
-    }
+    reload() { }
     className() {
-        if (this._cachedClassName) {
-            return this._cachedClassName;
+        let ast = this.project.program.getProgram().getSourceFile(this.fsPath);
+        if (!ast) {
+            console.error(`Referenced file ${this.fsPath} does not exist.`);
+            console.error(`This is a ts2gd bug. Please create an issue on GitHub for it.`);
+            return null;
         }
-        let tsFileContent = fs_1.default.readFileSync(this.fsPath, "utf-8");
-        // TODO: this is a bit brittle
-        let classNameMatch = [
-            ...tsFileContent.matchAll(/^(?:export )?class ([^ ]*?) /gm),
-        ];
-        let className;
-        if (classNameMatch && classNameMatch.length === 1) {
-            className = classNameMatch[0][1];
+        const topLevelClasses = ast
+            .getChildren()[0] // SyntaxList
+            .getChildren()
+            .filter((node) => node.kind === typescript_1.SyntaxKind.ClassDeclaration);
+        if (topLevelClasses.length > 1) {
+            ts_utils_1.logErrorAtNode(topLevelClasses[1], "You can't declare more than one class per file.");
         }
-        else {
-            if (classNameMatch.length > 1) {
-                throw new Error(`Found too many exported classes in ${this.fsPath}`);
-            }
-            else {
-                return null;
-            }
+        const name = topLevelClasses[0].name;
+        if (!name) {
+            ts_utils_1.logErrorAtNode(topLevelClasses[0], "This class cannot be anonymous.");
         }
-        this._cachedClassName = className;
-        return this._cachedClassName;
+        return name?.text ?? null;
     }
     tsType() {
         const className = this.className();
@@ -99,7 +93,7 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
             scope: new scope_1.Scope(watchProgram.getProgram().getProgram()),
             project: this.project,
             mostRecentControlStructureIsSwitch: false,
-            isAutoload: this.project.godotProject.autoloads.find((autoload) => autoload.resPath === this.resPath) !== undefined,
+            isAutoload: this.isAutoload(),
             program: watchProgram.getProgram().getProgram(),
             usages: new Map(),
         });
@@ -112,16 +106,17 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         }
     }
     destroy() {
+        // Delete the .gd file
         fs_1.default.rmSync(this.gdPath);
-        if (!this._lastCompilationResult) {
-            return;
+        // Delete the generated enum files
+        const filesInDirectory = fs_1.default.readdirSync(this.gdContainingDirectory);
+        const nameWithoutExtension = this.gdPath.slice(0, -".gd".length);
+        for (const fileName of filesInDirectory) {
+            const fullPath = this.gdContainingDirectory + fileName;
+            if (fullPath.startsWith(nameWithoutExtension)) {
+                fs_1.default.rmSync(fullPath);
+            }
         }
-        for (const { content, name } of this._lastCompilationResult.enums ?? []) {
-            fs_1.default.writeFileSync(this.getEnumPath(name), content);
-        }
-    }
-    static extensions() {
-        return [".ts"];
     }
 }
 exports.AssetSourceFile = AssetSourceFile;

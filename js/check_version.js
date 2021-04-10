@@ -8,7 +8,7 @@ const package_json_1 = __importDefault(require("./package.json"));
 const https_1 = __importDefault(require("https"));
 const chalk_1 = __importDefault(require("chalk"));
 const checkVersionAsync = async () => {
-    console.log(chalk_1.default.blueBright("ts2gd", "v" + package_json_1.default.version));
+    console.info(chalk_1.default.blueBright("ts2gd", "v" + package_json_1.default.version));
     const options = {
         hostname: "registry.npmjs.org",
         path: "/ts2gd",
@@ -37,11 +37,11 @@ const checkVersionAsync = async () => {
         break;
     }
     if (latestPublishedVersion !== package_json_1.default.version) {
-        console.log(``);
-        console.log(`There is a new version (${latestPublishedVersion}) of ts2gd.`);
-        console.log(`Install it with`);
-        console.log(``);
-        console.log(chalk_1.default.blue(`npm install --global ts2gd`));
+        console.info(``);
+        console.info(`There is a new version (${latestPublishedVersion}) of ts2gd.`);
+        console.info(`Install it with`);
+        console.info(``);
+        console.info(chalk_1.default.blue(`npm install --global ts2gd`));
     }
 };
 exports.checkVersionAsync = checkVersionAsync;

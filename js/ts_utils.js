@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.syntaxToKind = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullable = void 0;
+exports.getCommonElements = exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.logErrorAtNode = exports.syntaxKindToString = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullable = void 0;
 const typescript_1 = __importStar(require("typescript"));
 const chalk_1 = __importDefault(require("chalk"));
 const fs_1 = __importDefault(require("fs"));
@@ -118,13 +118,20 @@ function isEnumType(type) {
         valueDeclaration.kind === typescript_1.default.SyntaxKind.EnumDeclaration);
 }
 exports.isEnumType = isEnumType;
-const syntaxToKind = (kind) => {
+const syntaxKindToString = (kind) => {
     return typescript_1.default.SyntaxKind[kind];
 };
-exports.syntaxToKind = syntaxToKind;
+exports.syntaxKindToString = syntaxKindToString;
+const logErrorAtNode = (node, error) => {
+    const { line, character, } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart());
+    console.warn();
+    console.warn("Error at", `${chalk_1.default.blueBright(node.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
+    console.warn(chalk_1.default.redBright(error));
+};
+exports.logErrorAtNode = logErrorAtNode;
 /**
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
- * we can be aboue this type.
+ * we can be about this type.
  *
  * Note we need actualType because if we have let x: float, TS will say the
  * type is number (not float!), which isn't very useful.
@@ -155,12 +162,8 @@ function getGodotType(node, props, initializer, actualType) {
             .typeToString(typecheckerInferredType);
     }
     if (tsTypeName === "number") {
-        const { line, character, } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart());
-        console.warn(`${chalk_1.default.blueBright(node.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
-        console.warn(chalk_1.default.redBright(`Please add either "int" or "float" here (not number)`));
+        exports.logErrorAtNode(node, `Please add either "int" or "float" here (not number)`);
         console.warn();
-        console.warn(node.getText());
-        console.warn(node.parent.getText());
         return "float";
     }
     // TODO: Optionals make this nearly impossible
@@ -257,4 +260,11 @@ function copyFolderRecursiveSync(source, target) {
     }
 }
 exports.copyFolderRecursiveSync = copyFolderRecursiveSync;
+const getCommonElements = (lists, eq) => {
+    if (lists.length === 0) {
+        return [];
+    }
+    return lists[0].filter((elem) => lists.every((list) => list.find((listElem) => eq(listElem, elem))));
+};
+exports.getCommonElements = getCommonElements;
 //# sourceMappingURL=ts_utils.js.map

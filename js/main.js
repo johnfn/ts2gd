@@ -1,6 +1,5 @@
-#!/usr/bin/env ts-node
 "use strict";
-// how do u access global label
+// HIGH
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -24,6 +23,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.showLoadingMessage = void 0;
+// adding a node to a scene should update paths in the other nodes in that scene.
+// Have a github action that auto publishes an html5 build
+// Convert "throw new Error()" into a better failure
+// change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
+// regenerate asset_paths on restart
+// Make a testing harness for project-related stuff.
+// consider always running buildAllDefinitions. it might be safer
+/*
+When deleting a scene:
+
+/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154
+    throw new Error("I dont know the type of that thing.")
+          ^
+Error: I dont know the type of that thing.
+    at GodotNode.tsType (/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154:11)
+    at Object.buildNodePathsTypeForScript (/Users/johnfn/code/tsgd/ts2gd/build_paths_for_node.ts:137:33)
+    at TsGdProjectClass.onChangeAsset (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:212:11)
+    at FSWatcher.<anonymous> (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:152:36)
+    at FSWatcher.emit (node:events:376:20)
+*/
 /*
 /Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77
     while (file[nextNonemptyIndex].trim() === "") {
@@ -32,19 +52,17 @@ TypeError: Cannot read property 'trim' of undefined
     at eof (/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77:36)
     at Object.parseGodotConfigFile (/Users/johnfn/code/tsgd/ts2gd/project/godot
 */
-// HIGH
 // TODO: Better print() output, with spacing
 // TODO: Document @exports
+// have a way to compile all files, and collate all errors.
 // TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g.
 // merge conflicts. should just retry after a while.
 // TODO: change_scene should autocomplete .tscn files only
-// TODO: "cannot find module typescript"
-// TODO: if you dont have a tsconfig.json it just goes into an infinite loop
-// and we need to generate one for the skipping library stuff
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
+// @autoload
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
@@ -55,7 +73,12 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing
 //   Eh it wouldnt typecheck though...
 //   Might be possible if an array had 2 index signatures and it was something like array["1:1"]
+// TODO:
+// Instead of doing stuff like         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
+// just have autoloads stored as Assets
 // MED
+// Do I even handle nested folders?
+// TODO: str() with no arguments is technically an error
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
 // TODO: template strings
@@ -133,27 +156,28 @@ const setup = () => {
         tsInitialLoad,
     };
 };
-const showLoadingMessage = (msg) => {
+const showLoadingMessage = (msg, done = false) => {
     console.clear();
-    console.log(chalk_1.default.blueBright("ts2gd " + package_json_1.default.version), "-", msg);
+    console.info(chalk_1.default.blueBright("ts2gd v" + package_json_1.default.version), "-", msg + (done ? "" : "..."));
 };
+exports.showLoadingMessage = showLoadingMessage;
 const main = async (flags) => {
     const start = new Date().getTime();
-    showLoadingMessage("Initializing TypeScript...");
+    exports.showLoadingMessage("Initializing TypeScript");
     const { watchProgram, tsgdJson, tsInitialLoad } = setup();
-    showLoadingMessage("Scanning project...");
+    exports.showLoadingMessage("Scanning project");
     let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
     if (project.shouldBuildDefinitions(flags)) {
-        showLoadingMessage("Building definition files...");
+        exports.showLoadingMessage("Building definition files");
         await project.buildAllDefinitions();
     }
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
-    showLoadingMessage("Waiting for TypeScript to finish...");
+    exports.showLoadingMessage("Waiting for TypeScript to finish");
     await tsInitialLoad;
-    showLoadingMessage("Compiling all source files...");
+    exports.showLoadingMessage("Compiling all source files");
     project.compileAllSourceFiles();
-    showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`);
+    exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, true);
 };
 if (!process.argv[1].includes("test")) {
     const flags = parse_args_1.parseArgs();

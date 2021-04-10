@@ -1,12 +1,13 @@
 import ts, { SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript"
-import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
-import { Test } from "../test"
 import {
-  isDictionary,
-  isEnumType,
-  isNullable,
-  syntaxKindToString,
-} from "../ts_utils"
+  combine,
+  ExtraLine,
+  parseNode,
+  ParseNodeType,
+  ParseState,
+} from "../parse_node"
+import { Test } from "../test"
+import { isDictionary, isEnumType, isNullable } from "../ts_utils"
 
 const isRhs = (node: ts.PropertyAccessExpression) => {
   let parentExpression: ts.Node = node
@@ -41,6 +42,8 @@ export const parsePropertyAccessExpression = (
     .getTypeChecker()
     .getTypeAtLocation(node.expression)
 
+  console.log(!!node.questionDotToken)
+
   // Compile things like KeyList.KEY_SPACE into KEY_SPACE
   if (isEnumType(exprType)) {
     const symbol = exprType.getSymbol()!
@@ -53,11 +56,24 @@ export const parsePropertyAccessExpression = (
     }
   }
 
-  return combine({
+  let nullCoalesce: ExtraLine | null = null
+
+  let result = combine({
     parent: node,
     nodes: [node.expression, node.name],
     props,
     content: (lhs, rhs) => {
+      if (node.questionDotToken) {
+        const newName = props.scope.createUniqueName()
+
+        nullCoalesce = {
+          type: "before",
+          line: `var ${newName} = ${lhs}`,
+        }
+
+        return `(${newName}.${rhs} if ${newName} != null else null)`
+      }
+
       // Godot does not like var foo = bar.baz when baz is not a key of bar
       // However, Godot is fine with bar.baz = foo even if baz is not a key.
 
@@ -72,6 +88,15 @@ export const parsePropertyAccessExpression = (
       return `${lhs}.${rhs}`
     },
   })
+
+  result.extraLines = [
+    ...(result.extraLines ?? []),
+    ...(nullCoalesce ? [nullCoalesce] : []),
+  ]
+
+  console.log(result.extraLines)
+
+  return result
 }
 
 export const testAccess: Test = {
@@ -196,4 +221,23 @@ func test(a, b: String):
   self.a = a
   self.b = b
 `,
+}
+
+export const testNullCoalesce: Test = {
+  ts: `
+export class Test {
+  test() {
+    const foo: string | null = "hello"
+
+    print(foo?.bar)
+  }
+}
+  `,
+  expected: `
+class_name Test
+func test():
+  var foo = "hello"
+  var __gen1 = foo
+  print((__gen1.bar if __gen1 != null else null))
+  `,
 }

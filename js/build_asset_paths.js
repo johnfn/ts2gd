@@ -7,6 +7,7 @@ exports.buildAssetPathsType = void 0;
 const project_1 = require("./project/project");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const asset_godot_scene_1 = require("./project/asset_godot_scene");
 function buildAssetPathsType(project) {
     const assetFileContents = `
 declare type AssetType = {
@@ -15,6 +16,12 @@ ${project.assets
         .map((obj) => `  '${obj.resPath}': ${obj.tsType()}`)
         .join(",\n")}
 }
+
+declare type SceneName =
+${project.assets
+        .filter((obj) => obj instanceof asset_godot_scene_1.AssetGodotScene)
+        .map((obj) => `  | '${obj.resPath}'`)
+        .join("\n")}
 
 declare type AssetPath = keyof AssetType;
   `;

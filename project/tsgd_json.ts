@@ -2,7 +2,7 @@ import path from "path"
 import fs from "fs"
 import process from "process"
 import { showLoadingMessage } from "../main"
-import { defaultTsconfig } from "../generators/generate_tsconfig"
+import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 
@@ -31,6 +31,8 @@ export class Paths {
   godotSourceRepoPath: string | undefined
 
   constructor() {
+    // TODO: Merge this with parse_args.ts
+
     let commandLineArgument = process.argv[2]
 
     if (commandLineArgument === "--init") {
@@ -127,6 +129,27 @@ export class Paths {
     // Can't hurt!
     fs.mkdirSync("compiled")
     fs.mkdirSync("src")
+    fs.mkdirSync(".vscode")
+
+    // TODO: Put in a separate file.
+    fs.writeFileSync(
+      path.join(process.cwd(), ".vscode", "launch.json"),
+      `{
+      "version": "0.2.0",
+      "configurations": [
+        {
+          "name": "GDScript Godot",
+          "type": "godot",
+          "request": "launch",
+          "project": "$\{workspaceFolder}",
+          "port": 6007,
+          "address": "127.0.0.1",
+          "launch_game_instance": true,
+          "launch_scene": false
+        }
+      ]
+    }`
+    )
 
     console.info("ts2gd.json created.")
     console.info("compiled/ created.")

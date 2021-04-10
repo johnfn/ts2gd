@@ -8,20 +8,20 @@ const chokidar_1 = __importDefault(require("chokidar"));
 const path_1 = __importDefault(require("path"));
 const chalk_1 = __importDefault(require("chalk"));
 const fs_1 = __importDefault(require("fs"));
-const asset_godot_class_1 = require("./asset_godot_class");
-const asset_godot_scene_1 = require("./asset_godot_scene");
-const asset_font_1 = require("./asset_font");
-const asset_source_file_1 = require("./asset_source_file");
 const godot_project_file_1 = require("./godot_project_file");
-const base_asset_1 = require("./base_asset");
-const build_paths_for_node_1 = require("../build_paths_for_node");
-const build_scene_imports_1 = require("../build_scene_imports");
-const build_asset_paths_1 = require("../build_asset_paths");
-const build_group_types_1 = require("../build_group_types");
-const build_action_names_1 = require("../build_action_names");
-const asset_image_1 = require("./asset_image");
-const asset_glb_1 = require("./asset_glb");
-const generate_library_1 = require("../generators/generate_library");
+const generate_library_1 = require("../generate_library_defs/generate_library");
+const build_action_names_1 = require("./generate_dynamic_defs/build_action_names");
+const build_asset_paths_1 = require("./generate_dynamic_defs/build_asset_paths");
+const build_group_types_1 = require("./generate_dynamic_defs/build_group_types");
+const build_paths_for_node_1 = require("./generate_dynamic_defs/build_paths_for_node");
+const build_scene_imports_1 = require("./generate_dynamic_defs/build_scene_imports");
+const asset_font_1 = require("./assets/asset_font");
+const asset_glb_1 = require("./assets/asset_glb");
+const asset_godot_scene_1 = require("./assets/asset_godot_scene");
+const asset_image_1 = require("./assets/asset_image");
+const asset_source_file_1 = require("./assets/asset_source_file");
+const base_asset_1 = require("./assets/base_asset");
+const asset_godot_class_1 = require("./assets/asset_godot_class");
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
@@ -48,27 +48,27 @@ class TsGdProjectClass {
         this.mainScene = this.godotScenes().find((scene) => scene.resPath === this.godotProject.mainScene().resPath);
         this.monitor(watcher);
     }
-    /** Info about each source file. */
+    /** Each source file. */
     sourceFiles() {
         return this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
     }
-    /** Info about each Godot class. */
+    /** Each Godot class. */
     godotClasses() {
         return this.assets.filter((a) => a instanceof asset_godot_class_1.AssetGodotClass);
     }
-    /** Info about each Godot scene. */
+    /** Each Godot scene. */
     godotScenes() {
         return this.assets.filter((a) => a instanceof asset_godot_scene_1.AssetGodotScene);
     }
-    /** Info about each Godot font. */
+    /** Each Godot font. */
     godotFonts() {
         return this.assets.filter((a) => a instanceof asset_font_1.AssetFont);
     }
-    /** Info about each .glb file. */
+    /** Each .glb file. */
     godotGlbs() {
         return this.assets.filter((a) => a instanceof asset_glb_1.AssetGlb);
     }
-    /** Info about each Godot image. */
+    /** Each Godot image. */
     godotImages() {
         return this.assets.filter((a) => a instanceof asset_image_1.AssetImage);
     }
@@ -108,6 +108,11 @@ class TsGdProjectClass {
     }
     onAddAsset(path) {
         const newAsset = this.createAsset(path);
+        // Do this first because some assets expect themselves to exist - e.g.
+        // an enum inside a source file expects that source file to exist.
+        if (newAsset instanceof base_asset_1.BaseAsset) {
+            this.assets.push(newAsset);
+        }
         if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
             newAsset.compile(this.program);
         }
@@ -116,9 +121,6 @@ class TsGdProjectClass {
             build_group_types_1.buildGroupTypes(this);
         }
         build_asset_paths_1.buildAssetPathsType(this);
-        if (newAsset instanceof base_asset_1.BaseAsset) {
-            this.assets.push(newAsset);
-        }
     }
     onChangeAsset(path) {
         let start = new Date().getTime();
@@ -135,8 +137,17 @@ class TsGdProjectClass {
             }
         }
         if (path.endsWith(".godot")) {
+            const oldProjectFile = this.godotProject;
             this.godotProject = new godot_project_file_1.GodotProjectFile(path, this);
-            console.log(this.godotProject.autoloads);
+            const oldAutoloads = oldProjectFile.autoloads;
+            const newAutoloads = this.godotProject.autoloads;
+            const allAutoloads = [...oldAutoloads, ...newAutoloads];
+            for (const { resPath } of allAutoloads) {
+                const script = this.sourceFiles().find((sf) => sf.resPath === resPath);
+                if (script) {
+                    script.compile(this.program);
+                }
+            }
             return;
         }
         let oldAsset = this.assets.find((asset) => asset.fsPath === path);
@@ -170,6 +181,7 @@ class TsGdProjectClass {
         if (changedAsset instanceof asset_source_file_1.AssetSourceFile) {
             changedAsset.destroy();
         }
+        this.assets = this.assets.filter((asset) => asset !== changedAsset);
     }
     compileAllSourceFiles() {
         for (const asset of this.assets) {
@@ -212,7 +224,6 @@ const makeTsGdProject = async (ts2gdJson, program) => {
     const initialFiles = [];
     let addFn;
     let readyFn;
-    // TODO: This takes too long to forcibly do it
     const watcher = await new Promise((resolve) => {
         addFn = (path) => initialFiles.push(path);
         readyFn = () => resolve(watcher);
@@ -238,11 +249,11 @@ const shouldIncludePath = (path) => {
         return false;
     }
     if (!path.includes(".")) {
-        // Folder (i hope)
+        // Folder (I hope)
         // TODO: Might be able to check stat to be more sure about this
         return true;
     }
-    if (path.includes("godot_defs")) {
+    if (path.includes("_godot_defs")) {
         return false;
     }
     if (asset_font_1.AssetFont.extensions().some((ext) => path.endsWith(ext))) {

@@ -16,19 +16,27 @@ const parsePostfixUnaryExpression = (node, props) => {
         content: (operand) => {
             switch (node.operator) {
                 case SyntaxKind.PlusPlusToken: {
-                    newIncrements = { type: "postincrement", variable: operand };
+                    newIncrements = {
+                        type: "after",
+                        line: `${operand} += 1`,
+                        isIncrement: true,
+                    };
                     return `${operand}`;
                 }
                 case SyntaxKind.MinusMinusToken: {
-                    newIncrements = { type: "postdecrement", variable: operand };
+                    newIncrements = {
+                        type: "after",
+                        line: `${operand} -= 1`,
+                        isDecrement: true,
+                    };
                     return `${operand}`;
                 }
             }
         },
     });
-    result.incrementState = [
+    result.extraLines = [
         ...(newIncrements ? [newIncrements] : []),
-        ...(result.incrementState ?? []),
+        ...(result.extraLines ?? []),
     ];
     return result;
 };

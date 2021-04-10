@@ -25,7 +25,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runTests = exports.compileTs = void 0;
 const ts = __importStar(require("typescript"));
 const parse_node_1 = require("./parse_node");
-const generate_base_1 = require("./generators/generate_base");
+const generate_base_1 = require("./generate_library_defs/generate_base");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const scope_1 = require("./scope");
@@ -114,8 +114,8 @@ const compileTs = (code, isAutoload) => {
                     resPath: "",
                     tsRelativePath: "",
                     getEnumPath: () => "",
-                    _cachedClassName: null,
                     _lastCompilationResult: undefined,
+                    gdContainingDirectory: "",
                     destroy: () => { },
                     project: {},
                     tsType: () => "",
@@ -131,7 +131,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     tsRelativePath: "",
                     getEnumPath: () => "",
-                    _cachedClassName: null,
+                    gdContainingDirectory: "",
                     _lastCompilationResult: undefined,
                     destroy: () => { },
                     project: {},

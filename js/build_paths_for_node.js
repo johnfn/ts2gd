@@ -3,19 +3,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildNodePathsTypeForScript = exports.getAllRelativePaths = void 0;
+exports.buildNodePathsTypeForScript = exports.getAllChildPaths = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const project_1 = require("./project/project");
-const getAllRelativePaths = (node, prefix = "") => {
+const ts_utils_1 = require("./ts_utils");
+/**
+ * Returns the paths to all children below this node, including grandchildren
+ * etc.
+ *
+ * @param node
+ * @param prefix
+ */
+const getAllChildPaths = (node, prefix = "") => {
     let myPath = (prefix ? prefix + "/" : "") + node.name;
     let result = [{ path: myPath, node }];
     for (const child of node.children()) {
-        result = [...result, ...exports.getAllRelativePaths(child, myPath)];
+        result = [...result, ...exports.getAllChildPaths(child, myPath)];
     }
     return result;
 };
-exports.getAllRelativePaths = getAllRelativePaths;
+exports.getAllChildPaths = getAllChildPaths;
 const buildNodePathsTypeForScript = (script, project) => {
     // Find all instances of this script in all scenes.
     const nodesWithScript = [];
@@ -37,16 +45,14 @@ const buildNodePathsTypeForScript = (script, project) => {
         return [];
     }
     let commonRelativePaths = [];
-    let allPaths = [];
+    let references = [];
     if (nodesWithScript.length === 0) {
         if (script.isAutoload()) {
             // Special logic for autoload classes.
             // TODO: Should we generate /root/ in the node path too?
             const rootScene = project.mainScene;
-            commonRelativePaths = exports.getAllRelativePaths(rootScene.rootNode);
-            allPaths = [
-                `This is an autoload class. Your starting scene is: ${rootScene.resPath}`,
-            ];
+            commonRelativePaths = exports.getAllChildPaths(rootScene.rootNode);
+            references = [{ type: "autoload" }];
             commonRelativePaths = commonRelativePaths.map(({ path, node }) => ({
                 path: `/root/${path}`,
                 node,
@@ -55,16 +61,48 @@ const buildNodePathsTypeForScript = (script, project) => {
         else {
             // This class is never instantiated as a node.
             commonRelativePaths = [];
-            allPaths = [];
+            references = [];
             // TODO: Maybe flag it if it's also never used as a class.
             // Currently, this is just noise.
             // console.error("Unused class:", className)
         }
     }
     else {
-        const relativePathsPerNode = nodesWithScript.map((i) => i.children().flatMap((ch) => exports.getAllRelativePaths(ch)));
-        allPaths = nodesWithScript.map((node) => node.scene.resPath + ":" + node.scenePath());
-        commonRelativePaths = relativePathsPerNode[0].filter((elem) => relativePathsPerNode.every((pathsList) => pathsList.map((pl) => pl.path).includes(elem.path)));
+        const relativePathsPerNode = nodesWithScript.map((i) => i.children().flatMap((ch) => exports.getAllChildPaths(ch)));
+        references = nodesWithScript.map((node) => ({
+            type: "script",
+            use: node.scene.resPath + ":" + node.scenePath(),
+            children: exports.getAllChildPaths(node).map((o) => o.path),
+        }));
+        commonRelativePaths = ts_utils_1.getCommonElements(relativePathsPerNode, (a, b) => a.path === b.path);
+        const instancedScene = nodesWithScript.find((node) => node.isRoot)?.scene;
+        if (instancedScene) {
+            const allScenes = project.godotScenes();
+            let scenesThatContainInstance = [];
+            let moreReferences = [];
+            for (const scene of allScenes) {
+                for (const node of scene.nodes) {
+                    if (node.instance() === instancedScene) {
+                        moreReferences.push({
+                            type: "instance",
+                            use: scene.resPath + ":" + node.scenePath(),
+                        });
+                        scenesThatContainInstance.push(scene);
+                    }
+                }
+            }
+            references = [...references, ...moreReferences];
+            scenesThatContainInstance = [...new Set(scenesThatContainInstance)];
+            const allScenePaths = scenesThatContainInstance.map((scene) => exports.getAllChildPaths(scene.rootNode));
+            const commonScenePaths = ts_utils_1.getCommonElements(allScenePaths, (a, b) => a.path === b.path);
+            commonRelativePaths = [
+                ...commonRelativePaths,
+                ...commonScenePaths.map((obj) => ({
+                    node: obj.node,
+                    path: "/root/" + obj.path,
+                })),
+            ];
+        }
     }
     // Normal case
     const pathToImport = {};
@@ -77,8 +115,23 @@ const buildNodePathsTypeForScript = (script, project) => {
             pathToImport[path] = node.tsType();
         }
     }
-    let result = `${allPaths.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""}
-${allPaths.map((x) => "// " + x).join("\n")}
+    let result = `${references.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""}
+${references
+        .map((ref) => {
+        if (ref.type === "autoload") {
+            return "// This is an autoload class\n";
+        }
+        else if (ref.type === "script") {
+            return ("// script: " +
+                ref.use +
+                "\n" +
+                ref.children.map((c) => "//  - " + c + " \n").join(""));
+        }
+        else if (ref.type === "instance") {
+            return "// instance: " + ref.use + "\n";
+        }
+    })
+        .join("")}
 declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
         .map(([path, importStr]) => `  "${path}": ${importStr},`)
@@ -91,7 +144,8 @@ import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
-    get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    get_node(path: string): Node
     connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
   }
 

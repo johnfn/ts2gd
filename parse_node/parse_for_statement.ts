@@ -27,24 +27,13 @@ export const parseForStatement = (
     content: (inc) => inc,
   })
 
-  let incrementText = ""
-  let incVar = increment.incrementState?.find(
-    (x) => x.type === "preincrement" || x.type === "postincrement"
-  )?.variable
-  let decVar = increment.incrementState?.find(
-    (x) => x.type === "predecrement" || x.type === "postdecrement"
-  )?.variable
-
-  if (incVar) {
-    incrementText += `${incVar} += 1\n`
-  }
-
-  if (decVar) {
-    incrementText += `${decVar} -= 1\n`
-  }
+  let incrementText =
+    increment.extraLines
+      ?.filter((line) => line.isDecrement || line.isIncrement)
+      .map((line) => line.line) ?? []
 
   props.mostRecentForStatement = {
-    incrementor: incrementText,
+    incrementor: incrementText.join("\n"),
   }
 
   const result = combine({

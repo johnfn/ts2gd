@@ -12,8 +12,7 @@ const parseIfStatement = (node, props) => {
         content: (expression, thenStatement, elseStatement) => `
 if ${expression}:
   ${thenStatement}${elseStatement
-            ? `
-else:
+            ? `else:
   ${elseStatement}`
             : ""}`,
     });

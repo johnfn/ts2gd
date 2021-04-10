@@ -1,6 +1,6 @@
 import ts from "typescript"
 const { SyntaxKind } = ts
-import { ParseState, parseNode, combine } from "../parse_node"
+import { ParseState, parseNode, combine, ExtraLine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../test"
@@ -9,10 +9,7 @@ export const parsePrefixUnaryExpression = (
   node: ts.PrefixUnaryExpression,
   props: ParseState
 ): ParseNodeType => {
-  let newIncrements: {
-    type: "preincrement" | "predecrement"
-    variable: string
-  } | null = null
+  let newIncrements: ExtraLine | null = null
 
   const result = combine({
     parent: node,
@@ -21,12 +18,20 @@ export const parsePrefixUnaryExpression = (
     content: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken: {
-          newIncrements = { type: "preincrement", variable: operand }
+          newIncrements = {
+            type: "before",
+            line: `${operand} += 1`,
+            isIncrement: true,
+          }
 
           return `${operand}`
         }
         case SyntaxKind.MinusMinusToken: {
-          newIncrements = { type: "predecrement", variable: operand }
+          newIncrements = {
+            type: "before",
+            line: `${operand} -= 1`,
+            isDecrement: true,
+          }
 
           return `${operand}`
         }
@@ -43,9 +48,9 @@ export const parsePrefixUnaryExpression = (
     },
   })
 
-  result.incrementState = [
+  result.extraLines = [
     ...(newIncrements ? [newIncrements] : []),
-    ...(result.incrementState ?? []),
+    ...(result.extraLines ?? []),
   ]
 
   return result

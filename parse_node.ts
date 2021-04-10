@@ -5,6 +5,7 @@ import { parseBinaryExpression } from "./parse_node/parse_binary_expression"
 import { parseSourceFile } from "./parse_node/parse_source_file"
 import {
   generatePrecedingNewlines,
+  logErrorAtNode,
   syntaxKindToString as kindToString,
 } from "./ts_utils"
 import { parseTypeReference } from "./parse_node/parse_type_reference"
@@ -77,15 +78,19 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
 }
 
+export type ExtraLine = {
+  type: "before" | "after"
+  isIncrement?: boolean
+  isDecrement?: boolean
+  line: string
+}
+
 export type ParseNodeType = {
   content: string
   hoistedEnumImports?: string[]
   hoistedArrowFunctions?: string[]
   hoistedLibraryFunctions?: string[]
-  incrementState?: {
-    type: "preincrement" | "postincrement" | "predecrement" | "postdecrement"
-    variable: string
-  }[]
+  extraLines?: ExtraLine[]
   enums?: {
     /** Content of the enum */
     content: string
@@ -98,7 +103,7 @@ export type ParseNodeType = {
 }
 
 const isTsNodeArray = <T extends ts.Node>(x: any): x is ts.NodeArray<T> => {
-  // Poor mans hack
+  // Poor man's hack
   return x && "pos" in x && "find" in x
 }
 
@@ -129,7 +134,7 @@ export function combine(args: {
         node: undefined,
         content: "",
         enums: [],
-        incrementState: [],
+        extraLines: [],
         hoistedEnumImports: [],
         hoistedArrowFunctions: [],
         hoistedLibraryFunctions: [],
@@ -142,7 +147,7 @@ export function combine(args: {
       node,
       content: parsed.content,
       enums: parsed.enums ?? [],
-      incrementState: parsed.incrementState ?? [],
+      extraLines: parsed.extraLines ?? [],
       hoistedEnumImports: parsed.hoistedEnumImports ?? [],
       hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
       hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
@@ -170,19 +175,15 @@ export function combine(args: {
     let lines = content.split("\n") // .filter(x => x !== '');
 
     if (isStatement) {
-      if (parsed.incrementState.length > 0) {
-        for (const inc of parsed.incrementState) {
-          if (inc.type === "predecrement") {
-            result = `${inc.variable} -= 1\n` + result
-          } else if (inc.type === "preincrement") {
-            result = `${inc.variable} += 1\n` + result
-          } else if (inc.type === "postdecrement") {
-            result = result + `\n${inc.variable} -= 1\n`
-          } else if (inc.type === "postincrement") {
-            result = result + `\n${inc.variable} += 1\n`
+      if (parsed.extraLines.length > 0) {
+        for (const line of parsed.extraLines) {
+          if (line.type === "before") {
+            result = line.line.trimEnd() + "\n" + result + "\n"
+          } else if (line.type === "after") {
+            result = result.trimEnd() + "\n" + line.line.trimEnd() + "\n"
           }
 
-          parsed.incrementState = []
+          parsed.extraLines = []
         }
       }
     }
@@ -228,7 +229,7 @@ export function combine(args: {
     hoistedArrowFunctions: parsedNodes.flatMap(
       (node) => node.hoistedArrowFunctions ?? []
     ),
-    incrementState: parsedNodes.flatMap((node) => node.incrementState ?? []),
+    extraLines: parsedNodes.flatMap((node) => node.extraLines ?? []),
   }
 }
 
@@ -448,12 +449,16 @@ export const parseNode = (
       return { content: "null" }
     case SyntaxKind.NullKeyword:
       return { content: "null" }
-  }
 
-  throw new Error(
-    "uh oh!: " +
-      kindToString(genericNode.kind) +
-      " " +
-      (genericNode.getText ? genericNode.getText() : genericNode)
-  )
+    default:
+      // We don't handle that node! At least not yet!
+      logErrorAtNode(genericNode, "ts2gd does not currently support this code:")
+      console.info(genericNode.getText())
+      console.info("")
+      console.info(
+        "Try rewriting it, or opening an issue on the ts2gd GitHub repo."
+      )
+
+      return { content: "" }
+  }
 }

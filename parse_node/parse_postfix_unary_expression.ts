@@ -1,6 +1,6 @@
 import ts from "typescript"
 const { SyntaxKind } = ts
-import { ParseState, combine } from "../parse_node"
+import { ParseState, combine, ExtraLine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 
@@ -8,10 +8,7 @@ export const parsePostfixUnaryExpression = (
   node: ts.PostfixUnaryExpression,
   props: ParseState
 ): ParseNodeType => {
-  let newIncrements: {
-    type: "postincrement" | "postdecrement"
-    variable: string
-  } | null = null
+  let newIncrements: ExtraLine | null = null
 
   const result = combine({
     parent: node,
@@ -20,12 +17,20 @@ export const parsePostfixUnaryExpression = (
     content: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken: {
-          newIncrements = { type: "postincrement", variable: operand }
+          newIncrements = {
+            type: "after",
+            line: `${operand} += 1`,
+            isIncrement: true,
+          }
 
           return `${operand}`
         }
         case SyntaxKind.MinusMinusToken: {
-          newIncrements = { type: "postdecrement", variable: operand }
+          newIncrements = {
+            type: "after",
+            line: `${operand} -= 1`,
+            isDecrement: true,
+          }
 
           return `${operand}`
         }
@@ -33,9 +38,9 @@ export const parsePostfixUnaryExpression = (
     },
   })
 
-  result.incrementState = [
+  result.extraLines = [
     ...(newIncrements ? [newIncrements] : []),
-    ...(result.incrementState ?? []),
+    ...(result.extraLines ?? []),
   ]
 
   return result

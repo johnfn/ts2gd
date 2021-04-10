@@ -121,18 +121,28 @@ export const syntaxKindToString = (kind: ts.Node["kind"]) => {
   return ts.SyntaxKind[kind]
 }
 
-export const logErrorAtNode = (node: ts.Node, error: string) => {
-  const {
-    line,
-    character,
-  } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart())
-  console.warn()
-  console.warn(
-    "Error at",
-    `${chalk.blueBright(node.getSourceFile().fileName)}:${chalk.yellow(
-      line + 1
-    )}:${chalk.yellow(character + 1)}`
-  )
+// Location is either
+// * The TS AST node that the error occured at (preferred), or
+// * Some generic string (ideally a path to the file)
+export const logErrorAtNode = (location: ts.Node | string, error: string) => {
+  if (typeof location === "string") {
+    console.warn("Error at", chalk.blueBright(location))
+  } else {
+    const {
+      line,
+      character,
+    } = location
+      .getSourceFile()
+      ?.getLineAndCharacterOfPosition(location.getStart())
+    console.warn()
+    console.warn(
+      "Error at",
+      `${chalk.blueBright(location.getSourceFile().fileName)}:${chalk.yellow(
+        line + 1
+      )}:${chalk.yellow(character + 1)}`
+    )
+  }
+
   console.warn(chalk.redBright(error))
 }
 

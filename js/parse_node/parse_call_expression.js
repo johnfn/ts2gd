@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testDoubleMap = exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
+exports.testRewriteGetNode2 = exports.testRewriteGetNode = exports.testDoubleMap = exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -203,6 +203,9 @@ const parseCallExpression = (node, props) => {
             if (expr === "Yield") {
                 expr = "yield";
             }
+            if (expr === "self.get_node_safe") {
+                expr = "self.get_node";
+            }
             // Translate `this.emit_signal(this.signal)`
             // into `this.emit_signal("signal")`
             if (expr === "self.emit_signal") {
@@ -353,6 +356,36 @@ func func2(x: String, captures):
   return x
 var a = []
 __map(__filter(a, funcref(self, "func1"), {}), funcref(self, "func2"), {})
+`,
+};
+exports.testRewriteGetNode = {
+    ts: `
+export class Test {
+  foo() {
+    this.get_node_safe('hello')
+  }
+}
+  `,
+    expected: `
+class_name Test
+
+func foo():
+  self.get_node("hello")
+`,
+};
+exports.testRewriteGetNode2 = {
+    ts: `
+export class Test {
+  foo() {
+    this.get_node('hello')
+  }
+}
+  `,
+    expected: `
+class_name Test
+
+func foo():
+  self.get_node("hello")
 `,
 };
 //# sourceMappingURL=parse_call_expression.js.map

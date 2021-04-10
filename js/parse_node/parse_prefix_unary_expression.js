@@ -16,11 +16,19 @@ const parsePrefixUnaryExpression = (node, props) => {
         content: (operand) => {
             switch (node.operator) {
                 case SyntaxKind.PlusPlusToken: {
-                    newIncrements = { type: "preincrement", variable: operand };
+                    newIncrements = {
+                        type: "before",
+                        line: `${operand} += 1`,
+                        isIncrement: true,
+                    };
                     return `${operand}`;
                 }
                 case SyntaxKind.MinusMinusToken: {
-                    newIncrements = { type: "predecrement", variable: operand };
+                    newIncrements = {
+                        type: "before",
+                        line: `${operand} -= 1`,
+                        isDecrement: true,
+                    };
                     return `${operand}`;
                 }
                 case SyntaxKind.PlusToken:
@@ -35,9 +43,9 @@ const parsePrefixUnaryExpression = (node, props) => {
             }
         },
     });
-    result.incrementState = [
+    result.extraLines = [
         ...(newIncrements ? [newIncrements] : []),
-        ...(result.incrementState ?? []),
+        ...(result.extraLines ?? []),
     ];
     return result;
 };

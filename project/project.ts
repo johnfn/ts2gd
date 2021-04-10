@@ -4,22 +4,22 @@ import ts from "typescript"
 import chalk from "chalk"
 import fs from "fs"
 
-import { AssetGodotClass as GodotFile } from "./asset_godot_class"
-import { AssetGodotScene } from "./asset_godot_scene"
-import { AssetFont } from "./asset_font"
-import { AssetSourceFile } from "./asset_source_file"
 import { GodotProjectFile } from "./godot_project_file"
 import { Paths } from "./tsgd_json"
-import { BaseAsset } from "./base_asset"
-import { buildNodePathsTypeForScript } from "../build_paths_for_node"
-import { buildSceneImports } from "../build_scene_imports"
-import { buildAssetPathsType } from "../build_asset_paths"
-import { buildGroupTypes } from "../build_group_types"
-import { buildActionNames } from "../build_action_names"
-import { AssetImage } from "./asset_image"
-import { AssetGlb } from "./asset_glb"
-import { generateGodotLibraryDefinitions } from "../generators/generate_library"
+import { generateGodotLibraryDefinitions } from "../generate_library_defs/generate_library"
 import { Flags } from "../parse_args"
+import { buildActionNames } from "./generate_dynamic_defs/build_action_names"
+import { buildAssetPathsType } from "./generate_dynamic_defs/build_asset_paths"
+import { buildGroupTypes } from "./generate_dynamic_defs/build_group_types"
+import { buildNodePathsTypeForScript } from "./generate_dynamic_defs/build_paths_for_node"
+import { buildSceneImports } from "./generate_dynamic_defs/build_scene_imports"
+import { AssetFont } from "./assets/asset_font"
+import { AssetGlb } from "./assets/asset_glb"
+import { AssetGodotScene } from "./assets/asset_godot_scene"
+import { AssetImage } from "./assets/asset_image"
+import { AssetSourceFile } from "./assets/asset_source_file"
+import { BaseAsset } from "./assets/base_asset"
+import { AssetGodotClass } from "./assets/asset_godot_class"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -35,36 +35,38 @@ export class TsGdProjectClass {
   /** Parsed project.godot file. */
   godotProject!: GodotProjectFile
 
-  /** Info about each source file. */
+  /** Each source file. */
   sourceFiles(): AssetSourceFile[] {
     return this.assets.filter(
       (a): a is AssetSourceFile => a instanceof AssetSourceFile
     )
   }
 
-  /** Info about each Godot class. */
-  godotClasses(): GodotFile[] {
-    return this.assets.filter((a): a is GodotFile => a instanceof GodotFile)
+  /** Each Godot class. */
+  godotClasses(): AssetGodotClass[] {
+    return this.assets.filter(
+      (a): a is AssetGodotClass => a instanceof AssetGodotClass
+    )
   }
 
-  /** Info about each Godot scene. */
+  /** Each Godot scene. */
   godotScenes(): AssetGodotScene[] {
     return this.assets.filter(
       (a): a is AssetGodotScene => a instanceof AssetGodotScene
     )
   }
 
-  /** Info about each Godot font. */
+  /** Each Godot font. */
   godotFonts(): AssetFont[] {
     return this.assets.filter((a): a is AssetFont => a instanceof AssetFont)
   }
 
-  /** Info about each .glb file. */
+  /** Each .glb file. */
   godotGlbs(): AssetGlb[] {
     return this.assets.filter((a): a is AssetGlb => a instanceof AssetGlb)
   }
 
-  /** Info about each Godot image. */
+  /** Each Godot image. */
   godotImages(): AssetImage[] {
     return this.assets.filter((a): a is AssetImage => a instanceof AssetImage)
   }
@@ -85,6 +87,12 @@ export class TsGdProjectClass {
     this.program = program
 
     // Parse assets
+
+    const projectGodot = initialFilePaths.filter((path) =>
+      path.includes("project.godot")
+    )[0]
+
+    this.godotProject = this.createAsset(projectGodot)! as GodotProjectFile
 
     const initialAssets = initialFilePaths.map((path) => this.createAsset(path))
 
@@ -113,7 +121,7 @@ export class TsGdProjectClass {
     path: string
   ):
     | AssetSourceFile
-    | GodotFile
+    | AssetGodotClass
     | AssetGodotScene
     | AssetFont
     | AssetImage
@@ -123,7 +131,7 @@ export class TsGdProjectClass {
     if (path.endsWith(".ts")) {
       return new AssetSourceFile(path, this)
     } else if (path.endsWith(".gd")) {
-      return new GodotFile(path, this)
+      return new AssetGodotClass(path, this)
     } else if (path.endsWith(".tscn")) {
       return new AssetGodotScene(path, this)
     } else if (path.endsWith(".godot")) {
@@ -157,7 +165,7 @@ export class TsGdProjectClass {
     const newAsset = this.createAsset(path)
 
     // Do this first because some assets expect themselves to exist - e.g.
-    // an enum inside a source file.
+    // an enum inside a source file expects that source file to exist.
     if (newAsset instanceof BaseAsset) {
       this.assets.push(newAsset)
     }
@@ -173,6 +181,8 @@ export class TsGdProjectClass {
   }
 
   onChangeAsset(path: string) {
+    console.log("Change", path)
+
     let start = new Date().getTime()
     let showTime = false
 
@@ -190,7 +200,21 @@ export class TsGdProjectClass {
     }
 
     if (path.endsWith(".godot")) {
+      const oldProjectFile = this.godotProject
+
       this.godotProject = new GodotProjectFile(path, this)
+
+      const oldAutoloads = oldProjectFile.autoloads
+      const newAutoloads = this.godotProject.autoloads
+      const allAutoloads = [...oldAutoloads, ...newAutoloads]
+
+      for (const { resPath } of allAutoloads) {
+        const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
+
+        if (script) {
+          script.compile(this.program)
+        }
+      }
 
       return
     }
@@ -285,6 +309,19 @@ export class TsGdProjectClass {
   static FsPathToResPath(fsPath: string) {
     return "res://" + fsPath.slice(TsGdProjectClass.Paths.rootPath.length + 1)
   }
+
+  /**
+   * Returns true if all autoloads are valid; false if not.
+   */
+  validateAutoloads(): boolean {
+    let valid = true
+
+    for (const sourceFile of this.sourceFiles()) {
+      valid = valid && sourceFile.validateAutoload()
+    }
+
+    return valid
+  }
 }
 
 export const makeTsGdProject = async (
@@ -296,7 +333,6 @@ export const makeTsGdProject = async (
   let addFn!: (path: string) => void
   let readyFn!: () => void
 
-  // TODO: This takes too long to forcibly do it
   const watcher = await new Promise<chokidar.FSWatcher>((resolve) => {
     addFn = (path) => initialFiles.push(path)
     readyFn = () => resolve(watcher)
@@ -327,7 +363,7 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   if (!path.includes(".")) {
-    // Folder (i hope)
+    // Folder (I hope)
     // TODO: Might be able to check stat to be more sure about this
     return true
   }

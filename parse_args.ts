@@ -3,6 +3,7 @@ export const parseArgs = () => {
   const flags = {
     help: false,
     buildLibraries: false,
+    init: false,
   }
 
   for (const arg of args) {
@@ -10,10 +11,12 @@ export const parseArgs = () => {
       continue
     }
 
-    if (arg === "-help") {
+    if (arg === "--help") {
       flags.help = true
-    } else if (arg === "-buildLibraries") {
+    } else if (arg === "--buildLibraries") {
       flags.buildLibraries = true
+    } else if (arg === "--init") {
+      flags.init = true
     } else {
       flags.help = true
     }
@@ -25,10 +28,11 @@ export const parseArgs = () => {
 export const printHelp = () => {
   console.info()
   console.info("Arguments:")
-  console.info("-help              Print this help.")
   console.info(
-    "-buildLibraries    Force ts2gd to regenerate the TypeScript definitions for Godot."
+    "--buildLibraries    Force ts2gd to regenerate the TypeScript definitions for Godot."
   )
+  console.info("--init              Initialize a ts2gd project here.")
+  console.info("--help              Print this help.")
   console.info()
   console.info()
   console.info(

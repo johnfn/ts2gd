@@ -1,16 +1,22 @@
-#!/usr/bin/env ts-node
-
 // HIGH
 
-// * set up a local autobuilder to HTML5 so we can use liveshare
+// adding a node to a scene should update paths in the other nodes in that scene.
+
+// Have a github action that auto publishes an html5 build
 
 // Convert "throw new Error()" into a better failure
 
-// Adding a new autoload updates project.godot, but doesn't
-// recompile the files
-
 // change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
 // regenerate asset_paths on restart
+
+// Make a testing harness for project-related stuff.
+
+// consider always running buildAllDefinitions. it might be safer
+
+// TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
+
+// The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
+// local state. I should think of a way to address this.
 
 /*
 When deleting a scene:
@@ -45,13 +51,13 @@ TypeError: Cannot read property 'trim' of undefined
 
 // TODO: change_scene should autocomplete .tscn files only
 
-// TODO: "cannot find module typescript"
-
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
+
+// @autoload
 
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
@@ -63,6 +69,10 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing
 //   Eh it wouldnt typecheck though...
 //   Might be possible if an array had 2 index signatures and it was something like array["1:1"]
+
+// TODO:
+// Instead of doing stuff like         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
+// just have autoloads stored as Assets
 
 // MED
 
@@ -104,7 +114,7 @@ import { checkVersionAsync } from "./check_version"
 import { Flags, parseArgs, printHelp } from "./parse_args"
 import chalk from "chalk"
 import fs from "fs"
-import { defaultTsconfig } from "./generators/generate_tsconfig"
+import { defaultTsconfig } from "./generate_library_defs/generate_tsconfig"
 
 const setup = () => {
   const tsgdJson = new Paths()
@@ -194,12 +204,12 @@ const setup = () => {
   }
 }
 
-export const showLoadingMessage = (msg: string) => {
+export const showLoadingMessage = (msg: string, done = false) => {
   console.clear()
   console.info(
     chalk.blueBright("ts2gd v" + packageJson.version),
     "-",
-    msg + "..."
+    msg + (done ? "" : "...")
   )
 }
 
@@ -222,11 +232,16 @@ const main = async (flags: Flags) => {
   showLoadingMessage("Waiting for TypeScript to finish")
   await tsInitialLoad
 
+  if (!project.validateAutoloads()) {
+    process.exit(0)
+  }
+
   showLoadingMessage("Compiling all source files")
   project.compileAllSourceFiles()
 
   showLoadingMessage(
-    `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`
+    `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
+    true
   )
 }
 

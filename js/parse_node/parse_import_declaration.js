@@ -25,32 +25,31 @@ const getPathWithoutExtension = (node, props) => {
     return pathToImportedTs;
 };
 const getImportResPathForEnum = (node, props) => {
-    const symbol = node.getSymbol();
-    if (!symbol) {
+    const enumSymbol = node.getSymbol();
+    if (!enumSymbol) {
         throw new Error("Can't find symbol for node.");
     }
-    const declarations = symbol.declarations;
-    if (declarations.length === 0 || declarations.length > 1) {
-        throw new Error(`Invalid length for declarations: ${declarations.length}`);
+    const enumDeclarations = enumSymbol.declarations;
+    if (enumDeclarations.length === 0 || enumDeclarations.length > 1) {
+        throw new Error(`Invalid length for declarations: ${enumDeclarations.length}`);
     }
-    const decl = declarations[0];
-    const sourceFile = decl.getSourceFile();
-    const importedSourceFile = props.project
+    const enumDeclaration = enumDeclarations[0];
+    const enumSourceFile = enumDeclaration.getSourceFile();
+    const enumSourceFileAsset = props.project
         .sourceFiles()
-        .find((sf) => sf.fsPath === sourceFile.fileName);
-    if (!importedSourceFile) {
-        console.log("All source files:\n", props.project.sourceFiles().map((f) => f.fsPath + "\n"));
-        throw new Error(`Can't find associated sourcefile for ${sourceFile.fileName}`);
+        .find((sf) => sf.fsPath === enumSourceFile.fileName);
+    if (!enumSourceFileAsset) {
+        throw new Error(`Can't find associated sourcefile for ${enumSourceFile.fileName}`);
     }
     let enumTypeString = props.program.getTypeChecker().typeToString(node);
     if (enumTypeString.startsWith("typeof ")) {
         enumTypeString = enumTypeString.slice("typeof ".length);
     }
-    const pathWithoutEnum = importedSourceFile.resPath;
+    const pathWithoutEnum = enumSourceFileAsset.resPath;
     const importPath = pathWithoutEnum.slice(0, -".gd".length) + "_" + enumTypeString + ".gd";
     return {
         resPath: importPath,
-        sourceFile,
+        sourceFile: enumSourceFile,
         enumName: enumTypeString,
     };
 };
@@ -96,8 +95,8 @@ const parseImportDeclaration = (node, props) => {
                     if (pathToImportedTs.includes("@")) {
                         continue;
                     }
-                    throw new Error(`Error! ${pathToImportedTs} import not found.
-  in ${node.getSourceFile().fileName}`);
+                    ts_utils_1.logErrorAtNode(node, `Import ${pathToImportedTs} not found.`);
+                    continue;
                 }
                 let typeString = props.program.getTypeChecker().typeToString(type);
                 if (typeString.startsWith("typeof ")) {

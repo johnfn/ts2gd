@@ -1,5 +1,6 @@
 import { parseGodotConfigFile } from "./godot_parser"
 import { TsGdProjectClass as TsGdProject } from "./project"
+import fs from "fs"
 
 interface IRawGodotConfig {
   globals: {
@@ -63,6 +64,38 @@ export class GodotProjectFile {
       }))
 
     this.actionNames = Object.keys(this.rawConfig.input ?? {})
+  }
+
+  addAutoload(className: string, resPath: string) {
+    this.project.godotProject.autoloads = [
+      ...this.project.godotProject.autoloads,
+      { resPath: resPath },
+    ]
+
+    const lines = fs.readFileSync(this.fsPath, "utf-8").split("\n")
+    const index = lines.indexOf("[autoload]")
+    const autoloadLine = `${className}="*${resPath}"`
+
+    if (index > 0) {
+      lines.splice(index + 2, 0, autoloadLine)
+    } else {
+      lines.push(`[autoload]\n\n${autoloadLine}`)
+    }
+
+    fs.writeFileSync(this.fsPath, lines.join("\n"))
+  }
+
+  removeAutoload(className: string, resPath: string) {
+    this.project.godotProject.autoloads = this.project.godotProject.autoloads.filter(
+      (a) => a.resPath !== resPath
+    )
+
+    let lines = fs.readFileSync(this.fsPath, "utf-8").split("\n")
+    const autoloadLine = `${className}="*${resPath}"`
+
+    lines = lines.filter((l) => l.trim() !== autoloadLine)
+
+    fs.writeFileSync(this.fsPath, lines.join("\n"))
   }
 
   mainScene() {

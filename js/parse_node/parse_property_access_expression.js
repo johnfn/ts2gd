@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
+exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -28,6 +28,7 @@ const parsePropertyAccessExpression = (node, props) => {
     const exprType = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression);
+    console.log(!!node.questionDotToken);
     // Compile things like KeyList.KEY_SPACE into KEY_SPACE
     if (ts_utils_1.isEnumType(exprType)) {
         const symbol = exprType.getSymbol();
@@ -38,11 +39,20 @@ const parsePropertyAccessExpression = (node, props) => {
             return parse_node_1.parseNode(node.name, props);
         }
     }
-    return parse_node_1.combine({
+    let nullCoalesce = null;
+    let result = parse_node_1.combine({
         parent: node,
         nodes: [node.expression, node.name],
         props,
         content: (lhs, rhs) => {
+            if (node.questionDotToken) {
+                const newName = props.scope.createUniqueName();
+                nullCoalesce = {
+                    type: "before",
+                    line: `var ${newName} = ${lhs}`,
+                };
+                return `(${newName}.${rhs} if ${newName} != null else null)`;
+            }
             // Godot does not like var foo = bar.baz when baz is not a key of bar
             // However, Godot is fine with bar.baz = foo even if baz is not a key.
             if (ts_utils_1.isDictionary(exprType) &&
@@ -53,6 +63,12 @@ const parsePropertyAccessExpression = (node, props) => {
             return `${lhs}.${rhs}`;
         },
     });
+    result.extraLines = [
+        ...(result.extraLines ?? []),
+        ...(nullCoalesce ? [nullCoalesce] : []),
+    ];
+    console.log(result.extraLines);
+    return result;
 };
 exports.parsePropertyAccessExpression = parsePropertyAccessExpression;
 exports.testAccess = {
@@ -169,5 +185,23 @@ func test(a, b: String):
   self.a = a
   self.b = b
 `,
+};
+exports.testNullCoalesce = {
+    ts: `
+export class Test {
+  test() {
+    const foo: string | null = "hello"
+
+    print(foo?.bar)
+  }
+}
+  `,
+    expected: `
+class_name Test
+func test():
+  var foo = "hello"
+  var __gen1 = foo
+  print((__gen1.bar if __gen1 != null else null))
+  `,
 };
 //# sourceMappingURL=parse_property_access_expression.js.map

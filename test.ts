@@ -1,6 +1,6 @@
 import * as ts from "typescript"
 import { parseNode, ParseNodeType } from "./parse_node"
-import { baseContentForTests } from "./generators/generate_base"
+import { baseContentForTests } from "./generate_library_defs/generate_base"
 import fs from "fs"
 import path from "path"
 import { Scope } from "./scope"
@@ -76,6 +76,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       program: undefined as any,
       compileAllSourceFiles: () => {},
       shouldBuildDefinitions: () => false,
+      validateAutoloads: () => true,
       mainScene: {
         fsPath: "",
         resPath: "",
@@ -98,6 +99,8 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         rawConfig: 0 as any,
         actionNames: [],
         project: {} as any,
+        addAutoload: {} as any,
+        removeAutoload: {} as any,
       },
       monitor: () => 0 as any,
       onAddAsset: () => {},
@@ -107,11 +110,10 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         {
           className: () => "",
           fsPath: "autoload.ts",
-          isAutoload: () => true,
+          isProjectAutoload: () => true,
           resPath: "",
           tsRelativePath: "",
           getEnumPath: () => "",
-          _lastCompilationResult: undefined,
           gdContainingDirectory: "",
           destroy: () => {},
           project: {} as any,
@@ -119,22 +121,24 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           compile: async () => {},
           gdPath: "",
           reload: () => {},
+          isDecoratedAutoload: {} as any,
+          ...({} as any), // ssh about private properties.
         },
         {
           className: () => "",
           fsPath: "test.ts",
-          isAutoload: () => false,
+          isProjectAutoload: () => false,
           resPath: "",
           gdPath: "",
           tsRelativePath: "",
           getEnumPath: () => "",
           gdContainingDirectory: "",
-          _lastCompilationResult: undefined,
           destroy: () => {},
           project: {} as any,
           tsType: () => "",
           compile: async () => {},
           reload: () => {},
+          ...({} as any),
         },
       ],
     },

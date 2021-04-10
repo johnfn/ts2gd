@@ -8,9 +8,7 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/js/main.js",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "args": [
         // "main.ts",
         "/Users/johnfn/GodotProject2/tsgd.json"

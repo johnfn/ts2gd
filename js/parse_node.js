@@ -50,7 +50,7 @@ const parse_conditional_expression_1 = require("./parse_node/parse_conditional_e
 const parse_arrow_function_1 = require("./parse_node/parse_arrow_function");
 const parse_typeof_expression_1 = require("./parse_node/parse_typeof_expression");
 const isTsNodeArray = (x) => {
-    // Poor mans hack
+    // Poor man's hack
     return x && "pos" in x && "find" in x;
 };
 function combine(args) {
@@ -71,7 +71,7 @@ function combine(args) {
                 node: undefined,
                 content: "",
                 enums: [],
-                incrementState: [],
+                extraLines: [],
                 hoistedEnumImports: [],
                 hoistedArrowFunctions: [],
                 hoistedLibraryFunctions: [],
@@ -82,7 +82,7 @@ function combine(args) {
             node,
             content: parsed.content,
             enums: parsed.enums ?? [],
-            incrementState: parsed.incrementState ?? [],
+            extraLines: parsed.extraLines ?? [],
             hoistedEnumImports: parsed.hoistedEnumImports ?? [],
             hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
             hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
@@ -102,21 +102,16 @@ function combine(args) {
         let result = content;
         let lines = content.split("\n"); // .filter(x => x !== '');
         if (isStatement) {
-            if (parsed.incrementState.length > 0) {
-                for (const inc of parsed.incrementState) {
-                    if (inc.type === "predecrement") {
-                        result = `${inc.variable} -= 1\n` + result;
+            if (parsed.extraLines.length > 0) {
+                console.log(parsed.extraLines);
+                for (const line of parsed.extraLines) {
+                    if (line.type === "before") {
+                        result = line.line.trimEnd() + "\n" + result + "\n";
                     }
-                    else if (inc.type === "preincrement") {
-                        result = `${inc.variable} += 1\n` + result;
+                    else if (line.type === "after") {
+                        result = result.trimEnd() + "\n" + line.line.trimEnd() + "\n";
                     }
-                    else if (inc.type === "postdecrement") {
-                        result = result + `\n${inc.variable} -= 1\n`;
-                    }
-                    else if (inc.type === "postincrement") {
-                        result = result + `\n${inc.variable} += 1\n`;
-                    }
-                    parsed.incrementState = [];
+                    parsed.extraLines = [];
                 }
             }
         }
@@ -150,7 +145,7 @@ function combine(args) {
         hoistedEnumImports: parsedNodes.flatMap((node) => node.hoistedEnumImports ?? []),
         hoistedLibraryFunctions: parsedNodes.flatMap((node) => node.hoistedLibraryFunctions ?? []),
         hoistedArrowFunctions: parsedNodes.flatMap((node) => node.hoistedArrowFunctions ?? []),
-        incrementState: parsedNodes.flatMap((node) => node.incrementState ?? []),
+        extraLines: parsedNodes.flatMap((node) => node.extraLines ?? []),
     };
 }
 exports.combine = combine;
@@ -321,11 +316,14 @@ const parseNode = (genericNode, props) => {
             return { content: "null" };
         case typescript_1.SyntaxKind.NullKeyword:
             return { content: "null" };
+        default:
+            // We don't handle that node! At least not yet!
+            ts_utils_1.logErrorAtNode(genericNode, "ts2gd does not currently support this code:");
+            console.info(genericNode.getText());
+            console.info("");
+            console.info("Try rewriting it, or opening an issue on the ts2gd GitHub repo.");
+            return { content: "" };
     }
-    throw new Error("uh oh!: " +
-        ts_utils_1.syntaxToKind(genericNode.kind) +
-        " " +
-        (genericNode.getText ? genericNode.getText() : genericNode));
 };
 exports.parseNode = parseNode;
 //# sourceMappingURL=parse_node.js.map
