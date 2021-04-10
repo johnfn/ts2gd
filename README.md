@@ -60,13 +60,9 @@ In the future, this could become a configuration setting on tsgd.json.
 
 ### Autoloads
 
-In order to use an autoload class:
+In order to make a class autoload, put `@autoload` on the line before the class. ts2gd will tell you what to do with helpful error messages.
 
-1. Marking it as autoload in Godot.
-2. Declare the class as normal, but do not export it.
-3. Instead, export an instance of the class. ts2gd will figure out what you mean.
-
-Here's an example:
+Here's a full example of an autoload class.
 
 ```
 class MyAutoloadClass extends Node2D {
