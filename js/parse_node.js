@@ -103,7 +103,6 @@ function combine(args) {
         let lines = content.split("\n"); // .filter(x => x !== '');
         if (isStatement) {
             if (parsed.extraLines.length > 0) {
-                console.log(parsed.extraLines);
                 for (const line of parsed.extraLines) {
                     if (line.type === "before") {
                         result = line.line.trimEnd() + "\n" + result + "\n";

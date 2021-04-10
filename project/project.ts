@@ -11,7 +11,7 @@ import { Flags } from "../parse_args"
 import { buildActionNames } from "./generate_dynamic_defs/build_action_names"
 import { buildAssetPathsType } from "./generate_dynamic_defs/build_asset_paths"
 import { buildGroupTypes } from "./generate_dynamic_defs/build_group_types"
-import { buildNodePathsTypeForScript } from "./generate_dynamic_defs/build_paths_for_node"
+import { buildNodePathsTypeForScript } from "./generate_dynamic_defs/build_node_paths"
 import { buildSceneImports } from "./generate_dynamic_defs/build_scene_imports"
 import { AssetFont } from "./assets/asset_font"
 import { AssetGlb } from "./assets/asset_glb"
@@ -315,7 +315,7 @@ export class TsGdProjectClass {
     let valid = true
 
     for (const sourceFile of this.sourceFiles()) {
-      valid = valid && sourceFile.validateAutoload()
+      valid = valid && sourceFile.validateAutoloadChange()
     }
 
     return valid

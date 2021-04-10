@@ -31,6 +31,9 @@ exports.showLoadingMessage = void 0;
 // regenerate asset_paths on restart
 // Make a testing harness for project-related stuff.
 // consider always running buildAllDefinitions. it might be safer
+// TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
+// The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
+// local state. I should think of a way to address this.
 /*
 When deleting a scene:
 
@@ -62,7 +65,6 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Import constants from other files.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
-// @autoload
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
@@ -175,6 +177,9 @@ const main = async (flags) => {
     // we just saved in buildAllDefinitions().
     exports.showLoadingMessage("Waiting for TypeScript to finish");
     await tsInitialLoad;
+    if (!project.validateAutoloads()) {
+        process.exit(0);
+    }
     exports.showLoadingMessage("Compiling all source files");
     project.compileAllSourceFiles();
     exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, true);

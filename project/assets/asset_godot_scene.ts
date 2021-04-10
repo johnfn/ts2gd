@@ -262,7 +262,7 @@ export class AssetGodotScene extends BaseAsset {
         )
       }
 
-      const className = rootSourceFile.className()
+      const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
         return null
@@ -271,7 +271,7 @@ export class AssetGodotScene extends BaseAsset {
       return `import('${rootSourceFile.fsPath.slice(
         0,
         -".ts".length
-      )}').${rootSourceFile.className()}`
+      )}').${rootSourceFile.exportedTsClassName()}`
     } else {
       return `${this.rootNode.tsType()}`
     }

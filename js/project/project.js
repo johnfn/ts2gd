@@ -33,6 +33,8 @@ class TsGdProjectClass {
         TsGdProjectClass.Paths = ts2gdJson;
         this.program = program;
         // Parse assets
+        const projectGodot = initialFilePaths.filter((path) => path.includes("project.godot"))[0];
+        this.godotProject = this.createAsset(projectGodot);
         const initialAssets = initialFilePaths.map((path) => this.createAsset(path));
         for (const asset of initialAssets) {
             if (asset === null) {
@@ -217,6 +219,16 @@ class TsGdProjectClass {
     }
     static FsPathToResPath(fsPath) {
         return "res://" + fsPath.slice(TsGdProjectClass.Paths.rootPath.length + 1);
+    }
+    /**
+     * Returns true if all autoloads are valid; false if not.
+     */
+    validateAutoloads() {
+        let valid = true;
+        for (const sourceFile of this.sourceFiles()) {
+            valid = valid && sourceFile.validateAutoload();
+        }
+        return valid;
     }
 }
 exports.TsGdProjectClass = TsGdProjectClass;

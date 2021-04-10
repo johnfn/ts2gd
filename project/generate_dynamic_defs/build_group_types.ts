@@ -14,7 +14,7 @@ export const buildGroupTypes = (project: TsGdProjectClass) => {
         continue
       }
 
-      const type = script.className()
+      const type = script.exportedTsClassName()
 
       if (!type) {
         continue

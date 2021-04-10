@@ -23,7 +23,7 @@ interface Function {
 }
 
 declare function exports(target: Node, name: string): void;
-declare function autoload(target: Node): void;
+declare function autoload(target: typeof Node): void
 
 declare type int = number;
 declare type float = number;

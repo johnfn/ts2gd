@@ -52,7 +52,7 @@ export const buildNodePathsTypeForScript = (
   // For every potential relative path, validate that it can be found
   // in each instantiated node.
 
-  const className = script.className()
+  const className = script.exportedTsClassName()
 
   if (!className) {
     return []
@@ -165,7 +165,7 @@ export const buildNodePathsTypeForScript = (
       pathToImport[path] = `import("${script.fsPath.slice(
         0,
         -".ts".length
-      )}").${script.className()}`
+      )}").${script.exportedTsClassName()}`
     } else {
       pathToImport[path] = node.tsType()
     }
@@ -213,12 +213,11 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 
     export { _new as new };
   }
-}
-  `
+}`
 
   const destPath = path.join(
     TsGdProjectClass.Paths.dynamicGodotDefsPath,
-    `@node_paths_${className}.d.ts`
+    `@node_paths_${script.getGodotClassName()}.d.ts`
   )
 
   fs.writeFileSync(destPath, result)

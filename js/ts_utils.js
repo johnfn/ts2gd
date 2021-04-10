@@ -122,10 +122,20 @@ const syntaxKindToString = (kind) => {
     return typescript_1.default.SyntaxKind[kind];
 };
 exports.syntaxKindToString = syntaxKindToString;
-const logErrorAtNode = (node, error) => {
-    const { line, character, } = node.getSourceFile()?.getLineAndCharacterOfPosition(node.getStart());
-    console.warn();
-    console.warn("Error at", `${chalk_1.default.blueBright(node.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
+// Location is either
+// * The TS AST node that the error occured at (preferred), or
+// * Some generic string (ideally a path to the file)
+const logErrorAtNode = (location, error) => {
+    if (typeof location === "string") {
+        console.warn("Error at", chalk_1.default.blueBright(location));
+    }
+    else {
+        const { line, character, } = location
+            .getSourceFile()
+            ?.getLineAndCharacterOfPosition(location.getStart());
+        console.warn();
+        console.warn("Error at", `${chalk_1.default.blueBright(location.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
+    }
     console.warn(chalk_1.default.redBright(error));
 };
 exports.logErrorAtNode = logErrorAtNode;

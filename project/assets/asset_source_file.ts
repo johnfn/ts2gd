@@ -107,7 +107,8 @@ export class AssetSourceFile extends BaseAsset {
     return topLevelClasses[0]
   }
 
-  className(): string | null {
+  // This can be different than the Godot class name for autoload classes.
+  exportedTsClassName(): string | null {
     const node = this.getClassNode()
     const name = node?.name
 
@@ -121,7 +122,7 @@ export class AssetSourceFile extends BaseAsset {
     return name?.text ?? null
   }
 
-  getAutoloadNameFromExportedVariable(): string | null {
+  private getAutoloadNameFromExportedVariable(): string | null {
     const ast = this.getAst()
 
     if (!ast) {
@@ -146,7 +147,7 @@ export class AssetSourceFile extends BaseAsset {
   }
 
   tsType(): string | null {
-    const className = this.className()
+    const className = this.exportedTsClassName()
 
     if (className) {
       return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
@@ -177,13 +178,13 @@ export class AssetSourceFile extends BaseAsset {
     return false
   }
 
-  validateAutoload(): boolean {
+  validateAutoloadChange(): boolean {
     if (this.isProjectAutoload() && !this.isDecoratedAutoload()) {
       logErrorAtNode(
         this.tsRelativePath,
-        `This file is an autoload, so it needs an ${chalk.blueBright(
+        `Godot thinks this is an AutoLoad, but it doesn't have an ${chalk.white(
           "@autoload"
-        )} decorator.\n\nIf that was unintentional, you can remove it from the Godot autoload list.`
+        )} decorator. Either add the decorator or remove it from the Godot AutoLoad list.`
       )
 
       return false
@@ -192,7 +193,9 @@ export class AssetSourceFile extends BaseAsset {
     if (!this.isProjectAutoload() && this.isDecoratedAutoload()) {
       logErrorAtNode(
         this.tsRelativePath,
-        `This file has an @autoload decorator, so it needs to be marked as an autoload in Godot.\n\nIf that was unintentional, you can remove the "@autoload" decorator.`
+        `This has an ${chalk.white(
+          "@autoload"
+        )} decorator, but Godot doesn't have it on the AutoLoad list. Either add it to the Godot AutoLoad list, or remove the decorator.`
       )
 
       return false
@@ -259,41 +262,33 @@ export class AssetSourceFile extends BaseAsset {
     this.checkForAutoloadChanges()
 
     if (this.isAutoload()) {
-      const classNode = this.getClassNode()
-      const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? []
-
-      // skip class declarations; there's no code to generate here
-      if (modifiers?.includes("export")) {
-        logErrorAtNode(
-          classNode ?? this.fsPath,
-          `Autoload classes cannot be exported - remove ${chalk.white(
-            "export"
-          )}.`
-        )
-      }
-
-      if (!this.getAutoloadNameFromExportedVariable()) {
-        logErrorAtNode(
-          classNode ?? this.fsPath,
-          `Be sure to export an instance of your autoload class, e.g.:
-
-${chalk.white(
-  `export const ${this.getAutoloadClassNameFromFileName()} = new ${this.className()}()`
-)}        
-        `
-        )
-      }
+      this.validateAutoloadClass()
     }
   }
 
-  validateAutoloadClass() {}
+  validateAutoloadClass() {
+    const classNode = this.getClassNode()
+    const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? []
 
-  getAutoloadClassNameFromFileName(): string {
+    if (!this.getAutoloadNameFromExportedVariable()) {
+      logErrorAtNode(
+        classNode ?? this.fsPath,
+        `Be sure to export an instance of your autoload class, e.g.:
+
+${chalk.white(
+  `export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`
+)}        
+        `
+      )
+    }
+  }
+
+  getGodotClassName(): string {
     return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length)
   }
 
   checkForAutoloadChanges() {
-    const autoloadClassName = this.getAutoloadClassNameFromFileName()
+    const autoloadClassName = this.getGodotClassName()
     let shouldBeAutoload: boolean
     let prevAutoload = this.isAutoload()
 
@@ -319,6 +314,17 @@ ${chalk.white(
       if (!this.isProjectAutoload()) {
         this.project.godotProject.addAutoload(autoloadClassName, this.resPath)
       }
+
+      if (!this.isDecoratedAutoload()) {
+        shouldBeAutoload = false
+
+        logErrorAtNode(
+          this.getClassNode() || this.fsPath,
+          `Since this is an autoload class in Godot, you must put ${chalk.white(
+            "@autoload"
+          )} the line before the class declaration.`
+        )
+      }
     }
 
     if (prevAutoload && !shouldBeAutoload) {
@@ -326,6 +332,17 @@ ${chalk.white(
         this.project.godotProject.removeAutoload(
           autoloadClassName,
           this.resPath
+        )
+      }
+
+      if (this.isDecoratedAutoload()) {
+        shouldBeAutoload = true
+
+        logErrorAtNode(
+          this.getClassNode() || this.fsPath,
+          `Since you removed this as an autoload class in Godot, you must remove ${chalk.white(
+            "@autoload"
+          )}.`
         )
       }
     }
@@ -351,7 +368,7 @@ ${chalk.white(
     }
 
     this.project.godotProject.removeAutoload(
-      this.getAutoloadClassNameFromFileName(),
+      this.getGodotClassName(),
       this.resPath
     )
   }

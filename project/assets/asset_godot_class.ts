@@ -43,7 +43,7 @@ export class AssetGodotClass extends BaseAsset {
       return null
     }
 
-    const className = sourceFile.className()
+    const className = sourceFile.exportedTsClassName()
 
     if (!className) {
       return null
@@ -52,7 +52,7 @@ export class AssetGodotClass extends BaseAsset {
     return `import('${sourceFile.fsPath.slice(
       0,
       -".ts".length
-    )}').${sourceFile.className()}`
+    )}').${sourceFile.exportedTsClassName()}`
   }
 
   static extensions() {

@@ -108,9 +108,10 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       onRemoveAsset: () => {},
       sourceFiles: () => [
         {
-          className: () => "",
+          exportedTsClassName: () => "",
           fsPath: "autoload.ts",
           isProjectAutoload: () => true,
+          isAutoload: () => true,
           resPath: "",
           tsRelativePath: "",
           getEnumPath: () => "",
@@ -125,12 +126,13 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           ...({} as any), // ssh about private properties.
         },
         {
-          className: () => "",
+          exportedTsClassName: () => "",
           fsPath: "test.ts",
           isProjectAutoload: () => false,
           resPath: "",
           gdPath: "",
           tsRelativePath: "",
+          isAutoload: () => false,
           getEnumPath: () => "",
           gdContainingDirectory: "",
           destroy: () => {},

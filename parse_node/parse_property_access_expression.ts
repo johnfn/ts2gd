@@ -42,8 +42,6 @@ export const parsePropertyAccessExpression = (
     .getTypeChecker()
     .getTypeAtLocation(node.expression)
 
-  console.log(!!node.questionDotToken)
-
   // Compile things like KeyList.KEY_SPACE into KEY_SPACE
   if (isEnumType(exprType)) {
     const symbol = exprType.getSymbol()!
@@ -93,8 +91,6 @@ export const parsePropertyAccessExpression = (
     ...(result.extraLines ?? []),
     ...(nullCoalesce ? [nullCoalesce] : []),
   ]
-
-  console.log(result.extraLines)
 
   return result
 }
@@ -238,6 +234,25 @@ class_name Test
 func test():
   var foo = "hello"
   var __gen1 = foo
+  print((__gen1.bar if __gen1 != null else null))
+  `,
+}
+
+export const testNullCoalesce2: Test = {
+  ts: `
+export class Test {
+  test() {
+    const foo: string | null = "hello"
+
+    print((foo + "a")?.bar)
+  }
+}
+  `,
+  expected: `
+class_name Test
+func test():
+  var foo = "hello"
+  var __gen1 = (foo + "a")
   print((__gen1.bar if __gen1 != null else null))
   `,
 }

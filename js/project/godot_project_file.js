@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GodotProjectFile = void 0;
 const godot_parser_1 = require("./godot_parser");
 const project_1 = require("./project");
+const fs_1 = __importDefault(require("fs"));
 class GodotProjectFile {
     constructor(path, project) {
         this.rawConfig = godot_parser_1.parseGodotConfigFile(path, {
@@ -17,6 +21,29 @@ class GodotProjectFile {
             resPath: x.slice(1),
         }));
         this.actionNames = Object.keys(this.rawConfig.input ?? {});
+    }
+    addAutoload(className, resPath) {
+        this.project.godotProject.autoloads = [
+            ...this.project.godotProject.autoloads,
+            { resPath: resPath },
+        ];
+        const lines = fs_1.default.readFileSync(this.fsPath, "utf-8").split("\n");
+        const index = lines.indexOf("[autoload]");
+        const autoloadLine = `${className}="*${resPath}"`;
+        if (index > 0) {
+            lines.splice(index + 2, 0, autoloadLine);
+        }
+        else {
+            lines.push(`[autoload]\n\n${autoloadLine}`);
+        }
+        fs_1.default.writeFileSync(this.fsPath, lines.join("\n"));
+    }
+    removeAutoload(className, resPath) {
+        this.project.godotProject.autoloads = this.project.godotProject.autoloads.filter((a) => a.resPath !== resPath);
+        let lines = fs_1.default.readFileSync(this.fsPath, "utf-8").split("\n");
+        const autoloadLine = `${className}="*${resPath}"`;
+        lines = lines.filter((l) => l.trim() !== autoloadLine);
+        fs_1.default.writeFileSync(this.fsPath, lines.join("\n"));
     }
     mainScene() {
         let mainSceneResPath = this.rawConfig.application?.["run/main_scene"];
