@@ -57,8 +57,6 @@ TypeError: Cannot read property 'trim' of undefined
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
 
-// @autoload
-
 // TODO: Godot doesnt allow shadowing tho TS does.
 // TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.

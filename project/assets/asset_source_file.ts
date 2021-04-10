@@ -121,7 +121,7 @@ export class AssetSourceFile extends BaseAsset {
     return name?.text ?? null
   }
 
-  getAutoloadInstanceName(): string | null {
+  getAutoloadNameFromExportedVariable(): string | null {
     const ast = this.getAst()
 
     if (!ast) {
@@ -257,14 +257,43 @@ export class AssetSourceFile extends BaseAsset {
     }
 
     this.checkForAutoloadChanges()
+
+    if (this.isAutoload()) {
+      const classNode = this.getClassNode()
+      const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? []
+
+      // skip class declarations; there's no code to generate here
+      if (modifiers?.includes("export")) {
+        logErrorAtNode(
+          classNode ?? this.fsPath,
+          `Autoload classes cannot be exported - remove ${chalk.white(
+            "export"
+          )}.`
+        )
+      }
+
+      if (!this.getAutoloadNameFromExportedVariable()) {
+        logErrorAtNode(
+          classNode ?? this.fsPath,
+          `Be sure to export an instance of your autoload class, e.g.:
+
+${chalk.white(
+  `export const ${this.getAutoloadClassNameFromFileName()} = new ${this.className()}()`
+)}        
+        `
+        )
+      }
+    }
   }
 
-  autoloadClassName(): string {
+  validateAutoloadClass() {}
+
+  getAutoloadClassNameFromFileName(): string {
     return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length)
   }
 
   checkForAutoloadChanges() {
-    const autoloadClassName = this.autoloadClassName()
+    const autoloadClassName = this.getAutoloadClassNameFromFileName()
     let shouldBeAutoload: boolean
     let prevAutoload = this.isAutoload()
 
@@ -322,7 +351,7 @@ export class AssetSourceFile extends BaseAsset {
     }
 
     this.project.godotProject.removeAutoload(
-      this.autoloadClassName(),
+      this.getAutoloadClassNameFromFileName(),
       this.resPath
     )
   }

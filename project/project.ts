@@ -181,8 +181,6 @@ export class TsGdProjectClass {
   }
 
   onChangeAsset(path: string) {
-    console.log("Change", path)
-
     let start = new Date().getTime()
     let showTime = false
 
