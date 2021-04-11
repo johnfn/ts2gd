@@ -125,7 +125,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     reload: () => { },
                     isDecoratedAutoload: {},
-                    ...{}, // ssh about private properties.
+                    ...{},
                 },
                 {
                     exportedTsClassName: () => "",

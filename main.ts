@@ -1,7 +1,7 @@
 // HIGH
 
-// TODO: typeof(null) explodes, need to check this some other way.
-// TODO: if (this.ship) does not check if ship is null
+// TODO: int?
+// TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
 
 // TODO make load/preload() work and return proper string
 // TODO make FooTscn return proper type of root node (without script, not just Node)

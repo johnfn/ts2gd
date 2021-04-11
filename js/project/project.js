@@ -192,7 +192,7 @@ class TsGdProjectClass {
             }
         }
     }
-    shouldBuildDefinitions(flags) {
+    shouldBuildLibraryDefinitions(flags) {
         if (flags.buildLibraries) {
             return true;
         }

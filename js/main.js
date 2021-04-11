@@ -25,13 +25,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.showLoadingMessage = void 0;
 // TODO: typeof(null) explodes, need to check this some other way.
-// TODO: delete float.d.ts
 // TODO: if (this.ship) does not check if ship is null
-// TODO sin()
-// TODO cos()
-// TODO atan2()
-// TODO str()
-// TODO make load() work and return proper string
+// TODO make load/preload() work and return proper string
 // TODO make FooTscn return proper type of root node (without script, not just Node)
 // Have a github action that auto publishes an html5 build
 // Convert "throw new Error()" into a better failure
