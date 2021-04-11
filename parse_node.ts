@@ -65,7 +65,6 @@ export type ParseState = {
   project: TsGdProjectClass
   program: ts.Program
   scope: Scope
-  genUniqueName: () => string
 
   /**
    * Is the current file we're in an autoload class?

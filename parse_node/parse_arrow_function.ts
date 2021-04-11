@@ -106,7 +106,7 @@ export const parseArrowFunction = (
   node: ts.ArrowFunction,
   props: ParseState
 ): ParseNodeType => {
-  const name = props.genUniqueName()
+  const name = props.scope.createUniqueName()
 
   const { unwrapCapturedScope } = getCapturedScope(
     node,

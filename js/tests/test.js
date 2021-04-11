@@ -65,21 +65,20 @@ const compileTs = (code, isAutoload) => {
     };
     const program = ts.createProgram(["test.ts", "autoload.ts"], tsconfigOptions, customCompilerHost);
     let i = 0;
-    const genUniqueName = () => `func${++i}`;
     // TODO: Make this less silly.
     const godotFile = parse_node_1.parseNode(sourceFile, {
         indent: "",
         scope: new scope_1.Scope(program),
         isConstructor: false,
         program,
-        genUniqueName,
         project: {
-            buildAllDefinitions: async () => { },
+            buildDynamicDefinitions: async () => { },
             assets: [],
             program: undefined,
             compileAllSourceFiles: () => { },
-            shouldBuildDefinitions: () => false,
+            shouldBuildLibraryDefinitions: () => false,
             validateAutoloads: () => true,
+            buildLibraryDefinitions: async () => { },
             mainScene: {
                 fsPath: "",
                 resPath: "",

@@ -204,8 +204,7 @@ class TsGdProjectClass {
         }
         return false;
     }
-    async buildAllDefinitions() {
-        await generate_library_1.generateGodotLibraryDefinitions();
+    async buildDynamicDefinitions() {
         build_asset_paths_1.buildAssetPathsType(this);
         for (const script of this.sourceFiles()) {
             build_node_paths_1.buildNodePathsTypeForScript(script, this);
@@ -213,6 +212,9 @@ class TsGdProjectClass {
         build_scene_imports_1.buildSceneImports(this);
         build_group_types_1.buildGroupTypes(this);
         build_action_names_1.buildActionNames(this);
+    }
+    async buildLibraryDefinitions() {
+        await generate_library_1.generateGodotLibraryDefinitions();
     }
     static ResPathToFsPath(resPath) {
         return path_1.default.join(TsGdProjectClass.Paths.rootPath, resPath.slice("res://".length));

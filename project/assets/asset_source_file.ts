@@ -214,16 +214,18 @@ export class AssetSourceFile extends BaseAsset {
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
     let tries = 0
 
-    while (!sourceFileAst && ++tries < 10) {
+    while (!sourceFileAst && ++tries < 50) {
       await new Promise((resolve) => setTimeout(resolve, 10))
+
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
     if (!sourceFileAst) {
       console.error(
-        `TS can't find source file ${this.fsPath} - this is almost certainly a bug with ts2gd.`
+        `TS can't find source file ${this.fsPath} after waiting 1s.`
       )
-      process.exit()
+
+      return
     }
 
     // Since we use chokidar but TS uses something else to monitor files, sometimes
@@ -237,12 +239,10 @@ export class AssetSourceFile extends BaseAsset {
     }
 
     let id = 0
-    const genUniqueName = () => `func${++id}`
 
     const result = parseNode(sourceFileAst, {
       indent: "",
       isConstructor: false,
-      genUniqueName,
       scope: new Scope(watchProgram.getProgram().getProgram()),
       project: this.project,
       mostRecentControlStructureIsSwitch: false,

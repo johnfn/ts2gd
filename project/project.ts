@@ -6,7 +6,7 @@ import fs from "fs"
 
 import { GodotProjectFile } from "./godot_project_file"
 import { Paths } from "./tsgd_json"
-import { generateGodotLibraryDefinitions } from "../generate_library_defs/generate_library"
+import { generateGodotLibraryDefinitions as buildLibraryDefinitions } from "../generate_library_defs/generate_library"
 import { ParsedArgs } from "../parse_args"
 import { buildActionNames } from "./generate_dynamic_defs/build_action_names"
 import { buildAssetPathsType } from "./generate_dynamic_defs/build_asset_paths"
@@ -268,7 +268,7 @@ export class TsGdProjectClass {
     }
   }
 
-  shouldBuildDefinitions(flags: ParsedArgs) {
+  shouldBuildLibraryDefinitions(flags: ParsedArgs) {
     if (flags.buildLibraries) {
       return true
     }
@@ -284,8 +284,7 @@ export class TsGdProjectClass {
     return false
   }
 
-  async buildAllDefinitions() {
-    await generateGodotLibraryDefinitions()
+  async buildDynamicDefinitions() {
     buildAssetPathsType(this)
 
     for (const script of this.sourceFiles()) {
@@ -295,6 +294,10 @@ export class TsGdProjectClass {
     buildSceneImports(this)
     buildGroupTypes(this)
     buildActionNames(this)
+  }
+
+  async buildLibraryDefinitions() {
+    await buildLibraryDefinitions()
   }
 
   static ResPathToFsPath(resPath: string) {

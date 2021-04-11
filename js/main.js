@@ -24,6 +24,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.showLoadingMessage = void 0;
+// TODO: typeof(null) explodes, need to check this some other way.
+// TODO: delete float.d.ts
+// TODO: if (this.ship) does not check if ship is null
+// TODO sin()
+// TODO cos()
+// TODO atan2()
+// TODO str()
+// TODO make load() work and return proper string
+// TODO make FooTscn return proper type of root node (without script, not just Node)
 // Have a github action that auto publishes an html5 build
 // Convert "throw new Error()" into a better failure
 // change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
@@ -34,6 +43,17 @@ exports.main = exports.showLoadingMessage = void 0;
 // The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
 // local state. I should think of a way to address this.
 // TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
+/*
+/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:22
+                throw new Error(`Expected ${expected} but got ${x} at ${getLineAndCol()}`);
+                      ^
+
+Error: Expected " but got < at line 39, col 1
+    at getchar (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:22:23)
+    at getString (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:137:9)
+    at getJson (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:118:25)
+    at getValue (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:190:20)
+*/
 /*
 When deleting a scene:
 
@@ -169,10 +189,11 @@ const main = async (args) => {
     const { watchProgram, tsInitializationFinished } = setup(tsgdJson);
     exports.showLoadingMessage("Scanning project");
     let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
-    if (project.shouldBuildDefinitions(args)) {
+    if (args.buildLibraries || project.shouldBuildLibraryDefinitions(args)) {
         exports.showLoadingMessage("Building definition files");
-        await project.buildAllDefinitions();
+        await project.buildLibraryDefinitions();
     }
+    await project.buildDynamicDefinitions();
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
     exports.showLoadingMessage("Waiting for TypeScript to finish");

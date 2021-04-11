@@ -62,21 +62,20 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   )
 
   let i = 0
-  const genUniqueName = () => `func${++i}`
   // TODO: Make this less silly.
   const godotFile = parseNode(sourceFile, {
     indent: "",
     scope: new Scope(program),
     isConstructor: false,
     program,
-    genUniqueName,
     project: {
-      buildAllDefinitions: async () => {},
+      buildDynamicDefinitions: async () => {},
       assets: [],
       program: undefined as any,
       compileAllSourceFiles: () => {},
-      shouldBuildDefinitions: () => false,
+      shouldBuildLibraryDefinitions: () => false,
       validateAutoloads: () => true,
+      buildLibraryDefinitions: async () => {},
       mainScene: {
         fsPath: "",
         resPath: "",

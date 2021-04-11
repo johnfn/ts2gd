@@ -5,6 +5,7 @@
   "main": "js/main.js",
   "scripts": {
     "publish-local": "npm run tsc && npm link",
+    "publish": "npm run tsc && npm publish",
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn main.ts",
     "test": "ts-node-dev --respawn --clear tests/test.ts",

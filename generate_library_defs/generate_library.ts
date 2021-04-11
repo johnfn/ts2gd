@@ -394,7 +394,7 @@ ${Object.keys(enums)
     )
 
     fs.writeFileSync(
-      path.join(TsGdProjectClass.Paths.dynamicGodotDefsPath, "@globals.d.ts"),
+      path.join(TsGdProjectClass.Paths.staticGodotDefsPath, "@globals.d.ts"),
       globalScope
     )
 
@@ -404,7 +404,7 @@ ${Object.keys(enums)
 
     fs.writeFileSync(
       path.join(
-        TsGdProjectClass.Paths.dynamicGodotDefsPath,
+        TsGdProjectClass.Paths.staticGodotDefsPath,
         "@global_functions.d.ts"
       ),
       globalFunctions

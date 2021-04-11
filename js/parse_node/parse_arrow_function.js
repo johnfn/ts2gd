@@ -75,7 +75,7 @@ const getCapturedScope = (node, checker) => {
 };
 exports.getCapturedScope = getCapturedScope;
 const parseArrowFunction = (node, props) => {
-    const name = props.genUniqueName();
+    const name = props.scope.createUniqueName();
     const { unwrapCapturedScope } = exports.getCapturedScope(node, props.program.getTypeChecker());
     props.scope.enterScope();
     let parsed = parse_node_1.combine({

@@ -314,9 +314,9 @@ ${Object.keys(enums)
         // This must come first because it parses out singletons
         // TODO - clean that up.
         const globalScope = await parseGlobalScope(path_1.default.join(normalClassesPath, "@GlobalScope.xml"));
-        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@globals.d.ts"), globalScope);
+        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, "@globals.d.ts"), globalScope);
         const globalFunctions = await generate_gdscript_lib_1.generateGdscriptLib(path_1.default.join(gdscriptPath, "@GDScript.xml"));
-        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@global_functions.d.ts"), globalFunctions);
+        fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, "@global_functions.d.ts"), globalFunctions);
         const xmlPaths = [
             ...fs_1.default
                 .readdirSync(csgClassesPath)

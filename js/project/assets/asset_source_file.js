@@ -124,13 +124,13 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
     async compile(watchProgram) {
         let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath);
         let tries = 0;
-        while (!sourceFileAst && ++tries < 10) {
+        while (!sourceFileAst && ++tries < 50) {
             await new Promise((resolve) => setTimeout(resolve, 10));
             sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath);
         }
         if (!sourceFileAst) {
-            console.error(`TS can't find source file ${this.fsPath} - this is almost certainly a bug with ts2gd.`);
-            process.exit();
+            console.error(`TS can't find source file ${this.fsPath} after waiting 1s.`);
+            return;
         }
         // Since we use chokidar but TS uses something else to monitor files, sometimes
         // we can race ahead of the TS compiler. This is a hack to wait for them to
@@ -140,11 +140,9 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
             sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath);
         }
         let id = 0;
-        const genUniqueName = () => `func${++id}`;
         const result = parse_node_1.parseNode(sourceFileAst, {
             indent: "",
             isConstructor: false,
-            genUniqueName,
             scope: new scope_1.Scope(watchProgram.getProgram().getProgram()),
             project: this.project,
             mostRecentControlStructureIsSwitch: false,
