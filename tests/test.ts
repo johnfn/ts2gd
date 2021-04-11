@@ -1,9 +1,9 @@
 import * as ts from "typescript"
-import { parseNode, ParseNodeType } from "./parse_node"
-import { baseContentForTests } from "./generate_library_defs/generate_base"
+import { parseNode, ParseNodeType } from "../parse_node"
+import { baseContentForTests } from "../generate_library_defs/generate_base"
 import fs from "fs"
 import path from "path"
-import { Scope } from "./scope"
+import { Scope } from "../scope"
 import chalk from "chalk"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
@@ -171,8 +171,6 @@ type TestResultFail = {
   name: string
   expected: string
   expectFail?: boolean
-  // TODO: can prob remove this
-  fileName: string
   path: string
   logs?: any[][]
 }
@@ -210,7 +208,6 @@ const test = (
           expected: `${filename} was not created.`,
           name,
           expectFail: props.expectFail ?? false,
-          fileName: testFileName,
           path: "[generated]/" + testFileName,
         }
       }
@@ -222,7 +219,6 @@ const test = (
           expected: match.content,
           name,
           expectFail: props.expectFail ?? false,
-          fileName: testFileName,
           path: "[generated]/" + testFileName,
         }
       }
@@ -239,7 +235,6 @@ const test = (
     expected: trim(expected),
     name,
     expectFail: props.expectFail ?? false,
-    fileName: testFileName,
     path,
   }
 }
@@ -257,7 +252,7 @@ const getAllFiles = async (): Promise<{
       continue
     }
 
-    let relativePath = "./parse_node/" + f
+    let relativePath = "./../parse_node/" + f
 
     const obj = await import(relativePath)
 

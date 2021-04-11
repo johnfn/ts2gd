@@ -7,7 +7,7 @@ import fs from "fs"
 import { GodotProjectFile } from "./godot_project_file"
 import { Paths } from "./tsgd_json"
 import { generateGodotLibraryDefinitions } from "../generate_library_defs/generate_library"
-import { Flags } from "../parse_args"
+import { ParsedArgs } from "../parse_args"
 import { buildActionNames } from "./generate_dynamic_defs/build_action_names"
 import { buildAssetPathsType } from "./generate_dynamic_defs/build_asset_paths"
 import { buildGroupTypes } from "./generate_dynamic_defs/build_group_types"
@@ -268,7 +268,7 @@ export class TsGdProjectClass {
     }
   }
 
-  shouldBuildDefinitions(flags: Flags) {
+  shouldBuildDefinitions(flags: ParsedArgs) {
     if (flags.buildLibraries) {
       return true
     }

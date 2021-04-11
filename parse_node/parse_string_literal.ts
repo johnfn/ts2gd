@@ -1,7 +1,7 @@
 import ts from "typescript"
 
 import { combine, ParseNodeType, ParseState } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 
 export const parseStringLiteral = (
   node: ts.StringLiteral,

@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 import { isArrayType, isDictionary } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
@@ -368,9 +368,6 @@ __map(x, funcref(self, "func1"), {"z": z, "big": big})
 
 // }
 // return z + big.a + y * 3
-
-// TODO this also fails bc it's double quoted.
-// let big = { "a" : 6 }
 
 export const testRewriteDictPut: Test = {
   ts: `

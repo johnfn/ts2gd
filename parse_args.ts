@@ -1,6 +1,13 @@
-export const parseArgs = () => {
+export type ParsedArgs = {
+  help: boolean
+  buildLibraries: boolean
+  init: boolean
+  tsgdPath?: string
+}
+
+export const parseArgs = (): ParsedArgs => {
   const args = process.argv.slice(2)
-  const flags = {
+  const flags: ParsedArgs = {
     help: false,
     buildLibraries: false,
     init: false,
@@ -17,6 +24,8 @@ export const parseArgs = () => {
       flags.buildLibraries = true
     } else if (arg === "--init") {
       flags.init = true
+    } else if (arg.includes("/") || arg.includes(".json")) {
+      flags.tsgdPath = arg
     } else {
       flags.help = true
     }
@@ -39,5 +48,3 @@ export const printHelp = () => {
     "See README on GitHub for much more detail: https://github.com/johnfn/ts2gd"
   )
 }
-
-export type Flags = ReturnType<typeof parseArgs>

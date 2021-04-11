@@ -7,7 +7,8 @@
     "publish-local": "npm run tsc && npm link",
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn main.ts",
-    "test": "ts-node-dev --respawn --clear test.ts"
+    "test": "ts-node-dev --respawn --clear tests/test.ts",
+    "project-test": "ts-node-dev --respawn --clear tests/project_tests.ts"
   },
   "prepublish": "tsc",
   "bin": {

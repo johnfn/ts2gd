@@ -1,15 +1,18 @@
-import ts from "typescript";
-import { ParseState, combine } from "../parse_node";
+import ts from "typescript"
+import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test";
+import { Test } from "../tests/test"
 
-export const parseExpressionStatement = (node: ts.ExpressionStatement, props: ParseState): ParseNodeType => {
+export const parseExpressionStatement = (
+  node: ts.ExpressionStatement,
+  props: ParseState
+): ParseNodeType => {
   return combine({
     parent: node,
     nodes: node.expression,
     props,
-    content: expr => expr
-  });
+    content: (expr) => expr,
+  })
 }
 
 export const testExpressionStatement: Test = {
@@ -19,4 +22,4 @@ export const testExpressionStatement: Test = {
   expected: `
 1 + 1
   `,
-};
+}

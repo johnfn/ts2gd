@@ -133,7 +133,6 @@ myComplexDict.put(myNode, 5)
 - [x] Godot expects methods like \_process to _always_ have a float parameter, but TS does not require this. It should be added implicitly.
 - [ ] explain tne `enum` thing better
 - [ ] @node annotations to say which node a class belongs to
-- [ ] How come I can't call get_tree() on a class that extends Object?
 - [x] handle parameters to \_functions that aren't provided in TS by autofilling them in Godot
 - [x] `callables`
 - [x] Handle passing anonymous functions around - probably with funcref for now.
@@ -157,17 +156,16 @@ myComplexDict.put(myNode, 5)
 - [x] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
 - [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
-- [ ] add a way to install ts2gd as a global command
+- [x] add a way to install ts2gd as a global command
 - [x] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
 - [ ] Whether to hide away constants into enums or not could be parameterizeable. It is _correct_ to hide them into enums, but it will be confusing for people who haven't read the README, which is probably everyone.
 - [ ] Some sort of error if an autoload class is not entirely static.
 - [x] yield(this.get_tree(), "idle_frame"); could autocomplete idle_frame? it's possible: just get all the signals on the object.
 - [ ] Fancy TS/JS features
-  - [ ] destructuring
+  - [x] destructuring
   - [ ] ... spread operator
 - [x] Map, filter, etc? even though they aren't part of godot, it would be nice to have them.
-- [ ] Skip compiled/
 - [x] ../ node paths (note: impossible)
 - [x] Break our assumption that filename === classname
 - [ ] Onready vs nonready - maybe we don't have to mark everything as an onready var? Is there an advantage to so doing?

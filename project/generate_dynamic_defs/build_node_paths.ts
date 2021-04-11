@@ -72,7 +72,6 @@ export const buildNodePathsTypeForScript = (
   if (nodesWithScript.length === 0) {
     if (script.isAutoload()) {
       // Special logic for autoload classes.
-      // TODO: Should we generate /root/ in the node path too?
 
       const rootScene = project.mainScene
       commonRelativePaths = getAllChildPaths(rootScene.rootNode)

@@ -2,7 +2,7 @@ import ts from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { getGodotType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 
 export const parseParameter = (
   node: ts.ParameterDeclaration,

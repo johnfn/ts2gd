@@ -1,7 +1,5 @@
 // HIGH
 
-// adding a node to a scene should update paths in the other nodes in that scene.
-
 // Have a github action that auto publishes an html5 build
 
 // Convert "throw new Error()" into a better failure
@@ -17,6 +15,8 @@
 
 // The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
 // local state. I should think of a way to address this.
+
+// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
 
 /*
 When deleting a scene:
@@ -109,14 +109,10 @@ import packageJson from "./package.json"
 import { makeTsGdProject } from "./project/project"
 import { Paths } from "./project/tsgd_json"
 import { checkVersionAsync } from "./check_version"
-import { Flags, parseArgs, printHelp } from "./parse_args"
+import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
 import chalk from "chalk"
-import fs from "fs"
-import { defaultTsconfig } from "./generate_library_defs/generate_tsconfig"
 
-const setup = () => {
-  const tsgdJson = new Paths()
-
+const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {
     getCanonicalFileName: (path: string) => path,
     getCurrentDirectory: ts.sys.getCurrentDirectory,
@@ -125,7 +121,7 @@ const setup = () => {
 
   let tsUpdateResolve!: (value: void | PromiseLike<void>) => void
 
-  const tsInitialLoad = new Promise<void>((resolve) => {
+  const tsInitializationFinished = new Promise<void>((resolve) => {
     tsUpdateResolve = resolve
   })
 
@@ -198,7 +194,7 @@ const setup = () => {
     watchProgram,
     tsgdJson,
     reportWatchStatusChanged,
-    tsInitialLoad,
+    tsInitializationFinished,
   }
 }
 
@@ -211,16 +207,18 @@ export const showLoadingMessage = (msg: string, done = false) => {
   )
 }
 
-const main = async (flags: Flags) => {
+export const main = async (args: ParsedArgs) => {
   const start = new Date().getTime()
 
+  const tsgdJson = new Paths(args)
+
   showLoadingMessage("Initializing TypeScript")
-  const { watchProgram, tsgdJson, tsInitialLoad } = setup()
+  const { watchProgram, tsInitializationFinished } = setup(tsgdJson)
 
   showLoadingMessage("Scanning project")
   let project = await makeTsGdProject(tsgdJson, watchProgram)
 
-  if (project.shouldBuildDefinitions(flags)) {
+  if (project.shouldBuildDefinitions(args)) {
     showLoadingMessage("Building definition files")
     await project.buildAllDefinitions()
   }
@@ -228,7 +226,7 @@ const main = async (flags: Flags) => {
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
   showLoadingMessage("Waiting for TypeScript to finish")
-  await tsInitialLoad
+  await tsInitializationFinished
 
   if (!project.validateAutoloads()) {
     process.exit(0)
@@ -244,13 +242,13 @@ const main = async (flags: Flags) => {
 }
 
 if (!process.argv[1].includes("test")) {
-  const flags = parseArgs()
+  const args = parseArgs()
 
   checkVersionAsync()
 
-  if (flags.help) {
+  if (args.help) {
     printHelp()
   } else {
-    main(flags)
+    main(args)
   }
 }

@@ -1,7 +1,7 @@
 import ts from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 
 export const parseVariableDeclarationList = (
   node: ts.VariableDeclarationList,

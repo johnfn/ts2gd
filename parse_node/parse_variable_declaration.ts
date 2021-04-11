@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 import { getPreciseInitializerType as inferInitializerType } from "../ts_utils"
 
 export const getDestructuredNamesAndAccessStrings = (
@@ -51,7 +51,6 @@ export const parseVariableDeclaration = (
 ): ParseNodeType => {
   let declaredType = node.type?.getText()
 
-  // TODO: maybe error for number
   if (declaredType !== "int" && declaredType !== "float") {
     declaredType = undefined
   }

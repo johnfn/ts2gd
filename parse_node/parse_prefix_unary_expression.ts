@@ -3,7 +3,7 @@ const { SyntaxKind } = ts
 import { ParseState, parseNode, combine, ExtraLine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 
 export const parsePrefixUnaryExpression = (
   node: ts.PrefixUnaryExpression,

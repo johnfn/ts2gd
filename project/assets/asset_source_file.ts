@@ -308,8 +308,6 @@ ${chalk.white(
       }
     }
 
-    // TODO: Forcibly add decorator in the case of a project.godot update.
-
     if (!prevAutoload && shouldBeAutoload) {
       if (!this.isProjectAutoload()) {
         this.project.godotProject.addAutoload(autoloadClassName, this.resPath)

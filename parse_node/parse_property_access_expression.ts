@@ -6,7 +6,7 @@ import {
   ParseNodeType,
   ParseState,
 } from "../parse_node"
-import { Test } from "../test"
+import { Test } from "../tests/test"
 import { isDictionary, isEnumType, isNullable } from "../ts_utils"
 
 const isRhs = (node: ts.PropertyAccessExpression) => {
@@ -233,8 +233,8 @@ export class Test {
 class_name Test
 func test():
   var foo = "hello"
-  var __gen1 = foo
-  print((__gen1.bar if __gen1 != null else null))
+  var __gen = foo
+  print((__gen.bar if __gen != null else null))
   `,
 }
 
@@ -252,7 +252,7 @@ export class Test {
 class_name Test
 func test():
   var foo = "hello"
-  var __gen1 = (foo + "a")
-  print((__gen1.bar if __gen1 != null else null))
+  var __gen = (foo + "a")
+  print((__gen.bar if __gen != null else null))
   `,
 }
