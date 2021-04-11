@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
+exports.testNullCoalesce2 = exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -198,8 +198,26 @@ export class Test {
 class_name Test
 func test():
   var foo = "hello"
-  var __gen1 = foo
-  print((__gen1.bar if __gen1 != null else null))
+  var __gen = foo
+  print((__gen.bar if __gen != null else null))
+  `,
+};
+exports.testNullCoalesce2 = {
+    ts: `
+export class Test {
+  test() {
+    const foo: string | null = "hello"
+
+    print((foo + "a")?.bar)
+  }
+}
+  `,
+    expected: `
+class_name Test
+func test():
+  var foo = "hello"
+  var __gen = (foo + "a")
+  print((__gen.bar if __gen != null else null))
   `,
 };
 //# sourceMappingURL=parse_property_access_expression.js.map

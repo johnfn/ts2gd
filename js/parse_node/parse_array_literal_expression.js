@@ -13,11 +13,11 @@ const parseArrayLiteralExpression = (node, props) => {
 exports.parseArrayLiteralExpression = parseArrayLiteralExpression;
 // Tests
 exports.testArrayLiteral = {
-    ts: '[1, 2, 3]',
-    expected: '[1, 2, 3]',
+    ts: "[1, 2, 3]",
+    expected: "[1, 2, 3]",
 };
 exports.testEmptyArrayLiteral = {
-    ts: '[]',
-    expected: '[]',
+    ts: "[]",
+    expected: "[]",
 };
 //# sourceMappingURL=parse_array_literal_expression.js.map

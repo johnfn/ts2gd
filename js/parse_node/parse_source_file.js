@@ -50,13 +50,16 @@ const parseSourceFile = (node, props) => {
         (statement.modifiers ?? []).filter((m) => m.getText() === "declare")
             .length === 0);
     const parsedStatements = statements.map((statement) => parse_node_1.parseNode(statement, props));
+    const content = [
+        classDecl ? preprocessClassDecl(classDecl, props) : "",
+        parsedStatements.flatMap((x) => x.hoistedEnumImports ?? []).join("\n"),
+        parsedStatements.flatMap((x) => x.hoistedLibraryFunctions ?? []).join("\n"),
+        parsedStatements.flatMap((x) => x.hoistedArrowFunctions ?? []).join("\n"),
+        parsedStatements.map((x) => x.content).join("\n"),
+    ];
     return {
         content: `
-${classDecl ? preprocessClassDecl(classDecl, props) : ""} 
-${parsedStatements.flatMap((x) => x.hoistedEnumImports ?? []).join("\n")}
-${parsedStatements.flatMap((x) => x.hoistedLibraryFunctions ?? []).join("\n")}
-${parsedStatements.flatMap((x) => x.hoistedArrowFunctions ?? []).join("\n")}
-${parsedStatements.map((x) => x.content).join("\n")}
+    ${content.filter((item) => item.trim() !== "").join("\n")}
 `.trim(),
         enums: parsedStatements.flatMap((x) => x.enums ?? []),
     };

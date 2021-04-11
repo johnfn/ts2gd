@@ -30,11 +30,11 @@ class AssetGodotClass extends base_asset_1.BaseAsset {
         if (!sourceFile) {
             return null;
         }
-        const className = sourceFile.className();
+        const className = sourceFile.exportedTsClassName();
         if (!className) {
             return null;
         }
-        return `import('${sourceFile.fsPath.slice(0, -".ts".length)}').${sourceFile.className()}`;
+        return `import('${sourceFile.fsPath.slice(0, -".ts".length)}').${sourceFile.exportedTsClassName()}`;
     }
     static extensions() {
         return [".gd"];

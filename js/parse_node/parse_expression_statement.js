@@ -7,7 +7,7 @@ const parseExpressionStatement = (node, props) => {
         parent: node,
         nodes: node.expression,
         props,
-        content: expr => expr
+        content: (expr) => expr,
     });
 };
 exports.parseExpressionStatement = parseExpressionStatement;

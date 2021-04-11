@@ -21,6 +21,9 @@ const parseArgs = () => {
         else if (arg === "--init") {
             flags.init = true;
         }
+        else if (arg.includes("/") || arg.includes(".json")) {
+            flags.tsgdPath = arg;
+        }
         else {
             flags.help = true;
         }

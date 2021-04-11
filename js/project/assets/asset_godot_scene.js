@@ -129,11 +129,11 @@ class AssetGodotScene extends base_asset_1.BaseAsset {
             if (!rootSourceFile) {
                 throw new Error(`Failed to find root source file for ${rootScript.fsPath}`);
             }
-            const className = rootSourceFile.className();
+            const className = rootSourceFile.exportedTsClassName();
             if (!className) {
                 return null;
             }
-            return `import('${rootSourceFile.fsPath.slice(0, -".ts".length)}').${rootSourceFile.className()}`;
+            return `import('${rootSourceFile.fsPath.slice(0, -".ts".length)}').${rootSourceFile.exportedTsClassName()}`;
         }
         else {
             return `${this.rootNode.tsType()}`;

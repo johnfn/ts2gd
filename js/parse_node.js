@@ -131,10 +131,8 @@ function combine(args) {
         }
         return result;
     });
-    // TODO: This causes a mess of things - refactor it to work a different way.
-    let dummy = content(...strings.map((s) => "x"));
     let stringResult = content(...strings);
-    let initialWhitespaceLength = dummy.length - dummy.trimLeft().length;
+    const initialWhitespaceLength = stringResult.length - stringResult.trimLeft().length;
     stringResult =
         stringResult.slice(initialWhitespaceLength).trimRight() +
             (stringResult.endsWith("\n") ? "\n" : "");

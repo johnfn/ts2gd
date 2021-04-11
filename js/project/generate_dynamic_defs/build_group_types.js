@@ -15,7 +15,7 @@ const buildGroupTypes = (project) => {
             if (!script) {
                 continue;
             }
-            const type = script.className();
+            const type = script.exportedTsClassName();
             if (!type) {
                 continue;
             }

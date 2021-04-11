@@ -303,8 +303,6 @@ __map(x, funcref(self, "func1"), {"z": z, "big": big})
 // for (let i = 0; i < 3; i++) {
 // }
 // return z + big.a + y * 3
-// TODO this also fails bc it's double quoted.
-// let big = { "a" : 6 }
 exports.testRewriteDictPut = {
     ts: `
 let d = todict({ 'a': 1 })

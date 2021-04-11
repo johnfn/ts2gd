@@ -11,16 +11,26 @@ const main_1 = require("../main");
 const generate_tsconfig_1 = require("../generate_library_defs/generate_tsconfig");
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 class Paths {
-    constructor() {
-        // TODO: Merge this with parse_args.ts
-        let commandLineArgument = process_1.default.argv[2];
-        if (commandLineArgument === "--init") {
+    constructor(flags) {
+        if (flags.init) {
             this.init();
             process_1.default.exit(0);
         }
         let ts2gdPath = "";
-        if (commandLineArgument) {
-            ts2gdPath = commandLineArgument;
+        let fullyQualifiedTs2gdPathWithFilename;
+        let fullyQualifiedTs2gdPath;
+        if (flags.tsgdPath) {
+            ts2gdPath = flags.tsgdPath;
+            // relativeTs2gdPath is now a path of some sort, but it could be a relative path (e.g. "./ts2gd.json").
+            // Let's make it fully qualified.
+            if (ts2gdPath.startsWith("/")) {
+                // absolute path
+                fullyQualifiedTs2gdPathWithFilename = ts2gdPath;
+            }
+            else if (ts2gdPath.startsWith(".")) {
+                // some sort of relative path, so resolve it
+                fullyQualifiedTs2gdPathWithFilename = path_1.default.join(__dirname, flags.tsgdPath);
+            }
         }
         else {
             // Check if we can find the ts2gd.json in the current folder
@@ -31,18 +41,6 @@ class Paths {
                 process_1.default.exit(0);
             }
             ts2gdPath = ts2gdInCurrentFolderPath;
-        }
-        // relativeTs2gdPath is now a path of some sort, but it could be a relative path (e.g. "./ts2gd.json").
-        // Let's make it fully qualified.
-        let fullyQualifiedTs2gdPathWithFilename;
-        let fullyQualifiedTs2gdPath;
-        if (ts2gdPath.startsWith("/")) {
-            // absolute path
-            fullyQualifiedTs2gdPathWithFilename = ts2gdPath;
-        }
-        else if (ts2gdPath.startsWith(".")) {
-            // some sort of relative path, so resolve it
-            fullyQualifiedTs2gdPathWithFilename = path_1.default.join(__dirname, commandLineArgument);
         }
         fullyQualifiedTs2gdPathWithFilename = ts2gdPath;
         fullyQualifiedTs2gdPath = path_1.default.dirname(fullyQualifiedTs2gdPathWithFilename);

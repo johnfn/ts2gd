@@ -57,7 +57,8 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         }
         return topLevelClasses[0];
     }
-    className() {
+    // This can be different than the Godot class name for autoload classes.
+    exportedTsClassName() {
         const node = this.getClassNode();
         const name = node?.name;
         if (!name) {
@@ -83,7 +84,7 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         return this._isAutoload;
     }
     tsType() {
-        const className = this.className();
+        const className = this.exportedTsClassName();
         if (className) {
             return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`;
         }
@@ -106,7 +107,7 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         }
         return false;
     }
-    validateAutoload() {
+    validateAutoloadChange() {
         if (this.isProjectAutoload() && !this.isDecoratedAutoload()) {
             ts_utils_1.logErrorAtNode(this.tsRelativePath, `Godot thinks this is an AutoLoad, but it doesn't have an ${chalk_1.default.white("@autoload")} decorator. Either add the decorator or remove it from the Godot AutoLoad list.`);
             return false;
@@ -159,26 +160,24 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         }
         this.checkForAutoloadChanges();
         if (this.isAutoload()) {
-            const classNode = this.getClassNode();
-            const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? [];
-            // skip class declarations; there's no code to generate here
-            if (modifiers?.includes("export")) {
-                ts_utils_1.logErrorAtNode(classNode ?? this.fsPath, `Autoload classes cannot be exported - remove ${chalk_1.default.white("export")}.`);
-            }
-            if (!this.getAutoloadNameFromExportedVariable()) {
-                ts_utils_1.logErrorAtNode(classNode ?? this.fsPath, `Be sure to export an instance of your autoload class, e.g.:
-
-${chalk_1.default.white(`export const ${this.getAutoloadClassNameFromFileName()} = new ${this.className()}()`)}        
-        `);
-            }
+            this.validateAutoloadClass();
         }
     }
-    validateAutoloadClass() { }
-    getAutoloadClassNameFromFileName() {
+    validateAutoloadClass() {
+        const classNode = this.getClassNode();
+        const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? [];
+        if (!this.getAutoloadNameFromExportedVariable()) {
+            ts_utils_1.logErrorAtNode(classNode ?? this.fsPath, `Be sure to export an instance of your autoload class, e.g.:
+
+${chalk_1.default.white(`export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`)}        
+        `);
+        }
+    }
+    getGodotClassName() {
         return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length);
     }
     checkForAutoloadChanges() {
-        const autoloadClassName = this.getAutoloadClassNameFromFileName();
+        const autoloadClassName = this.getGodotClassName();
         let shouldBeAutoload;
         let prevAutoload = this.isAutoload();
         if (prevAutoload) {
@@ -199,7 +198,6 @@ ${chalk_1.default.white(`export const ${this.getAutoloadClassNameFromFileName()}
                 shouldBeAutoload = false;
             }
         }
-        // TODO: Forcibly add decorator in the case of a project.godot update.
         if (!prevAutoload && shouldBeAutoload) {
             if (!this.isProjectAutoload()) {
                 this.project.godotProject.addAutoload(autoloadClassName, this.resPath);
@@ -232,7 +230,7 @@ ${chalk_1.default.white(`export const ${this.getAutoloadClassNameFromFileName()}
                 fs_1.default.rmSync(fullPath);
             }
         }
-        this.project.godotProject.removeAutoload(this.getAutoloadClassNameFromFileName(), this.resPath);
+        this.project.godotProject.removeAutoload(this.getGodotClassName(), this.resPath);
     }
 }
 exports.AssetSourceFile = AssetSourceFile;

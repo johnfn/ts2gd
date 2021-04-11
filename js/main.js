@@ -23,8 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.showLoadingMessage = void 0;
-// adding a node to a scene should update paths in the other nodes in that scene.
+exports.main = exports.showLoadingMessage = void 0;
 // Have a github action that auto publishes an html5 build
 // Convert "throw new Error()" into a better failure
 // change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
@@ -34,6 +33,7 @@ exports.showLoadingMessage = void 0;
 // TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
 // The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
 // local state. I should think of a way to address this.
+// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
 /*
 When deleting a scene:
 
@@ -112,15 +112,14 @@ const tsgd_json_1 = require("./project/tsgd_json");
 const check_version_1 = require("./check_version");
 const parse_args_1 = require("./parse_args");
 const chalk_1 = __importDefault(require("chalk"));
-const setup = () => {
-    const tsgdJson = new tsgd_json_1.Paths();
+const setup = (tsgdJson) => {
     const formatHost = {
         getCanonicalFileName: (path) => path,
         getCurrentDirectory: typescript_1.default.sys.getCurrentDirectory,
         getNewLine: () => typescript_1.default.sys.newLine,
     };
     let tsUpdateResolve;
-    const tsInitialLoad = new Promise((resolve) => {
+    const tsInitializationFinished = new Promise((resolve) => {
         tsUpdateResolve = resolve;
     });
     let watchProgram;
@@ -155,7 +154,7 @@ const setup = () => {
         watchProgram,
         tsgdJson,
         reportWatchStatusChanged,
-        tsInitialLoad,
+        tsInitializationFinished,
     };
 };
 const showLoadingMessage = (msg, done = false) => {
@@ -163,20 +162,21 @@ const showLoadingMessage = (msg, done = false) => {
     console.info(chalk_1.default.blueBright("ts2gd v" + package_json_1.default.version), "-", msg + (done ? "" : "..."));
 };
 exports.showLoadingMessage = showLoadingMessage;
-const main = async (flags) => {
+const main = async (args) => {
     const start = new Date().getTime();
+    const tsgdJson = new tsgd_json_1.Paths(args);
     exports.showLoadingMessage("Initializing TypeScript");
-    const { watchProgram, tsgdJson, tsInitialLoad } = setup();
+    const { watchProgram, tsInitializationFinished } = setup(tsgdJson);
     exports.showLoadingMessage("Scanning project");
     let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
-    if (project.shouldBuildDefinitions(flags)) {
+    if (project.shouldBuildDefinitions(args)) {
         exports.showLoadingMessage("Building definition files");
         await project.buildAllDefinitions();
     }
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
     exports.showLoadingMessage("Waiting for TypeScript to finish");
-    await tsInitialLoad;
+    await tsInitializationFinished;
     if (!project.validateAutoloads()) {
         process.exit(0);
     }
@@ -184,14 +184,15 @@ const main = async (flags) => {
     project.compileAllSourceFiles();
     exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, true);
 };
+exports.main = main;
 if (!process.argv[1].includes("test")) {
-    const flags = parse_args_1.parseArgs();
+    const args = parse_args_1.parseArgs();
     check_version_1.checkVersionAsync();
-    if (flags.help) {
+    if (args.help) {
         parse_args_1.printHelp();
     }
     else {
-        main(flags);
+        exports.main(args);
     }
 }
 //# sourceMappingURL=main.js.map

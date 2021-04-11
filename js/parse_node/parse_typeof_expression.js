@@ -9,7 +9,7 @@ const parseTypeofExpression = (node, props) => {
         props,
         content: (expr) => {
             return `${expr}.get_class()`;
-        }
+        },
     });
 };
 exports.parseTypeofExpression = parseTypeofExpression;

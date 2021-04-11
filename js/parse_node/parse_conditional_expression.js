@@ -9,7 +9,7 @@ const parseConditionalExpression = (node, props) => {
         props,
         content: (cond, true_, false_) => {
             return `${true_} if ${cond} else ${false_}`;
-        }
+        },
     });
 };
 exports.parseConditionalExpression = parseConditionalExpression;

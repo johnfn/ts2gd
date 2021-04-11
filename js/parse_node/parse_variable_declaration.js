@@ -33,7 +33,6 @@ const getDestructuredNamesAndAccessStrings = (node, access = "") => {
 exports.getDestructuredNamesAndAccessStrings = getDestructuredNamesAndAccessStrings;
 const parseVariableDeclaration = (node, props) => {
     let declaredType = node.type?.getText();
-    // TODO: maybe error for number
     if (declaredType !== "int" && declaredType !== "float") {
         declaredType = undefined;
     }

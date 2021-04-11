@@ -13,7 +13,7 @@ const generate_library_1 = require("../generate_library_defs/generate_library");
 const build_action_names_1 = require("./generate_dynamic_defs/build_action_names");
 const build_asset_paths_1 = require("./generate_dynamic_defs/build_asset_paths");
 const build_group_types_1 = require("./generate_dynamic_defs/build_group_types");
-const build_paths_for_node_1 = require("./generate_dynamic_defs/build_paths_for_node");
+const build_node_paths_1 = require("./generate_dynamic_defs/build_node_paths");
 const build_scene_imports_1 = require("./generate_dynamic_defs/build_scene_imports");
 const asset_font_1 = require("./assets/asset_font");
 const asset_glb_1 = require("./assets/asset_glb");
@@ -160,11 +160,11 @@ class TsGdProjectClass {
             if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
                 newAsset.compile(this.program);
                 build_asset_paths_1.buildAssetPathsType(this);
-                build_paths_for_node_1.buildNodePathsTypeForScript(newAsset, this);
+                build_node_paths_1.buildNodePathsTypeForScript(newAsset, this);
             }
             else if (newAsset instanceof asset_godot_scene_1.AssetGodotScene) {
                 for (const script of this.sourceFiles()) {
-                    build_paths_for_node_1.buildNodePathsTypeForScript(script, this);
+                    build_node_paths_1.buildNodePathsTypeForScript(script, this);
                 }
                 build_scene_imports_1.buildSceneImports(this);
             }
@@ -208,7 +208,7 @@ class TsGdProjectClass {
         await generate_library_1.generateGodotLibraryDefinitions();
         build_asset_paths_1.buildAssetPathsType(this);
         for (const script of this.sourceFiles()) {
-            build_paths_for_node_1.buildNodePathsTypeForScript(script, this);
+            build_node_paths_1.buildNodePathsTypeForScript(script, this);
         }
         build_scene_imports_1.buildSceneImports(this);
         build_group_types_1.buildGroupTypes(this);
@@ -226,7 +226,7 @@ class TsGdProjectClass {
     validateAutoloads() {
         let valid = true;
         for (const sourceFile of this.sourceFiles()) {
-            valid = valid && sourceFile.validateAutoload();
+            valid = valid && sourceFile.validateAutoloadChange();
         }
         return valid;
     }
