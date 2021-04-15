@@ -2,7 +2,7 @@ import * as ts from "typescript"
 import { parseNode, ParseNodeType } from "../parse_node"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
 import fs from "fs"
-import path from "path"
+import path, { relative } from "path"
 import { Scope } from "../scope"
 import chalk from "chalk"
 
@@ -68,13 +68,14 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     scope: new Scope(program),
     isConstructor: false,
     program,
+    addError: () => {},
     project: {
       buildDynamicDefinitions: async () => {},
       assets: [],
       program: undefined as any,
-      compileAllSourceFiles: () => {},
+      compileAllSourceFiles: async () => {},
       shouldBuildLibraryDefinitions: () => false,
-      validateAutoloads: () => true,
+      validateAutoloads: () => [],
       buildLibraryDefinitions: async () => {},
       mainScene: {
         fsPath: "",
@@ -102,7 +103,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         removeAutoload: {} as any,
       },
       monitor: () => 0 as any,
-      onAddAsset: () => {},
+      onAddAsset: async () => ({ result: null }),
       onChangeAsset: () => {},
       onRemoveAsset: () => {},
       sourceFiles: () => [
@@ -251,9 +252,9 @@ const getAllFiles = async (): Promise<{
       continue
     }
 
-    let relativePath = "./../parse_node/" + f
+    let relativePath = "./parse_node/" + f
 
-    const obj = await import(relativePath)
+    const obj = await import("./../parse_node/" + f)
 
     results[f] = {
       content: obj,

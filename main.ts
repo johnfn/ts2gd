@@ -1,98 +1,44 @@
-// HIGH
-
-// TODO: int?
-// TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
-
-// TODO make load/preload() work and return proper string
-// TODO make FooTscn return proper type of root node (without script, not just Node)
-
-// Have a github action that auto publishes an html5 build
-
-// Convert "throw new Error()" into a better failure
-
-// change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
-// regenerate asset_paths on restart
-
-// Make a testing harness for project-related stuff.
-
-// consider always running buildAllDefinitions. it might be safer
-
-// TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
-
-// The onChange flow in project.ts delets the old obj and adds a new one - but then you lose
-// local state. I should think of a way to address this.
-
-// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
-
-/*
-/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:22
-                throw new Error(`Expected ${expected} but got ${x} at ${getLineAndCol()}`);
-                      ^
-
-Error: Expected " but got < at line 39, col 1
-    at getchar (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:22:23)
-    at getString (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:137:9)
-    at getJson (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:118:25)
-    at getValue (/usr/local/lib/node_modules/ts2gd/js/project/godot_parser.js:190:20)
-*/
-
-/*
-When deleting a scene:
-
-/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154
-    throw new Error("I dont know the type of that thing.")
-          ^
-Error: I dont know the type of that thing.
-    at GodotNode.tsType (/Users/johnfn/code/tsgd/ts2gd/project/asset_godot_scene.ts:154:11)
-    at Object.buildNodePathsTypeForScript (/Users/johnfn/code/tsgd/ts2gd/build_paths_for_node.ts:137:33)
-    at TsGdProjectClass.onChangeAsset (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:212:11)
-    at FSWatcher.<anonymous> (/Users/johnfn/code/tsgd/ts2gd/project/project.ts:152:36)
-    at FSWatcher.emit (node:events:376:20)
-*/
-
-/*
-/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77
-    while (file[nextNonemptyIndex].trim() === "") {
-                                   ^
-TypeError: Cannot read property 'trim' of undefined
-    at eof (/Users/johnfn/code/tsgd/ts2gd/project/godot_parser.ts:77:36)
-    at Object.parseGodotConfigFile (/Users/johnfn/code/tsgd/ts2gd/project/godot
-*/
-
-// TODO: Better print() output, with spacing
-// TODO: Document @exports
-
-// have a way to compile all files, and collate all errors.
-
-// TODO: parseGodotConfigFile() can fail if the config is in a bad state, e.g.
-// merge conflicts. should just retry after a while.
-
-// TODO: change_scene should autocomplete .tscn files only
-
-// TODO: we need to clean up old node_paths when we delete or rename a class.
+// VERY USEFUL
 
 // TODO: Import constants from other files.
+// TODO: this.collision.connect("mouseexit", this, () => {})
+
+// USEFUL
+
+// TODO: Have a github action that auto publishes an html5 build
+// TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
+// TODO  make load/preload() work and return proper string
+// TODO make FooTscn return proper type of root node (without script, not just Node)
+// TODO: Merge conflict markets in project.godot cause a ts2gd crash.
+// TODO: Better print() output, with spacing
+// TODO: Deleting a scene can cause a "I dont know the type of that thing." error.
+
+// TODO: Ensure that there aren't any bugs with _ prefixes.
+
+// HIGH
+
+// TODO: this.gold_instance?.queue_free() doesn't gen right.
+// TODO: while (foo++) { } might put the increment in the wrong place
+// TODO: if (foo++) { } else { } will DEFINTELY put it in the wrong place, as it needs to be in both true and false blocks.
+// TODO: Refactor error handling strategy.
+// TODO: change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
+// TODO: Make a testing harness for project-related stuff.
+// TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
+// TODO: The onChange flow in project.ts delets the old obj and adds a new one - but then you lose local state. I should think of a way to address this.
+// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
+// TODO: have a way to compile all files, and collate all errors.
+// TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
-
-// TODO: Godot doesnt allow shadowing tho TS does.
-// TODO: Renaming files crashes when the previously named thing was imported somewhere.
 // TODO: new assets aren't immediately imported.
 // TODO: There are bugs when you have both a constructor and an _ready() method.
-// TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
-// TODO: Fun idea: array[1-1] (or some other notation) could translate into slicing
-//   Eh it wouldnt typecheck though...
-//   Might be possible if an array had 2 index signatures and it was something like array["1:1"]
-
-// TODO:
-// Instead of doing stuff like         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
-// just have autoloads stored as Assets
 
 // MED
 
-// Do I even handle nested folders?
+// TODO: Godot doesnt allow shadowing tho TS does.
+// TODO: Do I even handle nested folders?
 // TODO: str() with no arguments is technically an error
 // TODO: Add __filter and __map to symbol table
 // TODO: new Thing() should find the appropriate scene to initialize if there is one.
@@ -116,9 +62,11 @@ TypeError: Cannot read property 'trim' of undefined
 
 // LOW
 
+// TODO:
+// Instead of doing stuff like         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
+// just have autoloads stored as Assets
+
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
-// TODO: For autoload classes, marking them @autoload would then update the config file
-//         - this would require being able to save back config files accurately.
 
 import ts from "typescript"
 import * as process from "process"

@@ -71,13 +71,14 @@ const compileTs = (code, isAutoload) => {
         scope: new scope_1.Scope(program),
         isConstructor: false,
         program,
+        addError: () => { },
         project: {
             buildDynamicDefinitions: async () => { },
             assets: [],
             program: undefined,
-            compileAllSourceFiles: () => { },
+            compileAllSourceFiles: async () => { },
             shouldBuildLibraryDefinitions: () => false,
-            validateAutoloads: () => true,
+            validateAutoloads: () => [],
             buildLibraryDefinitions: async () => { },
             mainScene: {
                 fsPath: "",
@@ -105,7 +106,7 @@ const compileTs = (code, isAutoload) => {
                 removeAutoload: {},
             },
             monitor: () => 0,
-            onAddAsset: () => { },
+            onAddAsset: async () => ({ result: null }),
             onChangeAsset: () => { },
             onRemoveAsset: () => { },
             sourceFiles: () => [
@@ -125,7 +126,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     reload: () => { },
                     isDecoratedAutoload: {},
-                    ...{},
+                    ...{}, // ssh about private properties.
                 },
                 {
                     exportedTsClassName: () => "",
@@ -210,8 +211,8 @@ const getAllFiles = async () => {
         if (f === "index") {
             continue;
         }
-        let relativePath = "./../parse_node/" + f;
-        const obj = await Promise.resolve().then(() => __importStar(require(relativePath)));
+        let relativePath = "./parse_node/" + f;
+        const obj = await Promise.resolve().then(() => __importStar(require("./../parse_node/" + f)));
         results[f] = {
             content: obj,
             path: path_1.default.resolve(relativePath),

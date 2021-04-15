@@ -99,3 +99,65 @@ if true:
   x += 1
   `,
 }
+
+export const testWhileCondition: Test = {
+  expectFail: true,
+  ts: `
+let x = 0
+while (x++ < 10) {
+  print(x)
+}
+  `,
+  expected: `
+let x = 0
+while (x++ < 10) {
+  print(x)
+}
+`,
+}
+
+export const testIfStatement: Test = {
+  ts: `
+let x = 0
+if (true) {
+  if (++x) {
+    print(x)
+  } else {
+    print(x)
+  }
+}
+  `,
+  expected: `
+var x: int = 0
+if true:
+  x += 1
+  if x:
+    print(x)
+  else:
+    print(x)
+`,
+}
+
+export const testIfStatement2: Test = {
+  expectFail: true,
+  ts: `
+let x = 0
+if (true) {
+  if (x++) {
+    print(x)
+  } else {
+    print(x)
+  }
+}
+  `,
+  expected: `
+var x: int = 0
+if true:
+  if x:
+    x += 1
+    print(x)
+  else:
+    x += 1
+    print(x)
+`,
+}

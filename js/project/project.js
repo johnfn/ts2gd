@@ -22,6 +22,7 @@ const asset_image_1 = require("./assets/asset_image");
 const asset_source_file_1 = require("./assets/asset_source_file");
 const base_asset_1 = require("./assets/base_asset");
 const asset_godot_class_1 = require("./assets/asset_godot_class");
+const errors_1 = require("../errors");
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
@@ -108,7 +109,8 @@ class TsGdProjectClass {
             .on("change", (path) => this.onChangeAsset(path))
             .on("unlink", (path) => this.onRemoveAsset(path));
     }
-    onAddAsset(path) {
+    async onAddAsset(path) {
+        let result = { result: null };
         const newAsset = this.createAsset(path);
         // Do this first because some assets expect themselves to exist - e.g.
         // an enum inside a source file expects that source file to exist.
@@ -116,13 +118,14 @@ class TsGdProjectClass {
             this.assets.push(newAsset);
         }
         if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
-            newAsset.compile(this.program);
+            result = await newAsset.compile(this.program);
         }
         else if (newAsset instanceof asset_godot_scene_1.AssetGodotScene) {
             build_scene_imports_1.buildSceneImports(this);
             build_group_types_1.buildGroupTypes(this);
         }
         build_asset_paths_1.buildAssetPathsType(this);
+        return result;
     }
     onChangeAsset(path) {
         let start = new Date().getTime();
@@ -185,12 +188,10 @@ class TsGdProjectClass {
         }
         this.assets = this.assets.filter((asset) => asset !== changedAsset);
     }
-    compileAllSourceFiles() {
-        for (const asset of this.assets) {
-            if (asset instanceof asset_source_file_1.AssetSourceFile) {
-                asset.compile(this.program);
-            }
-        }
+    async compileAllSourceFiles() {
+        const assetsToCompile = this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
+        const result = await Promise.all(assetsToCompile.map((asset) => asset.compile(this.program)));
+        errors_1.displayErrors(result.flatMap((compiledSourceFile) => compiledSourceFile.errors ?? []));
     }
     shouldBuildLibraryDefinitions(flags) {
         if (flags.buildLibraries) {
@@ -223,14 +224,12 @@ class TsGdProjectClass {
         return "res://" + fsPath.slice(TsGdProjectClass.Paths.rootPath.length + 1);
     }
     /**
-     * Returns true if all autoloads are valid; false if not.
+     * Returns any errors encountered while validating autoload classes
      */
     validateAutoloads() {
-        let valid = true;
-        for (const sourceFile of this.sourceFiles()) {
-            valid = valid && sourceFile.validateAutoloadChange();
-        }
-        return valid;
+        return this.sourceFiles()
+            .map((sf) => sf.getAutoloadValidationErrors())
+            .filter((f) => f !== null);
     }
 }
 exports.TsGdProjectClass = TsGdProjectClass;

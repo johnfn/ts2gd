@@ -28,6 +28,9 @@ declare function autoload(target: typeof Node): void
 declare type int = number;
 declare type float = number;
 
+declare function int(x: number): number
+declare function float(x: number): number
+
 // Used for typing connect()
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;

@@ -49,6 +49,7 @@ const parse_empty_statement_1 = require("./parse_node/parse_empty_statement");
 const parse_conditional_expression_1 = require("./parse_node/parse_conditional_expression");
 const parse_arrow_function_1 = require("./parse_node/parse_arrow_function");
 const parse_typeof_expression_1 = require("./parse_node/parse_typeof_expression");
+const errors_1 = require("./errors");
 const isTsNodeArray = (x) => {
     // Poor man's hack
     return x && "pos" in x && "find" in x;
@@ -67,7 +68,7 @@ function combine(args) {
     const parsedNodes = nodes.map((node) => {
         if (!node) {
             // We need to preserve the order of the array, incl. undefined, when we call content().
-            return {
+            let res = {
                 node: undefined,
                 content: "",
                 enums: [],
@@ -76,10 +77,12 @@ function combine(args) {
                 hoistedArrowFunctions: [],
                 hoistedLibraryFunctions: [],
             };
+            return res;
         }
         const parsed = exports.parseNode(node, props);
         return {
             node,
+            errors: [],
             content: parsed.content,
             enums: parsed.enums ?? [],
             extraLines: parsed.extraLines ?? [],
@@ -314,12 +317,20 @@ const parseNode = (genericNode, props) => {
         case typescript_1.SyntaxKind.NullKeyword:
             return { content: "null" };
         default:
-            // We don't handle that node! At least not yet!
-            ts_utils_1.logErrorAtNode(genericNode, "ts2gd does not currently support this code:");
-            console.info(genericNode.getText());
-            console.info("");
-            console.info("Try rewriting it, or opening an issue on the ts2gd GitHub repo.");
-            return { content: "" };
+            props.addError({
+                error: errors_1.ErrorName.UnknownTsSyntax,
+                location: genericNode,
+                description: `
+ts2gd does not current support this code:
+
+${genericNode.getText()}
+
+Try rewriting it, or opening an issue on the ts2gd GitHub repo.
+        `,
+            });
+            return {
+                content: "",
+            };
     }
 };
 exports.parseNode = parseNode;

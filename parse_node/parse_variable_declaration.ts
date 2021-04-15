@@ -2,7 +2,7 @@ import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import { getPreciseInitializerType as inferInitializerType } from "../ts_utils"
+import { getPreciseInitializerType as getFloatOrInt } from "../ts_utils"
 
 export const getDestructuredNamesAndAccessStrings = (
   node: ts.BindingName,
@@ -55,7 +55,7 @@ export const parseVariableDeclaration = (
     declaredType = undefined
   }
 
-  let inferredType = inferInitializerType(node.initializer)
+  let inferredType = getFloatOrInt(node.initializer)
 
   const type = declaredType ?? inferredType
   const usages = props.usages.get(node.name as ts.Identifier)

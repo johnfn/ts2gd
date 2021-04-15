@@ -7,7 +7,10 @@ const parseParameter = (node, props) => {
     const type = ts_utils_1.getGodotType(node, props, node.initializer, node.type);
     const usages = props.usages.get(node.name);
     const unusedPrefix = usages?.uses.length === 0 ? "_" : "";
-    const typeString = type ? `: ${type}` : "";
+    const typeString = type.result ? `: ${type.result}` : "";
+    if (type.errors) {
+        type.errors.forEach((err) => props.addError(err));
+    }
     props.scope.addName(node.name);
     return parse_node_1.combine({
         parent: node,

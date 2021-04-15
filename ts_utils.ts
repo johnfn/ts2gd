@@ -1,6 +1,6 @@
 import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
 import { ParseState } from "./parse_node"
-import chalk from "chalk"
+import { ErrorName, TsGdReturn } from "./errors"
 import fs from "fs"
 import path from "path"
 
@@ -124,27 +124,33 @@ export const syntaxKindToString = (kind: ts.Node["kind"]) => {
 // Location is either
 // * The TS AST node that the error occured at (preferred), or
 // * Some generic string (ideally a path to the file)
-export const logErrorAtNode = (location: ts.Node | string, error: string) => {
-  if (typeof location === "string") {
-    console.warn("Error at", chalk.blueBright(location))
-  } else {
-    const {
-      line,
-      character,
-    } = location
-      .getSourceFile()
-      ?.getLineAndCharacterOfPosition(location.getStart())
-    console.warn()
-    console.warn(
-      "Error at",
-      `${chalk.blueBright(location.getSourceFile().fileName)}:${chalk.yellow(
-        line + 1
-      )}:${chalk.yellow(character + 1)}`
-    )
-  }
+// export const logErrorAtNode = (
+//   location: ts.Node | string,
+//   error: ErrorName
+// ): TsGdError => {
+//   if (typeof location === "string") {
+//     return {
+//       error,
+//       location,
+//     }
+//   } else {
+//     const {
+//       line,
+//       character,
+//     } = location
+//       .getSourceFile()
+//       ?.getLineAndCharacterOfPosition(location.getStart())
+//     console.warn()
+//     console.warn(
+//       "Error at",
+//       `${chalk.blueBright(location.getSourceFile().fileName)}:${chalk.yellow(
+//         line + 1
+//       )}:${chalk.yellow(character + 1)}`
+//     )
+//   }
 
-  console.warn(chalk.redBright(error))
-}
+//   console.warn(chalk.redBright(error))
+// }
 
 /**
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
@@ -161,7 +167,7 @@ export function getGodotType(
   props: ParseState,
   initializer?: ts.Expression,
   actualType?: ts.TypeNode
-): string | undefined {
+): TsGdReturn<string | null> {
   const typecheckerInferredType = props.program
     .getTypeChecker()
     .getTypeAtLocation(node)
@@ -172,7 +178,7 @@ export function getGodotType(
     let preciseInitializerType = getPreciseInitializerType(initializer)
 
     if (preciseInitializerType) {
-      return preciseInitializerType
+      return { result: preciseInitializerType }
     }
   }
 
@@ -190,29 +196,35 @@ export function getGodotType(
   }
 
   if (tsTypeName === "number") {
-    logErrorAtNode(node, `Please add either "int" or "float" here (not number)`)
+    return {
+      errors: [
+        {
+          description: `Please add either "int" or "float" here (not number)`,
+          error: ErrorName.InvalidNumber,
+          location: node,
+        },
+      ],
 
-    console.warn()
-
-    return "float"
+      result: "float",
+    }
   }
 
   // TODO: Optionals make this nearly impossible
 
   if (tsTypeName === "string") {
-    return "String"
+    return { result: "String" }
   }
 
   if (tsTypeName === "boolean") {
-    return "bool"
+    return { result: "bool" }
   }
 
   if (tsTypeName.startsWith("{")) {
-    return "Dictionary"
+    return { result: "Dictionary" }
   }
 
   if (tsTypeName.startsWith("IterableIterator")) {
-    return "Array"
+    return { result: "Array" }
   }
 
   // if (tsTypeName.includes("[")) {
@@ -236,7 +248,7 @@ export function getGodotType(
   // causes errors due to cyclic dependencies, and those would be a huge pain to
   // resolve properly.
 
-  return undefined
+  return { result: null }
 }
 
 export function notEmpty<TValue>(

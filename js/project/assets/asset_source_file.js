@@ -9,8 +9,8 @@ const typescript_1 = require("typescript");
 const path_1 = __importDefault(require("path"));
 const base_asset_1 = require("./base_asset");
 const parse_node_1 = require("../../parse_node");
+const errors_1 = require("../../errors");
 const scope_1 = require("../../scope");
-const ts_utils_1 = require("../../ts_utils");
 const project_1 = require("../project");
 const chalk_1 = __importDefault(require("chalk"));
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
@@ -33,43 +33,61 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
     getAst() {
         const ast = this.project.program.getProgram().getSourceFile(this.fsPath);
         if (!ast) {
-            console.error(`Referenced file ${this.fsPath} does not exist.`);
-            console.error(`This is a ts2gd bug. Please create an issue on GitHub for it.`);
-            return null;
+            return {
+                error: errors_1.ErrorName.PathNotFound,
+                description: `
+Referenced file ${this.fsPath} does not exist.
+This is a ts2gd bug. Please create an issue on GitHub for it.`,
+                location: this.fsPath,
+            };
         }
         return ast;
     }
     getClassNode() {
         const ast = this.getAst();
-        if (!ast) {
-            return null;
+        if ("error" in ast) {
+            return ast;
         }
         const topLevelClasses = ast
             .getChildren()[0] // SyntaxList
             .getChildren()
             .filter((node) => node.kind === typescript_1.SyntaxKind.ClassDeclaration);
         if (topLevelClasses.length === 0) {
-            ts_utils_1.logErrorAtNode(ast, "Every file must have a class.");
-            return null;
+            return {
+                error: errors_1.ErrorName.ClassNameNotFound,
+                location: ast,
+                description: "Every file must have a class.",
+            };
         }
         if (topLevelClasses.length > 1) {
-            ts_utils_1.logErrorAtNode(topLevelClasses[1], "You can't declare more than one class per file.");
+            return {
+                error: errors_1.ErrorName.TooManyClassesFound,
+                location: topLevelClasses[1],
+                description: "Every file must have a class.",
+            };
         }
         return topLevelClasses[0];
     }
     // This can be different than the Godot class name for autoload classes.
     exportedTsClassName() {
         const node = this.getClassNode();
+        if (node === null || "error" in node) {
+            return node;
+        }
         const name = node?.name;
         if (!name) {
-            ts_utils_1.logErrorAtNode(node ?? this.tsRelativePath, "This class cannot be anonymous.");
+            return {
+                error: errors_1.ErrorName.ClassCannotBeAnonymous,
+                location: node ?? this.tsRelativePath,
+                description: "This class cannot be anonymous",
+            };
         }
         return name?.text ?? null;
     }
     getAutoloadNameFromExportedVariable() {
         const ast = this.getAst();
-        if (!ast) {
-            return null;
+        if ("error" in ast) {
+            return ast;
         }
         const topLevelDefinitions = ast.getChildren()[0]; // SyntaxList
         for (const d of topLevelDefinitions.getChildren()) {
@@ -78,7 +96,12 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
                 return vs.declarationList.declarations[0].name.getText();
             }
         }
-        return null;
+        // TODO: Better error.
+        return {
+            error: errors_1.ErrorName.CantFindAutoloadInstance,
+            location: ast ?? this.tsRelativePath,
+            description: "Can't find the autoload instance variable for this autoload class. Check the README.",
+        };
     }
     isAutoload() {
         return this._isAutoload;
@@ -97,8 +120,8 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
     }
     isDecoratedAutoload() {
         const classNode = this.getClassNode();
-        if (!classNode) {
-            return false;
+        if ("error" in classNode) {
+            return classNode;
         }
         for (const dec of classNode.decorators ?? []) {
             if (dec.expression.getText() === "autoload") {
@@ -107,16 +130,22 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
         }
         return false;
     }
-    validateAutoloadChange() {
+    getAutoloadValidationErrors() {
         if (this.isProjectAutoload() && !this.isDecoratedAutoload()) {
-            ts_utils_1.logErrorAtNode(this.tsRelativePath, `Godot thinks this is an AutoLoad, but it doesn't have an ${chalk_1.default.white("@autoload")} decorator. Either add the decorator or remove it from the Godot AutoLoad list.`);
-            return false;
+            return {
+                error: errors_1.ErrorName.AutoloadProjectButNotDecorated,
+                description: `Godot thinks this is an AutoLoad, but it doesn't have an ${chalk_1.default.white("@autoload")} decorator. Either add the decorator or remove it from the Godot AutoLoad list.`,
+                location: this.fsPath,
+            };
         }
         if (!this.isProjectAutoload() && this.isDecoratedAutoload()) {
-            ts_utils_1.logErrorAtNode(this.tsRelativePath, `This has an ${chalk_1.default.white("@autoload")} decorator, but Godot doesn't have it on the AutoLoad list. Either add it to the Godot AutoLoad list, or remove the decorator.`);
-            return false;
+            return {
+                error: errors_1.ErrorName.AutoloadProjectButNotDecorated,
+                description: `This has an ${chalk_1.default.white("@autoload")} decorator, but Godot doesn't have it on the AutoLoad list. Either add it to the Godot AutoLoad list, or remove the decorator.`,
+                location: this.fsPath,
+            };
         }
-        return true;
+        return null;
     }
     getEnumPath(enumName) {
         return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd";
@@ -129,8 +158,16 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
             sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath);
         }
         if (!sourceFileAst) {
-            console.error(`TS can't find source file ${this.fsPath} after waiting 1s.`);
-            return;
+            return {
+                errors: [
+                    {
+                        description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
+                        error: errors_1.ErrorName.PathNotFound,
+                        location: this.fsPath,
+                    },
+                ],
+                result: null,
+            };
         }
         // Since we use chokidar but TS uses something else to monitor files, sometimes
         // we can race ahead of the TS compiler. This is a hack to wait for them to
@@ -139,8 +176,8 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
             await new Promise((resolve) => setTimeout(resolve, 10));
             sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath);
         }
-        let id = 0;
-        const result = parse_node_1.parseNode(sourceFileAst, {
+        const result = { result: null, errors: [] };
+        const parsedNode = parse_node_1.parseNode(sourceFileAst, {
             indent: "",
             isConstructor: false,
             scope: new scope_1.Scope(watchProgram.getProgram().getProgram()),
@@ -149,27 +186,43 @@ class AssetSourceFile extends base_asset_1.BaseAsset {
             isAutoload: this.isProjectAutoload(),
             program: watchProgram.getProgram().getProgram(),
             usages: new Map(),
+            addError: (newError) => result.errors.push(newError),
         });
         // TODO: Only do this once per program run max!
         fs_1.default.mkdirSync(path_1.default.dirname(this.gdPath), { recursive: true });
-        fs_1.default.writeFileSync(this.gdPath, result.content);
-        for (const { content, name } of result.enums ?? []) {
+        fs_1.default.writeFileSync(this.gdPath, parsedNode.content);
+        for (const { content, name } of parsedNode.enums ?? []) {
             fs_1.default.writeFileSync(this.getEnumPath(name), content);
         }
-        this.checkForAutoloadChanges();
-        if (this.isAutoload()) {
-            this.validateAutoloadClass();
+        const err = this.checkForAutoloadChanges();
+        if (err !== null) {
+            result.errors.push(err);
         }
+        if (this.isAutoload()) {
+            const error = this.validateAutoloadClass();
+            if (error !== null) {
+                result.errors.push(error);
+            }
+        }
+        return result;
     }
     validateAutoloadClass() {
         const classNode = this.getClassNode();
+        if ("error" in classNode) {
+            return classNode;
+        }
         const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? [];
         if (!this.getAutoloadNameFromExportedVariable()) {
-            ts_utils_1.logErrorAtNode(classNode ?? this.fsPath, `Be sure to export an instance of your autoload class, e.g.:
+            return {
+                error: errors_1.ErrorName.AutoloadNotExported,
+                description: `Be sure to export an instance of your autoload class, e.g.:
 
 ${chalk_1.default.white(`export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`)}        
-        `);
+        `,
+                location: classNode ?? this.fsPath,
+            };
         }
+        return null;
     }
     getGodotClassName() {
         return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length);
@@ -202,7 +255,12 @@ ${chalk_1.default.white(`export const ${this.getGodotClassName()} = new ${this.e
             }
             if (!this.isDecoratedAutoload()) {
                 shouldBeAutoload = false;
-                ts_utils_1.logErrorAtNode(this.getClassNode() || this.fsPath, `Since this is an autoload class in Godot, you must put ${chalk_1.default.white("@autoload")} the line before the class declaration.`);
+                const classNode = this.getClassNode();
+                return {
+                    error: errors_1.ErrorName.AutoloadProjectButNotDecorated,
+                    description: `Since this is an autoload class in Godot, you must put ${chalk_1.default.white("@autoload")} the line before the class declaration.`,
+                    location: "error" in classNode ? this.fsPath : classNode,
+                };
             }
         }
         if (prevAutoload && !shouldBeAutoload) {
@@ -211,10 +269,16 @@ ${chalk_1.default.white(`export const ${this.getGodotClassName()} = new ${this.e
             }
             if (this.isDecoratedAutoload()) {
                 shouldBeAutoload = true;
-                ts_utils_1.logErrorAtNode(this.getClassNode() || this.fsPath, `Since you removed this as an autoload class in Godot, you must remove ${chalk_1.default.white("@autoload")}.`);
+                const classNode = this.getClassNode();
+                return {
+                    error: errors_1.ErrorName.AutoloadDecoratedButNotProject,
+                    description: `Since you removed this as an autoload class in Godot, you must remove ${chalk_1.default.white("@autoload")}.`,
+                    location: "error" in classNode ? this.fsPath : classNode,
+                };
             }
         }
         this._isAutoload = shouldBeAutoload;
+        return null;
     }
     destroy() {
         // Delete the .gd file

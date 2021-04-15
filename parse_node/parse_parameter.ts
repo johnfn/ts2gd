@@ -11,7 +11,11 @@ export const parseParameter = (
   const type = getGodotType(node, props, node.initializer, node.type)
   const usages = props.usages.get(node.name as ts.Identifier)
   const unusedPrefix = usages?.uses.length === 0 ? "_" : ""
-  const typeString = type ? `: ${type}` : ""
+  const typeString = type.result ? `: ${type.result}` : ""
+
+  if (type.errors) {
+    type.errors.forEach((err) => props.addError(err))
+  }
 
   props.scope.addName(node.name)
 

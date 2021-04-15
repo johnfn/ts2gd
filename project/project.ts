@@ -20,6 +20,7 @@ import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
 import { BaseAsset } from "./assets/base_asset"
 import { AssetGodotClass } from "./assets/asset_godot_class"
+import { displayErrors, TsGdError, TsGdReturn } from "../errors"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -156,12 +157,22 @@ export class TsGdProjectClass {
 
   monitor(watcher: chokidar.FSWatcher) {
     watcher
-      .on("add", (path) => this.onAddAsset(path))
-      .on("change", (path) => this.onChangeAsset(path))
+      .on("add", async (path) => {
+        const result = await this.onAddAsset(path)
+
+        displayErrors(result.errors ?? [])
+      })
+      .on("change", async (path) => {
+        const result = await this.onChangeAsset(path)
+
+        displayErrors(result.errors ?? [])
+      })
       .on("unlink", (path) => this.onRemoveAsset(path))
   }
 
-  onAddAsset(path: string) {
+  async onAddAsset(path: string): Promise<TsGdReturn<null>> {
+    let result: TsGdReturn<null> = { result: null }
+
     const newAsset = this.createAsset(path)
 
     // Do this first because some assets expect themselves to exist - e.g.
@@ -171,18 +182,24 @@ export class TsGdProjectClass {
     }
 
     if (newAsset instanceof AssetSourceFile) {
-      newAsset.compile(this.program)
+      result = await newAsset.compile(this.program)
     } else if (newAsset instanceof AssetGodotScene) {
       buildSceneImports(this)
       buildGroupTypes(this)
     }
 
     buildAssetPathsType(this)
+
+    return result
   }
 
-  onChangeAsset(path: string) {
+  async onChangeAsset(path: string): Promise<TsGdReturn<null>> {
     let start = new Date().getTime()
     let showTime = false
+    let result = {
+      result: null,
+      errors: [] as TsGdError[],
+    }
 
     // Just noisy, since it's not caused by a user action
     if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
@@ -210,11 +227,13 @@ export class TsGdProjectClass {
         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
 
         if (script) {
-          script.compile(this.program)
+          const compileResult = await script.compile(this.program)
+
+          result.errors = [...result.errors, ...(compileResult.errors ?? [])]
         }
       }
 
-      return
+      return result
     }
 
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
@@ -225,7 +244,9 @@ export class TsGdProjectClass {
       this.assets.push(newAsset)
 
       if (newAsset instanceof AssetSourceFile) {
-        newAsset.compile(this.program)
+        const compileResult = await newAsset.compile(this.program)
+
+        result.errors = [...result.errors, ...(compileResult.errors ?? [])]
 
         buildAssetPathsType(this)
         buildNodePathsTypeForScript(newAsset, this)
@@ -242,6 +263,8 @@ export class TsGdProjectClass {
       console.info()
       console.info("Done in", (new Date().getTime() - start) / 1000 + "s")
     }
+
+    return result
   }
 
   onRemoveAsset(path: string) {
@@ -260,11 +283,21 @@ export class TsGdProjectClass {
     this.assets = this.assets.filter((asset) => asset !== changedAsset)
   }
 
-  compileAllSourceFiles() {
-    for (const asset of this.assets) {
-      if (asset instanceof AssetSourceFile) {
-        asset.compile(this.program)
-      }
+  async compileAllSourceFiles() {
+    const assetsToCompile = this.assets.filter(
+      (a): a is AssetSourceFile => a instanceof AssetSourceFile
+    )
+    const result = await Promise.all(
+      assetsToCompile.map((asset) => asset.compile(this.program))
+    )
+    const errors = result.flatMap(
+      (compiledSourceFile) => compiledSourceFile.errors ?? []
+    )
+
+    if (errors.length === 0) {
+      console.log("No errors in project.")
+    } else {
+      displayErrors(errors)
     }
   }
 
@@ -312,16 +345,12 @@ export class TsGdProjectClass {
   }
 
   /**
-   * Returns true if all autoloads are valid; false if not.
+   * Returns any errors encountered while validating autoload classes
    */
-  validateAutoloads(): boolean {
-    let valid = true
-
-    for (const sourceFile of this.sourceFiles()) {
-      valid = valid && sourceFile.validateAutoloadChange()
-    }
-
-    return valid
+  validateAutoloads(): TsGdError[] {
+    return this.sourceFiles()
+      .map((sf) => sf.getAutoloadValidationErrors())
+      .filter((f): f is TsGdError => f !== null)
   }
 }
 

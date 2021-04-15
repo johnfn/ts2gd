@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseImportDeclaration = exports.getImportResPathForEnum = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
+const errors_1 = require("../errors");
 const path_1 = __importDefault(require("path"));
 const ts_utils_1 = require("../ts_utils");
 const project_1 = require("../project/project");
@@ -95,7 +96,11 @@ const parseImportDeclaration = (node, props) => {
                     if (pathToImportedTs.includes("@")) {
                         continue;
                     }
-                    ts_utils_1.logErrorAtNode(node, `Import ${pathToImportedTs} not found.`);
+                    props.addError({
+                        error: errors_1.ErrorName.InvalidNumber,
+                        location: node,
+                        description: `Import ${pathToImportedTs} not found.`,
+                    });
                     continue;
                 }
                 let typeString = props.program.getTypeChecker().typeToString(type);

@@ -60,7 +60,8 @@ const parseGodotConfigFile = (path, initial = {}) => {
     };
     const eof = () => {
         let nextNonemptyIndex = index;
-        while (file[nextNonemptyIndex].trim() === "") {
+        while (nextNonemptyIndex < file.length &&
+            file[nextNonemptyIndex].trim() === "") {
             ++nextNonemptyIndex;
             if (nextNonemptyIndex >= file.length)
                 return true;

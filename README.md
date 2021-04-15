@@ -60,11 +60,12 @@ In the future, this could become a configuration setting on tsgd.json.
 
 ### Autoloads
 
-In order to make a class autoload, put `@autoload` on the line before the class. ts2gd will tell you what to do with helpful error messages.
+In order to make a class autoload, decorate your class with `@autoload`, and create and export an instance of the class. ts2gd will automatically add it as an AutoLoad in your Godot project (assuming you're on version 3.3!)
 
 Here's a full example of an autoload class.
 
 ```
+@autoload.
 class MyAutoloadClass extends Node2D {
   public string hello = "hi"
 }
@@ -75,6 +76,10 @@ export const MyAutoload = new MyAutoloadClass()
 #### Autoload node resolution
 
 `get_node()` on an autoloaded class will autocomplete to nodes found in the main scene (the scene that Godot launches at the start of the game). This is generally accurate... unless you start a different scene in Godot.
+
+### Exports
+
+In order to mark an instance variable as `export`, use `@export`.
 
 ### yield
 

@@ -22,9 +22,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCommonElements = exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.logErrorAtNode = exports.syntaxKindToString = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullable = void 0;
+exports.getCommonElements = exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.syntaxKindToString = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullable = void 0;
 const typescript_1 = __importStar(require("typescript"));
-const chalk_1 = __importDefault(require("chalk"));
+const errors_1 = require("./errors");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const isNullable = (node, typechecker) => {
@@ -125,20 +125,32 @@ exports.syntaxKindToString = syntaxKindToString;
 // Location is either
 // * The TS AST node that the error occured at (preferred), or
 // * Some generic string (ideally a path to the file)
-const logErrorAtNode = (location, error) => {
-    if (typeof location === "string") {
-        console.warn("Error at", chalk_1.default.blueBright(location));
-    }
-    else {
-        const { line, character, } = location
-            .getSourceFile()
-            ?.getLineAndCharacterOfPosition(location.getStart());
-        console.warn();
-        console.warn("Error at", `${chalk_1.default.blueBright(location.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
-    }
-    console.warn(chalk_1.default.redBright(error));
-};
-exports.logErrorAtNode = logErrorAtNode;
+// export const logErrorAtNode = (
+//   location: ts.Node | string,
+//   error: ErrorName
+// ): TsGdError => {
+//   if (typeof location === "string") {
+//     return {
+//       error,
+//       location,
+//     }
+//   } else {
+//     const {
+//       line,
+//       character,
+//     } = location
+//       .getSourceFile()
+//       ?.getLineAndCharacterOfPosition(location.getStart())
+//     console.warn()
+//     console.warn(
+//       "Error at",
+//       `${chalk.blueBright(location.getSourceFile().fileName)}:${chalk.yellow(
+//         line + 1
+//       )}:${chalk.yellow(character + 1)}`
+//     )
+//   }
+//   console.warn(chalk.redBright(error))
+// }
 /**
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
  * we can be about this type.
@@ -157,7 +169,7 @@ function getGodotType(node, props, initializer, actualType) {
     if (initializer) {
         let preciseInitializerType = getPreciseInitializerType(initializer);
         if (preciseInitializerType) {
-            return preciseInitializerType;
+            return { result: preciseInitializerType };
         }
     }
     // If we have an explicitly written type e.g. x: string, use that.
@@ -172,22 +184,29 @@ function getGodotType(node, props, initializer, actualType) {
             .typeToString(typecheckerInferredType);
     }
     if (tsTypeName === "number") {
-        exports.logErrorAtNode(node, `Please add either "int" or "float" here (not number)`);
-        console.warn();
-        return "float";
+        return {
+            errors: [
+                {
+                    description: `Please add either "int" or "float" here (not number)`,
+                    error: errors_1.ErrorName.InvalidNumber,
+                    location: node,
+                },
+            ],
+            result: "float",
+        };
     }
     // TODO: Optionals make this nearly impossible
     if (tsTypeName === "string") {
-        return "String";
+        return { result: "String" };
     }
     if (tsTypeName === "boolean") {
-        return "bool";
+        return { result: "bool" };
     }
     if (tsTypeName.startsWith("{")) {
-        return "Dictionary";
+        return { result: "Dictionary" };
     }
     if (tsTypeName.startsWith("IterableIterator")) {
-        return "Array";
+        return { result: "Array" };
     }
     // if (tsTypeName.includes("[")) {
     //   return "Array"
@@ -205,7 +224,7 @@ function getGodotType(node, props, initializer, actualType) {
     // of benefit. In some cases (e.g. using user-defined types) it actually
     // causes errors due to cyclic dependencies, and those would be a huge pain to
     // resolve properly.
-    return undefined;
+    return { result: null };
 }
 exports.getGodotType = getGodotType;
 function notEmpty(value) {

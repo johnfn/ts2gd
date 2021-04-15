@@ -5,7 +5,6 @@ import { parseBinaryExpression } from "./parse_node/parse_binary_expression"
 import { parseSourceFile } from "./parse_node/parse_source_file"
 import {
   generatePrecedingNewlines,
-  logErrorAtNode,
   syntaxKindToString as kindToString,
 } from "./ts_utils"
 import { parseTypeReference } from "./parse_node/parse_type_reference"
@@ -58,6 +57,7 @@ import { parseArrowFunction } from "./parse_node/parse_arrow_function"
 import { parseTypeofExpression } from "./parse_node/parse_typeof_expression"
 import { TsGdProjectClass } from "./project/project"
 import { Scope } from "./scope"
+import { ErrorName, TsGdError } from "./errors"
 
 export type ParseState = {
   isConstructor: boolean
@@ -75,6 +75,8 @@ export type ParseState = {
     incrementor: string
   }
   usages: Map<ts.Identifier, utils.VariableInfo>
+
+  addError: (error: TsGdError) => void
 }
 
 export type ExtraLine = {
@@ -129,7 +131,7 @@ export function combine(args: {
   })[] = nodes.map((node) => {
     if (!node) {
       // We need to preserve the order of the array, incl. undefined, when we call content().
-      return {
+      let res: Required<ParseNodeType> & { node: ts.Node | undefined } = {
         node: undefined,
         content: "",
         enums: [],
@@ -138,12 +140,15 @@ export function combine(args: {
         hoistedArrowFunctions: [],
         hoistedLibraryFunctions: [],
       }
+
+      return res
     }
 
     const parsed = parseNode(node, props)
 
     return {
       node,
+      errors: [],
       content: parsed.content,
       enums: parsed.enums ?? [],
       extraLines: parsed.extraLines ?? [],
@@ -449,14 +454,20 @@ export const parseNode = (
       return { content: "null" }
 
     default:
-      // We don't handle that node! At least not yet!
-      logErrorAtNode(genericNode, "ts2gd does not currently support this code:")
-      console.info(genericNode.getText())
-      console.info("")
-      console.info(
-        "Try rewriting it, or opening an issue on the ts2gd GitHub repo."
-      )
+      props.addError({
+        error: ErrorName.UnknownTsSyntax,
+        location: genericNode,
+        description: `
+ts2gd does not current support this code:
 
-      return { content: "" }
+${genericNode.getText()}
+
+Try rewriting it, or opening an issue on the ts2gd GitHub repo.
+        `,
+      })
+
+      return {
+        content: "",
+      }
   }
 }

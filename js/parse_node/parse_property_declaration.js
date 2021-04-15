@@ -44,11 +44,18 @@ const parsePropertyDeclaration = (node, props) => {
     let classType = props.program.getTypeChecker().getTypeAtLocation(klass);
     let type = props.program.getTypeChecker().getTypeAtLocation(node);
     let superclassType = getSuperclassType(classType);
+    let nameOrError = ts_utils_1.getGodotType(node, props, node.initializer, node.type);
+    if (nameOrError.errors) {
+        for (const error of nameOrError.errors) {
+            props.addError(error);
+        }
+    }
     let typeGodotName = ts_utils_1.getGodotType(node, props, node.initializer, node.type);
     let typeName = type.symbol?.getName() ?? "";
-    let typeHintName = typeGodotName;
+    let typeHintName = typeGodotName.result;
+    typeGodotName.errors?.forEach((error) => props.addError(error));
     if (ts_utils_1.isEnumType(type)) {
-        typeGodotName = props.program.getTypeChecker().typeToString(type);
+        typeGodotName.result = props.program.getTypeChecker().typeToString(type);
     }
     if (typeName === "Signal") {
         return parse_node_1.combine({
@@ -58,7 +65,7 @@ const parsePropertyDeclaration = (node, props) => {
             content: () => `signal ${node.name.getText()}`,
         });
     }
-    const exportText = isExported(node) ? `export(${typeGodotName}) ` : "";
+    const exportText = isExported(node) ? `export(${typeGodotName.result}) ` : "";
     const onReady = isOnReady(node, props);
     return parse_node_1.combine({
         parent: node,

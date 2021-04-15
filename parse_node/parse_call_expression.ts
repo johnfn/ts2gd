@@ -320,9 +320,9 @@ const test = () => 5;
 test()  
   `,
   expected: `
-func func1(captures):
+func __gen(captures):
   return 5
-var test = funcref(self, "func1")
+var test = funcref(self, "__gen")
 test.call_func({})
 `,
 }
@@ -334,10 +334,10 @@ x.map(y => y + '1')
   `,
   expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y: String, captures):
+func __gen(y: String, captures):
   return y + "1"
 var x = ["a", "b", "c"]
-__map(x, funcref(self, "func1"), {})
+__map(x, funcref(self, "__gen"), {})
 `,
 }
 
@@ -352,14 +352,14 @@ x.map((y: int) => {
   `,
   expected: `
 ${LibraryFunctions.map.definition("__map")}
-func func1(y, captures):
+func __gen(y, captures):
   var z = captures.z
   var big = captures.big
   return z + big.a + y * 3
 var x = [1, 2, 3]
 var z: int = 5
 var big = { "a": 6 }
-__map(x, funcref(self, "func1"), {"z": z, "big": big})
+__map(x, funcref(self, "__gen"), {"z": z, "big": big})
 `,
 }
 
@@ -417,12 +417,12 @@ a.filter(x => x).map(x => x)
   expected: `
 ${LibraryFunctions.filter.definition("__filter")}
 ${LibraryFunctions.map.definition("__map")}
-func func1(x: String, captures):
+func __gen(x: String, captures):
   return x
-func func2(x: String, captures):
+func __gen1(x: String, captures):
   return x
 var a = []
-__map(__filter(a, funcref(self, "func1"), {}), funcref(self, "func2"), {})
+__map(__filter(a, funcref(self, "__gen"), {}), funcref(self, "__gen1"), {})
 `,
 }
 
