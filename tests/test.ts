@@ -2,11 +2,15 @@ import * as ts from "typescript"
 import { parseNode, ParseNodeType } from "../parse_node"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
 import fs from "fs"
-import path, { relative } from "path"
+import path from "path"
 import { Scope } from "../scope"
 import chalk from "chalk"
+import { TsGdError } from "../errors"
 
-export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
+export const compileTs = (
+  code: string,
+  isAutoload: boolean
+): { compiled: ParseNodeType; errors: TsGdError[] } => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
 
   const sourceFile = ts.createSourceFile(
@@ -62,13 +66,15 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   )
 
   let i = 0
+  const errors: TsGdError[] = []
+
   // TODO: Make this less silly.
   const godotFile = parseNode(sourceFile, {
     indent: "",
     scope: new Scope(program),
     isConstructor: false,
     program,
-    addError: () => {},
+    addError: (error) => errors.push(error),
     project: {
       buildDynamicDefinitions: async () => {},
       assets: [],
@@ -104,7 +110,9 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       },
       monitor: () => 0 as any,
       onAddAsset: async () => ({ result: null }),
-      onChangeAsset: () => {},
+      onChangeAsset: async () => {
+        return { result: null }
+      },
       onRemoveAsset: () => {},
       sourceFiles: () => [
         {
@@ -149,7 +157,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     usages: new Map(),
   })
 
-  return godotFile
+  return { compiled: godotFile, errors }
 }
 
 export type Test = {
@@ -166,7 +174,7 @@ type TestResult = TestResultPass | TestResultFail
 
 type TestResultPass = { type: "success" }
 type TestResultFail = {
-  type: "fail"
+  type: "fail" | "fail-error"
   result: string
   name: string
   expected: string
@@ -191,8 +199,21 @@ const test = (
 ): TestResult => {
   const { ts, expected } = props
 
-  const compiled = compileTs(ts, props.isAutoload ?? false)
+  const { compiled, errors } = compileTs(ts, props.isAutoload ?? false)
   const output = compiled.content
+
+  if (errors.length > 0) {
+    return {
+      type: "fail-error",
+      result: "",
+      expected: `Got an unexpected error:\n\n${errors
+        .map((err) => err.description)
+        .join("\n")}`,
+      name,
+      expectFail: props.expectFail ?? false,
+      path,
+    }
+  }
 
   if (props.expectedFiles) {
     // Go into file comparison mode
@@ -304,7 +325,7 @@ export const runTests = async () => {
     console.log = oldConsoleLog
 
     total++
-    if (result.type === "fail") {
+    if (result.type === "fail" || result.type === "fail-error") {
       result.logs = logged
       failures.push(result)
     }
@@ -321,7 +342,7 @@ export const runTests = async () => {
     console.info("\nSome failed, but they were expected to fail:")
     console.info(failures.map((f) => "  " + f.name).join("\n"))
   } else {
-    for (let { expected, name, result, logs, path } of failures.filter(
+    for (let { expected, name, result, logs, path, type } of failures.filter(
       (x) => !x.expectFail
     )) {
       const fileContents = fs.readFileSync(path, "utf-8")
@@ -337,35 +358,40 @@ export const runTests = async () => {
         chalk.yellowBright(`${path}${line ? `:${line}:0` : ``}`)
       )
       console.info("=============================================\n")
-      console.info("\x1b[31mExpected:\x1b[0m")
 
-      let str = ""
+      if (type === "fail-error") {
+        console.info(expected + "\n")
+      } else {
+        console.info("\x1b[31mExpected:\x1b[0m")
 
-      for (let i = 0; i < expected.length; i++) {
-        if (expected[i] !== result[i]) {
-          if (expected[i].trim() === "") {
-            str += `\x1b[41m${expected[i]}\x1b[0m`
+        let str = ""
+
+        for (let i = 0; i < expected.length; i++) {
+          if (expected[i] !== result[i]) {
+            if (expected[i].trim() === "") {
+              str += `\x1b[41m${expected[i]}\x1b[0m`
+            } else {
+              str += `\x1b[31m${expected[i]}\x1b[0m`
+            }
           } else {
-            str += `\x1b[31m${expected[i]}\x1b[0m`
+            str += expected[i]
           }
-        } else {
-          str += expected[i]
         }
-      }
 
-      console.info(
-        str
-          .split("\n")
-          .map((x) => "  " + x + "\n")
-          .join("")
-      )
-      console.info("\x1b[32mActual:\x1b[0m")
-      console.info(
-        result
-          .split("\n")
-          .map((x) => "  " + x + "\n")
-          .join("")
-      )
+        console.info(
+          str
+            .split("\n")
+            .map((x) => x + "\n")
+            .join("")
+        )
+        console.info("\x1b[32mActual:\x1b[0m")
+        console.info(
+          result
+            .split("\n")
+            .map((x) => x + "\n")
+            .join("")
+        )
+      }
 
       if (logs && logs.length > 0) {
         console.info("Logs:")

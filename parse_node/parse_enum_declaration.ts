@@ -12,7 +12,7 @@ export const parseEnumDeclaration = (
     parent: node,
     nodes: node.members.map((member) => member.initializer ?? undefined),
     props,
-    content: (...initializers) => {
+    parsedStrings: (...initializers) => {
       let result = `const ${node.name.text} = {\n`
       let initializedValue = 0
 

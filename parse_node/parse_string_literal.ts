@@ -16,7 +16,7 @@ export const parseStringLiteral = (
     parent: node,
     nodes: [],
     props,
-    content: () => `"${text}"`,
+    parsedStrings: () => `"${text}"`,
   })
 }
 

@@ -60,7 +60,7 @@ export const parsePropertyAccessExpression = (
     parent: node,
     nodes: [node.expression, node.name],
     props,
-    content: (lhs, rhs) => {
+    parsedStrings: (lhs, rhs) => {
       if (node.questionDotToken) {
         const newName = props.scope.createUniqueName()
 

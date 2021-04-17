@@ -11,7 +11,7 @@ export const parseArrayLiteralExpression = (
     parent: node,
     nodes: node.elements,
     props,
-    content: (...args) => `[${args.join(", ")}]`,
+    parsedStrings: (...args) => `[${args.join(", ")}]`,
   })
 }
 

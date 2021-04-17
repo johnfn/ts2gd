@@ -18,7 +18,7 @@ export const parseEmptyStatement = (
     return combine({
       parent: node,
       nodes: [],
-      content: () => "pass",
+      parsedStrings: () => "pass",
       props,
     })
   }
@@ -26,7 +26,7 @@ export const parseEmptyStatement = (
   return combine({
     parent: node,
     nodes: [],
-    content: () => "",
+    parsedStrings: () => "",
     props,
   })
 }

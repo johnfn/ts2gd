@@ -14,7 +14,7 @@ export const parsePostfixUnaryExpression = (
     parent: node,
     nodes: node.operand,
     props,
-    content: (operand) => {
+    parsedStrings: (operand) => {
       switch (node.operator) {
         case SyntaxKind.PlusPlusToken: {
           newIncrements = {

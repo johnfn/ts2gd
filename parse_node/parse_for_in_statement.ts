@@ -24,7 +24,7 @@ export const parseForInStatement = (
       nodes: [vdl.declarations[0].name, node.expression, node.statement],
       props,
       addIndent: true,
-      content: (name, expr, statement) => `
+      parsedStrings: (name, expr, statement) => `
 for ${name} in ${expr}:
   ${statement}
 `,
@@ -37,7 +37,7 @@ for ${name} in ${expr}:
       nodes: [initExpr, node.expression, node.statement],
       props,
       addIndent: true,
-      content: (initExpr, expr, statement) => `
+      parsedStrings: (initExpr, expr, statement) => `
 for ${initExpr} in ${expr}:
   ${statement}
 `,

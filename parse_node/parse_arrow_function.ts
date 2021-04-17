@@ -120,7 +120,7 @@ export const parseArrowFunction = (
     nodes: [node.body, ...node.parameters],
     props,
     addIndent: true,
-    content: (body, ...args) => {
+    parsedStrings: (body, ...args) => {
       if (node.body.kind === SyntaxKind.Block) {
         return `
 func ${name}(${[...args, "captures"].join(", ")}):
@@ -141,10 +141,15 @@ ${unwrapCapturedScope}
 
   props.scope.leaveScope()
 
+  // NOTE: parse_call_expression expects all arrow functions to be declared on self.
   return {
     content: `funcref(self, "${name}")`,
     hoistedArrowFunctions: [
-      parsed.content,
+      {
+        name,
+        node: node,
+        content: parsed.content,
+      },
       ...(parsed.hoistedArrowFunctions ?? []),
     ],
   }

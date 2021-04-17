@@ -14,7 +14,7 @@ export const parseForStatement = (
     parent: node,
     nodes: node.initializer,
     props,
-    content: (init) => init,
+    parsedStrings: (init) => init,
   }).content
 
   props.scope.enterScope()
@@ -24,7 +24,7 @@ export const parseForStatement = (
     addIndent: true,
     nodes: [node.incrementor],
     props,
-    content: (inc) => inc,
+    parsedStrings: (inc) => inc,
   })
 
   let incrementText =
@@ -41,7 +41,7 @@ export const parseForStatement = (
     addIndent: true,
     nodes: [node.condition, node.statement],
     props,
-    content: (cond, statement) => {
+    parsedStrings: (cond, statement) => {
       if (
         statement.trim().length === 0 &&
         increment.content.trim().length === 0

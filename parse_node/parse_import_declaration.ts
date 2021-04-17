@@ -189,7 +189,7 @@ export const parseImportDeclaration = (
     parent: node,
     nodes: [],
     props,
-    content: () =>
+    parsedStrings: () =>
       imports
         .map(({ importedName, type, resPath }) => {
           if (type === "class") {

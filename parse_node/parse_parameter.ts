@@ -23,7 +23,7 @@ export const parseParameter = (
     parent: node,
     nodes: [node.name, node.initializer],
     props,
-    content: (name, initializer) =>
+    parsedStrings: (name, initializer) =>
       `${unusedPrefix}${name}${typeString}${initializer && `= ${initializer}`}`,
   })
 }

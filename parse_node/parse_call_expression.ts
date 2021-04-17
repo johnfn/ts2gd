@@ -1,8 +1,9 @@
 import ts, { SyntaxKind } from "typescript"
-import { combine, ParseState } from "../parse_node"
+import { ErrorName } from "../errors"
+import { combine, parseNode, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import { isArrayType, isDictionary } from "../ts_utils"
+import { isArrayType, isDictionary, syntaxKindToString } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
 type LibraryFunctionName =
@@ -128,7 +129,7 @@ export const parseCallExpression = (
       parent: node,
       nodes: node.expression,
       props,
-      content: () => "",
+      parsedStrings: () => "",
     })
   }
 
@@ -165,7 +166,7 @@ export const parseCallExpression = (
             parent: node,
             nodes: [prop.expression, ...args],
             props,
-            content: (expr, ...args) => {
+            parsedStrings: (expr, ...args) => {
               return `__${libFunctionName}(${[expr, ...args].join(
                 ", "
               )}, ${capturedScopeObject})`
@@ -176,7 +177,7 @@ export const parseCallExpression = (
             parent: node,
             nodes: [prop.expression, ...args],
             props,
-            content: (expr, ...args) => {
+            parsedStrings: (expr, ...args) => {
               return `__${libFunctionName}(${[expr, ...args].join(", ")})`
             },
           })
@@ -209,7 +210,7 @@ export const parseCallExpression = (
           parent: node,
           nodes: [prop.expression, node.arguments[0]],
           props,
-          content: (exp, arg) => `${exp} ${operator} ${arg}`,
+          parsedStrings: (exp, arg) => `${exp} ${operator} ${arg}`,
         })
       }
     }
@@ -229,7 +230,7 @@ export const parseCallExpression = (
         parent: node,
         nodes: [propAccess.expression, args[0], args[1]],
         props,
-        content: (dict, key, val) => `${dict}[${key}] = ${val}`,
+        parsedStrings: (dict, key, val) => `${dict}[${key}] = ${val}`,
       })
     }
   }
@@ -237,7 +238,7 @@ export const parseCallExpression = (
   const decls = props.program
     .getTypeChecker()
     .getTypeAtLocation(node.expression).symbol?.declarations
-  const isArrowFunction =
+  const isExpressionArrowFunction =
     decls &&
     decls[0].kind === SyntaxKind.ArrowFunction &&
     decls[0].getSourceFile() === node.getSourceFile()
@@ -246,39 +247,104 @@ export const parseCallExpression = (
     parent: node,
     nodes: [expression, ...args],
     props,
-    content: (expr, ...args) => {
-      if (expr === "Yield") {
-        expr = "yield"
+    parsedObjs: (parsedExpr, ...parsedArgs) => {
+      let parsedStringArgs: string[] = parsedArgs.map((arg) => arg.content)
+
+      if (parsedExpr.content === "Yield") {
+        parsedExpr.content = "yield"
       }
 
-      if (expr === "self.get_node_safe") {
-        expr = "self.get_node"
+      if (parsedExpr.content === "self.get_node_safe") {
+        parsedExpr.content = "self.get_node"
+      }
+
+      // TODO - there are less brittle ways of checking for this.
+
+      // We need to rewrite .connect() to handle function arguments
+      if (parsedExpr.content.endsWith(".connect")) {
+        // this.connect("body_entered", this.handle_body_enter)
+        const secondArg = args[1]
+
+        if (secondArg.kind === SyntaxKind.PropertyAccessExpression) {
+          const propAccess = secondArg as ts.PropertyAccessExpression
+          const name = propAccess.name.text
+          const expr = parseNode(propAccess.expression, props)
+
+          if (
+            (expr.enums?.length ?? 0 > 0) ||
+            (expr.extraLines?.length ?? 0 > 0) ||
+            (expr.hoistedArrowFunctions?.length ?? 0 > 0) ||
+            (expr.hoistedEnumImports?.length ?? 0 > 0) ||
+            (expr.hoistedLibraryFunctions?.length ?? 0 > 0)
+          ) {
+            props.addError({
+              description:
+                "ts2gd does not handle complicated types in .connect().",
+              error: ErrorName.NoComplicatedConnect,
+              location: expression,
+            })
+          }
+
+          parsedStringArgs = [parsedArgs[0].content, expr.content, `"${name}"`]
+        } else if (secondArg.kind === SyntaxKind.ArrowFunction) {
+          const af = secondArg as ts.ArrowFunction
+          const arrowFunctionObj = parsedArgs[1].hoistedArrowFunctions?.find(
+            (obj) => obj.node === af
+          )
+
+          if (!arrowFunctionObj) {
+            props.addError({
+              description:
+                "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+              error: ErrorName.Ts2GdError,
+              location: secondArg,
+            })
+          } else {
+            // anonymous arrow functions are always declared on the current class.
+            parsedStringArgs = [
+              parsedArgs[0].content,
+              "self",
+              `"${arrowFunctionObj?.name}"`,
+            ]
+          }
+        } else {
+          props.addError({
+            description: `ts2gd requires the second argument of .connect() to be a method or an arrow function. It was: ${syntaxKindToString(
+              secondArg.kind
+            )}`,
+            error: ErrorName.NoComplicatedConnect,
+            location: node,
+          })
+        }
       }
 
       // Translate `this.emit_signal(this.signal)`
       // into `this.emit_signal("signal")`
-      if (expr === "self.emit_signal") {
-        if (args[0].startsWith("self")) {
-          args[0] = args[0].slice("self.".length)
+      if (parsedExpr.content === "self.emit_signal") {
+        if (parsedArgs[0].content.startsWith("self")) {
+          parsedStringArgs[0] = parsedStringArgs[0].slice("self.".length)
         }
 
-        args[0] = '"' + args[0] + '"'
+        parsedStringArgs[0] = '"' + parsedStringArgs[0] + '"'
       }
 
-      if (expr === "todict") {
-        return args[0]
+      if (parsedExpr.content === "todict") {
+        return parsedArgs[0].content
       }
 
-      if (isArrowFunction) {
+      if (isExpressionArrowFunction) {
         const { capturedScopeObject } = getCapturedScope(
           decls[0] as ts.ArrowFunction,
           props.program.getTypeChecker()
         )
 
-        return `${expr}.call_func(${[...args, capturedScopeObject].join(", ")})`
+        return `${parsedExpr.content}.call_func(${[
+          ...parsedArgs,
+          capturedScopeObject,
+        ].join(", ")})`
       }
 
-      return `${expr}(${args.join(", ")})`
+      return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`
     },
   })
 }
@@ -377,6 +443,50 @@ d.put('b', 2)
   expected: `
 var d = { "a": 1 }
 d["b"] = 2
+`,
+}
+
+export const testConnect: Test = {
+  ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+
+    this.connect("body_entered", this.on_body_entered)
+  }
+
+  on_body_entered(body: Node) {
+
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func _ready():
+  self.connect("body_entered", self, "on_body_entered")
+func on_body_entered(_body):
+  pass
+`,
+}
+
+export const testConnect2: Test = {
+  ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+
+    this.connect("body_entered", (body: Node) => { print(body) })
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(body, captures):
+  print(body)
+func _ready():
+  self.connect("body_entered", self, "__gen")
 `,
 }
 

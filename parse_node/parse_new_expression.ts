@@ -11,7 +11,7 @@ export const parseNewExpression = (
     parent: node,
     nodes: [node.expression, ...(node.arguments ?? [])],
     props,
-    content: (expr, ...args) => {
+    parsedStrings: (expr, ...args) => {
       if (
         expr === "Vector2" ||
         expr === "Vector3" ||

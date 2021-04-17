@@ -11,14 +11,14 @@ export const parseBlock = (
       parent: node,
       nodes: node.statements,
       props,
-      content: (...parsed) => parsed.join(""),
+      parsedStrings: (...parsed) => parsed.join(""),
     })
   } else {
     return combine({
       parent: node,
       nodes: [],
       props,
-      content: () => "pass\n",
+      parsedStrings: () => "pass\n",
     })
   }
 }

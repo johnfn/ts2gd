@@ -12,7 +12,7 @@ export const parseContinueStatement = (
     parent: node,
     nodes: [],
     props,
-    content: () => `
+    parsedStrings: () => `
 ${props.mostRecentForStatement?.incrementor ?? ""}
 continue
 `,

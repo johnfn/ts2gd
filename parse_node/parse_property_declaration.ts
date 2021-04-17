@@ -85,7 +85,7 @@ export const parsePropertyDeclaration = (
       parent: node,
       nodes: [],
       props,
-      content: () => `signal ${node.name.getText()}`,
+      parsedStrings: () => `signal ${node.name.getText()}`,
     })
   }
 
@@ -96,7 +96,7 @@ export const parsePropertyDeclaration = (
     parent: node,
     nodes: [node.initializer, node.name],
     props,
-    content: (initializer, name) => {
+    parsedStrings: (initializer, name) => {
       // Don't redeclare properties defined in a superclass. This is useful in
       // TS (because you can define them w/ more precise types) but causes an
       // error in Godot.

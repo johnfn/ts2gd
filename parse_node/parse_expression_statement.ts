@@ -11,7 +11,7 @@ export const parseExpressionStatement = (
     parent: node,
     nodes: node.expression,
     props,
-    content: (expr) => expr,
+    parsedStrings: (expr) => expr,
   })
 }
 

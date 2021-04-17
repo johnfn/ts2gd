@@ -11,9 +11,12 @@ export enum ErrorName {
   UnknownTsSyntax,
   PathNotFound,
 
+  Ts2GdError,
+
   AutoloadProjectButNotDecorated,
   AutoloadDecoratedButNotProject,
   AutoloadNotExported,
+  NoComplicatedConnect,
 }
 
 export type TsGdReturn<T> = {
@@ -30,10 +33,7 @@ export type TsGdError = {
 export const displayErrors = (errors: TsGdError[]) => {
   for (const error of errors) {
     if (typeof error.location === "string") {
-      return {
-        error,
-        location,
-      }
+      console.warn("Error at", `${chalk.blueBright(error.location)}`)
     } else {
       const {
         line,

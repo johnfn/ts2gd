@@ -1,9 +1,12 @@
-import ts from "typescript";
-import { ParseState, combine } from "../parse_node";
+import ts from "typescript"
+import { ParseState, combine } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 
-export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseState): ParseNodeType => {
+export const parseConstructor = (
+  node: ts.ConstructorDeclaration,
+  props: ParseState
+): ParseNodeType => {
   if (node.body) {
     // The trim() is for a constructor with only one element: a super() call
 
@@ -12,16 +15,17 @@ export const parseConstructor = (node: ts.ConstructorDeclaration, props: ParseSt
       nodes: node.body,
       props,
       addIndent: true,
-      content: body => `
+      parsedStrings: (body) => `
 func _ready(): 
-  ${body.trim().length > 0 ? body : 'pass'}
-` });
+  ${body.trim().length > 0 ? body : "pass"}
+`,
+    })
   } else {
     return combine({
       parent: node,
       nodes: [],
       props,
-      content: () => `func _ready():\n pass`
-    });
+      parsedStrings: () => `func _ready():\n pass`,
+    })
   }
 }

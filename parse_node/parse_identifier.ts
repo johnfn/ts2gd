@@ -14,7 +14,7 @@ export const parseIdentifier = (
       parent: node,
       nodes: [],
       props,
-      content: () => "null",
+      parsedStrings: () => "null",
     })
   }
 
@@ -22,7 +22,7 @@ export const parseIdentifier = (
     parent: node,
     nodes: [],
     props,
-    content: () => {
+    parsedStrings: () => {
       const name = props.scope.getName(node)
 
       if (!name) {

@@ -55,7 +55,7 @@ export const parseClassDeclaration = (
       parent: node,
       nodes: [],
       props,
-      content: () => "",
+      parsedStrings: () => "",
     })
   }
 
@@ -76,7 +76,7 @@ export const parseClassDeclaration = (
     parent: node,
     nodes: node.members,
     props,
-    content: (...members) => {
+    parsedStrings: (...members) => {
       return `
 ${parsedSetterGetters}
 ${members.join("")}

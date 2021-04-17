@@ -1,6 +1,9 @@
-import ts from "typescript";
+import ts from "typescript"
 import { combine, ParseNodeType, ParseState } from "../parse_node"
 
-export const parseSuperKeyword = (node: ts.SuperExpression, props: ParseState): ParseNodeType => {
-  return combine({ parent: node, nodes: [], props, content: () => `` });
+export const parseSuperKeyword = (
+  node: ts.SuperExpression,
+  props: ParseState
+): ParseNodeType => {
+  return combine({ parent: node, nodes: [], props, parsedStrings: () => `` })
 }

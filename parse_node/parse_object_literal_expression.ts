@@ -12,7 +12,7 @@ export const parseObjectLiteralExpression = (
       parent: node,
       nodes: [],
       props,
-      content: () => "{}",
+      parsedStrings: () => "{}",
     })
   }
 
@@ -48,7 +48,7 @@ export const parseObjectLiteralExpression = (
     parent: node,
     nodes: [...unprocessedKeys, ...unprocessedValues],
     props,
-    content: (...keysAndValues) => {
+    parsedStrings: (...keysAndValues) => {
       const keys = keysAndValues.slice(0, keysAndValues.length / 2)
       const values = keysAndValues.slice(keysAndValues.length / 2)
 

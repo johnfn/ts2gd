@@ -53,7 +53,10 @@ export const parseSourceFile = (
     classDecl ? preprocessClassDecl(classDecl, props) : "",
     parsedStatements.flatMap((x) => x.hoistedEnumImports ?? []).join("\n"),
     parsedStatements.flatMap((x) => x.hoistedLibraryFunctions ?? []).join("\n"),
-    parsedStatements.flatMap((x) => x.hoistedArrowFunctions ?? []).join("\n"),
+    parsedStatements
+      .flatMap((x) => x.hoistedArrowFunctions ?? [])
+      .map((obj) => obj.content)
+      .join("\n"),
     parsedStatements.map((x) => x.content).join("\n"),
   ]
 

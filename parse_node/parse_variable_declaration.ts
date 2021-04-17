@@ -79,7 +79,7 @@ export const parseVariableDeclaration = (
         parent: node,
         nodes: [node.name, node.initializer],
         props,
-        content: (nodeName, init) => ``,
+        parsedStrings: (nodeName, init) => ``,
       })
     }
   }
@@ -91,7 +91,7 @@ export const parseVariableDeclaration = (
       parent: node,
       nodes: [node.name, node.initializer],
       props,
-      content: (nodeName, init) =>
+      parsedStrings: (nodeName, init) =>
         `var ${unused}${nodeName}${typeString}${init ? " = " + init : ""}`,
     })
   } else {
@@ -107,7 +107,7 @@ export const parseVariableDeclaration = (
       parent: node,
       nodes: [node.initializer, ...destructuredNames.map((d) => d.id)],
       props,
-      content: (initializer, ...nodes) => {
+      parsedStrings: (initializer, ...nodes) => {
         return `
 var ${genName} = ${initializer}
 ${nodes

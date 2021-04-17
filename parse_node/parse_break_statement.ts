@@ -12,14 +12,14 @@ export const parseBreakStatement = (
       parent: node,
       nodes: [],
       props,
-      content: () => "",
+      parsedStrings: () => "",
     })
   } else {
     return combine({
       parent: node,
       nodes: [],
       props,
-      content: () => `
+      parsedStrings: () => `
 ${props.mostRecentForStatement?.incrementor ?? ""}
 break
 `,

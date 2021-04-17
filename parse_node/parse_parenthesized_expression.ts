@@ -13,7 +13,7 @@ export const parseParenthesizedExpression = (
       parent: node,
       nodes: node.expression,
       props,
-      content: (expr) => `${expr}`,
+      parsedStrings: (expr) => `${expr}`,
     })
   }
 
@@ -21,7 +21,7 @@ export const parseParenthesizedExpression = (
     parent: node,
     nodes: node.expression,
     props,
-    content: (expr) => `(${expr})`,
+    parsedStrings: (expr) => `(${expr})`,
   })
 }
 

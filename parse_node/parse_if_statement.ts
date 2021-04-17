@@ -14,7 +14,7 @@ export const parseIfStatement = (
     parent: node,
     nodes: [node.expression, node.thenStatement, node.elseStatement],
     props,
-    content: (expression, thenStatement, elseStatement) => `
+    parsedStrings: (expression, thenStatement, elseStatement) => `
 if ${expression}:
   ${thenStatement}${
       elseStatement

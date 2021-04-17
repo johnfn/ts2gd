@@ -11,7 +11,7 @@ export const parseTypeofExpression = (
     parent: node,
     nodes: node.expression,
     props,
-    content: (expr) => {
+    parsedStrings: (expr) => {
       return `${expr}.get_class()`
     },
   })

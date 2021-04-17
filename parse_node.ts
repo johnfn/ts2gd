@@ -89,7 +89,11 @@ export type ExtraLine = {
 export type ParseNodeType = {
   content: string
   hoistedEnumImports?: string[]
-  hoistedArrowFunctions?: string[]
+  hoistedArrowFunctions?: {
+    name: string
+    content: string
+    node: ts.ArrowFunction
+  }[]
   hoistedLibraryFunctions?: string[]
   extraLines?: ExtraLine[]
   enums?: {
@@ -112,11 +116,20 @@ export function combine(args: {
   parent: ts.Node
   nodes: ts.Node | undefined | (ts.Node | undefined)[] | ts.NodeArray<ts.Node>
   props: ParseState
-  content: (...args: string[]) => string
+
+  // We default to calling this callback...
+  parsedStrings?: (...args: string[]) => string
+
+  // ...unless this one is passed in, in which case we call it instead.
+  parsedObjs?: (...args: ParseNodeType[]) => string
 
   addIndent?: boolean
 }): ParseNodeType {
-  let { parent, nodes, props, content, addIndent } = args
+  let { parent, nodes, props, parsedStrings, parsedObjs, addIndent } = args
+
+  if (!parsedStrings && !parsedObjs) {
+    throw new Error("Need at least one of parsedStrings or parsedObjs")
+  }
 
   if (Array.isArray(nodes)) {
     nodes = [...nodes]
@@ -158,11 +171,11 @@ export function combine(args: {
     }
   })
 
-  const strings = parsedNodes.map((parsed) => {
-    const { node, content, enums } = parsed
+  for (const parsedNode of parsedNodes) {
+    const { node, content, enums, extraLines } = parsedNode
 
     if (!node) {
-      return ""
+      continue
     }
 
     const isStatement =
@@ -175,19 +188,21 @@ export function combine(args: {
       node.kind === SyntaxKind.ImportDeclaration ||
       node.kind === SyntaxKind.EnumDeclaration
 
-    let result = content
+    let formattedContent = content
     let lines = content.split("\n") // .filter(x => x !== '');
 
     if (isStatement) {
-      if (parsed.extraLines.length > 0) {
-        for (const line of parsed.extraLines) {
+      if (extraLines.length > 0) {
+        for (const line of extraLines) {
           if (line.type === "before") {
-            result = line.line.trimEnd() + "\n" + result + "\n"
+            formattedContent =
+              line.line.trimEnd() + "\n" + formattedContent + "\n"
           } else if (line.type === "after") {
-            result = result.trimEnd() + "\n" + line.line.trimEnd() + "\n"
+            formattedContent =
+              formattedContent.trimEnd() + "\n" + line.line.trimEnd() + "\n"
           }
 
-          parsed.extraLines = []
+          parsedNode.extraLines = []
         }
       }
     }
@@ -195,25 +210,27 @@ export function combine(args: {
     if (addIndent) {
       if (lines.length > 1) {
         // indent all but the first line.
-        result = lines
+        formattedContent = lines
           .map((line, i) => (i > 0 ? "  " : "") + line + "\n")
           .join("")
       }
     }
 
     if (isStandAloneLine && lines.length === 1) {
-      result = result + "\n"
+      formattedContent = formattedContent + "\n"
     }
 
     if (isStandAloneLine || lines.length > 1) {
       const preceding = generatePrecedingNewlines(node)
-      result = preceding + result
+      formattedContent = preceding + formattedContent
     }
 
-    return result
-  })
+    parsedNode.content = formattedContent
+  }
 
-  let stringResult = content(...strings)
+  let stringResult = parsedObjs
+    ? parsedObjs(...parsedNodes)
+    : parsedStrings!(...parsedNodes.map((node) => node.content))
   const initialWhitespaceLength =
     stringResult.length - stringResult.trimLeft().length
   stringResult =

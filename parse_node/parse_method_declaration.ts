@@ -23,7 +23,7 @@ export const parseMethodDeclaration = (
     nodes: [node.body, ...node.parameters],
     props: props,
     addIndent: true,
-    content: (body, ...params) => {
+    parsedStrings: (body, ...params) => {
       let joinedParams = params.join(", ")
 
       const specialMethod = specialMethods.find(
