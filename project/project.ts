@@ -19,7 +19,6 @@ import { AssetGodotScene } from "./assets/asset_godot_scene"
 import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
 import { BaseAsset } from "./assets/base_asset"
-import { AssetGodotClass } from "./assets/asset_godot_class"
 import { displayErrors, TsGdError, TsGdReturn } from "../errors"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
@@ -40,13 +39,6 @@ export class TsGdProjectClass {
   sourceFiles(): AssetSourceFile[] {
     return this.assets.filter(
       (a): a is AssetSourceFile => a instanceof AssetSourceFile
-    )
-  }
-
-  /** Each Godot class. */
-  godotClasses(): AssetGodotClass[] {
-    return this.assets.filter(
-      (a): a is AssetGodotClass => a instanceof AssetGodotClass
     )
   }
 
@@ -107,6 +99,7 @@ export class TsGdProjectClass {
       }
 
       if (asset instanceof BaseAsset) {
+        console.log("initial asset", asset.fsPath)
         this.assets.push(asset)
       }
 
@@ -126,7 +119,6 @@ export class TsGdProjectClass {
     path: string
   ):
     | AssetSourceFile
-    | AssetGodotClass
     | AssetGodotScene
     | AssetFont
     | AssetImage
@@ -135,8 +127,6 @@ export class TsGdProjectClass {
     | null {
     if (path.endsWith(".ts")) {
       return new AssetSourceFile(path, this)
-    } else if (path.endsWith(".gd")) {
-      return new AssetGodotClass(path, this)
     } else if (path.endsWith(".tscn")) {
       return new AssetGodotScene(path, this)
     } else if (path.endsWith(".godot")) {
@@ -208,7 +198,7 @@ export class TsGdProjectClass {
     }
 
     // Just noisy, since it's not caused by a user action
-    if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
+    if (!path.endsWith(".d.ts")) {
       if (!this.args.debug) console.clear()
 
       if (path.endsWith(".ts")) {
@@ -399,6 +389,10 @@ const shouldIncludePath = (path: string): boolean => {
     return false
   }
 
+  if (path.endsWith(".gd")) {
+    return false
+  }
+
   if (!path.includes(".")) {
     // Folder (I hope)
     // TODO: Might be able to check stat to be more sure about this
@@ -414,10 +408,6 @@ const shouldIncludePath = (path: string): boolean => {
   }
 
   if (AssetImage.extensions().some((ext) => path.endsWith(ext))) {
-    return true
-  }
-
-  if (path.endsWith(".gd")) {
     return true
   }
 

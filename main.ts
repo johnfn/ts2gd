@@ -2,6 +2,8 @@
 
 // TODO: Turn off skipLibCheck
 
+// TODO: Every file should export something
+
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
 

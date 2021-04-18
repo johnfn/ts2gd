@@ -197,7 +197,6 @@ declare class Dictionary<K, V> {
  *
 */
   "new"(): Dictionary<K, V>;
-  static "new"(): Dictionary<K, V>;
 
 
 

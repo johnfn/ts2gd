@@ -57,6 +57,10 @@ export function godotTypeToTsType(godotType: string): string {
     return "string"
   }
 
+  if (godotType === "Dictionary") {
+    return "Dictionary<any, any>"
+  }
+
   if (godotType === "NodePath") {
     // TODO
     return "NodePathType"
@@ -169,7 +173,7 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
     const constructorInfo = methods.filter((method) => method.isConstructor)
 
     if (className === "Signal") {
-      className = "Signal<T extends any[]>"
+      className = "Signal<T extends (...args: any[]): any>"
     }
 
     if (singletons.includes(className)) {
@@ -230,7 +234,7 @@ ${methods
   .join("\n\n")}
 
   // connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<${className}>>(signal: T, method: SignalFunction<${className}[T]>): number;
+  connect<T extends SignalsOf<${className}Signals>>(signal: T, method: SignalFunction<${className}Signals[T]>): number;
 
 ${(() => {
   // Generate wrapper functions for operator overloading stuff.
@@ -292,7 +296,11 @@ ${constants
     }
   })
   .join("\n")}
+}
 
+declare class ${className}Signals${
+      inherits ? ` extends ${inherits}Signals` : ""
+    } {
   ${signals
     .map((signal: any) => {
       return `${formatJsDoc(signal.description[0])}\n${

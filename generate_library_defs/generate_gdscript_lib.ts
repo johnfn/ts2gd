@@ -56,7 +56,7 @@ export const getCodeForMethod = (
     case "has_group":
       return `has_group<T extends keyof Groups>(name: T): bool`
     case "emit_signal":
-      return "emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;"
+      return "emit_signal<U extends (...args: any[]): any, T extends Signal<U>>(signal: T, ...args: U): void;"
     default:
       if (isConstructor) {
         return ""
@@ -157,6 +157,10 @@ export const generateGdscriptLib = async (path: string) => {
   )
 
   for (const parsedMethod of parsedMethods) {
+    if (parsedMethod.name === "load") {
+      continue
+    }
+
     result += `
 ${parsedMethod.codegen}
     `

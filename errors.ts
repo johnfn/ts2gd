@@ -5,6 +5,7 @@ export enum ErrorName {
   InvalidNumber,
   InvalidImport,
   ClassNameNotFound,
+  ClassDoesntExtendAnything,
   TooManyClassesFound,
   ClassCannotBeAnonymous,
   CantFindAutoloadInstance,

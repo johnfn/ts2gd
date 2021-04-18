@@ -100,7 +100,6 @@ export const compileTs = (
       } as any,
       godotScenes: () => [],
       createAsset: () => 0 as any,
-      godotClasses: () => [],
       godotFonts: () => [],
       godotImages: () => [],
       godotGlbs: () => [],
