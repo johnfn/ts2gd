@@ -16,10 +16,6 @@ GDScript is a great language - it's perfectly designed for quick prototyping. Bu
 
 We can also get really, really good autocomplete and refactoring support.
 
-## How?!
-
-Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript.
-
 ## How it works
 
 Add a ts2gd.json file to your Godot project root:
@@ -27,8 +23,7 @@ Add a ts2gd.json file to your Godot project root:
 ```
 {
   "destination": "./compiled",
-  "source": "./src",
-  "godotSourceRepoPath": "/Users/johnfn/Godot"
+  "source": "./src"
 }
 ```
 
@@ -57,6 +52,20 @@ Input.is_key_pressed(KeyList.KEY_SPACE)
 For the full list of namespaced enums, you can see the generated @globals.d.ts file.
 
 In the future, this could become a configuration setting on tsgd.json.
+
+### `connect`
+
+Connect has been improved. It now only has two arguments: the signal you're connecting to, and the method that should be called when the signal fires. Additionally, you can pass in an arrow function to the second parameter.
+
+```
+this.connect("body_entered", this.body_entered)
+```
+
+Or simply:
+
+```
+this.connect("body_entered", body => print("Body entered:", body))
+```
 
 ### Autoloads
 
@@ -180,3 +189,7 @@ myComplexDict.put(myNode, 5)
 - [x] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???
 - [ ] use LSP to handle operator overloading, sourcemap issues...?!?
+
+# How?!
+
+Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript.
