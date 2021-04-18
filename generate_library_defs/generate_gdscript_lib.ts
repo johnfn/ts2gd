@@ -56,7 +56,7 @@ export const getCodeForMethod = (
     case "has_group":
       return `has_group<T extends keyof Groups>(name: T): bool`
     case "emit_signal":
-      return "emit_signal<U extends (...args: any[]): any, T extends Signal<U>>(signal: T, ...args: U): void;"
+      return "emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;"
     default:
       if (isConstructor) {
         return ""
@@ -71,6 +71,40 @@ declare const ${name}: (${argumentList}) => ${returnType}
 ${isAbstract ? "protected " : ""}${name}(${argumentList}): ${returnType};`
       }
   }
+}
+
+const argsToString = (
+  args: {
+    $: {
+      index: string
+      name: string
+      type: string
+      default?: string
+    }
+  }[]
+) => {
+  let result: string[] = []
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]
+    const argName = sanitizeGodotNameForTs(arg["$"].name, "argument")
+    let argType = godotTypeToTsType(arg["$"].type)
+    const isOptional = args.slice(i).every((arg) => !!arg["$"].default)
+
+    if (argType === "StringName") {
+      if (argName === "group") {
+        argType = "keyof Groups"
+      }
+
+      if (argName === "action") {
+        argType = "Action"
+      }
+    }
+
+    result.push(`${argName}${isOptional ? "?" : ""}: ${argType}`)
+  }
+
+  return result
 }
 
 export const parseMethod = (
@@ -95,25 +129,7 @@ export const parseMethod = (
     if (isVarArgs) {
       argumentList = "...args: any[]"
     } else {
-      argumentList = args
-        .map((arg) => {
-          let argName = sanitizeGodotNameForTs(arg["$"].name)
-          let argType = godotTypeToTsType(arg["$"].type)
-          let isOptional = !!arg["$"].default
-
-          if (argType === "StringName") {
-            if (argName === "group") {
-              argType = "keyof Groups"
-            }
-
-            if (argName === "action") {
-              argType = "Action"
-            }
-          }
-
-          return `${argName}${isOptional ? "?" : ""}: ${argType}`
-        })
-        .join(", ")
+      argumentList = argsToString(args).join(", ")
     }
   }
 

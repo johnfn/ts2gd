@@ -99,7 +99,6 @@ export class TsGdProjectClass {
       }
 
       if (asset instanceof BaseAsset) {
-        console.log("initial asset", asset.fsPath)
         this.assets.push(asset)
       }
 
@@ -298,6 +297,8 @@ export class TsGdProjectClass {
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {
+    console.log(flags)
+
     if (flags.buildLibraries) {
       return true
     }

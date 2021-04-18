@@ -10,7 +10,10 @@ import {
   parseMethod,
 } from "./generate_gdscript_lib"
 
-export function sanitizeGodotNameForTs(name: string): string {
+export function sanitizeGodotNameForTs(
+  name: string,
+  type: "argument" | "property"
+): string {
   if (
     name === "with" ||
     name === "var" ||
@@ -18,7 +21,11 @@ export function sanitizeGodotNameForTs(name: string): string {
     name === "default" ||
     name === "in"
   ) {
-    return "_" + name
+    if (type === "argument") {
+      return "_" + name
+    } else {
+      return `"${name}"`
+    }
   }
 
   // for enum names in @GlobalScope
@@ -26,7 +33,11 @@ export function sanitizeGodotNameForTs(name: string): string {
 
   // Bizarre case in SliderJoint3D.xml
   if (name.includes("/")) {
-    name = '"' + name + '"'
+    if (type === "argument") {
+      return name.replace("/", "_")
+    } else {
+      return `"${name}"`
+    }
   }
 
   return name
@@ -49,12 +60,20 @@ export function godotTypeToTsType(godotType: string): string {
     return "any[]"
   }
 
+  if (godotType === "PackedScene") {
+    return "PackedScene<any>"
+  }
+
   if (godotType === "Variant") {
     return "any"
   }
 
   if (godotType === "String") {
     return "string"
+  }
+
+  if (godotType.startsWith("Transform2D")) {
+    return "Transform2D"
   }
 
   if (godotType === "Dictionary") {
@@ -64,6 +83,10 @@ export function godotTypeToTsType(godotType: string): string {
   if (godotType === "NodePath") {
     // TODO
     return "NodePathType"
+  }
+
+  if (!!godotType.match(/^[0-9]+$/)) {
+    return "int"
   }
 
   return godotType
@@ -194,10 +217,6 @@ ${(() => {
   let constructors = ""
 
   if (constructorInfo.length === 0) {
-    // We also need to tell typescript that this object can be extended from, e.g. class Foo extends Object {}
-    // Unfortunately by adding this, we also make new Object() not a syntax error - even
-    // though it really should be.
-
     constructors += `  "new"(): ${className};\n`
   } else {
     constructors += `
@@ -213,17 +232,21 @@ ${constructorInfo
 })()}
 
 ${members
-  .map((member: any) => {
-    const name = member["$"].name.trim()
-    if (!member["_"]) {
+  .map((property: any) => {
+    const propertyName = sanitizeGodotNameForTs(property["$"].name, "property")
+
+    if (!property["_"]) {
       return ""
     }
 
+    // Godot allows for a method and a variable with the same name, but TS does not.
+    if (propertyName === "rotate" && className === "PathFollow2D") {
+      return
+    }
+
     return `
-${formatJsDoc(member["_"].trim())}
-${sanitizeGodotNameForTs(member["$"].name)}: ${godotTypeToTsType(
-      member["$"].type
-    )};`
+${formatJsDoc(property["_"].trim())}
+${propertyName}: ${godotTypeToTsType(property["$"].type)};`
   })
   .join("\n")}
 
@@ -259,40 +282,14 @@ div(other: number | ${className}): ${className};
 ${constants
   .map((c: any) => {
     const value: string = c["$"].value.trim()
-    let type: string | null = null
-
-    let genericClassNameRe = /([A-Z][a-z]*)\(.*\)/
+    let genericClassNameRe = /([A-Z][a-zA-Z0-9]*)\(.*\)/
     const match = genericClassNameRe.exec(value)
+    const type = godotTypeToTsType(match?.[1] ?? "any")
 
-    if (match) {
-      type = match[1]
-    } else if (value.startsWith("Vector2")) {
-      type = "Vector2"
-    } else if (value.startsWith("Vector3")) {
-      type = "Vector3"
-    } else if (value.startsWith('"')) {
-      type = "string"
-    } else if (value.startsWith("false") || value.startsWith("true")) {
-      type = "boolean"
-    } else if (/^[0-9]+$/.test(value)) {
-      type = "number"
-    }
-
-    if (
-      c["$"].value &&
-      (type === "string" || type === "boolean" || type === "number")
-    ) {
-      return `${formatJsDoc(c["_"] || "")}\nstatic ${c["$"].name}: ${
-        c["$"].value
-      };\n`
+    if (type) {
+      return `${formatJsDoc(c["_"] || "")}\nstatic ${c["$"].name}: ${type};\n`
     } else {
-      if (type) {
-        return `${formatJsDoc(c["_"] || "")}\nstatic ${c["$"].name}: ${type};\n`
-      } else {
-        return `${formatJsDoc(c["_"] || "")}\n static ${
-          c["$"].name
-        }: ${type};\n`
-      }
+      return `${formatJsDoc(c["_"] || "")}\n static ${c["$"].name}: ${type};\n`
     }
   })
   .join("\n")}
@@ -322,7 +319,7 @@ declare class ${className}Signals${
     const content = fs.readFileSync(path, "utf-8")
     const json = await parseStringPromise(content)
     const methods = json.class.methods[0].method ?? []
-    const members = (json.class.members ?? [])[0]?.member ?? []
+    const properties = (json.class.members ?? [])[0]?.member ?? []
     const className = json.class["$"].name
     const inherits = json.class["$"].inherits
     const constants = (json.class.constants ?? [])[0]?.constant ?? []
@@ -342,21 +339,27 @@ declare class ${className}Signals${
 
     const result = `
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
-${members
-  .map((member: any) => {
-    const name = sanitizeGodotNameForTs(member["$"].name)
+${properties
+  .map((property: any) => {
+    const name = sanitizeGodotNameForTs(property["$"].name, "property")
     // these dont have .xml files
-    const commentOut = name === "VisualScriptEditor" || name === "GodotSharp"
+    let commentOut = name === "VisualScriptEditor" || name === "GodotSharp"
+
+    // TODO:
+    if (name === "NavigationMeshGenerator") {
+      commentOut = true
+    }
 
     singletons.push(name)
-    if (!member["_"]) {
+
+    if (!property["_"]) {
       return ""
     }
 
     return `
-${formatJsDoc(member["_"].trim())}
+${formatJsDoc(property["_"].trim())}
 ${commentOut ? "//" : ""}declare const ${name}: ${godotTypeToTsType(
-      member["$"].type
+      property["$"].type
     )}Class;`
   })
   .join("\n")}
@@ -364,7 +367,7 @@ ${commentOut ? "//" : ""}declare const ${name}: ${godotTypeToTsType(
 ${Object.keys(enums)
   .map((key) => {
     return `
-    declare enum ${sanitizeGodotNameForTs(key)} {
+    declare enum ${sanitizeGodotNameForTs(key, "argument")} {
       ${enums[key]
         .map((enumItem: any) => {
           return `${formatJsDoc(enumItem.doc)}\n${enumItem.name} = ${
