@@ -8,7 +8,7 @@ const parseBlock = (node, props) => {
             parent: node,
             nodes: node.statements,
             props,
-            content: (...parsed) => parsed.join(""),
+            parsedStrings: (...parsed) => parsed.join(""),
         });
     }
     else {
@@ -16,7 +16,7 @@ const parseBlock = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => "pass\n",
+            parsedStrings: () => "pass\n",
         });
     }
 };

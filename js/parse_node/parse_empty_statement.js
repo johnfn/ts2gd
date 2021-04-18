@@ -13,14 +13,14 @@ const parseEmptyStatement = (node, props) => {
         return parse_node_1.combine({
             parent: node,
             nodes: [],
-            content: () => "pass",
+            parsedStrings: () => "pass",
             props,
         });
     }
     return parse_node_1.combine({
         parent: node,
         nodes: [],
-        content: () => "",
+        parsedStrings: () => "",
         props,
     });
 };

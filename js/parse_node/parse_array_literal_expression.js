@@ -7,7 +7,7 @@ const parseArrayLiteralExpression = (node, props) => {
         parent: node,
         nodes: node.elements,
         props,
-        content: (...args) => `[${args.join(", ")}]`,
+        parsedStrings: (...args) => `[${args.join(", ")}]`,
     });
 };
 exports.parseArrayLiteralExpression = parseArrayLiteralExpression;

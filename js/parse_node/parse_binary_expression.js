@@ -31,7 +31,7 @@ const parseBinaryExpression = (node, props) => {
         parent: node,
         nodes: [node.left, node.operatorToken, node.right],
         props,
-        content: (left, operatorToken, right) => {
+        parsedStrings: (left, operatorToken, right) => {
             if (operatorToken === "??") {
                 return `(${left} if (${left}) != null else ${right})`;
             }

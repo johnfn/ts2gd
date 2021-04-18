@@ -8,7 +8,7 @@ const parseSetAccessor = (node, props) => {
         nodes: [node.name, node.body, ...node.parameters],
         props,
         addIndent: true,
-        content: (name, body, ...params) => `
+        parsedStrings: (name, body, ...params) => `
 func ${name}_set(${params.join(", ")}):
   ${body}
 `,

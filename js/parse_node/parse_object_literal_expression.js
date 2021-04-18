@@ -9,7 +9,7 @@ const parseObjectLiteralExpression = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => "{}",
+            parsedStrings: () => "{}",
         });
     }
     const isMultiline = node.getText().includes("\n");
@@ -43,7 +43,7 @@ const parseObjectLiteralExpression = (node, props) => {
         parent: node,
         nodes: [...unprocessedKeys, ...unprocessedValues],
         props,
-        content: (...keysAndValues) => {
+        parsedStrings: (...keysAndValues) => {
             const keys = keysAndValues.slice(0, keysAndValues.length / 2);
             const values = keysAndValues.slice(keysAndValues.length / 2);
             let pairs = [];

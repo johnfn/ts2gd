@@ -10,10 +10,10 @@ const parseConstructor = (node, props) => {
             nodes: node.body,
             props,
             addIndent: true,
-            content: body => `
+            parsedStrings: (body) => `
 func _ready(): 
-  ${body.trim().length > 0 ? body : 'pass'}
-`
+  ${body.trim().length > 0 ? body : "pass"}
+`,
         });
     }
     else {
@@ -21,7 +21,7 @@ func _ready():
             parent: node,
             nodes: [],
             props,
-            content: () => `func _ready():\n pass`
+            parsedStrings: () => `func _ready():\n pass`,
         });
     }
 };

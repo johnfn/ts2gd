@@ -7,7 +7,7 @@ const parseTypeofExpression = (node, props) => {
         parent: node,
         nodes: node.expression,
         props,
-        content: (expr) => {
+        parsedStrings: (expr) => {
             return `${expr}.get_class()`;
         },
     });

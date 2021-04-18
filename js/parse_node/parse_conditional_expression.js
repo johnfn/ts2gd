@@ -7,7 +7,7 @@ const parseConditionalExpression = (node, props) => {
         parent: node,
         nodes: [node.condition, node.whenTrue, node.whenFalse],
         props,
-        content: (cond, true_, false_) => {
+        parsedStrings: (cond, true_, false_) => {
             return `${true_} if ${cond} else ${false_}`;
         },
     });

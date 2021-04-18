@@ -7,7 +7,7 @@ const parseVariableDeclarationList = (node, props) => {
         parent: node,
         nodes: node.declarations,
         props,
-        content: (...decls) => decls.join("\n"),
+        parsedStrings: (...decls) => decls.join("\n"),
     });
 };
 exports.parseVariableDeclarationList = parseVariableDeclarationList;

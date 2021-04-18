@@ -55,7 +55,10 @@ const isTsNodeArray = (x) => {
     return x && "pos" in x && "find" in x;
 };
 function combine(args) {
-    let { parent, nodes, props, content, addIndent } = args;
+    let { parent, nodes, props, parsedStrings, parsedObjs, addIndent } = args;
+    if (!parsedStrings && !parsedObjs) {
+        throw new Error("Need at least one of parsedStrings or parsedObjs");
+    }
     if (Array.isArray(nodes)) {
         nodes = [...nodes];
     }
@@ -91,10 +94,10 @@ function combine(args) {
             hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
         };
     });
-    const strings = parsedNodes.map((parsed) => {
-        const { node, content, enums } = parsed;
+    for (const parsedNode of parsedNodes) {
+        const { node, content, enums, extraLines } = parsedNode;
         if (!node) {
-            return "";
+            continue;
         }
         const isStatement = node.kind >= typescript_1.SyntaxKind.FirstStatement &&
             node.kind <= typescript_1.SyntaxKind.LastStatement;
@@ -102,39 +105,43 @@ function combine(args) {
             node.kind === typescript_1.SyntaxKind.PropertyDeclaration ||
             node.kind === typescript_1.SyntaxKind.ImportDeclaration ||
             node.kind === typescript_1.SyntaxKind.EnumDeclaration;
-        let result = content;
+        let formattedContent = content;
         let lines = content.split("\n"); // .filter(x => x !== '');
         if (isStatement) {
-            if (parsed.extraLines.length > 0) {
-                for (const line of parsed.extraLines) {
+            if (extraLines.length > 0) {
+                for (const line of extraLines) {
                     if (line.type === "before") {
-                        result = line.line.trimEnd() + "\n" + result + "\n";
+                        formattedContent =
+                            line.line.trimEnd() + "\n" + formattedContent + "\n";
                     }
                     else if (line.type === "after") {
-                        result = result.trimEnd() + "\n" + line.line.trimEnd() + "\n";
+                        formattedContent =
+                            formattedContent.trimEnd() + "\n" + line.line.trimEnd() + "\n";
                     }
-                    parsed.extraLines = [];
+                    parsedNode.extraLines = [];
                 }
             }
         }
         if (addIndent) {
             if (lines.length > 1) {
                 // indent all but the first line.
-                result = lines
+                formattedContent = lines
                     .map((line, i) => (i > 0 ? "  " : "") + line + "\n")
                     .join("");
             }
         }
         if (isStandAloneLine && lines.length === 1) {
-            result = result + "\n";
+            formattedContent = formattedContent + "\n";
         }
         if (isStandAloneLine || lines.length > 1) {
             const preceding = ts_utils_1.generatePrecedingNewlines(node);
-            result = preceding + result;
+            formattedContent = preceding + formattedContent;
         }
-        return result;
-    });
-    let stringResult = content(...strings);
+        parsedNode.content = formattedContent;
+    }
+    let stringResult = parsedObjs
+        ? parsedObjs(...parsedNodes)
+        : parsedStrings(...parsedNodes.map((node) => node.content));
     const initialWhitespaceLength = stringResult.length - stringResult.trimLeft().length;
     stringResult =
         stringResult.slice(initialWhitespaceLength).trimRight() +

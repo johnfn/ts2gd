@@ -10,7 +10,7 @@ const parseWhileStatement = (node, props) => {
         nodes: [node.expression, node.statement],
         props: newProps,
         addIndent: true,
-        content: (expr, statement) => `
+        parsedStrings: (expr, statement) => `
 while ${expr}:
   ${statement}
 `,

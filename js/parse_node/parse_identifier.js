@@ -9,14 +9,14 @@ const parseIdentifier = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => "null",
+            parsedStrings: () => "null",
         });
     }
     return parse_node_1.combine({
         parent: node,
         nodes: [],
         props,
-        content: () => {
+        parsedStrings: () => {
             const name = props.scope.getName(node);
             if (!name) {
                 return node.text;

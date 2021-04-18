@@ -41,7 +41,7 @@ const parseClassDeclaration = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => "",
+            parsedStrings: () => "",
         });
     }
     // Preprocess set/get to make setget declarations
@@ -57,7 +57,7 @@ const parseClassDeclaration = (node, props) => {
         parent: node,
         nodes: node.members,
         props,
-        content: (...members) => {
+        parsedStrings: (...members) => {
             return `
 ${parsedSetterGetters}
 ${members.join("")}

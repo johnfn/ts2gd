@@ -76,14 +76,18 @@ export class TsGdProjectClass {
 
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 
+  args: ParsedArgs
+
   constructor(
     watcher: chokidar.FSWatcher,
     initialFilePaths: string[],
     program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
-    ts2gdJson: Paths
+    ts2gdJson: Paths,
+    args: ParsedArgs
   ) {
     // Initial set up
 
+    this.args = args
     TsGdProjectClass.Paths = ts2gdJson
     this.program = program
 
@@ -178,6 +182,8 @@ export class TsGdProjectClass {
     // Do this first because some assets expect themselves to exist - e.g.
     // an enum inside a source file expects that source file to exist.
     if (newAsset instanceof BaseAsset) {
+      console.log("add", newAsset)
+
       this.assets.push(newAsset)
     }
 
@@ -203,7 +209,7 @@ export class TsGdProjectClass {
 
     // Just noisy, since it's not caused by a user action
     if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
-      console.clear()
+      if (!this.args.debug) console.clear()
 
       if (path.endsWith(".ts")) {
         console.info("Compile:", chalk.blueBright(path))
@@ -356,7 +362,8 @@ export class TsGdProjectClass {
 
 export const makeTsGdProject = async (
   ts2gdJson: Paths,
-  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
+  args: ParsedArgs
 ) => {
   const initialFiles: string[] = []
 
@@ -380,7 +387,7 @@ export const makeTsGdProject = async (
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson)
+  return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson, args)
 }
 
 const shouldIncludePath = (path: string): boolean => {

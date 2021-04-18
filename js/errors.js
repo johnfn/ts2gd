@@ -15,17 +15,16 @@ var ErrorName;
     ErrorName[ErrorName["CantFindAutoloadInstance"] = 5] = "CantFindAutoloadInstance";
     ErrorName[ErrorName["UnknownTsSyntax"] = 6] = "UnknownTsSyntax";
     ErrorName[ErrorName["PathNotFound"] = 7] = "PathNotFound";
-    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 8] = "AutoloadProjectButNotDecorated";
-    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 9] = "AutoloadDecoratedButNotProject";
-    ErrorName[ErrorName["AutoloadNotExported"] = 10] = "AutoloadNotExported";
+    ErrorName[ErrorName["Ts2GdError"] = 8] = "Ts2GdError";
+    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 9] = "AutoloadProjectButNotDecorated";
+    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 10] = "AutoloadDecoratedButNotProject";
+    ErrorName[ErrorName["AutoloadNotExported"] = 11] = "AutoloadNotExported";
+    ErrorName[ErrorName["NoComplicatedConnect"] = 12] = "NoComplicatedConnect";
 })(ErrorName = exports.ErrorName || (exports.ErrorName = {}));
 const displayErrors = (errors) => {
     for (const error of errors) {
         if (typeof error.location === "string") {
-            return {
-                error,
-                location,
-            };
+            console.warn("Error at", `${chalk_1.default.blueBright(error.location)}`);
         }
         else {
             const { line, character, } = error.location
@@ -34,7 +33,7 @@ const displayErrors = (errors) => {
             console.warn();
             console.warn("Error at", `${chalk_1.default.blueBright(error.location.getSourceFile().fileName)}:${chalk_1.default.yellow(line + 1)}:${chalk_1.default.yellow(character + 1)}`);
         }
-        console.log(error.description);
+        console.info(error.description);
     }
 };
 exports.displayErrors = displayErrors;

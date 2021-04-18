@@ -179,7 +179,8 @@ ${methods
         })
             .join("\n\n")}
 
-  connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<${className}>>(signal: T, method: SignalFunction<${className}[T]>): number;
 
 ${(() => {
             // Generate wrapper functions for operator overloading stuff.

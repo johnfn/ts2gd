@@ -131,7 +131,7 @@ const parseImportDeclaration = (node, props) => {
         parent: node,
         nodes: [],
         props,
-        content: () => imports
+        parsedStrings: () => imports
             .map(({ importedName, type, resPath }) => {
             if (type === "class") {
                 return `const ${importedName} = preload("${resPath}")`;

@@ -8,7 +8,7 @@ const parseNumericLiteral = (node, props) => {
         parent: node,
         nodes: [],
         props,
-        content: () => node.getText(),
+        parsedStrings: () => node.getText(),
     });
 };
 exports.parseNumericLiteral = parseNumericLiteral;

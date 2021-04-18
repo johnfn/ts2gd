@@ -10,7 +10,7 @@ const parseStringLiteral = (node, props) => {
         parent: node,
         nodes: [],
         props,
-        content: () => `"${text}"`,
+        parsedStrings: () => `"${text}"`,
     });
 };
 exports.parseStringLiteral = parseStringLiteral;

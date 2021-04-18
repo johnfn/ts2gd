@@ -9,7 +9,7 @@ const parseForStatement = (node, props) => {
         parent: node,
         nodes: node.initializer,
         props,
-        content: (init) => init,
+        parsedStrings: (init) => init,
     }).content;
     props.scope.enterScope();
     const increment = parse_node_1.combine({
@@ -17,7 +17,7 @@ const parseForStatement = (node, props) => {
         addIndent: true,
         nodes: [node.incrementor],
         props,
-        content: (inc) => inc,
+        parsedStrings: (inc) => inc,
     });
     let incrementText = increment.extraLines
         ?.filter((line) => line.isDecrement || line.isIncrement)
@@ -30,7 +30,7 @@ const parseForStatement = (node, props) => {
         addIndent: true,
         nodes: [node.condition, node.statement],
         props,
-        content: (cond, statement) => {
+        parsedStrings: (cond, statement) => {
             if (statement.trim().length === 0 &&
                 increment.content.trim().length === 0) {
                 statement = "pass";

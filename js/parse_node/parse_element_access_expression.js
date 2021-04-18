@@ -7,7 +7,7 @@ const parseElementAccessExpression = (node, props) => {
         parent: node,
         nodes: [node.expression, node.argumentExpression],
         props,
-        content: (lhs, rhs) => `${lhs}[${rhs}]`
+        parsedStrings: (lhs, rhs) => `${lhs}[${rhs}]`,
     });
 };
 exports.parseElementAccessExpression = parseElementAccessExpression;

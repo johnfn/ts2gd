@@ -16,7 +16,7 @@ const parseMethodDeclaration = (node, props) => {
         nodes: [node.body, ...node.parameters],
         props: props,
         addIndent: true,
-        content: (body, ...params) => {
+        parsedStrings: (body, ...params) => {
             let joinedParams = params.join(", ");
             const specialMethod = specialMethods.find((method) => method.name === funcName);
             if (specialMethod && joinedParams.trim() === "") {

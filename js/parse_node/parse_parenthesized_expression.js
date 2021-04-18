@@ -9,14 +9,14 @@ const parseParenthesizedExpression = (node, props) => {
             parent: node,
             nodes: node.expression,
             props,
-            content: (expr) => `${expr}`,
+            parsedStrings: (expr) => `${expr}`,
         });
     }
     return parse_node_1.combine({
         parent: node,
         nodes: node.expression,
         props,
-        content: (expr) => `(${expr})`,
+        parsedStrings: (expr) => `(${expr})`,
     });
 };
 exports.parseParenthesizedExpression = parseParenthesizedExpression;

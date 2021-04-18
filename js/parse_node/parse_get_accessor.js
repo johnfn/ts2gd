@@ -8,7 +8,7 @@ const parseGetAccessor = (node, props) => {
         nodes: [node.name, node.body, ...node.parameters],
         addIndent: true,
         props,
-        content: (name, body, ...params) => `
+        parsedStrings: (name, body, ...params) => `
 func ${name}_get(${params}):
   ${body || "pass"}
 `,

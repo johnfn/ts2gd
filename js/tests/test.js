@@ -65,13 +65,14 @@ const compileTs = (code, isAutoload) => {
     };
     const program = ts.createProgram(["test.ts", "autoload.ts"], tsconfigOptions, customCompilerHost);
     let i = 0;
+    const errors = [];
     // TODO: Make this less silly.
     const godotFile = parse_node_1.parseNode(sourceFile, {
         indent: "",
         scope: new scope_1.Scope(program),
         isConstructor: false,
         program,
-        addError: () => { },
+        addError: (error) => errors.push(error),
         project: {
             buildDynamicDefinitions: async () => { },
             assets: [],
@@ -107,7 +108,9 @@ const compileTs = (code, isAutoload) => {
             },
             monitor: () => 0,
             onAddAsset: async () => ({ result: null }),
-            onChangeAsset: () => { },
+            onChangeAsset: async () => {
+                return { result: null };
+            },
             onRemoveAsset: () => { },
             sourceFiles: () => [
                 {
@@ -126,7 +129,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     reload: () => { },
                     isDecoratedAutoload: {},
-                    ...{}, // ssh about private properties.
+                    ...{},
                 },
                 {
                     exportedTsClassName: () => "",
@@ -151,7 +154,7 @@ const compileTs = (code, isAutoload) => {
         isAutoload: false,
         usages: new Map(),
     });
-    return godotFile;
+    return { compiled: godotFile, errors };
 };
 exports.compileTs = compileTs;
 const trim = (s) => {
@@ -163,8 +166,20 @@ const trim = (s) => {
 };
 const test = (props, name, testFileName, path) => {
     const { ts, expected } = props;
-    const compiled = exports.compileTs(ts, props.isAutoload ?? false);
+    const { compiled, errors } = exports.compileTs(ts, props.isAutoload ?? false);
     const output = compiled.content;
+    if (errors.length > 0) {
+        return {
+            type: "fail-error",
+            result: "",
+            expected: `Got an unexpected error:\n\n${errors
+                .map((err) => err.description)
+                .join("\n")}`,
+            name,
+            expectFail: props.expectFail ?? false,
+            path,
+        };
+    }
     if (props.expectedFiles) {
         // Go into file comparison mode
         for (const { filename, content } of props.expectedFiles) {
@@ -243,7 +258,7 @@ const runTests = async () => {
         const result = test(testObj, testObj.testName, testObj.fileName, testObj.path);
         console.log = oldConsoleLog;
         total++;
-        if (result.type === "fail") {
+        if (result.type === "fail" || result.type === "fail-error") {
             result.logs = logged;
             failures.push(result);
         }
@@ -259,7 +274,7 @@ const runTests = async () => {
         console.info(failures.map((f) => "  " + f.name).join("\n"));
     }
     else {
-        for (let { expected, name, result, logs, path } of failures.filter((x) => !x.expectFail)) {
+        for (let { expected, name, result, logs, path, type } of failures.filter((x) => !x.expectFail)) {
             const fileContents = fs_1.default.readFileSync(path, "utf-8");
             const lines = fileContents.split("\n");
             // Take a guess at line
@@ -268,30 +283,35 @@ const runTests = async () => {
             console.info(name, "failed:");
             console.info(`  in`, chalk_1.default.yellowBright(`${path}${line ? `:${line}:0` : ``}`));
             console.info("=============================================\n");
-            console.info("\x1b[31mExpected:\x1b[0m");
-            let str = "";
-            for (let i = 0; i < expected.length; i++) {
-                if (expected[i] !== result[i]) {
-                    if (expected[i].trim() === "") {
-                        str += `\x1b[41m${expected[i]}\x1b[0m`;
+            if (type === "fail-error") {
+                console.info(expected + "\n");
+            }
+            else {
+                console.info("\x1b[31mExpected:\x1b[0m");
+                let str = "";
+                for (let i = 0; i < expected.length; i++) {
+                    if (expected[i] !== result[i]) {
+                        if (expected[i].trim() === "") {
+                            str += `\x1b[41m${expected[i]}\x1b[0m`;
+                        }
+                        else {
+                            str += `\x1b[31m${expected[i]}\x1b[0m`;
+                        }
                     }
                     else {
-                        str += `\x1b[31m${expected[i]}\x1b[0m`;
+                        str += expected[i];
                     }
                 }
-                else {
-                    str += expected[i];
-                }
+                console.info(str
+                    .split("\n")
+                    .map((x) => x + "\n")
+                    .join(""));
+                console.info("\x1b[32mActual:\x1b[0m");
+                console.info(result
+                    .split("\n")
+                    .map((x) => x + "\n")
+                    .join(""));
             }
-            console.info(str
-                .split("\n")
-                .map((x) => "  " + x + "\n")
-                .join(""));
-            console.info("\x1b[32mActual:\x1b[0m");
-            console.info(result
-                .split("\n")
-                .map((x) => "  " + x + "\n")
-                .join(""));
             if (logs && logs.length > 0) {
                 console.info("Logs:");
                 for (const log of logs) {

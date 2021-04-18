@@ -8,7 +8,7 @@ const parseBreakStatement = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => "",
+            parsedStrings: () => "",
         });
     }
     else {
@@ -16,7 +16,7 @@ const parseBreakStatement = (node, props) => {
             parent: node,
             nodes: [],
             props,
-            content: () => `
+            parsedStrings: () => `
 ${props.mostRecentForStatement?.incrementor ?? ""}
 break
 `,

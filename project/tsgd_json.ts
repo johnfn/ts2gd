@@ -31,8 +31,8 @@ export class Paths {
   /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
   godotSourceRepoPath: string | undefined
 
-  constructor(flags: ParsedArgs) {
-    if (flags.init) {
+  constructor(args: ParsedArgs) {
+    if (args.init) {
       this.init()
 
       process.exit(0)
@@ -43,8 +43,8 @@ export class Paths {
     let fullyQualifiedTs2gdPathWithFilename: string
     let fullyQualifiedTs2gdPath: string
 
-    if (flags.tsgdPath) {
-      ts2gdPath = flags.tsgdPath
+    if (args.tsgdPath) {
+      ts2gdPath = args.tsgdPath
 
       // relativeTs2gdPath is now a path of some sort, but it could be a relative path (e.g. "./ts2gd.json").
       // Let's make it fully qualified.
@@ -58,7 +58,7 @@ export class Paths {
 
         fullyQualifiedTs2gdPathWithFilename = path.join(
           __dirname,
-          flags.tsgdPath
+          args.tsgdPath
         )
       }
     } else {
@@ -103,7 +103,7 @@ export class Paths {
     )
 
     if (!fs.existsSync(this.tsconfigPath)) {
-      showLoadingMessage("Creating tsconfig.json")
+      showLoadingMessage("Creating tsconfig.json", args)
 
       fs.writeFileSync(this.tsconfigPath, defaultTsconfig)
     }

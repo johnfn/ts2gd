@@ -76,6 +76,12 @@ export const compileTs = (
     program,
     addError: (error) => errors.push(error),
     project: {
+      args: {
+        buildLibraries: false,
+        debug: false,
+        help: false,
+        init: false,
+      },
       buildDynamicDefinitions: async () => {},
       assets: [],
       program: undefined as any,

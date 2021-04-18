@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testRewriteGetNode2 = exports.testRewriteGetNode = exports.testDoubleMap = exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
+exports.testRewriteGetNode2 = exports.testRewriteGetNode = exports.testDoubleMap = exports.testEmitSignal = exports.testRewriteDictPut2 = exports.testConnect2 = exports.testConnect = exports.testRewriteDictPut = exports.testMapCapture = exports.testMap = exports.testArrowFunction = exports.testNormalVec = exports.testAddVec2 = exports.testAddVec = exports.testBasicCall = exports.parseCallExpression = void 0;
 const typescript_1 = require("typescript");
+const errors_1 = require("../errors");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
 const parse_arrow_function_1 = require("./parse_arrow_function");
@@ -106,7 +107,7 @@ const parseCallExpression = (node, props) => {
             parent: node,
             nodes: node.expression,
             props,
-            content: () => "",
+            parsedStrings: () => "",
         });
     }
     // This block compiles vec.add(vec2) into vec + vec2.
@@ -131,7 +132,7 @@ const parseCallExpression = (node, props) => {
                         parent: node,
                         nodes: [prop.expression, ...args],
                         props,
-                        content: (expr, ...args) => {
+                        parsedStrings: (expr, ...args) => {
                             return `__${libFunctionName}(${[expr, ...args].join(", ")}, ${capturedScopeObject})`;
                         },
                     });
@@ -141,7 +142,7 @@ const parseCallExpression = (node, props) => {
                         parent: node,
                         nodes: [prop.expression, ...args],
                         props,
-                        content: (expr, ...args) => {
+                        parsedStrings: (expr, ...args) => {
                             return `__${libFunctionName}(${[expr, ...args].join(", ")})`;
                         },
                     });
@@ -171,7 +172,7 @@ const parseCallExpression = (node, props) => {
                     parent: node,
                     nodes: [prop.expression, node.arguments[0]],
                     props,
-                    content: (exp, arg) => `${exp} ${operator} ${arg}`,
+                    parsedStrings: (exp, arg) => `${exp} ${operator} ${arg}`,
                 });
             }
         }
@@ -185,43 +186,96 @@ const parseCallExpression = (node, props) => {
                 parent: node,
                 nodes: [propAccess.expression, args[0], args[1]],
                 props,
-                content: (dict, key, val) => `${dict}[${key}] = ${val}`,
+                parsedStrings: (dict, key, val) => `${dict}[${key}] = ${val}`,
             });
         }
     }
     const decls = props.program
         .getTypeChecker()
         .getTypeAtLocation(node.expression).symbol?.declarations;
-    const isArrowFunction = decls &&
+    const isExpressionArrowFunction = decls &&
         decls[0].kind === typescript_1.SyntaxKind.ArrowFunction &&
         decls[0].getSourceFile() === node.getSourceFile();
     return parse_node_1.combine({
         parent: node,
         nodes: [expression, ...args],
         props,
-        content: (expr, ...args) => {
-            if (expr === "Yield") {
-                expr = "yield";
+        parsedObjs: (parsedExpr, ...parsedArgs) => {
+            let parsedStringArgs = parsedArgs.map((arg) => arg.content);
+            if (parsedExpr.content === "Yield") {
+                parsedExpr.content = "yield";
             }
-            if (expr === "self.get_node_safe") {
-                expr = "self.get_node";
+            if (parsedExpr.content === "self.get_node_safe") {
+                parsedExpr.content = "self.get_node";
+            }
+            // TODO - there are less brittle ways of checking for this.
+            // We need to rewrite .connect() to handle function arguments
+            if (parsedExpr.content.endsWith(".connect")) {
+                // this.connect("body_entered", this.handle_body_enter)
+                const secondArg = args[1];
+                if (secondArg.kind === typescript_1.SyntaxKind.PropertyAccessExpression) {
+                    const propAccess = secondArg;
+                    const name = propAccess.name.text;
+                    const expr = parse_node_1.parseNode(propAccess.expression, props);
+                    if ((expr.enums?.length ?? 0 > 0) ||
+                        (expr.extraLines?.length ?? 0 > 0) ||
+                        (expr.hoistedArrowFunctions?.length ?? 0 > 0) ||
+                        (expr.hoistedEnumImports?.length ?? 0 > 0) ||
+                        (expr.hoistedLibraryFunctions?.length ?? 0 > 0)) {
+                        props.addError({
+                            description: "ts2gd does not handle complicated types in .connect().",
+                            error: errors_1.ErrorName.NoComplicatedConnect,
+                            location: expression,
+                        });
+                    }
+                    parsedStringArgs = [parsedArgs[0].content, expr.content, `"${name}"`];
+                }
+                else if (secondArg.kind === typescript_1.SyntaxKind.ArrowFunction) {
+                    const af = secondArg;
+                    const arrowFunctionObj = parsedArgs[1].hoistedArrowFunctions?.find((obj) => obj.node === af);
+                    if (!arrowFunctionObj) {
+                        props.addError({
+                            description: "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+                            error: errors_1.ErrorName.Ts2GdError,
+                            location: secondArg,
+                        });
+                    }
+                    else {
+                        // anonymous arrow functions are always declared on the current class.
+                        parsedStringArgs = [
+                            parsedArgs[0].content,
+                            "self",
+                            `"${arrowFunctionObj?.name}"`,
+                        ];
+                    }
+                }
+                else {
+                    props.addError({
+                        description: `ts2gd requires the second argument of .connect() to be a method or an arrow function. It was: ${ts_utils_1.syntaxKindToString(secondArg.kind)}`,
+                        error: errors_1.ErrorName.NoComplicatedConnect,
+                        location: node,
+                    });
+                }
             }
             // Translate `this.emit_signal(this.signal)`
             // into `this.emit_signal("signal")`
-            if (expr === "self.emit_signal") {
-                if (args[0].startsWith("self")) {
-                    args[0] = args[0].slice("self.".length);
+            if (parsedExpr.content === "self.emit_signal") {
+                if (parsedArgs[0].content.startsWith("self")) {
+                    parsedStringArgs[0] = parsedStringArgs[0].slice("self.".length);
                 }
-                args[0] = '"' + args[0] + '"';
+                parsedStringArgs[0] = '"' + parsedStringArgs[0] + '"';
             }
-            if (expr === "todict") {
-                return args[0];
+            if (parsedExpr.content === "todict") {
+                return parsedArgs[0].content;
             }
-            if (isArrowFunction) {
+            if (isExpressionArrowFunction) {
                 const { capturedScopeObject } = parse_arrow_function_1.getCapturedScope(decls[0], props.program.getTypeChecker());
-                return `${expr}.call_func(${[...args, capturedScopeObject].join(", ")})`;
+                return `${parsedExpr.content}.call_func(${[
+                    ...parsedArgs,
+                    capturedScopeObject,
+                ].join(", ")})`;
             }
-            return `${expr}(${args.join(", ")})`;
+            return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`;
         },
     });
 };
@@ -311,6 +365,48 @@ d.put('b', 2)
     expected: `
 var d = { "a": 1 }
 d["b"] = 2
+`,
+};
+exports.testConnect = {
+    ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+
+    this.connect("body_entered", this.on_body_entered)
+  }
+
+  on_body_entered(body: Node) {
+
+  }
+}
+  `,
+    expected: `
+extends Area2D
+class_name Test
+func _ready():
+  self.connect("body_entered", self, "on_body_entered")
+func on_body_entered(_body):
+  pass
+`,
+};
+exports.testConnect2 = {
+    ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+
+    this.connect("body_entered", (body: Node) => { print(body) })
+  }
+}
+  `,
+    expected: `
+extends Area2D
+class_name Test
+func __gen(body, captures):
+  print(body)
+func _ready():
+  self.connect("body_entered", self, "__gen")
 `,
 };
 exports.testRewriteDictPut2 = {

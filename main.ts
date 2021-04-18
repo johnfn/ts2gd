@@ -2,10 +2,11 @@
 
 // TODO: Turn off skipLibCheck
 
-// TODO: this.collision.connect("mouseexit", this, () => {})
-
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
+
+// TODO: Rename ParsedArgs to ParsedFlags
+// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
 
 // USEFUL
 
@@ -171,8 +172,12 @@ const setup = (tsgdJson: Paths) => {
   }
 }
 
-export const showLoadingMessage = (msg: string, done = false) => {
-  console.clear()
+export const showLoadingMessage = (
+  msg: string,
+  args: ParsedArgs,
+  done = false
+) => {
+  if (!args.debug) console.clear()
   console.info(
     chalk.blueBright("ts2gd v" + packageJson.version),
     "-",
@@ -185,14 +190,14 @@ export const main = async (args: ParsedArgs) => {
 
   const tsgdJson = new Paths(args)
 
-  showLoadingMessage("Initializing TypeScript")
+  showLoadingMessage("Initializing TypeScript", args)
   const { watchProgram, tsInitializationFinished } = setup(tsgdJson)
 
-  showLoadingMessage("Scanning project")
-  let project = await makeTsGdProject(tsgdJson, watchProgram)
+  showLoadingMessage("Scanning project", args)
+  let project = await makeTsGdProject(tsgdJson, watchProgram, args)
 
   if (args.buildLibraries || project.shouldBuildLibraryDefinitions(args)) {
-    showLoadingMessage("Building definition files")
+    showLoadingMessage("Building definition files", args)
     await project.buildLibraryDefinitions()
   }
 
@@ -200,18 +205,19 @@ export const main = async (args: ParsedArgs) => {
 
   // This resolves a race condition where TS would not be aware of all the files
   // we just saved in buildAllDefinitions().
-  showLoadingMessage("Waiting for TypeScript to finish")
+  showLoadingMessage("Waiting for TypeScript to finish", args)
   await tsInitializationFinished
 
   if (!project.validateAutoloads()) {
     process.exit(0)
   }
 
-  showLoadingMessage("Compiling all source files")
+  showLoadingMessage("Compiling all source files", args)
   project.compileAllSourceFiles()
 
   showLoadingMessage(
     `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
+    args,
     true
   )
 }

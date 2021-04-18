@@ -105,8 +105,14 @@ class TsGdProjectClass {
     }
     monitor(watcher) {
         watcher
-            .on("add", (path) => this.onAddAsset(path))
-            .on("change", (path) => this.onChangeAsset(path))
+            .on("add", async (path) => {
+            const result = await this.onAddAsset(path);
+            errors_1.displayErrors(result.errors ?? []);
+        })
+            .on("change", async (path) => {
+            const result = await this.onChangeAsset(path);
+            errors_1.displayErrors(result.errors ?? []);
+        })
             .on("unlink", (path) => this.onRemoveAsset(path));
     }
     async onAddAsset(path) {
@@ -127,9 +133,13 @@ class TsGdProjectClass {
         build_asset_paths_1.buildAssetPathsType(this);
         return result;
     }
-    onChangeAsset(path) {
+    async onChangeAsset(path) {
         let start = new Date().getTime();
         let showTime = false;
+        let result = {
+            result: null,
+            errors: [],
+        };
         // Just noisy, since it's not caused by a user action
         if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
             console.clear();
@@ -150,10 +160,11 @@ class TsGdProjectClass {
             for (const { resPath } of allAutoloads) {
                 const script = this.sourceFiles().find((sf) => sf.resPath === resPath);
                 if (script) {
-                    script.compile(this.program);
+                    const compileResult = await script.compile(this.program);
+                    result.errors = [...result.errors, ...(compileResult.errors ?? [])];
                 }
             }
-            return;
+            return result;
         }
         let oldAsset = this.assets.find((asset) => asset.fsPath === path);
         if (oldAsset) {
@@ -161,7 +172,8 @@ class TsGdProjectClass {
             this.assets = this.assets.filter((a) => a.fsPath !== path);
             this.assets.push(newAsset);
             if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
-                newAsset.compile(this.program);
+                const compileResult = await newAsset.compile(this.program);
+                result.errors = [...result.errors, ...(compileResult.errors ?? [])];
                 build_asset_paths_1.buildAssetPathsType(this);
                 build_node_paths_1.buildNodePathsTypeForScript(newAsset, this);
             }
@@ -176,6 +188,7 @@ class TsGdProjectClass {
             console.info();
             console.info("Done in", (new Date().getTime() - start) / 1000 + "s");
         }
+        return result;
     }
     onRemoveAsset(path) {
         console.info("Delete:\t", path);
@@ -191,7 +204,13 @@ class TsGdProjectClass {
     async compileAllSourceFiles() {
         const assetsToCompile = this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
         const result = await Promise.all(assetsToCompile.map((asset) => asset.compile(this.program)));
-        errors_1.displayErrors(result.flatMap((compiledSourceFile) => compiledSourceFile.errors ?? []));
+        const errors = result.flatMap((compiledSourceFile) => compiledSourceFile.errors ?? []);
+        if (errors.length === 0) {
+            console.log("No errors in project.");
+        }
+        else {
+            errors_1.displayErrors(errors);
+        }
     }
     shouldBuildLibraryDefinitions(flags) {
         if (flags.buildLibraries) {

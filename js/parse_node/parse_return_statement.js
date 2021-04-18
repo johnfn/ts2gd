@@ -7,7 +7,7 @@ const parseReturnStatement = (node, props) => {
         parent: node,
         nodes: node.expression,
         props,
-        content: expr => `return ${expr}`,
+        parsedStrings: (expr) => `return ${expr}`,
     });
 };
 exports.parseReturnStatement = parseReturnStatement;

@@ -32,9 +32,10 @@ declare function int(x: number): number
 declare function float(x: number): number
 
 // Used for typing connect()
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
-type SignalArguments<T> = T extends Signal<infer R> ? R : any;
+type SignalFunction<T> = T extends Signal<infer R> ? R : never;
 
 interface FunctionConstructor {
   (...args: string[]): Function;
@@ -109,7 +110,7 @@ ${array_def_1.ArrayDefinition}
 ${dictionary_def_1.DictionaryDefinition}
 ${packed_scene_def_1.PackedSceneDef}
 
-declare class Signal<T extends any[]> {
+declare class Signal<T extends (...args: any[]) => any> {
   /** Don't use this - it's only to get typechecking working! */
   private __unused: T;
 }

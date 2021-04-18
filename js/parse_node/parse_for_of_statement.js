@@ -26,7 +26,7 @@ const parseForOfStatement = (node, props) => {
                 nodes: [node.expression, node.statement, name],
                 props,
                 addIndent: true,
-                content: (expr, statement, name) => `
+                parsedStrings: (expr, statement, name) => `
 for ${name} in ${expr}:
   ${statement}
 `,
@@ -49,7 +49,7 @@ for ${name} in ${expr}:
                 ],
                 props,
                 addIndent: true,
-                content: (expr, statement, ...nodes) => `
+                parsedStrings: (expr, statement, ...nodes) => `
 for ${genName} in ${expr}:
 ${nodes
                     .map((node, i) => `  var ${node} = ${genName}${destructuredNames[i].access}\n`)
@@ -66,7 +66,7 @@ ${nodes
             nodes: [initExpr, node.expression, node.statement],
             props,
             addIndent: true,
-            content: (expr, statement) => `
+            parsedStrings: (expr, statement) => `
 for ${initExpr} in ${expr}:
   ${statement}
 `,

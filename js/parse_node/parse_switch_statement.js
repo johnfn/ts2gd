@@ -12,9 +12,9 @@ const parseSwitchStatement = (node, props) => {
         nodes: [node.expression, node.caseBlock],
         props: newProps,
         addIndent: true,
-        content: (expr, block) => `match ${expr}:
+        parsedStrings: (expr, block) => `match ${expr}:
   ${block}
-`
+`,
     });
 };
 exports.parseSwitchStatement = parseSwitchStatement;
@@ -23,7 +23,7 @@ const parseSwitchCaseBlock = (node, props) => {
         parent: node,
         nodes: node.clauses,
         props: props,
-        content: (...clauses) => clauses.join('\n'),
+        parsedStrings: (...clauses) => clauses.join("\n"),
     });
 };
 exports.parseSwitchCaseBlock = parseSwitchCaseBlock;
@@ -33,9 +33,9 @@ const parseCaseClause = (node, props) => {
         parent: node,
         nodes: [node.expression, ...node.statements],
         props: props,
-        content: (expr, ...statements) => `
+        parsedStrings: (expr, ...statements) => `
 ${props.indent}${expr}:
-  ${statements.join('  ')}`
+  ${statements.join("  ")}`,
     });
 };
 exports.parseCaseClause = parseCaseClause;
@@ -45,9 +45,9 @@ const parseDefaultClause = (node, props) => {
         parent: node,
         nodes: [...node.statements],
         props,
-        content: (expr, ...statements) => `
+        parsedStrings: (expr, ...statements) => `
 ${props.indent}_:
-  ${statements.join('  ')}`
+  ${statements.join("  ")}`,
     });
 };
 exports.parseDefaultClause = parseDefaultClause;
