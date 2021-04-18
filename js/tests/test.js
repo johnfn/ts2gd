@@ -74,6 +74,12 @@ const compileTs = (code, isAutoload) => {
         program,
         addError: (error) => errors.push(error),
         project: {
+            args: {
+                buildLibraries: false,
+                debug: false,
+                help: false,
+                init: false,
+            },
             buildDynamicDefinitions: async () => { },
             assets: [],
             program: undefined,
@@ -129,7 +135,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     reload: () => { },
                     isDecoratedAutoload: {},
-                    ...{},
+                    ...{}, // ssh about private properties.
                 },
                 {
                     exportedTsClassName: () => "",

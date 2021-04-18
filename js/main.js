@@ -25,9 +25,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.showLoadingMessage = void 0;
 // TODO: Turn off skipLibCheck
-// TODO: this.collision.connect("mouseexit", this, () => {})
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
+// TODO: Rename ParsedArgs to ParsedFlags
+// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
 // USEFUL
 // TODO: Have a github action that auto publishes an html5 build
 // TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
@@ -138,33 +139,34 @@ const setup = (tsgdJson) => {
         tsInitializationFinished,
     };
 };
-const showLoadingMessage = (msg, done = false) => {
-    console.clear();
+const showLoadingMessage = (msg, args, done = false) => {
+    if (!args.debug)
+        console.clear();
     console.info(chalk_1.default.blueBright("ts2gd v" + package_json_1.default.version), "-", msg + (done ? "" : "..."));
 };
 exports.showLoadingMessage = showLoadingMessage;
 const main = async (args) => {
     const start = new Date().getTime();
     const tsgdJson = new tsgd_json_1.Paths(args);
-    exports.showLoadingMessage("Initializing TypeScript");
+    exports.showLoadingMessage("Initializing TypeScript", args);
     const { watchProgram, tsInitializationFinished } = setup(tsgdJson);
-    exports.showLoadingMessage("Scanning project");
-    let project = await project_1.makeTsGdProject(tsgdJson, watchProgram);
+    exports.showLoadingMessage("Scanning project", args);
+    let project = await project_1.makeTsGdProject(tsgdJson, watchProgram, args);
     if (args.buildLibraries || project.shouldBuildLibraryDefinitions(args)) {
-        exports.showLoadingMessage("Building definition files");
+        exports.showLoadingMessage("Building definition files", args);
         await project.buildLibraryDefinitions();
     }
     await project.buildDynamicDefinitions();
     // This resolves a race condition where TS would not be aware of all the files
     // we just saved in buildAllDefinitions().
-    exports.showLoadingMessage("Waiting for TypeScript to finish");
+    exports.showLoadingMessage("Waiting for TypeScript to finish", args);
     await tsInitializationFinished;
     if (!project.validateAutoloads()) {
         process.exit(0);
     }
-    exports.showLoadingMessage("Compiling all source files");
+    exports.showLoadingMessage("Compiling all source files", args);
     project.compileAllSourceFiles();
-    exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, true);
+    exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, args, true);
 };
 exports.main = main;
 if (!process.argv[1].includes("test")) {

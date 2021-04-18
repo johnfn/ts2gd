@@ -11,16 +11,16 @@ const main_1 = require("../main");
 const generate_tsconfig_1 = require("../generate_library_defs/generate_tsconfig");
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 class Paths {
-    constructor(flags) {
-        if (flags.init) {
+    constructor(args) {
+        if (args.init) {
             this.init();
             process_1.default.exit(0);
         }
         let ts2gdPath = "";
         let fullyQualifiedTs2gdPathWithFilename;
         let fullyQualifiedTs2gdPath;
-        if (flags.tsgdPath) {
-            ts2gdPath = flags.tsgdPath;
+        if (args.tsgdPath) {
+            ts2gdPath = args.tsgdPath;
             // relativeTs2gdPath is now a path of some sort, but it could be a relative path (e.g. "./ts2gd.json").
             // Let's make it fully qualified.
             if (ts2gdPath.startsWith("/")) {
@@ -29,7 +29,7 @@ class Paths {
             }
             else if (ts2gdPath.startsWith(".")) {
                 // some sort of relative path, so resolve it
-                fullyQualifiedTs2gdPathWithFilename = path_1.default.join(__dirname, flags.tsgdPath);
+                fullyQualifiedTs2gdPathWithFilename = path_1.default.join(__dirname, args.tsgdPath);
             }
         }
         else {
@@ -54,7 +54,7 @@ class Paths {
         this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined;
         this.tsconfigPath = path_1.default.join(path_1.default.dirname(fullyQualifiedTs2gdPathWithFilename), "tsconfig.json");
         if (!fs_1.default.existsSync(this.tsconfigPath)) {
-            main_1.showLoadingMessage("Creating tsconfig.json");
+            main_1.showLoadingMessage("Creating tsconfig.json", args);
             fs_1.default.writeFileSync(this.tsconfigPath, generate_tsconfig_1.defaultTsconfig);
         }
     }

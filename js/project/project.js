@@ -27,10 +27,11 @@ const errors_1 = require("../errors");
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
 class TsGdProjectClass {
-    constructor(watcher, initialFilePaths, program, ts2gdJson) {
+    constructor(watcher, initialFilePaths, program, ts2gdJson, args) {
         // Initial set up
         /** Master list of all Godot assets */
         this.assets = [];
+        this.args = args;
         TsGdProjectClass.Paths = ts2gdJson;
         this.program = program;
         // Parse assets
@@ -121,6 +122,7 @@ class TsGdProjectClass {
         // Do this first because some assets expect themselves to exist - e.g.
         // an enum inside a source file expects that source file to exist.
         if (newAsset instanceof base_asset_1.BaseAsset) {
+            console.log("add", newAsset);
             this.assets.push(newAsset);
         }
         if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
@@ -142,7 +144,8 @@ class TsGdProjectClass {
         };
         // Just noisy, since it's not caused by a user action
         if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
-            console.clear();
+            if (!this.args.debug)
+                console.clear();
             if (path.endsWith(".ts")) {
                 console.info("Compile:", chalk_1.default.blueBright(path));
                 showTime = true;
@@ -252,7 +255,7 @@ class TsGdProjectClass {
     }
 }
 exports.TsGdProjectClass = TsGdProjectClass;
-const makeTsGdProject = async (ts2gdJson, program) => {
+const makeTsGdProject = async (ts2gdJson, program, args) => {
     const initialFiles = [];
     let addFn;
     let readyFn;
@@ -270,7 +273,7 @@ const makeTsGdProject = async (ts2gdJson, program) => {
     });
     watcher.off("add", addFn);
     watcher.off("ready", readyFn);
-    return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson);
+    return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson, args);
 };
 exports.makeTsGdProject = makeTsGdProject;
 const shouldIncludePath = (path) => {

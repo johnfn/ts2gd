@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.test = void 0;
 const main_1 = require("../main");
 const test = () => {
-    console.log("Hello world");
     main_1.main({
         buildLibraries: false,
         help: false,
         init: false,
+        debug: false,
     });
 };
 exports.test = test;
