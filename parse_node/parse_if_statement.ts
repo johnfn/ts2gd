@@ -14,15 +14,27 @@ export const parseIfStatement = (
     parent: node,
     nodes: [node.expression, node.thenStatement, node.elseStatement],
     props,
-    parsedStrings: (expression, thenStatement, elseStatement) => `
-if ${expression}:
-  ${thenStatement}${
-      elseStatement
-        ? `else:
-  ${elseStatement}`
-        : ""
-    }`,
+    parsedObjs: (expression, thenStatement, elseStatement) => {
+      const beforeLines =
+        expression.extraLines?.filter((line) => line.type === "before") ?? []
+      const afterLines =
+        expression.extraLines?.filter((line) => line.type === "after") ?? []
+
+      return `
+${beforeLines.map((line) => line.line).join("\n")}
+if ${expression.content}:
+  ${afterLines.map((line) => line.line).join("\n")}
+  ${thenStatement.content}${
+        elseStatement.content
+          ? `else:
+  ${afterLines.map((line) => line.line).join("\n")}
+  ${elseStatement.content}`
+          : ""
+      }`
+    },
   })
+
+  result.extraLines = []
 
   props.scope.leaveScope()
 
@@ -63,5 +75,76 @@ else:
     print(2)
   else:
     print(0)
+  `,
+}
+
+export const testIfPreInc1: Test = {
+  ts: `
+if (++x) {
+  print(1)
+} else {
+  print(0)
+}
+  `,
+  expected: `
+x += 1
+if x:
+  print(1)
+else:
+  print(0)
+  `,
+}
+
+export const testIfPreInc2: Test = {
+  ts: `
+if (x) {
+  print(++x)
+} else {
+  print(++x)
+}
+  `,
+  expected: `
+if x:
+  x += 1
+  print(x)
+else:
+  x += 1
+  print(x)
+  `,
+}
+
+export const testIfPostInc1: Test = {
+  ts: `
+if (x++) {
+  print(1)
+} else {
+  print(0)
+}
+  `,
+  expected: `
+if x:
+  x += 1
+  print(1)
+else:
+  x += 1
+  print(0)
+  `,
+}
+
+export const testIfPostInc2: Test = {
+  ts: `
+if (x) {
+  print(x++)
+} else {
+  print(x++)
+}
+  `,
+  expected: `
+if x:
+  print(x)
+  x += 1
+else:
+  print(x)
+  x += 1
   `,
 }

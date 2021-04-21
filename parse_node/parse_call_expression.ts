@@ -1,9 +1,14 @@
-import ts, { SyntaxKind } from "typescript"
+import ts, { isOptionalChain, isOptionalTypeNode, SyntaxKind } from "typescript"
 import { ErrorName } from "../errors"
-import { combine, parseNode, ParseState } from "../parse_node"
+import { combine, ExtraLine, parseNode, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import { isArrayType, isDictionary, syntaxKindToString } from "../ts_utils"
+import {
+  isArrayType,
+  isDictionary,
+  isNullable,
+  syntaxKindToString,
+} from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
 type LibraryFunctionName =
@@ -243,7 +248,9 @@ export const parseCallExpression = (
     decls[0].kind === SyntaxKind.ArrowFunction &&
     decls[0].getSourceFile() === node.getSourceFile()
 
-  return combine({
+  let nullCoalesce: ExtraLine[] = []
+
+  let result = combine({
     parent: node,
     nodes: [expression, ...args],
     props,
@@ -344,9 +351,27 @@ export const parseCallExpression = (
         ].join(", ")})`
       }
 
+      if (isNullable(node, props.program.getTypeChecker())) {
+        const newName = props.scope.createUniqueName()
+        const expr = parsedExpr.content
+
+        nullCoalesce = [
+          {
+            type: "before",
+            line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+          },
+        ]
+
+        return `${newName}`
+      }
+
       return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`
     },
   })
+
+  result.extraLines = [...(result.extraLines ?? []), ...nullCoalesce]
+
+  return result
 }
 
 export const testBasicCall: Test = {

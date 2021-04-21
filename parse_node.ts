@@ -193,17 +193,22 @@ export function combine(args: {
 
     if (isStatement) {
       if (extraLines.length > 0) {
-        for (const line of extraLines) {
-          if (line.type === "before") {
-            formattedContent =
-              line.line.trimEnd() + "\n" + formattedContent + "\n"
-          } else if (line.type === "after") {
-            formattedContent =
-              formattedContent.trimEnd() + "\n" + line.line.trimEnd() + "\n"
-          }
+        let beforeLines =
+          extraLines
+            .filter((line) => line.type === "before")
+            ?.map((obj) => obj.line) ?? []
+        let afterLines =
+          extraLines
+            .filter((line) => line.type === "after")
+            ?.map((obj) => obj.line) ?? []
 
-          parsedNode.extraLines = []
-        }
+        formattedContent = [
+          ...beforeLines,
+          formattedContent,
+          ...afterLines,
+        ].join("\n")
+
+        parsedNode.extraLines = []
       }
     }
 

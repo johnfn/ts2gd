@@ -16,11 +16,28 @@ export const parseWhileStatement = (
     nodes: [node.expression, node.statement],
     props: newProps,
     addIndent: true,
-    parsedStrings: (expr, statement) => `
-while ${expr}:
-  ${statement}
-`,
+    parsedObjs: (expr, statement) => {
+      const beforeLines =
+        expr.extraLines
+          ?.filter((line) => line.type === "before")
+          .map((e) => e.line)
+          .join("\n") ?? ""
+      const afterLines =
+        expr.extraLines
+          ?.filter((line) => line.type === "after")
+          .map((e) => e.line)
+          .join("\n") ?? ""
+
+      return `${beforeLines}
+while ${expr.content}:
+  ${afterLines}
+  ${statement.content}
+  ${beforeLines}
+`
+    },
   })
+
+  result.extraLines = []
 
   props.scope.leaveScope()
 
@@ -35,4 +52,35 @@ while (true);
 while true:
   pass
   `,
+}
+
+export const testWhileConditionPostIncrement: Test = {
+  ts: `
+let x = 0
+while (x++ < 10) {
+  print(x)
+}
+  `,
+  expected: `
+var x: int = 0
+while x < 10:
+  x += 1
+  print(x)
+`,
+}
+
+export const testWhileConditionPreIncrement: Test = {
+  ts: `
+let x = 0
+while (++x < 10) {
+  print(x)
+}
+  `,
+  expected: `
+var x: int = 0
+x += 1
+while x < 10:
+  print(x)
+  x += 1
+`,
 }

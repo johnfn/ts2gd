@@ -1,14 +1,9 @@
 // VERY USEFUL
 
-// TODO: Turn off skipLibCheck
-
-// TODO: Every file should export something
+// TODO: Windows build.
 
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
-
-// TODO: Rename ParsedArgs to ParsedFlags
-// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
 
 // USEFUL
 
@@ -16,20 +11,21 @@
 // TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
 // TODO  make load/preload() work and return proper string
 // TODO make FooTscn return proper type of root node (without script, not just Node)
-// TODO: Merge conflict markets in project.godot cause a ts2gd crash.
+// TODO: Merge conflict markers in project.godot cause a ts2gd crash.
 // TODO: Better print() output, with spacing
 // TODO: check for E_OK
 // TODO: Deleting a scene can cause a "I dont know the type of that thing." error.
+// TODO: Every file should export something - show an error otherwise
 
 // TODO: Ensure that there aren't any bugs with _ prefixes.
 
 // HIGH
 
+// TODO: Rename ParsedArgs to ParsedFlags
+// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
+
 // TODO: It might be handy to keep ParseNodeTypes around for subnodes etc and return an entire tree of them. this would help code in parse_call_express that wants to inspect child nodes to see what they are etc
 
-// TODO: this.gold_instance?.queue_free() doesn't gen right.
-// TODO: while (foo++) { } might put the increment in the wrong place
-// TODO: if (foo++) { } else { } will DEFINTELY put it in the wrong place, as it needs to be in both true and false blocks.
 // TODO: Refactor error handling strategy.
 // TODO: change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
 // TODO: Make a testing harness for project-related stuff.

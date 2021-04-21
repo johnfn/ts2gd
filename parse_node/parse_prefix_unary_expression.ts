@@ -100,22 +100,6 @@ if true:
   `,
 }
 
-export const testWhileCondition: Test = {
-  expectFail: true,
-  ts: `
-let x = 0
-while (x++ < 10) {
-  print(x)
-}
-  `,
-  expected: `
-let x = 0
-while (x++ < 10) {
-  print(x)
-}
-`,
-}
-
 export const testIfStatement: Test = {
   ts: `
 let x = 0

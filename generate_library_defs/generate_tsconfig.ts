@@ -9,7 +9,7 @@ export const defaultTsconfig = `
     "strict": true,
     "strictNullChecks": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true
   }

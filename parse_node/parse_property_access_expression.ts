@@ -1,4 +1,11 @@
-import ts, { SyntaxKind, TypeFlags, TypeFormatFlags } from "typescript"
+import ts, {
+  isFunctionLike,
+  isFunctionTypeNode,
+  SymbolFlags,
+  SyntaxKind,
+  TypeFlags,
+  TypeFormatFlags,
+} from "typescript"
 import {
   combine,
   ExtraLine,
@@ -62,7 +69,23 @@ export const parsePropertyAccessExpression = (
     props,
     parsedStrings: (lhs, rhs) => {
       if (node.questionDotToken) {
+        const type = props.program
+          .getTypeChecker()
+          .getTypeAtLocation(node)
+          .getNonNullableType()
+        const areWeAFunction =
+          type.symbol?.flags & SymbolFlags.Method ||
+          type.symbol?.flags & SymbolFlags.Function
         const newName = props.scope.createUniqueName()
+
+        if (areWeAFunction) {
+          nullCoalesce = {
+            type: "before",
+            line: `var ${newName} = funcref(${lhs}, "${rhs}") if ${lhs} != null else null`,
+          }
+
+          return newName
+        }
 
         nullCoalesce = {
           type: "before",
@@ -254,5 +277,62 @@ func test():
   var foo = "hello"
   var __gen = (foo + "a")
   print((__gen.bar if __gen != null else null))
+  `,
+}
+
+export const testNullCoalesce3: Test = {
+  ts: `
+export class Test {
+  foo: string | null = "hello"
+
+  test(): void {
+    print(this.foo?.bar)
+  }
+}
+  `,
+  expected: `
+class_name Test
+var foo = "hello"
+func test():
+  var __gen = self.foo
+  print((__gen.bar if __gen != null else null))
+  `,
+}
+
+export const testNullCoalesce4: Test = {
+  ts: `
+export class Test {
+  test(): void {
+    let foo: Test | null = null as (Test | null)
+    print(foo?.test())
+  }
+}
+  `,
+  expected: `
+class_name Test
+func test():
+  var foo = null
+  var __gen = funcref(foo, "test") if foo != null else null
+  var __gen1 = __gen.call_func() if __gen != null else null
+  print(__gen1)
+  `,
+}
+
+export const testNullCoalesce5: Test = {
+  ts: `
+export class Test {
+  test(x: int): void {
+    let foo: Test | null = null as (Test | null)
+    print(foo?.test(1))
+  }
+}
+  `,
+  expected: `
+class_name Test
+func test(_x):
+  var foo = null
+  var __gen = funcref(foo, "test") if foo != null else null
+  var __gen1 = __gen.call_func(1) if __gen != null else null
+  print(__gen1)
   `,
 }
