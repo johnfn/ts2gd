@@ -339,6 +339,7 @@ declare class ${className}Signals${
 
     const result = `
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
+declare const preload: <T extends AssetPath>(path: T) => AssetType[T];
 ${properties
   .map((property: any) => {
     const name = sanitizeGodotNameForTs(property["$"].name, "property")

@@ -1,6 +1,9 @@
+import packageJson from "./package.json"
+
 export type ParsedArgs = {
   help: boolean
   buildLibraries: boolean
+  printVersion: boolean
   init: boolean
   debug: boolean
   tsgdPath?: string
@@ -11,6 +14,7 @@ export const parseArgs = (): ParsedArgs => {
   const flags: ParsedArgs = {
     help: false,
     buildLibraries: false,
+    printVersion: false,
     init: false,
     debug: false,
   }
@@ -24,6 +28,8 @@ export const parseArgs = (): ParsedArgs => {
       flags.help = true
     } else if (arg === "--buildLibraries") {
       flags.buildLibraries = true
+    } else if (arg === "--version") {
+      flags.printVersion = true
     } else if (arg === "--debug") {
       flags.debug = true
     } else if (arg === "--init") {

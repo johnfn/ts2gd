@@ -177,6 +177,10 @@ export const generateGdscriptLib = async (path: string) => {
       continue
     }
 
+    if (parsedMethod.name === "preload") {
+      continue
+    }
+
     result += `
 ${parsedMethod.codegen}
     `

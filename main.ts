@@ -227,6 +227,8 @@ if (!process.argv[1].includes("test")) {
 
   if (args.help) {
     printHelp()
+  } else if (args.printVersion) {
+    // Nothing to do; we already printed the version.
   } else {
     main(args)
   }
