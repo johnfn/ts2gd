@@ -268,12 +268,12 @@ export class AssetGodotScene extends BaseAsset {
         return null
       }
 
-      return `import('${rootSourceFile.fsPath.slice(
+      return `PackedScene<import('${rootSourceFile.fsPath.slice(
         0,
         -".ts".length
-      )}').${rootSourceFile.exportedTsClassName()}`
+      )}').${rootSourceFile.exportedTsClassName()}>`
     } else {
-      return `${this.rootNode.tsType()}`
+      return `PackedScene<${this.rootNode.tsType()}>`
     }
   }
 

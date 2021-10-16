@@ -91,8 +91,8 @@ export const parseImportDeclaration = (
   const pathWithoutExtension = getPathWithoutExtension(node, props)
   let pathToImportedTs = pathWithoutExtension + ".ts"
 
-  // Step 2: Parse bindings, sorting between class and enum types (which we need to generate different imports
-  // for).
+  // Step 2: Parse bindings, sorting between class and enum types (which we need
+  // to generate different imports for).
 
   type ImportType = {
     importedName: string

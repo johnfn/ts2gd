@@ -1,6 +1,7 @@
 import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../tests/test"
 
 const getSettersAndGetters = (members: readonly ts.ClassElement[]) => {
   const setOrGetters = members.filter(
@@ -84,3 +85,16 @@ ${members.join("")}
     },
   })
 }
+
+// export const testConditionalExpression: Test = {
+//   ts: `
+// export class Foo {
+//   x = 1
+// }
+
+// class Bar {
+//   x = 2
+// }
+//   `,
+//   expected: `var _x = 1 if true else 2`,
+// }
