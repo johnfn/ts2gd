@@ -196,7 +196,8 @@ const parseCallExpression = (node, props) => {
     const isExpressionArrowFunction = decls &&
         decls[0].kind === typescript_1.SyntaxKind.ArrowFunction &&
         decls[0].getSourceFile() === node.getSourceFile();
-    return parse_node_1.combine({
+    let nullCoalesce = [];
+    let result = parse_node_1.combine({
         parent: node,
         nodes: [expression, ...args],
         props,
@@ -275,9 +276,22 @@ const parseCallExpression = (node, props) => {
                     capturedScopeObject,
                 ].join(", ")})`;
             }
+            if (ts_utils_1.isNullable(node, props.program.getTypeChecker())) {
+                const newName = props.scope.createUniqueName();
+                const expr = parsedExpr.content;
+                nullCoalesce = [
+                    {
+                        type: "before",
+                        line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+                    },
+                ];
+                return `${newName}`;
+            }
             return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`;
         },
     });
+    result.extraLines = [...(result.extraLines ?? []), ...nullCoalesce];
+    return result;
 };
 exports.parseCallExpression = parseCallExpression;
 exports.testBasicCall = {

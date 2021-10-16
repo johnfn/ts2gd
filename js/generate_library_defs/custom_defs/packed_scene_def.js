@@ -37,8 +37,7 @@ declare class PackedScene<T> extends Resource {
           if error != OK:
               push_error("An error occurred while saving the scene to disk.")
       [/codeblock] */
-    "new"()
-    static "new"(): this
+    "new"(): PackedScene<T>
   
   
   
@@ -46,7 +45,7 @@ declare class PackedScene<T> extends Resource {
   
   /** A dictionary representation of the scene contents.
         Available keys include "rnames" and "variants" for resources, "node_count", "nodes", "node_paths" for nodes, "editable_instances" for base scene children overrides, "conn_count" and "conns" for signal connections, and "version" for the format style of the PackedScene. */
-  _bundled: Dictionary;
+  _bundled: Dictionary<any, any>;
   
   
   

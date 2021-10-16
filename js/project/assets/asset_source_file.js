@@ -84,6 +84,26 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
         }
         return name?.text ?? null;
     }
+    extendedClassName() {
+        const node = this.getClassNode();
+        if (node === null || "error" in node) {
+            return node;
+        }
+        if (node.heritageClauses) {
+            // TODO: Ensure there's only one of each here
+            const clause = node.heritageClauses[0];
+            const type = clause.types[0];
+            return type.getText();
+        }
+        return {
+            error: errors_1.ErrorName.ClassDoesntExtendAnything,
+            description: `The class in this file needs to extend another class: ${this.fsPath}
+
+Hint: try ${chalk_1.default.blueBright(`export class ${node.name?.text ?? ""} extends Node {`)}
+      `,
+            location: node,
+        };
+    }
     getAutoloadNameFromExportedVariable() {
         const ast = this.getAst();
         if ("error" in ast) {

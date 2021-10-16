@@ -41,6 +41,7 @@ const buildNodePathsTypeForScript = (script, project) => {
     // For every potential relative path, validate that it can be found
     // in each instantiated node.
     const className = script.exportedTsClassName();
+    const extendedClassName = script.extendedClassName();
     if (!className) {
         return [];
     }
@@ -139,13 +140,13 @@ ${Object.entries(pathToImport)
 `;
     result += `
   
-import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
+import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     get_node(path: string): Node
-    connect<T extends SignalsOf<${className}>>(signal: T, method: SignalFunction<${className}[T]>): number;
+    connect<T extends SignalsOf<${extendedClassName}Signals>>(signal: T, method: SignalFunction<${extendedClassName}Signals[T]>): number;
   }
 
   namespace ${className} {

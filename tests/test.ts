@@ -78,6 +78,7 @@ export const compileTs = (
     project: {
       args: {
         buildLibraries: false,
+        printVersion: false,
         debug: false,
         help: false,
         init: false,

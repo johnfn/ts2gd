@@ -6,11 +6,10 @@ const parseArgs = () => {
     const flags = {
         help: false,
         buildLibraries: false,
+        printVersion: false,
         init: false,
         debug: false,
     };
-    console.log(args);
-    return flags;
     for (const arg of args) {
         if (arg.trim().length === 0) {
             continue;
@@ -20,6 +19,9 @@ const parseArgs = () => {
         }
         else if (arg === "--buildLibraries") {
             flags.buildLibraries = true;
+        }
+        else if (arg === "--version") {
+            flags.printVersion = true;
         }
         else if (arg === "--debug") {
             flags.debug = true;

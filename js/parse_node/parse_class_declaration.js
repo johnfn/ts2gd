@@ -66,4 +66,15 @@ ${members.join("")}
     });
 };
 exports.parseClassDeclaration = parseClassDeclaration;
+// export const testConditionalExpression: Test = {
+//   ts: `
+// export class Foo {
+//   x = 1
+// }
+// class Bar {
+//   x = 2
+// }
+//   `,
+//   expected: `var _x = 1 if true else 2`,
+// }
 //# sourceMappingURL=parse_class_declaration.js.map

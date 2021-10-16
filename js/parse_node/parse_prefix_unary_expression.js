@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testIfStatement2 = exports.testIfStatement = exports.testWhileCondition = exports.testPostincrement1 = exports.testPreincrement2 = exports.testPreincrement1 = exports.parsePrefixUnaryExpression = void 0;
+exports.testIfStatement2 = exports.testIfStatement = exports.testPostincrement1 = exports.testPreincrement2 = exports.testPreincrement1 = exports.parsePrefixUnaryExpression = void 0;
 const typescript_1 = __importDefault(require("typescript"));
 const { SyntaxKind } = typescript_1.default;
 const parse_node_1 = require("../parse_node");
@@ -89,21 +89,6 @@ if true:
   print(x)
   x += 1
   `,
-};
-exports.testWhileCondition = {
-    expectFail: true,
-    ts: `
-let x = 0
-while (x++ < 10) {
-  print(x)
-}
-  `,
-    expected: `
-let x = 0
-while (x++ < 10) {
-  print(x)
-}
-`,
 };
 exports.testIfStatement = {
     ts: `

@@ -16,7 +16,7 @@ declare interface Boolean {
 
 }
 
-declare interface CallableFunction { };
+declare interface CallableFunction { }
 
 interface Function {
 
@@ -30,6 +30,8 @@ declare type float = number;
 
 declare function int(x: number): number
 declare function float(x: number): number
+
+declare type NodePathType = string
 
 // Used for typing connect()
 type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
@@ -68,7 +70,7 @@ interface RegExp {
 // methods.
 // interface Object extends Dictionary { }
 
-declare function Dict<T>(obj: T): Dictionary & T
+declare function Dict<T>(obj: T): Dictionary<string, any> & T
 
 interface IteratorYieldResult<TYield> {
   done?: false;
@@ -93,6 +95,18 @@ interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
   completed: Signal<any>;
 }
 
+interface Symbol { }
+
+interface SymbolConstructor {
+  /**
+   * A method that returns the default iterator for an object. Called by the semantics of the
+   * for-of statement.
+   */
+  readonly iterator: symbol;
+}
+
+declare var Symbol: SymbolConstructor;
+
 interface Iterable<T> {
   [Symbol.iterator](): Iterator<T>;
 }
@@ -102,8 +116,8 @@ interface IterableIterator<T> extends Iterator<T> {
 
   // Generator functions found on GDScriptFunctionState
 
-  is_valid(extended_check: bool = false);
-  resume(arg?: any);
+  is_valid(extended_check: bool): boolean;
+  resume(arg?: any): void;
 }
 
 ${array_def_1.ArrayDefinition}

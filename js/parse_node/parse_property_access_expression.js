@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testNullCoalesce2 = exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
+exports.testNullCoalesce5 = exports.testNullCoalesce4 = exports.testNullCoalesce3 = exports.testNullCoalesce2 = exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -45,7 +45,20 @@ const parsePropertyAccessExpression = (node, props) => {
         props,
         parsedStrings: (lhs, rhs) => {
             if (node.questionDotToken) {
+                const type = props.program
+                    .getTypeChecker()
+                    .getTypeAtLocation(node)
+                    .getNonNullableType();
+                const areWeAFunction = type.symbol?.flags & typescript_1.SymbolFlags.Method ||
+                    type.symbol?.flags & typescript_1.SymbolFlags.Function;
                 const newName = props.scope.createUniqueName();
+                if (areWeAFunction) {
+                    nullCoalesce = {
+                        type: "before",
+                        line: `var ${newName} = funcref(${lhs}, "${rhs}") if ${lhs} != null else null`,
+                    };
+                    return newName;
+                }
                 nullCoalesce = {
                     type: "before",
                     line: `var ${newName} = ${lhs}`,
@@ -218,6 +231,60 @@ func test():
   var foo = "hello"
   var __gen = (foo + "a")
   print((__gen.bar if __gen != null else null))
+  `,
+};
+exports.testNullCoalesce3 = {
+    ts: `
+export class Test {
+  foo: string | null = "hello"
+
+  test(): void {
+    print(this.foo?.bar)
+  }
+}
+  `,
+    expected: `
+class_name Test
+var foo = "hello"
+func test():
+  var __gen = self.foo
+  print((__gen.bar if __gen != null else null))
+  `,
+};
+exports.testNullCoalesce4 = {
+    ts: `
+export class Test {
+  test(): void {
+    let foo: Test | null = null as (Test | null)
+    print(foo?.test())
+  }
+}
+  `,
+    expected: `
+class_name Test
+func test():
+  var foo = null
+  var __gen = funcref(foo, "test") if foo != null else null
+  var __gen1 = __gen.call_func() if __gen != null else null
+  print(__gen1)
+  `,
+};
+exports.testNullCoalesce5 = {
+    ts: `
+export class Test {
+  test(x: int): void {
+    let foo: Test | null = null as (Test | null)
+    print(foo?.test(1))
+  }
+}
+  `,
+    expected: `
+class_name Test
+func test(_x):
+  var foo = null
+  var __gen = funcref(foo, "test") if foo != null else null
+  var __gen1 = __gen.call_func(1) if __gen != null else null
+  print(__gen1)
   `,
 };
 //# sourceMappingURL=parse_property_access_expression.js.map

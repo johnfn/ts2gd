@@ -6,6 +6,7 @@ export const test = () => {
     help: false,
     init: false,
     debug: false,
+    printVersion: false,
   })
 }
 

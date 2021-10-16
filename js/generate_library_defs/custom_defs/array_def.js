@@ -210,15 +210,15 @@ interface Array<T> {
       [/codeblocks]
       [b]Note:[/b] Arrays are always passed by reference. To get a copy of an array which can be modified independently of the original array, use [method duplicate]. */
 
-  (from: PackedColorArray): this;
-  (from: PackedVector3Array): this;
-  (from: PackedVector2Array): this;
-  (from: PackedStringArray): this;
-  (from: PackedFloat64Array): this;
-  (from: PackedFloat32Array): this;
-  (from: PackedInt64Array): this;
-  (from: PackedInt32Array): this;
-  (from: PackedByteArray): this;
+//   (from: PackedColorArray): this;
+//   (from: PackedVector3Array): this;
+//   (from: PackedVector2Array): this;
+//   (from: PackedStringArray): this;
+//   (from: PackedFloat64Array): this;
+//   (from: PackedFloat32Array): this;
+//   (from: PackedInt64Array): this;
+//   (from: PackedInt32Array): this;
+//   (from: PackedByteArray): this;
   new(): this;
 
   [n: number]: T;

@@ -10,16 +10,17 @@ var ErrorName;
     ErrorName[ErrorName["InvalidNumber"] = 0] = "InvalidNumber";
     ErrorName[ErrorName["InvalidImport"] = 1] = "InvalidImport";
     ErrorName[ErrorName["ClassNameNotFound"] = 2] = "ClassNameNotFound";
-    ErrorName[ErrorName["TooManyClassesFound"] = 3] = "TooManyClassesFound";
-    ErrorName[ErrorName["ClassCannotBeAnonymous"] = 4] = "ClassCannotBeAnonymous";
-    ErrorName[ErrorName["CantFindAutoloadInstance"] = 5] = "CantFindAutoloadInstance";
-    ErrorName[ErrorName["UnknownTsSyntax"] = 6] = "UnknownTsSyntax";
-    ErrorName[ErrorName["PathNotFound"] = 7] = "PathNotFound";
-    ErrorName[ErrorName["Ts2GdError"] = 8] = "Ts2GdError";
-    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 9] = "AutoloadProjectButNotDecorated";
-    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 10] = "AutoloadDecoratedButNotProject";
-    ErrorName[ErrorName["AutoloadNotExported"] = 11] = "AutoloadNotExported";
-    ErrorName[ErrorName["NoComplicatedConnect"] = 12] = "NoComplicatedConnect";
+    ErrorName[ErrorName["ClassDoesntExtendAnything"] = 3] = "ClassDoesntExtendAnything";
+    ErrorName[ErrorName["TooManyClassesFound"] = 4] = "TooManyClassesFound";
+    ErrorName[ErrorName["ClassCannotBeAnonymous"] = 5] = "ClassCannotBeAnonymous";
+    ErrorName[ErrorName["CantFindAutoloadInstance"] = 6] = "CantFindAutoloadInstance";
+    ErrorName[ErrorName["UnknownTsSyntax"] = 7] = "UnknownTsSyntax";
+    ErrorName[ErrorName["PathNotFound"] = 8] = "PathNotFound";
+    ErrorName[ErrorName["Ts2GdError"] = 9] = "Ts2GdError";
+    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 10] = "AutoloadProjectButNotDecorated";
+    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 11] = "AutoloadDecoratedButNotProject";
+    ErrorName[ErrorName["AutoloadNotExported"] = 12] = "AutoloadNotExported";
+    ErrorName[ErrorName["NoComplicatedConnect"] = 13] = "NoComplicatedConnect";
 })(ErrorName = exports.ErrorName || (exports.ErrorName = {}));
 const displayErrors = (errors) => {
     for (const error of errors) {

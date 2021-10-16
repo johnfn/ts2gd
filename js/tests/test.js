@@ -76,6 +76,7 @@ const compileTs = (code, isAutoload) => {
         project: {
             args: {
                 buildLibraries: false,
+                printVersion: false,
                 debug: false,
                 help: false,
                 init: false,
@@ -98,7 +99,6 @@ const compileTs = (code, isAutoload) => {
             },
             godotScenes: () => [],
             createAsset: () => 0,
-            godotClasses: () => [],
             godotFonts: () => [],
             godotImages: () => [],
             godotGlbs: () => [],
@@ -135,7 +135,7 @@ const compileTs = (code, isAutoload) => {
                     gdPath: "",
                     reload: () => { },
                     isDecoratedAutoload: {},
-                    ...{}, // ssh about private properties.
+                    ...{},
                 },
                 {
                     exportedTsClassName: () => "",

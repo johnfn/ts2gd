@@ -38,7 +38,7 @@ const checkVersionAsync = async () => {
     }
     if (latestPublishedVersion !== package_json_1.default.version) {
         console.info(``);
-        console.info(`There is a new version (${latestPublishedVersion}) of ts2gd.`);
+        console.info(`There is a new version (${latestPublishedVersion}) of ts2gd. (You have ${package_json_1.default.version}.)`);
         console.info(`Install it with`);
         console.info(``);
         console.info(chalk_1.default.blue(`npm install --global ts2gd`));

@@ -21,7 +21,6 @@ const asset_godot_scene_1 = require("./assets/asset_godot_scene");
 const asset_image_1 = require("./assets/asset_image");
 const asset_source_file_1 = require("./assets/asset_source_file");
 const base_asset_1 = require("./assets/base_asset");
-const asset_godot_class_1 = require("./assets/asset_godot_class");
 const errors_1 = require("../errors");
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -56,10 +55,6 @@ class TsGdProjectClass {
     sourceFiles() {
         return this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
     }
-    /** Each Godot class. */
-    godotClasses() {
-        return this.assets.filter((a) => a instanceof asset_godot_class_1.AssetGodotClass);
-    }
     /** Each Godot scene. */
     godotScenes() {
         return this.assets.filter((a) => a instanceof asset_godot_scene_1.AssetGodotScene);
@@ -79,9 +74,6 @@ class TsGdProjectClass {
     createAsset(path) {
         if (path.endsWith(".ts")) {
             return new asset_source_file_1.AssetSourceFile(path, this);
-        }
-        else if (path.endsWith(".gd")) {
-            return new asset_godot_class_1.AssetGodotClass(path, this);
         }
         else if (path.endsWith(".tscn")) {
             return new asset_godot_scene_1.AssetGodotScene(path, this);
@@ -143,7 +135,7 @@ class TsGdProjectClass {
             errors: [],
         };
         // Just noisy, since it's not caused by a user action
-        if (!path.endsWith(".gd") && !path.endsWith(".d.ts")) {
+        if (!path.endsWith(".d.ts")) {
             if (!this.args.debug)
                 console.clear();
             if (path.endsWith(".ts")) {
@@ -216,6 +208,7 @@ class TsGdProjectClass {
         }
     }
     shouldBuildLibraryDefinitions(flags) {
+        console.log(flags);
         if (flags.buildLibraries) {
             return true;
         }
@@ -283,6 +276,9 @@ const shouldIncludePath = (path) => {
     if (path.includes(".git")) {
         return false;
     }
+    if (path.endsWith(".gd")) {
+        return false;
+    }
     if (!path.includes(".")) {
         // Folder (I hope)
         // TODO: Might be able to check stat to be more sure about this
@@ -295,9 +291,6 @@ const shouldIncludePath = (path) => {
         return true;
     }
     if (asset_image_1.AssetImage.extensions().some((ext) => path.endsWith(ext))) {
-        return true;
-    }
-    if (path.endsWith(".gd")) {
         return true;
     }
     // Note ordering (re: .ts)

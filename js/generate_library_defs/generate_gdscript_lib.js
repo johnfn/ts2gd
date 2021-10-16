@@ -22,7 +22,7 @@ const getCodeForMethod = (generateAsGlobals, props) => {
         case "has_group":
             return `has_group<T extends keyof Groups>(name: T): bool`;
         case "emit_signal":
-            return "emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;";
+            return "emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;";
         default:
             if (isConstructor) {
                 return "";
@@ -39,6 +39,25 @@ ${isAbstract ? "protected " : ""}${name}(${argumentList}): ${returnType};`;
     }
 };
 exports.getCodeForMethod = getCodeForMethod;
+const argsToString = (args) => {
+    let result = [];
+    for (let i = 0; i < args.length; i++) {
+        const arg = args[i];
+        const argName = generate_library_1.sanitizeGodotNameForTs(arg["$"].name, "argument");
+        let argType = generate_library_1.godotTypeToTsType(arg["$"].type);
+        const isOptional = args.slice(i).every((arg) => !!arg["$"].default);
+        if (argType === "StringName") {
+            if (argName === "group") {
+                argType = "keyof Groups";
+            }
+            if (argName === "action") {
+                argType = "Action";
+            }
+        }
+        result.push(`${argName}${isOptional ? "?" : ""}: ${argType}`);
+    }
+    return result;
+};
 const parseMethod = (method, props) => {
     const containingClassName = props?.containgClassName ?? undefined;
     const generateAsGlobal = props?.generateAsGlobals ?? false;
@@ -54,22 +73,7 @@ const parseMethod = (method, props) => {
             argumentList = "...args: any[]";
         }
         else {
-            argumentList = args
-                .map((arg) => {
-                let argName = generate_library_1.sanitizeGodotNameForTs(arg["$"].name);
-                let argType = generate_library_1.godotTypeToTsType(arg["$"].type);
-                let isOptional = !!arg["$"].default;
-                if (argType === "StringName") {
-                    if (argName === "group") {
-                        argType = "keyof Groups";
-                    }
-                    if (argName === "action") {
-                        argType = "Action";
-                    }
-                }
-                return `${argName}${isOptional ? "?" : ""}: ${argType}`;
-            })
-                .join(", ");
+            argumentList = argsToString(args).join(", ");
         }
     }
     // Special case for TileSet#tile_get_shapes
@@ -104,6 +108,12 @@ const generateGdscriptLib = async (path) => {
     const globalMethods = json["class"].methods[0].method;
     const parsedMethods = globalMethods.map((m) => exports.parseMethod(m, { generateAsGlobals: true }));
     for (const parsedMethod of parsedMethods) {
+        if (parsedMethod.name === "load") {
+            continue;
+        }
+        if (parsedMethod.name === "preload") {
+            continue;
+        }
         result += `
 ${parsedMethod.codegen}
     `;
