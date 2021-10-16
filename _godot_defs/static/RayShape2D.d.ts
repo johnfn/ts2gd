@@ -23,11 +23,14 @@ slips_on_slope: boolean;
 
 
 
-  connect<T extends SignalsOf<RayShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RayShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RayShape2DSignals>>(signal: T, method: SignalFunction<RayShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class RayShape2DSignals extends Shape2DSignals {
   
 }

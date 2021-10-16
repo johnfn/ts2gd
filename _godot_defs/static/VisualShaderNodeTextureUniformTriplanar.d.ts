@@ -18,11 +18,14 @@ declare class VisualShaderNodeTextureUniformTriplanar extends VisualShaderNodeTe
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTextureUniformTriplanar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTextureUniformTriplanar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTextureUniformTriplanarSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTextureUniformTriplanarSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeTextureUniformTriplanarSignals extends VisualShaderNodeTextureUniformSignals {
   
 }

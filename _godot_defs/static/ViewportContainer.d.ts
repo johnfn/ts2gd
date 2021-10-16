@@ -34,11 +34,14 @@ stretch_shrink: int;
 
 
 
-  connect<T extends SignalsOf<ViewportContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ViewportContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ViewportContainerSignals>>(signal: T, method: SignalFunction<ViewportContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ViewportContainerSignals extends ContainerSignals {
   
 }

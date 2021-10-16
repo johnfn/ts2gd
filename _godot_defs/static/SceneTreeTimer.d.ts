@@ -42,12 +42,15 @@ time_left: float;
 
 
 
-  connect<T extends SignalsOf<SceneTreeTimer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SceneTreeTimer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SceneTreeTimerSignals>>(signal: T, method: SignalFunction<SceneTreeTimerSignals[T]>): number;
 
 
 
 
+}
 
+declare class SceneTreeTimerSignals extends ReferenceSignals {
   /**
  * Emitted when the timer reaches 0.
  *

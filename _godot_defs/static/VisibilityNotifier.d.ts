@@ -4,10 +4,10 @@
  *
  * If you want nodes to be disabled automatically when they exit the screen, use [VisibilityEnabler] instead.
  *
- * **Note:** VisibilityNotifier uses an approximate heuristic for performance reasons. It does't take walls and other occlusion into account. The heuristic is an implementation detail and may change in future versions. If you need precise visibility checking, use another method such as adding an [Area] node as a child of a [Camera] node and/or [method Vector3.dot].
+ * **Note:** VisibilityNotifier uses an approximate heuristic for performance reasons. It doesn't take walls and other occlusion into account. The heuristic is an implementation detail and may change in future versions. If you need precise visibility checking, use another method such as adding an [Area] node as a child of a [Camera] node and/or [method Vector3.dot].
  *
 */
-declare class VisibilityNotifier extends Spatial {
+declare class VisibilityNotifier extends CullInstance {
 
   
 /**
@@ -15,7 +15,7 @@ declare class VisibilityNotifier extends Spatial {
  *
  * If you want nodes to be disabled automatically when they exit the screen, use [VisibilityEnabler] instead.
  *
- * **Note:** VisibilityNotifier uses an approximate heuristic for performance reasons. It does't take walls and other occlusion into account. The heuristic is an implementation detail and may change in future versions. If you need precise visibility checking, use another method such as adding an [Area] node as a child of a [Camera] node and/or [method Vector3.dot].
+ * **Note:** VisibilityNotifier uses an approximate heuristic for performance reasons. It doesn't take walls and other occlusion into account. The heuristic is an implementation detail and may change in future versions. If you need precise visibility checking, use another method such as adding an [Area] node as a child of a [Camera] node and/or [method Vector3.dot].
  *
 */
   "new"(): VisibilityNotifier;
@@ -34,12 +34,15 @@ aabb: AABB;
 */
 is_on_screen(): boolean;
 
-  connect<T extends SignalsOf<VisibilityNotifier>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisibilityNotifier>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisibilityNotifierSignals>>(signal: T, method: SignalFunction<VisibilityNotifierSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisibilityNotifierSignals extends CullInstanceSignals {
   /**
  * Emitted when the VisibilityNotifier enters a [Camera]'s view.
  *

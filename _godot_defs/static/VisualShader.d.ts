@@ -64,7 +64,8 @@ set_mode(mode: int): void;
 /** Sets the position of the specified node. */
 set_node_position(type: int, id: int, position: Vector2): void;
 
-  connect<T extends SignalsOf<VisualShader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderSignals>>(signal: T, method: SignalFunction<VisualShaderSignals[T]>): number;
 
 
 
@@ -72,32 +73,34 @@ set_node_position(type: int, id: int, position: Vector2): void;
  * A vertex shader, operating on vertices.
  *
 */
-static TYPE_VERTEX: 0;
+static TYPE_VERTEX: any;
 
 /**
  * A fragment shader, operating on fragments (pixels).
  *
 */
-static TYPE_FRAGMENT: 1;
+static TYPE_FRAGMENT: any;
 
 /**
  * A shader for light calculations.
  *
 */
-static TYPE_LIGHT: 2;
+static TYPE_LIGHT: any;
 
 /**
  * Represents the size of the [enum Type] enum.
  *
 */
-static TYPE_MAX: 3;
+static TYPE_MAX: any;
 
 /** No documentation provided. */
- static NODE_ID_INVALID: null;
+static NODE_ID_INVALID: any;
 
 /** No documentation provided. */
-static NODE_ID_OUTPUT: 0;
+static NODE_ID_OUTPUT: any;
 
+}
 
+declare class VisualShaderSignals extends ShaderSignals {
   
 }

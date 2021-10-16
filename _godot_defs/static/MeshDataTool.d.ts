@@ -8,14 +8,21 @@
  *
  * @example 
  * 
+ * var mesh = ArrayMesh.new()
+ * mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, CubeMesh.new().get_mesh_arrays())
  * var mdt = MeshDataTool.new()
  * mdt.create_from_surface(mesh, 0)
  * for i in range(mdt.get_vertex_count()):
  *     var vertex = mdt.get_vertex(i)
- *     ...
+ *     # In this example we extend the mesh by one unit, which results in separated faces as it is flat shaded.
+ *     vertex += mdt.get_vertex_normal(i)
+ *     # Save your change.
  *     mdt.set_vertex(i, vertex)
  * mesh.surface_remove(0)
  * mdt.commit_to_surface(mesh)
+ * var mi = MeshInstance.new()
+ * mi.mesh = mesh
+ * add_child(mi)
  * @summary 
  * 
  *
@@ -36,14 +43,21 @@ declare class MeshDataTool extends Reference {
  *
  * @example 
  * 
+ * var mesh = ArrayMesh.new()
+ * mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, CubeMesh.new().get_mesh_arrays())
  * var mdt = MeshDataTool.new()
  * mdt.create_from_surface(mesh, 0)
  * for i in range(mdt.get_vertex_count()):
  *     var vertex = mdt.get_vertex(i)
- *     ...
+ *     # In this example we extend the mesh by one unit, which results in separated faces as it is flat shaded.
+ *     vertex += mdt.get_vertex_normal(i)
+ *     # Save your change.
  *     mdt.set_vertex(i, vertex)
  * mesh.surface_remove(0)
  * mdt.commit_to_surface(mesh)
+ * var mi = MeshInstance.new()
+ * mi.mesh = mesh
+ * add_child(mi)
  * @summary 
  * 
  *
@@ -197,11 +211,14 @@ set_vertex_uv2(idx: int, uv2: Vector2): void;
 /** Sets the bone weights of the given vertex. */
 set_vertex_weights(idx: int, weights: PoolRealArray): void;
 
-  connect<T extends SignalsOf<MeshDataTool>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MeshDataTool>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MeshDataToolSignals>>(signal: T, method: SignalFunction<MeshDataToolSignals[T]>): number;
 
 
 
 
+}
 
+declare class MeshDataToolSignals extends ReferenceSignals {
   
 }

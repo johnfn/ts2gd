@@ -28,12 +28,15 @@ declare class EditorInspector extends ScrollContainer {
 */
 refresh(): void;
 
-  connect<T extends SignalsOf<EditorInspector>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorInspector>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorInspectorSignals>>(signal: T, method: SignalFunction<EditorInspectorSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorInspectorSignals extends ScrollContainerSignals {
   /**
  * Emitted when the Edit button of an [Object] has been pressed in the inspector. This is mainly used in the remote scene tree inspector.
  *

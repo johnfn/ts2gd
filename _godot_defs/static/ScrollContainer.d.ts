@@ -32,18 +32,24 @@ scroll_vertical: int;
 /** If [code]true[/code], enables vertical scrolling. */
 scroll_vertical_enabled: boolean;
 
+/** Ensures the given [code]control[/code] is visible (must be a direct or indirect child of the ScrollContainer). Used by [member follow_focus]. */
+ensure_control_visible(control: Control): void;
+
 /** Returns the horizontal scrollbar [HScrollBar] of this [ScrollContainer]. */
 get_h_scrollbar(): HScrollBar;
 
 /** Returns the vertical scrollbar [VScrollBar] of this [ScrollContainer]. */
 get_v_scrollbar(): VScrollBar;
 
-  connect<T extends SignalsOf<ScrollContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ScrollContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ScrollContainerSignals>>(signal: T, method: SignalFunction<ScrollContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ScrollContainerSignals extends ContainerSignals {
   /**
  * Emitted when scrolling stops.
  *

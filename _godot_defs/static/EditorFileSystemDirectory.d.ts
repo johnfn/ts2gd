@@ -40,7 +40,7 @@ get_file_script_class_extends(idx: int): string;
 /** Returns the name of the script class defined in the file at index [code]idx[/code]. If the file doesn't define a script class using the [code]class_name[/code] syntax, this will return an empty string. */
 get_file_script_class_name(idx: int): string;
 
-/** Returns the file extension of the file at index [code]idx[/code]. */
+/** Returns the resource type of the file at index [code]idx[/code]. This returns a string such as [code]"Resource"[/code] or [code]"GDScript"[/code], [i]not[/i] a file extension such as [code]".gd"[/code]. */
 get_file_type(idx: int): string;
 
 /** Returns the name of this directory. */
@@ -58,11 +58,14 @@ get_subdir(idx: int): EditorFileSystemDirectory;
 /** Returns the number of subdirectories in this directory. */
 get_subdir_count(): int;
 
-  connect<T extends SignalsOf<EditorFileSystemDirectory>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorFileSystemDirectory>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorFileSystemDirectorySignals>>(signal: T, method: SignalFunction<EditorFileSystemDirectorySignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorFileSystemDirectorySignals extends ObjectSignals {
   
 }

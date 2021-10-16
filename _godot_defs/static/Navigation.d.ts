@@ -2,12 +2,16 @@
 /**
  * Provides navigation and pathfinding within a collection of [NavigationMesh]es. By default, these will be automatically collected from child [NavigationMeshInstance] nodes, but they can also be added on the fly with [method navmesh_add]. In addition to basic pathfinding, this class also assists with aligning navigation agents with the meshes they are navigating on.
  *
+ * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
+ *
 */
 declare class Navigation extends Spatial {
 
   
 /**
  * Provides navigation and pathfinding within a collection of [NavigationMesh]es. By default, these will be automatically collected from child [NavigationMeshInstance] nodes, but they can also be added on the fly with [method navmesh_add]. In addition to basic pathfinding, this class also assists with aligning navigation agents with the meshes they are navigating on.
+ *
+ * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
  *
 */
   "new"(): Navigation;
@@ -30,7 +34,12 @@ get_closest_point_owner(to_point: Vector3): Object;
 /** Returns the navigation point closest to the given line segment. When enabling [code]use_collision[/code], only considers intersection points between segment and navigation meshes. If multiple intersection points are found, the one closest to the segment start point is returned. */
 get_closest_point_to_segment(start: Vector3, end: Vector3, use_collision?: boolean): Vector3;
 
-/** Returns the path between two given points. Points are in local coordinate space. If [code]optimize[/code] is [code]true[/code] (the default), the agent properties associated with each [NavigationMesh] (radius, height, etc.) are considered in the path calculation, otherwise they are ignored. */
+/**
+ * Returns the path between two given points. Points are in local coordinate space. If `optimize` is `true` (the default), the agent properties associated with each [NavigationMesh] (radius, height, etc.) are considered in the path calculation, otherwise they are ignored.
+ *
+ * **Note:** This method has known issues and will often return non-optimal paths. These issues will be fixed in Godot 4.0.
+ *
+*/
 get_simple_path(start: Vector3, end: Vector3, optimize?: boolean): PoolVector3Array;
 
 /** Adds a [NavigationMesh]. Returns an ID for use with [method navmesh_remove] or [method navmesh_set_transform]. If given, a [Transform2D] is applied to the polygon. The optional [code]owner[/code] is used as return value for [method get_closest_point_owner]. */
@@ -42,11 +51,14 @@ navmesh_remove(id: int): void;
 /** Sets the transform applied to the [NavigationMesh] with the given ID. */
 navmesh_set_transform(id: int, xform: Transform): void;
 
-  connect<T extends SignalsOf<Navigation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Navigation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<NavigationSignals>>(signal: T, method: SignalFunction<NavigationSignals[T]>): number;
 
 
 
 
+}
 
+declare class NavigationSignals extends SpatialSignals {
   
 }

@@ -32,7 +32,8 @@ polygon: PoolVector2Array;
 
 
 
-  connect<T extends SignalsOf<CollisionPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CollisionPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CollisionPolygon2DSignals>>(signal: T, method: SignalFunction<CollisionPolygon2DSignals[T]>): number;
 
 
 
@@ -40,14 +41,16 @@ polygon: PoolVector2Array;
  * Collisions will include the polygon and its contained area.
  *
 */
-static BUILD_SOLIDS: 0;
+static BUILD_SOLIDS: any;
 
 /**
  * Collisions will only include the polygon edges.
  *
 */
-static BUILD_SEGMENTS: 1;
+static BUILD_SEGMENTS: any;
 
+}
 
+declare class CollisionPolygon2DSignals extends Node2DSignals {
   
 }

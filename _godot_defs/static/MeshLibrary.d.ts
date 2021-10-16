@@ -36,6 +36,9 @@ get_item_list(): PoolIntArray;
 /** Returns the item's mesh. */
 get_item_mesh(id: int): Mesh;
 
+/** Returns the transform applied to the item's mesh. */
+get_item_mesh_transform(id: int): Transform;
+
 /** Returns the item's name. */
 get_item_name(id: int): string;
 
@@ -65,6 +68,9 @@ remove_item(id: int): void;
 /** Sets the item's mesh. */
 set_item_mesh(id: int, mesh: Mesh): void;
 
+/** Sets the transform to apply to the item's mesh. */
+set_item_mesh_transform(id: int, mesh_transform: Transform): void;
+
 /**
  * Sets the item's name.
  *
@@ -90,11 +96,14 @@ set_item_preview(id: int, texture: Texture): void;
 */
 set_item_shapes(id: int, shapes: any[]): void;
 
-  connect<T extends SignalsOf<MeshLibrary>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MeshLibrary>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MeshLibrarySignals>>(signal: T, method: SignalFunction<MeshLibrarySignals[T]>): number;
 
 
 
 
+}
 
+declare class MeshLibrarySignals extends ResourceSignals {
   
 }

@@ -45,7 +45,8 @@ rename_node(name: string, new_name: string): void;
 /** Modifies the position of a sub-node. */
 set_node_position(name: string, position: Vector2): void;
 
-  connect<T extends SignalsOf<AnimationNodeBlendTree>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeBlendTree>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeBlendTreeSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendTreeSignals[T]>): number;
 
 
 
@@ -53,38 +54,40 @@ set_node_position(name: string, position: Vector2): void;
  * The connection was successful.
  *
 */
-static CONNECTION_OK: 0;
+static CONNECTION_OK: any;
 
 /**
  * The input node is `null`.
  *
 */
-static CONNECTION_ERROR_NO_INPUT: 1;
+static CONNECTION_ERROR_NO_INPUT: any;
 
 /**
  * The specified input port is out of range.
  *
 */
-static CONNECTION_ERROR_NO_INPUT_INDEX: 2;
+static CONNECTION_ERROR_NO_INPUT_INDEX: any;
 
 /**
  * The output node is `null`.
  *
 */
-static CONNECTION_ERROR_NO_OUTPUT: 3;
+static CONNECTION_ERROR_NO_OUTPUT: any;
 
 /**
  * Input and output nodes are the same.
  *
 */
-static CONNECTION_ERROR_SAME_NODE: 4;
+static CONNECTION_ERROR_SAME_NODE: any;
 
 /**
  * The specified connection already exists.
  *
 */
-static CONNECTION_ERROR_CONNECTION_EXISTS: 5;
+static CONNECTION_ERROR_CONNECTION_EXISTS: any;
 
+}
 
+declare class AnimationNodeBlendTreeSignals extends AnimationRootNodeSignals {
   
 }

@@ -14,40 +14,43 @@ declare class VisualShaderNodeScalarOp extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeScalarOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeScalarOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeScalarOpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeScalarOpSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static OP_ADD: 0;
+static OP_ADD: any;
 
 /** No documentation provided. */
-static OP_SUB: 1;
+static OP_SUB: any;
 
 /** No documentation provided. */
-static OP_MUL: 2;
+static OP_MUL: any;
 
 /** No documentation provided. */
-static OP_DIV: 3;
+static OP_DIV: any;
 
 /** No documentation provided. */
-static OP_MOD: 4;
+static OP_MOD: any;
 
 /** No documentation provided. */
-static OP_POW: 5;
+static OP_POW: any;
 
 /** No documentation provided. */
-static OP_MAX: 6;
+static OP_MAX: any;
 
 /** No documentation provided. */
-static OP_MIN: 7;
+static OP_MIN: any;
 
 /** No documentation provided. */
-static OP_ATAN2: 8;
+static OP_ATAN2: any;
 
 /** No documentation provided. */
-static OP_STEP: 9;
+static OP_STEP: any;
 
+}
 
+declare class VisualShaderNodeScalarOpSignals extends VisualShaderNodeSignals {
   
 }

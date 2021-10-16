@@ -25,12 +25,15 @@ get_bone_count(): int;
 /** Returns the [RID] of a Skeleton2D instance. */
 get_skeleton(): RID;
 
-  connect<T extends SignalsOf<Skeleton2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Skeleton2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Skeleton2DSignals>>(signal: T, method: SignalFunction<Skeleton2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Skeleton2DSignals extends Node2DSignals {
   /**
 */
 bone_setup_changed: Signal<() => void>

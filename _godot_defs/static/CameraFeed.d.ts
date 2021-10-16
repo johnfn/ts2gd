@@ -34,7 +34,8 @@ get_name(): string;
 /** Returns the position of camera on the device. */
 get_position(): int;
 
-  connect<T extends SignalsOf<CameraFeed>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CameraFeed>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CameraFeedSignals>>(signal: T, method: SignalFunction<CameraFeedSignals[T]>): number;
 
 
 
@@ -42,44 +43,46 @@ get_position(): int;
  * No image set for the feed.
  *
 */
-static FEED_NOIMAGE: 0;
+static FEED_NOIMAGE: any;
 
 /**
  * Feed supplies RGB images.
  *
 */
-static FEED_RGB: 1;
+static FEED_RGB: any;
 
 /**
  * Feed supplies YCbCr images that need to be converted to RGB.
  *
 */
-static FEED_YCBCR: 2;
+static FEED_YCBCR: any;
 
 /**
  * Feed supplies separate Y and CbCr images that need to be combined and converted to RGB.
  *
 */
-static FEED_YCBCR_SEP: 3;
+static FEED_YCBCR_SEP: any;
 
 /**
  * Unspecified position.
  *
 */
-static FEED_UNSPECIFIED: 0;
+static FEED_UNSPECIFIED: any;
 
 /**
  * Camera is mounted at the front of the device.
  *
 */
-static FEED_FRONT: 1;
+static FEED_FRONT: any;
 
 /**
  * Camera is mounted at the back of the device.
  *
 */
-static FEED_BACK: 2;
+static FEED_BACK: any;
 
+}
 
+declare class CameraFeedSignals extends ReferenceSignals {
   
 }

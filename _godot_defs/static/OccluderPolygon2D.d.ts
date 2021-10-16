@@ -31,7 +31,8 @@ polygon: PoolVector2Array;
 
 
 
-  connect<T extends SignalsOf<OccluderPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<OccluderPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<OccluderPolygon2DSignals>>(signal: T, method: SignalFunction<OccluderPolygon2DSignals[T]>): number;
 
 
 
@@ -39,20 +40,22 @@ polygon: PoolVector2Array;
  * Culling is disabled. See [member cull_mode].
  *
 */
-static CULL_DISABLED: 0;
+static CULL_DISABLED: any;
 
 /**
  * Culling is performed in the clockwise direction. See [member cull_mode].
  *
 */
-static CULL_CLOCKWISE: 1;
+static CULL_CLOCKWISE: any;
 
 /**
  * Culling is performed in the counterclockwise direction. See [member cull_mode].
  *
 */
-static CULL_COUNTER_CLOCKWISE: 2;
+static CULL_COUNTER_CLOCKWISE: any;
 
+}
 
+declare class OccluderPolygon2DSignals extends ResourceSignals {
   
 }

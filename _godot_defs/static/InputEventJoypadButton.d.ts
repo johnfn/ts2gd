@@ -26,11 +26,14 @@ pressure: float;
 
 
 
-  connect<T extends SignalsOf<InputEventJoypadButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventJoypadButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventJoypadButtonSignals>>(signal: T, method: SignalFunction<InputEventJoypadButtonSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventJoypadButtonSignals extends InputEventSignals {
   
 }

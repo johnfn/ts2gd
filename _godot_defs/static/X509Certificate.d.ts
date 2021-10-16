@@ -30,11 +30,14 @@ load(path: string): int;
 /** Saves a certificate to the given [code]path[/code] (should be a "*.crt" file). */
 save(path: string): int;
 
-  connect<T extends SignalsOf<X509Certificate>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<X509Certificate>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<X509CertificateSignals>>(signal: T, method: SignalFunction<X509CertificateSignals[T]>): number;
 
 
 
 
+}
 
+declare class X509CertificateSignals extends ResourceSignals {
   
 }

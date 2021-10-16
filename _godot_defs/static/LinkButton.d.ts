@@ -2,6 +2,8 @@
 /**
  * This kind of button is primarily used when the interaction with the button causes a context change (like linking to a web page).
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
 */
 declare class LinkButton extends BaseButton {
 
@@ -9,10 +11,11 @@ declare class LinkButton extends BaseButton {
 /**
  * This kind of button is primarily used when the interaction with the button causes a context change (like linking to a web page).
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
 */
   "new"(): LinkButton;
   static "new"(): LinkButton;
-
 
 
 
@@ -26,7 +29,8 @@ underline: int;
 
 
 
-  connect<T extends SignalsOf<LinkButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<LinkButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<LinkButtonSignals>>(signal: T, method: SignalFunction<LinkButtonSignals[T]>): number;
 
 
 
@@ -34,20 +38,22 @@ underline: int;
  * The LinkButton will always show an underline at the bottom of its text.
  *
 */
-static UNDERLINE_MODE_ALWAYS: 0;
+static UNDERLINE_MODE_ALWAYS: any;
 
 /**
  * The LinkButton will show an underline at the bottom of its text when the mouse cursor is over it.
  *
 */
-static UNDERLINE_MODE_ON_HOVER: 1;
+static UNDERLINE_MODE_ON_HOVER: any;
 
 /**
  * The LinkButton will never show an underline at the bottom of its text.
  *
 */
-static UNDERLINE_MODE_NEVER: 2;
+static UNDERLINE_MODE_NEVER: any;
 
+}
 
+declare class LinkButtonSignals extends BaseButtonSignals {
   
 }

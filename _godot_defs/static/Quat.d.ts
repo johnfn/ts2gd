@@ -67,8 +67,16 @@ z: float;
 
 
 
-/** Performs a cubic spherical interpolation between quaternions [code]preA[/code], this vector, [code]b[/code], and [code]postB[/code], by the given amount [code]t[/code]. */
-cubic_slerp(b: Quat, pre_a: Quat, post_b: Quat, t: float): Quat;
+/**
+ * Returns the angle between this quaternion and `to`. This is the magnitude of the angle you would need to rotate by to get from one to the other.
+ *
+ * **Note:** This method has an abnormally high amount of floating-point error, so methods such as [method @GDScript.is_zero_approx] will not work reliably.
+ *
+*/
+angle_to(to: Quat): float;
+
+/** Performs a cubic spherical interpolation between quaternions [code]pre_a[/code], this vector, [code]b[/code], and [code]post_b[/code], by the given amount [code]weight[/code]. */
+cubic_slerp(b: Quat, pre_a: Quat, post_b: Quat, weight: float): Quat;
 
 /** Returns the dot product of two quaternions. */
 dot(b: Quat): float;
@@ -79,7 +87,7 @@ get_euler(): Vector3;
 /** Returns the inverse of the quaternion. */
 inverse(): Quat;
 
-/** Returns [code]true[/code] if this quaterion and [code]quat[/code] are approximately equal, by running [method @GDScript.is_equal_approx] on each component. */
+/** Returns [code]true[/code] if this quaternion and [code]quat[/code] are approximately equal, by running [method @GDScript.is_equal_approx] on each component. */
 is_equal_approx(quat: Quat): boolean;
 
 /** Returns whether the quaternion is normalized or not. */
@@ -106,15 +114,16 @@ set_euler(euler: Vector3): any;
  * **Note:** Both quaternions must be normalized.
  *
 */
-slerp(b: Quat, t: float): Quat;
+slerp(to: Quat, weight: float): Quat;
 
 /** Returns the result of the spherical linear interpolation between this quaternion and [code]to[/code] by amount [code]weight[/code], but without checking if the rotation path is not bigger than 90 degrees. */
-slerpni(b: Quat, t: float): Quat;
+slerpni(to: Quat, weight: float): Quat;
 
 /** Returns a vector transformed (multiplied) by this quaternion. */
 xform(v: Vector3): Vector3;
 
-  connect<T extends SignalsOf<Quat>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Quat>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<QuatSignals>>(signal: T, method: SignalFunction<QuatSignals[T]>): number;
 
 
 
@@ -124,6 +133,8 @@ xform(v: Vector3): Vector3;
 */
 static IDENTITY: Quat;
 
+}
 
+declare class QuatSignals {
   
 }

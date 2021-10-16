@@ -56,11 +56,14 @@ dry: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectDelay>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectDelay>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectDelaySignals>>(signal: T, method: SignalFunction<AudioEffectDelaySignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectDelaySignals extends AudioEffectSignals {
   
 }

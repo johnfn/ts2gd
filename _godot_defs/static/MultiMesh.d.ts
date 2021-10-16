@@ -4,7 +4,7 @@
  *
  * MultiMesh is much faster as it can draw thousands of instances with a single draw call, resulting in less API overhead.
  *
- * As a drawback, if the instances are too far away of each other, performance may be reduced as every single instance will always rendered (they are spatially indexed as one, for the whole object).
+ * As a drawback, if the instances are too far away from each other, performance may be reduced as every single instance will always render (they are spatially indexed as one, for the whole object).
  *
  * Since instances may have any behavior, the AABB used for visibility must be provided by the user.
  *
@@ -17,7 +17,7 @@ declare class MultiMesh extends Resource {
  *
  * MultiMesh is much faster as it can draw thousands of instances with a single draw call, resulting in less API overhead.
  *
- * As a drawback, if the instances are too far away of each other, performance may be reduced as every single instance will always rendered (they are spatially indexed as one, for the whole object).
+ * As a drawback, if the instances are too far away from each other, performance may be reduced as every single instance will always render (they are spatially indexed as one, for the whole object).
  *
  * Since instances may have any behavior, the AABB used for visibility must be provided by the user.
  *
@@ -71,7 +71,7 @@ get_instance_transform_2d(instance: int): Transform2D;
 set_as_bulk_array(array: PoolRealArray): void;
 
 /**
- * Sets the color of a specific instance.
+ * Sets the color of a specific instance by **multiplying** the mesh's existing vertex colors.
  *
  * For the color to take effect, ensure that [member color_format] is non-`null` on the [MultiMesh] and [member SpatialMaterial.vertex_color_use_as_albedo] is `true` on the material.
  *
@@ -87,7 +87,8 @@ set_instance_transform(instance: int, transform: Transform): void;
 /** Sets the [Transform2D] for a specific instance. */
 set_instance_transform_2d(instance: int, transform: Transform2D): void;
 
-  connect<T extends SignalsOf<MultiMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MultiMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MultiMeshSignals>>(signal: T, method: SignalFunction<MultiMeshSignals[T]>): number;
 
 
 
@@ -95,50 +96,52 @@ set_instance_transform_2d(instance: int, transform: Transform2D): void;
  * Use this when using 2D transforms.
  *
 */
-static TRANSFORM_2D: 0;
+static TRANSFORM_2D: any;
 
 /**
  * Use this when using 3D transforms.
  *
 */
-static TRANSFORM_3D: 1;
+static TRANSFORM_3D: any;
 
 /**
  * Use when you are not using per-instance [Color]s.
  *
 */
-static COLOR_NONE: 0;
+static COLOR_NONE: any;
 
 /**
  * Compress [Color] data into 8 bits when passing to shader. This uses less memory and can be faster, but the [Color] loses precision.
  *
 */
-static COLOR_8BIT: 1;
+static COLOR_8BIT: any;
 
 /**
  * The [Color] passed into [method set_instance_color] will use 4 floats. Use this for highest precision [Color].
  *
 */
-static COLOR_FLOAT: 2;
+static COLOR_FLOAT: any;
 
 /**
  * Use when you are not using per-instance custom data.
  *
 */
-static CUSTOM_DATA_NONE: 0;
+static CUSTOM_DATA_NONE: any;
 
 /**
  * Compress custom_data into 8 bits when passing to shader. This uses less memory and can be faster, but loses precision and range. Floats packed into 8 bits can only represent values between 0 and 1, numbers outside that range will be clamped.
  *
 */
-static CUSTOM_DATA_8BIT: 1;
+static CUSTOM_DATA_8BIT: any;
 
 /**
  * The [Color] passed into [method set_instance_custom_data] will use 4 floats. Use this for highest precision.
  *
 */
-static CUSTOM_DATA_FLOAT: 2;
+static CUSTOM_DATA_FLOAT: any;
 
+}
 
+declare class MultiMeshSignals extends ResourceSignals {
   
 }

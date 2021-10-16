@@ -20,11 +20,14 @@ constant: Transform;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTransformConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTransformConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTransformConstantSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTransformConstantSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeTransformConstantSignals extends VisualShaderNodeSignals {
   
 }

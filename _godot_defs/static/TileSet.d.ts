@@ -287,55 +287,58 @@ tile_set_tile_mode(id: int, tilemode: int): void;
 /** Sets the tile's drawing index. */
 tile_set_z_index(id: int, z_index: int): void;
 
-  connect<T extends SignalsOf<TileSet>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TileSet>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TileSetSignals>>(signal: T, method: SignalFunction<TileSetSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static BITMASK_2X2: 0;
+static BITMASK_2X2: any;
 
 /** No documentation provided. */
-static BITMASK_3X3_MINIMAL: 1;
+static BITMASK_3X3_MINIMAL: any;
 
 /** No documentation provided. */
-static BITMASK_3X3: 2;
+static BITMASK_3X3: any;
 
 /** No documentation provided. */
-static BIND_TOPLEFT: 1;
+static BIND_TOPLEFT: any;
 
 /** No documentation provided. */
-static BIND_TOP: 2;
+static BIND_TOP: any;
 
 /** No documentation provided. */
-static BIND_TOPRIGHT: 4;
+static BIND_TOPRIGHT: any;
 
 /** No documentation provided. */
-static BIND_LEFT: 8;
+static BIND_LEFT: any;
 
 /** No documentation provided. */
-static BIND_CENTER: 16;
+static BIND_CENTER: any;
 
 /** No documentation provided. */
-static BIND_RIGHT: 32;
+static BIND_RIGHT: any;
 
 /** No documentation provided. */
-static BIND_BOTTOMLEFT: 64;
+static BIND_BOTTOMLEFT: any;
 
 /** No documentation provided. */
-static BIND_BOTTOM: 128;
+static BIND_BOTTOM: any;
 
 /** No documentation provided. */
-static BIND_BOTTOMRIGHT: 256;
+static BIND_BOTTOMRIGHT: any;
 
 /** No documentation provided. */
-static SINGLE_TILE: 0;
+static SINGLE_TILE: any;
 
 /** No documentation provided. */
-static AUTO_TILE: 1;
+static AUTO_TILE: any;
 
 /** No documentation provided. */
-static ATLAS_TILE: 2;
+static ATLAS_TILE: any;
 
+}
 
+declare class TileSetSignals extends ResourceSignals {
   
 }

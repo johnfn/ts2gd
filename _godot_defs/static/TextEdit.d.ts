@@ -2,12 +2,16 @@
 /**
  * TextEdit is meant for editing large, multiline text. It also has facilities for editing code, such as syntax highlighting support and multiple levels of undo/redo.
  *
+ * **Note:** When holding down `Alt`, the vertical scroll wheel will scroll 5 times as fast as it would normally do. This also works in the Godot script editor.
+ *
 */
 declare class TextEdit extends Control {
 
   
 /**
  * TextEdit is meant for editing large, multiline text. It also has facilities for editing code, such as syntax highlighting support and multiple levels of undo/redo.
+ *
+ * **Note:** When holding down `Alt`, the vertical scroll wheel will scroll 5 times as fast as it would normally do. This also works in the Godot script editor.
  *
 */
   "new"(): TextEdit;
@@ -75,10 +79,10 @@ override_selected_font_color: boolean;
 /** If [code]true[/code], read-only mode is enabled. Existing text cannot be modified and new text cannot be added. */
 readonly: boolean;
 
-/** The current horizontal scroll value. */
+/** If there is a horizontal scrollbar, this determines the current horizontal scroll value in pixels. */
 scroll_horizontal: int;
 
-/** The current vertical scroll value. */
+/** If there is a vertical scrollbar, this determines the current vertical scroll value in line numbers, starting at 0 for the top line. */
 scroll_vertical: float;
 
 /**
@@ -200,11 +204,17 @@ get_selection_to_column(): int;
 /** Returns the selection end line. */
 get_selection_to_line(): int;
 
-/** Returns a [String] text with the word under the mouse cursor location. */
+/** Returns a [String] text with the word under the caret (text cursor) location. */
 get_word_under_cursor(): string;
 
 /** Returns whether the specified [code]keyword[/code] has a color set to it or not. */
 has_keyword_color(keyword: string): boolean;
+
+/** Returns [code]true[/code] if a "redo" action is available. */
+has_redo(): boolean;
+
+/** Returns [code]true[/code] if an "undo" action is available. */
+has_undo(): boolean;
 
 /** Insert the specified text at the cursor position. */
 insert_text_at_cursor(text: string): void;
@@ -214,6 +224,15 @@ is_folded(line: int): boolean;
 
 /** Returns whether the line at the specified index is hidden or not. */
 is_line_hidden(line: int): boolean;
+
+/** Returns [code]true[/code] when the specified [code]line[/code] is bookmarked. */
+is_line_set_as_bookmark(line: int): boolean;
+
+/** Returns [code]true[/code] when the specified [code]line[/code] has a breakpoint. */
+is_line_set_as_breakpoint(line: int): boolean;
+
+/** Returns [code]true[/code] when the specified [code]line[/code] is marked as safe. */
+is_line_set_as_safe(line: int): boolean;
 
 /** Returns [code]true[/code] if the selection is active. */
 is_selection_active(): boolean;
@@ -267,8 +286,27 @@ select_all(): void;
 /** Sets the text for a specific line. */
 set_line(line: int, new_text: string): void;
 
+/**
+ * Bookmarks the `line` if `bookmark` is true. Deletes the bookmark if `bookmark` is false.
+ *
+ * Bookmarks are shown in the [member breakpoint_gutter].
+ *
+*/
+set_line_as_bookmark(line: int, bookmark: boolean): void;
+
+/** Adds or removes the breakpoint in [code]line[/code]. Breakpoints are shown in the [member breakpoint_gutter]. */
+set_line_as_breakpoint(line: int, breakpoint: boolean): void;
+
 /** If [code]true[/code], hides the line of the specified index. */
 set_line_as_hidden(line: int, enable: boolean): void;
+
+/**
+ * If `true`, marks the `line` as safe.
+ *
+ * This will show the line number with the color provided in the `safe_line_number_color` theme property.
+ *
+*/
+set_line_as_safe(line: int, safe: boolean): void;
 
 /** Toggle the folding of the code block at the given line. */
 toggle_fold_line(line: int): void;
@@ -282,7 +320,8 @@ unfold_line(line: int): void;
 /** Unhide all lines that were previously set to hidden by [method set_line_as_hidden]. */
 unhide_all_lines(): void;
 
-  connect<T extends SignalsOf<TextEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TextEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TextEditSignals>>(signal: T, method: SignalFunction<TextEditSignals[T]>): number;
 
 
 
@@ -290,81 +329,83 @@ unhide_all_lines(): void;
  * Match case when searching.
  *
 */
-static SEARCH_MATCH_CASE: 1;
+static SEARCH_MATCH_CASE: any;
 
 /**
  * Match whole words when searching.
  *
 */
-static SEARCH_WHOLE_WORDS: 2;
+static SEARCH_WHOLE_WORDS: any;
 
 /**
  * Search from end to beginning.
  *
 */
-static SEARCH_BACKWARDS: 4;
+static SEARCH_BACKWARDS: any;
 
 /**
  * Used to access the result column from [method search].
  *
 */
-static SEARCH_RESULT_COLUMN: 0;
+static SEARCH_RESULT_COLUMN: any;
 
 /**
  * Used to access the result line from [method search].
  *
 */
-static SEARCH_RESULT_LINE: 1;
+static SEARCH_RESULT_LINE: any;
 
 /**
  * Cuts (copies and clears) the selected text.
  *
 */
-static MENU_CUT: 0;
+static MENU_CUT: any;
 
 /**
  * Copies the selected text.
  *
 */
-static MENU_COPY: 1;
+static MENU_COPY: any;
 
 /**
  * Pastes the clipboard text over the selected text (or at the cursor's position).
  *
 */
-static MENU_PASTE: 2;
+static MENU_PASTE: any;
 
 /**
  * Erases the whole [TextEdit] text.
  *
 */
-static MENU_CLEAR: 3;
+static MENU_CLEAR: any;
 
 /**
  * Selects the whole [TextEdit] text.
  *
 */
-static MENU_SELECT_ALL: 4;
+static MENU_SELECT_ALL: any;
 
 /**
  * Undoes the previous action.
  *
 */
-static MENU_UNDO: 5;
+static MENU_UNDO: any;
 
 /**
  * Redoes the previous action.
  *
 */
-static MENU_REDO: 6;
+static MENU_REDO: any;
 
 /**
  * Represents the size of the [enum MenuItems] enum.
  *
 */
-static MENU_MAX: 7;
+static MENU_MAX: any;
 
+}
 
+declare class TextEditSignals extends ControlSignals {
   /**
  * Emitted when a breakpoint is placed via the breakpoint gutter.
  *

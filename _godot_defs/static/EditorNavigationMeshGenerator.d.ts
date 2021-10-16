@@ -18,11 +18,14 @@ bake(nav_mesh: NavigationMesh, root_node: Node): void;
 /** No documentation provided. */
 clear(nav_mesh: NavigationMesh): void;
 
-  connect<T extends SignalsOf<EditorNavigationMeshGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorNavigationMeshGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorNavigationMeshGeneratorSignals>>(signal: T, method: SignalFunction<EditorNavigationMeshGeneratorSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorNavigationMeshGeneratorSignals extends ObjectSignals {
   
 }

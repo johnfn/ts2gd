@@ -40,7 +40,7 @@ collide_with_areas: boolean;
 /** If [code]true[/code], collision with [PhysicsBody2D]s will be reported. */
 collide_with_bodies: boolean;
 
-/** The ray's collision mask. Only objects in at least one collision layer enabled in the mask will be detected. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The ray's collision mask. Only objects in at least one collision layer enabled in the mask will be detected. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
 
 /** If [code]true[/code], collisions will be reported. */
@@ -81,7 +81,7 @@ get_collision_normal(): Vector2;
 /**
  * Returns the collision point at which the ray intersects the closest object.
  *
- * **Note:** this point is in the **global** coordinate system.
+ * **Note:** This point is in the **global** coordinate system.
  *
 */
 get_collision_point(): Vector2;
@@ -98,11 +98,14 @@ remove_exception_rid(rid: RID): void;
 /** Sets or clears individual bits on the collision mask. This makes selecting the areas scanned easier. */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  connect<T extends SignalsOf<RayCast2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RayCast2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RayCast2DSignals>>(signal: T, method: SignalFunction<RayCast2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class RayCast2DSignals extends Node2DSignals {
   
 }

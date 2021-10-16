@@ -38,11 +38,14 @@ tilt: Vector2;
 
 
 
-  connect<T extends SignalsOf<InputEventMouseMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventMouseMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventMouseMotionSignals>>(signal: T, method: SignalFunction<InputEventMouseMotionSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventMouseMotionSignals extends InputEventMouseSignals {
   
 }

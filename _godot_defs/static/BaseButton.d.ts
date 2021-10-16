@@ -29,7 +29,7 @@ button_mask: int;
 /** If [code]true[/code], the button is in disabled state and can't be clicked or toggled. */
 disabled: boolean;
 
-/** Focus access mode to use when switching between enabled/disabled (see [member Control.focus_mode] and [member disabled]). */
+/** [i]Deprecated.[/i] This property has been deprecated due to redundancy and will be removed in Godot 4.0. This property no longer has any effect when set. Please use [member Control.focus_mode] instead. */
 enabled_focus_mode: int;
 
 
@@ -44,7 +44,12 @@ group: ButtonGroup;
 */
 keep_pressed_outside: boolean;
 
-/** If [code]true[/code], the button's state is pressed. Means the button is pressed down or toggled (if [member toggle_mode] is active). */
+/**
+ * If `true`, the button's state is pressed. Means the button is pressed down or toggled (if [member toggle_mode] is active). Only works if [member toggle_mode] is `true`.
+ *
+ * **Note:** Setting [member pressed] will result in [signal toggled] to be emitted. If you want to change the pressed state without emitting that signal, use [method set_pressed_no_signal].
+ *
+*/
 pressed: boolean;
 
 /** [ShortCut] associated to the button. */
@@ -68,7 +73,16 @@ get_draw_mode(): int;
 /** Returns [code]true[/code] if the mouse has entered the button and has not left it yet. */
 is_hovered(): boolean;
 
-  connect<T extends SignalsOf<BaseButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/**
+ * Changes the [member pressed] state of the button, without emitting [signal toggled]. Use when you just want to change the state of the button without sending the pressed event (e.g. when initializing scene). Only works if [member toggle_mode] is `true`.
+ *
+ * **Note:** This method doesn't unpress other buttons in its button [member group].
+ *
+*/
+set_pressed_no_signal(pressed: boolean): void;
+
+  // connect<T extends SignalsOf<BaseButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BaseButtonSignals>>(signal: T, method: SignalFunction<BaseButtonSignals[T]>): number;
 
 
 
@@ -76,45 +90,47 @@ is_hovered(): boolean;
  * The normal state (i.e. not pressed, not hovered, not toggled and enabled) of buttons.
  *
 */
-static DRAW_NORMAL: 0;
+static DRAW_NORMAL: any;
 
 /**
  * The state of buttons are pressed.
  *
 */
-static DRAW_PRESSED: 1;
+static DRAW_PRESSED: any;
 
 /**
  * The state of buttons are hovered.
  *
 */
-static DRAW_HOVER: 2;
+static DRAW_HOVER: any;
 
 /**
  * The state of buttons are disabled.
  *
 */
-static DRAW_DISABLED: 3;
+static DRAW_DISABLED: any;
 
 /**
  * The state of buttons are both hovered and pressed.
  *
 */
-static DRAW_HOVER_PRESSED: 4;
+static DRAW_HOVER_PRESSED: any;
 
 /**
  * Require just a press to consider the button clicked.
  *
 */
-static ACTION_MODE_BUTTON_PRESS: 0;
+static ACTION_MODE_BUTTON_PRESS: any;
 
 /**
  * Require a press and a subsequent release before considering the button clicked.
  *
 */
-static ACTION_MODE_BUTTON_RELEASE: 1;
+static ACTION_MODE_BUTTON_RELEASE: any;
 
+}
 
+declare class BaseButtonSignals extends ControlSignals {
   /**
  * Emitted when the button starts being held down.
  *

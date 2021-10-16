@@ -26,11 +26,14 @@ declare class PointMesh extends PrimitiveMesh {
 
 
 
-  connect<T extends SignalsOf<PointMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PointMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PointMeshSignals>>(signal: T, method: SignalFunction<PointMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class PointMeshSignals extends PrimitiveMeshSignals {
   
 }

@@ -2,12 +2,16 @@
 /**
  * A material that uses a custom [Shader] program to render either items to screen or process particles. You can create multiple materials for the same shader but configure different values for the uniforms defined in the shader.
  *
+ * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
+ *
 */
 declare class ShaderMaterial extends Material {
 
   
 /**
  * A material that uses a custom [Shader] program to render either items to screen or process particles. You can create multiple materials for the same shader but configure different values for the uniforms defined in the shader.
+ *
+ * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
 */
   "new"(): ShaderMaterial;
@@ -27,14 +31,22 @@ property_can_revert(name: string): boolean;
 /** Returns the default value of the material property with given [code]name[/code]. */
 property_get_revert(name: string): any;
 
-/** Changes the value set for this material of a uniform in the shader. [b]Note:[/b] [code]param[/code] must match the name of the uniform in the code exactly. */
+/**
+ * Changes the value set for this material of a uniform in the shader.
+ *
+ * **Note:** `param` must match the name of the uniform in the code exactly.
+ *
+*/
 set_shader_param(param: string, value: any): void;
 
-  connect<T extends SignalsOf<ShaderMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ShaderMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ShaderMaterialSignals>>(signal: T, method: SignalFunction<ShaderMaterialSignals[T]>): number;
 
 
 
 
+}
 
+declare class ShaderMaterialSignals extends MaterialSignals {
   
 }

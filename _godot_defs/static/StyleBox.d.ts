@@ -2,12 +2,16 @@
 /**
  * StyleBox is [Resource] that provides an abstract base class for drawing stylized boxes for the UI. StyleBoxes are used for drawing the styles of buttons, line edit backgrounds, tree backgrounds, etc. and also for testing a transparency mask for pointer signals. If mask test fails on a StyleBox assigned as mask to a control, clicks and motion signals will go through it to the one below.
  *
+ * **Note:** For children of [Control] that have **Theme Properties**, the `focus` [StyleBox] is displayed over the `normal`, `hover` or `pressed` [StyleBox]. This makes the `focus` [StyleBox] more reusable across different nodes.
+ *
 */
 declare class StyleBox extends Resource {
 
   
 /**
  * StyleBox is [Resource] that provides an abstract base class for drawing stylized boxes for the UI. StyleBoxes are used for drawing the styles of buttons, line edit backgrounds, tree backgrounds, etc. and also for testing a transparency mask for pointer signals. If mask test fails on a StyleBox assigned as mask to a control, clicks and motion signals will go through it to the one below.
+ *
+ * **Note:** For children of [Control] that have **Theme Properties**, the `focus` [StyleBox] is displayed over the `normal`, `hover` or `pressed` [StyleBox]. This makes the `focus` [StyleBox] more reusable across different nodes.
  *
 */
   "new"(): StyleBox;
@@ -88,11 +92,14 @@ set_default_margin(margin: int, offset: float): void;
 /** Test a position in a rectangle, return whether it passes the mask test. */
 test_mask(point: Vector2, rect: Rect2): boolean;
 
-  connect<T extends SignalsOf<StyleBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StyleBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StyleBoxSignals>>(signal: T, method: SignalFunction<StyleBoxSignals[T]>): number;
 
 
 
 
+}
 
+declare class StyleBoxSignals extends ResourceSignals {
   
 }

@@ -1,13 +1,21 @@
 
 /**
- * Rect2 consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ * [Rect2] consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ *
+ * It uses floating-point coordinates.
+ *
+ * The 3D counterpart to [Rect2] is [AABB].
  *
 */
 declare class Rect2 {
 
   
 /**
- * Rect2 consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ * [Rect2] consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ *
+ * It uses floating-point coordinates.
+ *
+ * The 3D counterpart to [Rect2] is [AABB].
  *
 */
 
@@ -24,7 +32,7 @@ end: Vector2;
 position: Vector2;
 
 /**
- * Size from [member position] to [member end]. Typically all components are positive.
+ * Size from [member position] to [member end]. Typically, all components are positive.
  *
  * If the size is negative, you can use [method abs] to fix it.
  *
@@ -79,11 +87,14 @@ is_equal_approx(rect: Rect2): boolean;
 /** Returns a larger [Rect2] that contains this [Rect2] and [code]b[/code]. */
 merge(b: Rect2): Rect2;
 
-  connect<T extends SignalsOf<Rect2>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Rect2>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Rect2Signals>>(signal: T, method: SignalFunction<Rect2Signals[T]>): number;
 
 
 
 
+}
 
+declare class Rect2Signals {
   
 }

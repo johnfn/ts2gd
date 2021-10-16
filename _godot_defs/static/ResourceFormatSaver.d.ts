@@ -34,11 +34,14 @@ recognize(resource: Resource): boolean;
 */
 save(path: string, resource: Resource, flags: int): int;
 
-  connect<T extends SignalsOf<ResourceFormatSaver>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourceFormatSaver>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourceFormatSaverSignals>>(signal: T, method: SignalFunction<ResourceFormatSaverSignals[T]>): number;
 
 
 
 
+}
 
+declare class ResourceFormatSaverSignals extends ReferenceSignals {
   
 }

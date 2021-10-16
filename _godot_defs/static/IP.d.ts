@@ -22,7 +22,7 @@ clear_cache(hostname?: string): void;
 /** Removes a given item [code]id[/code] from the queue. This should be used to free a queue after it has completed to enable more queries to happen. */
 erase_resolve_item(id: int): void;
 
-/** Returns all of the user's current IPv4 and IPv6 addresses as an array. */
+/** Returns all the user's current IPv4 and IPv6 addresses as an array. */
 get_local_addresses(): any[];
 
 /**
@@ -47,16 +47,23 @@ get_local_interfaces(): any[];
 /** Returns a queued hostname's IP address, given its queue [code]id[/code]. Returns an empty string on error or if resolution hasn't happened yet (see [method get_resolve_item_status]). */
 get_resolve_item_address(id: int): string;
 
+/** Return resolved addresses, or an empty array if an error happened or resolution didn't happen yet (see [method get_resolve_item_status]). */
+get_resolve_item_addresses(id: int): any[];
+
 /** Returns a queued hostname's status as a [enum ResolverStatus] constant, given its queue [code]id[/code]. */
 get_resolve_item_status(id: int): int;
 
 /** Returns a given hostname's IPv4 or IPv6 address when resolved (blocking-type method). The address type returned depends on the [enum Type] constant given as [code]ip_type[/code]. */
 resolve_hostname(host: string, ip_type?: int): string;
 
+/** Resolves a given hostname in a blocking way. Addresses are returned as an [Array] of IPv4 or IPv6 depending on [code]ip_type[/code]. */
+resolve_hostname_addresses(host: string, ip_type?: int): any[];
+
 /** Creates a queue item to resolve a hostname to an IPv4 or IPv6 address depending on the [enum Type] constant given as [code]ip_type[/code]. Returns the queue ID if successful, or [constant RESOLVER_INVALID_ID] on error. */
 resolve_hostname_queue_item(host: string, ip_type?: int): int;
 
-  connect<T extends SignalsOf<IPClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<IPClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<IPClassSignals>>(signal: T, method: SignalFunction<IPClassSignals[T]>): number;
 
 
 
@@ -64,62 +71,64 @@ resolve_hostname_queue_item(host: string, ip_type?: int): int;
  * DNS hostname resolver status: No status.
  *
 */
-static RESOLVER_STATUS_NONE: 0;
+static RESOLVER_STATUS_NONE: any;
 
 /**
  * DNS hostname resolver status: Waiting.
  *
 */
-static RESOLVER_STATUS_WAITING: 1;
+static RESOLVER_STATUS_WAITING: any;
 
 /**
  * DNS hostname resolver status: Done.
  *
 */
-static RESOLVER_STATUS_DONE: 2;
+static RESOLVER_STATUS_DONE: any;
 
 /**
  * DNS hostname resolver status: Error.
  *
 */
-static RESOLVER_STATUS_ERROR: 3;
+static RESOLVER_STATUS_ERROR: any;
 
 /**
  * Maximum number of concurrent DNS resolver queries allowed, [constant RESOLVER_INVALID_ID] is returned if exceeded.
  *
 */
-static RESOLVER_MAX_QUERIES: 32;
+static RESOLVER_MAX_QUERIES: any;
 
 /**
  * Invalid ID constant. Returned if [constant RESOLVER_MAX_QUERIES] is exceeded.
  *
 */
- static RESOLVER_INVALID_ID: null;
+static RESOLVER_INVALID_ID: any;
 
 /**
  * Address type: None.
  *
 */
-static TYPE_NONE: 0;
+static TYPE_NONE: any;
 
 /**
  * Address type: Internet protocol version 4 (IPv4).
  *
 */
-static TYPE_IPV4: 1;
+static TYPE_IPV4: any;
 
 /**
  * Address type: Internet protocol version 6 (IPv6).
  *
 */
-static TYPE_IPV6: 2;
+static TYPE_IPV6: any;
 
 /**
  * Address type: Any.
  *
 */
-static TYPE_ANY: 3;
+static TYPE_ANY: any;
 
+}
 
+declare class IPClassSignals extends ObjectSignals {
   
 }

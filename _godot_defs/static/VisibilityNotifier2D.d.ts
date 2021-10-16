@@ -34,12 +34,15 @@ rect: Rect2;
 */
 is_on_screen(): boolean;
 
-  connect<T extends SignalsOf<VisibilityNotifier2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisibilityNotifier2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisibilityNotifier2DSignals>>(signal: T, method: SignalFunction<VisibilityNotifier2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisibilityNotifier2DSignals extends Node2DSignals {
   /**
  * Emitted when the VisibilityNotifier2D enters the screen.
  *

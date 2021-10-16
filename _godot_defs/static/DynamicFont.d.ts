@@ -1,8 +1,8 @@
 
 /**
- * DynamicFont renders vector font files (such as TTF or OTF) dynamically at runtime instead of using a prerendered texture atlas like [BitmapFont]. This trades the faster loading time of [BitmapFont]s for the ability to change font parameters like size and spacing during runtime. [DynamicFontData] is used for referencing the font file paths. DynamicFont also supports defining one or more fallback fonts, which will be used when displaying a character not supported by the main font.
+ * DynamicFont renders vector font files dynamically at runtime instead of using a prerendered texture atlas like [BitmapFont]. This trades the faster loading time of [BitmapFont]s for the ability to change font parameters like size and spacing during runtime. [DynamicFontData] is used for referencing the font file paths. DynamicFont also supports defining one or more fallback fonts, which will be used when displaying a character not supported by the main font.
  *
- * DynamicFont uses the [url=https://www.freetype.org/]FreeType[/url] library for rasterization.
+ * DynamicFont uses the [url=https://www.freetype.org/]FreeType[/url] library for rasterization. Supported formats are TrueType (`.ttf`), OpenType (`.otf`) and Web Open Font Format 1 (`.woff`). Web Open Font Format 2 (`.woff2`) is **not** supported.
  *
  * @example 
  * 
@@ -20,9 +20,9 @@ declare class DynamicFont extends Font {
 
   
 /**
- * DynamicFont renders vector font files (such as TTF or OTF) dynamically at runtime instead of using a prerendered texture atlas like [BitmapFont]. This trades the faster loading time of [BitmapFont]s for the ability to change font parameters like size and spacing during runtime. [DynamicFontData] is used for referencing the font file paths. DynamicFont also supports defining one or more fallback fonts, which will be used when displaying a character not supported by the main font.
+ * DynamicFont renders vector font files dynamically at runtime instead of using a prerendered texture atlas like [BitmapFont]. This trades the faster loading time of [BitmapFont]s for the ability to change font parameters like size and spacing during runtime. [DynamicFontData] is used for referencing the font file paths. DynamicFont also supports defining one or more fallback fonts, which will be used when displaying a character not supported by the main font.
  *
- * DynamicFont uses the [url=https://www.freetype.org/]FreeType[/url] library for rasterization.
+ * DynamicFont uses the [url=https://www.freetype.org/]FreeType[/url] library for rasterization. Supported formats are TrueType (`.ttf`), OpenType (`.otf`) and Web Open Font Format 1 (`.woff`). Web Open Font Format 2 (`.woff2`) is **not** supported.
  *
  * @example 
  * 
@@ -44,10 +44,20 @@ declare class DynamicFont extends Font {
 /** Extra spacing at the bottom in pixels. */
 extra_spacing_bottom: int;
 
-/** Extra character spacing in pixels. */
+/**
+ * Extra spacing for each character in pixels.
+ *
+ * This can be a negative number to make the distance between characters smaller.
+ *
+*/
 extra_spacing_char: int;
 
-/** Extra space spacing in pixels. */
+/**
+ * Extra spacing for the space character (in addition to [member extra_spacing_char]) in pixels.
+ *
+ * This can be a negative number to make the distance between words smaller.
+ *
+*/
 extra_spacing_space: int;
 
 /** Extra spacing at the top in pixels. */
@@ -105,7 +115,8 @@ set_fallback(idx: int, data: DynamicFontData): void;
 /** Sets the spacing for [code]type[/code] (see [enum SpacingType]) to [code]value[/code] in pixels (not relative to the font size). */
 set_spacing(type: int, value: int): void;
 
-  connect<T extends SignalsOf<DynamicFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<DynamicFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DynamicFontSignals>>(signal: T, method: SignalFunction<DynamicFontSignals[T]>): number;
 
 
 
@@ -113,26 +124,28 @@ set_spacing(type: int, value: int): void;
  * Spacing at the top.
  *
 */
-static SPACING_TOP: 0;
+static SPACING_TOP: any;
 
 /**
  * Spacing at the bottom.
  *
 */
-static SPACING_BOTTOM: 1;
+static SPACING_BOTTOM: any;
 
 /**
- * Character spacing.
+ * Spacing for each character.
  *
 */
-static SPACING_CHAR: 2;
+static SPACING_CHAR: any;
 
 /**
- * Space spacing.
+ * Spacing for the space character.
  *
 */
-static SPACING_SPACE: 3;
+static SPACING_SPACE: any;
 
+}
 
+declare class DynamicFontSignals extends FontSignals {
   
 }

@@ -39,13 +39,13 @@ get_free_output_port_id(): int;
 /** Returns the number of input ports in use. Alternative for [method get_free_input_port_id]. */
 get_input_port_count(): int;
 
-/** Returns a [String] description of the input ports as as colon-separated list using the format [code]id,type,name;[/code] (see [method add_input_port]). */
+/** Returns a [String] description of the input ports as a colon-separated list using the format [code]id,type,name;[/code] (see [method add_input_port]). */
 get_inputs(): string;
 
 /** Returns the number of output ports in use. Alternative for [method get_free_output_port_id]. */
 get_output_port_count(): int;
 
-/** Returns a [String] description of the output ports as as colon-separated list using the format [code]id,type,name;[/code] (see [method add_output_port]). */
+/** Returns a [String] description of the output ports as a colon-separated list using the format [code]id,type,name;[/code] (see [method add_output_port]). */
 get_outputs(): string;
 
 /** Returns [code]true[/code] if the specified input port exists. */
@@ -81,11 +81,14 @@ set_output_port_type(id: int, type: int): void;
 /** Defines all output ports using a [String] formatted as a colon-separated list: [code]id,type,name;[/code] (see [method add_output_port]). */
 set_outputs(outputs: string): void;
 
-  connect<T extends SignalsOf<VisualShaderNodeGroupBase>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeGroupBase>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeGroupBaseSignals>>(signal: T, method: SignalFunction<VisualShaderNodeGroupBaseSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeGroupBaseSignals extends VisualShaderNodeSignals {
   
 }

@@ -36,11 +36,14 @@ sync: boolean;
 
 
 
-  connect<T extends SignalsOf<AnimationNodeAdd3>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeAdd3>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeAdd3Signals>>(signal: T, method: SignalFunction<AnimationNodeAdd3Signals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeAdd3Signals extends AnimationNodeSignals {
   
 }

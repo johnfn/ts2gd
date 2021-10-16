@@ -51,7 +51,7 @@ declare class Animation extends Resource {
 */
 length: float;
 
-/** A flag indicating that the animation must loop. This is uses for correct interpolation of animation cycles, and for hinting the player that it must restart the animation. */
+/** A flag indicating that the animation must loop. This is used for correct interpolation of animation cycles, and for hinting the player that it must restart the animation. */
 loop: boolean;
 
 /** The animation step value. */
@@ -102,7 +102,7 @@ audio_track_set_key_end_offset(track_idx: int, key_idx: int, offset: float): voi
 /** Sets the start offset of the key identified by [code]key_idx[/code] to value [code]offset[/code]. The [code]track_idx[/code] must be the index of an Audio Track. */
 audio_track_set_key_start_offset(track_idx: int, key_idx: int, offset: float): void;
 
-/** Sets the stream of the key identified by [code]key_idx[/code] to value [code]offset[/code]. The [code]track_idx[/code] must be the index of an Audio Track. */
+/** Sets the stream of the key identified by [code]key_idx[/code] to value [code]stream[/code]. The [code]track_idx[/code] must be the index of an Audio Track. */
 audio_track_set_key_stream(track_idx: int, key_idx: int, stream: Resource): void;
 
 /** Returns the in handle of the key identified by [code]key_idx[/code]. The [code]track_idx[/code] must be the index of a Bezier Track. */
@@ -231,7 +231,7 @@ track_set_key_transition(track_idx: int, key_idx: int, transition: float): void;
 track_set_key_value(track_idx: int, key: int, value: any): void;
 
 /**
- * Sets the path of a track. Paths must be valid scene-tree paths to a node, and must be specified starting from the parent node of the node that will reproduce the animation. Tracks that control properties or bones must append their name after the path, separated by `":"`.
+ * Sets the path of a track. Paths must be valid scene-tree paths to a node and must be specified starting from the parent node of the node that will reproduce the animation. Tracks that control properties or bones must append their name after the path, separated by `":"`.
  *
  * For example, `"character/skeleton:ankle"` or `"character/mesh:transform/local"`.
  *
@@ -253,10 +253,14 @@ value_track_get_key_indices(track_idx: int, time_sec: float, delta: float): Pool
 /** Returns the update mode of a value track. */
 value_track_get_update_mode(track_idx: int): int;
 
+/** Returns the interpolated value at the given time (in seconds). The [code]track_idx[/code] must be the index of a value track. */
+value_track_interpolate(track_idx: int, time_sec: float): any;
+
 /** Sets the update mode (see [enum UpdateMode]) of a value track. */
 value_track_set_update_mode(track_idx: int, mode: int): void;
 
-  connect<T extends SignalsOf<Animation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Animation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationSignals>>(signal: T, method: SignalFunction<AnimationSignals[T]>): number;
 
 
 
@@ -264,81 +268,83 @@ value_track_set_update_mode(track_idx: int, mode: int): void;
  * Value tracks set values in node properties, but only those which can be Interpolated.
  *
 */
-static TYPE_VALUE: 0;
+static TYPE_VALUE: any;
 
 /**
  * Transform tracks are used to change node local transforms or skeleton pose bones. Transitions are interpolated.
  *
 */
-static TYPE_TRANSFORM: 1;
+static TYPE_TRANSFORM: any;
 
 /**
  * Method tracks call functions with given arguments per key.
  *
 */
-static TYPE_METHOD: 2;
+static TYPE_METHOD: any;
 
 /**
  * Bezier tracks are used to interpolate a value using custom curves. They can also be used to animate sub-properties of vectors and colors (e.g. alpha value of a [Color]).
  *
 */
-static TYPE_BEZIER: 3;
+static TYPE_BEZIER: any;
 
 /**
  * Audio tracks are used to play an audio stream with either type of [AudioStreamPlayer]. The stream can be trimmed and previewed in the animation.
  *
 */
-static TYPE_AUDIO: 4;
+static TYPE_AUDIO: any;
 
 /**
  * Animation tracks play animations in other [AnimationPlayer] nodes.
  *
 */
-static TYPE_ANIMATION: 5;
+static TYPE_ANIMATION: any;
 
 /**
  * No interpolation (nearest value).
  *
 */
-static INTERPOLATION_NEAREST: 0;
+static INTERPOLATION_NEAREST: any;
 
 /**
  * Linear interpolation.
  *
 */
-static INTERPOLATION_LINEAR: 1;
+static INTERPOLATION_LINEAR: any;
 
 /**
  * Cubic interpolation.
  *
 */
-static INTERPOLATION_CUBIC: 2;
+static INTERPOLATION_CUBIC: any;
 
 /**
  * Update between keyframes.
  *
 */
-static UPDATE_CONTINUOUS: 0;
+static UPDATE_CONTINUOUS: any;
 
 /**
  * Update at the keyframes and hold the value.
  *
 */
-static UPDATE_DISCRETE: 1;
+static UPDATE_DISCRETE: any;
 
 /**
  * Update at the keyframes.
  *
 */
-static UPDATE_TRIGGER: 2;
+static UPDATE_TRIGGER: any;
 
 /**
  * Same as linear interpolation, but also interpolates from the current value (i.e. dynamically at runtime) if the first key isn't at 0 seconds.
  *
 */
-static UPDATE_CAPTURE: 3;
+static UPDATE_CAPTURE: any;
 
+}
 
+declare class AnimationSignals extends ResourceSignals {
   /**
  * Emitted when there's a change in the list of tracks, e.g. tracks are added, moved or have changed paths.
  *

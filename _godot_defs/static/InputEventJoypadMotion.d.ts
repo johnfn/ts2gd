@@ -23,11 +23,14 @@ axis_value: float;
 
 
 
-  connect<T extends SignalsOf<InputEventJoypadMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventJoypadMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventJoypadMotionSignals>>(signal: T, method: SignalFunction<InputEventJoypadMotionSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventJoypadMotionSignals extends InputEventSignals {
   
 }

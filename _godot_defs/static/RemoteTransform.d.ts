@@ -37,11 +37,14 @@ use_global_coordinates: boolean;
 /** [RemoteTransform] caches the remote node. It may not notice if the remote node disappears; [method force_update_cache] forces it to update the cache again. */
 force_update_cache(): void;
 
-  connect<T extends SignalsOf<RemoteTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RemoteTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RemoteTransformSignals>>(signal: T, method: SignalFunction<RemoteTransformSignals[T]>): number;
 
 
 
 
+}
 
+declare class RemoteTransformSignals extends SpatialSignals {
   
 }

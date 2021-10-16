@@ -51,7 +51,8 @@ is_enabler_enabled(enabler: int): boolean;
 /** Sets active state of the enabler identified by given [enum Enabler] constant. */
 set_enabler(enabler: int, enabled: boolean): void;
 
-  connect<T extends SignalsOf<VisibilityEnabler2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisibilityEnabler2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisibilityEnabler2DSignals>>(signal: T, method: SignalFunction<VisibilityEnabler2DSignals[T]>): number;
 
 
 
@@ -59,44 +60,46 @@ set_enabler(enabler: int, enabled: boolean): void;
  * This enabler will pause [AnimationPlayer] nodes.
  *
 */
-static ENABLER_PAUSE_ANIMATIONS: 0;
+static ENABLER_PAUSE_ANIMATIONS: any;
 
 /**
  * This enabler will freeze [RigidBody2D] nodes.
  *
 */
-static ENABLER_FREEZE_BODIES: 1;
+static ENABLER_FREEZE_BODIES: any;
 
 /**
  * This enabler will stop [Particles2D] nodes.
  *
 */
-static ENABLER_PAUSE_PARTICLES: 2;
+static ENABLER_PAUSE_PARTICLES: any;
 
 /**
  * This enabler will stop the parent's _process function.
  *
 */
-static ENABLER_PARENT_PROCESS: 3;
+static ENABLER_PARENT_PROCESS: any;
 
 /**
  * This enabler will stop the parent's _physics_process function.
  *
 */
-static ENABLER_PARENT_PHYSICS_PROCESS: 4;
+static ENABLER_PARENT_PHYSICS_PROCESS: any;
 
 /**
  * This enabler will stop [AnimatedSprite] nodes animations.
  *
 */
-static ENABLER_PAUSE_ANIMATED_SPRITES: 5;
+static ENABLER_PAUSE_ANIMATED_SPRITES: any;
 
 /**
  * Represents the size of the [enum Enabler] enum.
  *
 */
-static ENABLER_MAX: 6;
+static ENABLER_MAX: any;
 
+}
 
+declare class VisibilityEnabler2DSignals extends VisibilityNotifier2DSignals {
   
 }

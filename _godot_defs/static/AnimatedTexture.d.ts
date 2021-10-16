@@ -79,7 +79,8 @@ set_frame_delay(frame: int, delay: float): void;
 */
 set_frame_texture(frame: int, texture: Texture): void;
 
-  connect<T extends SignalsOf<AnimatedTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimatedTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimatedTextureSignals>>(signal: T, method: SignalFunction<AnimatedTextureSignals[T]>): number;
 
 
 
@@ -87,8 +88,10 @@ set_frame_texture(frame: int, texture: Texture): void;
  * The maximum number of frames supported by [AnimatedTexture]. If you need more frames in your animation, use [AnimationPlayer] or [AnimatedSprite].
  *
 */
-static MAX_FRAMES: 256;
+static MAX_FRAMES: any;
 
+}
 
+declare class AnimatedTextureSignals extends TextureSignals {
   
 }

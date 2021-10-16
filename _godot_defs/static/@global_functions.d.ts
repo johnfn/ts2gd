@@ -40,8 +40,7 @@ declare const ColorN: (name: string, alpha?: float) => Color
  *
  * @example 
  * 
- * # a is 1
- * a = abs(-1)
+ * a = abs(-1) # a is 1
  * @summary 
  * 
  *
@@ -50,7 +49,7 @@ declare const abs: (s: float) => float
     
     
 /**
- * Returns the arc cosine of `s` in radians. Use to get the angle of cosine `s`.
+ * Returns the arc cosine of `s` in radians. Use to get the angle of cosine `s`. `s` must be between `-1.0` and `1.0` (inclusive), otherwise, [method acos] will return [constant NAN].
  *
  * @example 
  * 
@@ -64,7 +63,7 @@ declare const acos: (s: float) => float
     
     
 /**
- * Returns the arc sine of `s` in radians. Use to get the angle of sine `s`.
+ * Returns the arc sine of `s` in radians. Use to get the angle of sine `s`. `s` must be between `-1.0` and `1.0` (inclusive), otherwise, [method asin] will return [constant NAN].
  *
  * @example 
  * 
@@ -78,17 +77,19 @@ declare const asin: (s: float) => float
     
     
 /**
- * Asserts that the `condition` is `true`. If the `condition` is `false`, an error is generated and the program is halted until you resume it. Only executes in debug builds, or when running the game from the editor. Use it for debugging purposes, to make sure a statement is `true` during development.
+ * Asserts that the `condition` is `true`. If the `condition` is `false`, an error is generated. When running from the editor, the running project will also be paused until you resume it. This can be used as a stronger form of [method push_error] for reporting errors to project developers or add-on users.
+ *
+ * **Note:** For performance reasons, the code inside [method assert] is only executed in debug builds or when running the project from the editor. Don't include code that has side effects in an [method assert] call. Otherwise, the project will behave differently when exported in release mode.
  *
  * The optional `message` argument, if given, is shown in addition to the generic "Assertion failed" message. You can use this to provide additional details about why the assertion failed.
  *
  * @example 
  * 
- * # Imagine we always want speed to be between 0 and 20
- * speed = -10
+ * # Imagine we always want speed to be between 0 and 20.
+ * var speed = -10
  * assert(speed < 20) # True, the program will continue
  * assert(speed >= 0) # False, the program will stop
- * assert(speed >= 0 && speed < 20) # You can also combine the two conditional statements in one check
+ * assert(speed >= 0 and speed < 20) # You can also combine the two conditional statements in one check
  * assert(speed < 20, "speed = %f, but the speed limit is 20" % speed) # Show a message with clarifying details
  * @summary 
  * 
@@ -145,12 +146,12 @@ declare const cartesian2polar: (x: float, y: float) => Vector2
  *
  * @example 
  * 
- * i = ceil(1.45)  # i is 2
- * i = ceil(1.001) # i is 2
+ * a = ceil(1.45)  # a is 2.0
+ * a = ceil(1.001) # a is 2.0
  * @summary 
  * 
  *
- * See also [method floor], [method round], and [method stepify].
+ * See also [method floor], [method round], [method stepify], and [int].
  *
 */
 declare const ceil: (s: float) => float
@@ -178,12 +179,9 @@ declare const char: (code: int) => string
  *
  * @example 
  * 
- * speed = 1000
- * # a is 20
- * a = clamp(speed, 1, 20)
- * speed = -10
- * # a is 1
- * a = clamp(speed, 1, 20)
+ * a = clamp(1000, 1, 20) # a is 20
+ * a = clamp(-10, 1, 20)  # a is 1
+ * a = clamp(15, 1, 20)   # a is 15
  * @summary 
  * 
  *
@@ -214,9 +212,8 @@ declare const convert: (what: any, type: int) => any
  *
  * @example 
  * 
- * # Prints 1 then -1
- * print(cos(PI * 2))
- * print(cos(PI))
+ * a = cos(TAU) # a is 1.0
+ * a = cos(PI)  # a is -1.0
  * @summary 
  * 
  *
@@ -229,8 +226,7 @@ declare const cos: (s: float) => float
  *
  * @example 
  * 
- * # Prints 1.543081
- * print(cosh(1))
+ * print(cosh(1)) # Prints 1.543081
  * @summary 
  * 
  *
@@ -247,12 +243,13 @@ declare const decimals: (step: float) => int
     
     
 /**
+ * **Note:** `dectime` has been deprecated and will be removed in Godot 4.0, please use [method move_toward] instead.
+ *
  * Returns the result of `value` decreased by `step` * `amount`.
  *
  * @example 
  * 
- * # a = 59
- * a = dectime(60, 10, 0.1))
+ * a = dectime(60, 10, 0.1)) # a is 59.0
  * @summary 
  * 
  *
@@ -265,8 +262,7 @@ declare const dectime: (value: float, amount: float, step: float) => float
  *
  * @example 
  * 
- * # r is 3.141593
- * r = deg2rad(180)
+ * r = deg2rad(180) # r is 3.141593
  * @summary 
  * 
  *
@@ -274,18 +270,37 @@ declare const dectime: (value: float, amount: float, step: float) => float
 declare const deg2rad: (deg: float) => float
     
     
-/** Converts a previously converted instance to a dictionary, back into an instance. Useful for deserializing. */
-declare const dict2inst: (dict: Dictionary) => Object
+/** Converts a dictionary (previously created with [method inst2dict]) back to an instance. Useful for deserializing. */
+declare const dict2inst: (dict: Dictionary<any, any>) => Object
     
     
-/** Easing function, based on exponent. The curve values are: 0 is constant, 1 is linear, 0 to 1 is ease-in, 1+ is ease out. Negative values are in-out/out in. */
+/**
+ * Returns an "eased" value of `x` based on an easing function defined with `curve`. This easing function is based on an exponent. The `curve` can be any floating-point number, with specific values leading to the following behaviors:
+ *
+ * @example 
+ * 
+ * - Lower than -1.0 (exclusive): Ease in-out
+ * - 1.0: Linear
+ * - Between -1.0 and 0.0 (exclusive): Ease out-in
+ * - 0.0: Constant
+ * - Between 0.0 to 1.0 (exclusive): Ease in
+ * - 1.0: Linear
+ * - Greater than 1.0 (exclusive): Ease out
+ * @summary 
+ * 
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/3.4/img/ease_cheatsheet.png]ease() curve values cheatsheet[/url]
+ *
+ * See also [method smoothstep]. If you need to perform more advanced transitions, use [Tween] or [AnimationPlayer].
+ *
+*/
 declare const ease: (s: float, curve: float) => float
     
     
 /**
  * The natural exponential function. It raises the mathematical constant **e** to the power of `s` and returns it.
  *
- * **e** has an approximate value of 2.71828.
+ * **e** has an approximate value of 2.71828, and can be obtained with `exp(1)`.
  *
  * For exponents to other bases use the method [method pow].
  *
@@ -304,16 +319,15 @@ declare const exp: (s: float) => float
  *
  * @example 
  * 
- * # a is 2.0
- * a = floor(2.99)
- * # a is -3.0
- * a = floor(-2.99)
+ * a = floor(2.45)  # a is 2.0
+ * a = floor(2.99)  # a is 2.0
+ * a = floor(-2.99) # a is -3.0
  * @summary 
  * 
  *
- * See also [method ceil], [method round], and [method stepify].
+ * See also [method ceil], [method round], [method stepify], and [int].
  *
- * **Note:** This method returns a float. If you need an integer, you can use `int(s)` directly.
+ * **Note:** This method returns a float. If you need an integer and `s` is a non-negative number, you can use `int(s)` directly.
  *
 */
 declare const floor: (s: float) => float
@@ -324,8 +338,7 @@ declare const floor: (s: float) => float
  *
  * @example 
  * 
- * # Remainder is 1.5
- * var remainder = fmod(7, 5.5)
+ * r = fmod(7, 5.5) # r is 1.5
  * @summary 
  * 
  *
@@ -442,7 +455,7 @@ declare const hash: (_var: any) => int
  * 
  *
 */
-declare const inst2dict: (inst: Object) => Dictionary
+declare const inst2dict: (inst: Object) => Dictionary<any, any>
     
     
 /**
@@ -479,7 +492,14 @@ declare const instance_from_id: (instance_id: int) => Object
 declare const inverse_lerp: (from: float, to: float, weight: float) => float
     
     
-/** Returns [code]true[/code] if [code]a[/code] and [code]b[/code] are approximately equal to each other. */
+/**
+ * Returns `true` if `a` and `b` are approximately equal to each other.
+ *
+ * Here, approximately equal means that `a` and `b` are within a small internal epsilon of each other, which scales with the magnitude of the numbers.
+ *
+ * Infinity values of the same sign are considered equal.
+ *
+*/
 declare const is_equal_approx: (a: float, b: float) => boolean
     
     
@@ -576,24 +596,6 @@ declare const linear2db: (nrg: float) => float
     
     
 /**
- * Loads a resource from the filesystem located at `path`. The resource is loaded on the method call (unless it's referenced already elsewhere, e.g. in another script or in the scene), which might cause slight delay, especially when loading scenes. To avoid unnecessary delays when loading something multiple times, either store the resource in a variable or use [method preload].
- *
- * **Note:** Resource paths can be obtained by right-clicking on a resource in the FileSystem dock and choosing "Copy Path" or by dragging the file from the FileSystem dock into the script.
- *
- * @example 
- * 
- * # Load a scene called main located in the root of the project directory and cache it in a variable.
- * var main = load("res://main.tscn") # main will contain a PackedScene resource.
- * @summary 
- * 
- *
- * **Important:** The path must be absolute, a local path will just return `null`.
- *
-*/
-declare const load: (path: string) => Resource
-    
-    
-/**
  * Natural logarithm. The amount of time needed to reach a certain level of continuous growth.
  *
  * **Note:** This is not the same as the "log" function on most calculators, which uses a base 10 logarithm.
@@ -603,6 +605,8 @@ declare const load: (path: string) => Resource
  * log(10) # Returns 2.302585
  * @summary 
  * 
+ *
+ * **Note:** The logarithm of `0` returns `-inf`, while negative values return `-nan`.
  *
 */
 declare const log: (s: float) => float
@@ -643,7 +647,9 @@ declare const min: (a: float, b: float) => float
  *
  * @example 
  * 
+ * move_toward(5, 10, 4) # Returns 9
  * move_toward(10, 5, 4) # Returns 6
+ * move_toward(10, 5, -1.5) # Returns 11.5
  * @summary 
  * 
  *
@@ -652,15 +658,21 @@ declare const move_toward: (from: float, to: float, delta: float) => float
     
     
 /**
- * Returns the nearest larger power of 2 for integer `value`.
+ * Returns the nearest equal or larger power of 2 for integer `value`.
+ *
+ * In other words, returns the smallest value `a` where `a = pow(2, n)` such that `value <= a` for some non-negative integer `n`.
  *
  * @example 
  * 
  * nearest_po2(3) # Returns 4
  * nearest_po2(4) # Returns 4
  * nearest_po2(5) # Returns 8
+ * nearest_po2(0) # Returns 0 (this may not be what you expect)
+ * nearest_po2(-1) # Returns 0 (this may not be what you expect)
  * @summary 
  * 
+ *
+ * **WARNING:** Due to the way it is implemented, this function returns `0` rather than `1` for non-positive values of `value` (in reality, 1 is the smallest integer power of 2).
  *
 */
 declare const nearest_po2: (value: int) => int
@@ -716,7 +728,7 @@ declare const polar2cartesian: (r: float, th: float) => Vector2
  * @example 
  * 
  * for i in range(-3, 4):
- *     print("%2.0f %2.0f %2.0f" % [i, i % 3, posmod(i, 3)])
+ *     print("%2d %2d %2d" % [i, i % 3, posmod(i, 3)])
  * @summary 
  * 
  *
@@ -739,32 +751,16 @@ declare const posmod: (a: int, b: int) => int
     
     
 /**
- * Returns the result of `x` raised to the power of `y`.
+ * Returns the result of `base` raised to the power of `exp`.
  *
  * @example 
  * 
- * pow(2, 5) # Returns 32
+ * pow(2, 5) # Returns 32.0
  * @summary 
  * 
  *
 */
 declare const pow: (base: float, exp: float) => float
-    
-    
-/**
- * Returns a [Resource] from the filesystem located at `path`. The resource is loaded during script parsing, i.e. is loaded with the script and [method preload] effectively acts as a reference to that resource. Note that the method requires a constant path. If you want to load a resource from a dynamic/variable path, use [method load].
- *
- * **Note:** Resource paths can be obtained by right clicking on a resource in the Assets Panel and choosing "Copy Path" or by dragging the file from the FileSystem dock into the script.
- *
- * @example 
- * 
- * # Instance a scene.
- * var diamond = preload("res://diamond.tscn").instance()
- * @summary 
- * 
- *
-*/
-declare const preload: (path: string) => Resource
     
     
 
@@ -853,6 +849,8 @@ declare const printt: (...args: any[]) => void
  * @summary 
  * 
  *
+ * **Note:** Errors printed this way will not pause project execution. To print an error message and pause project execution in debug builds, use `assert(false, "test error")` instead.
+ *
 */
 declare const push_error: (message: string) => void
     
@@ -875,7 +873,7 @@ declare const push_warning: (message: string) => void
  *
  * @example 
  * 
- * rad2deg(0.523599) # Returns 30
+ * rad2deg(0.523599) # Returns 30.0
  * @summary 
  * 
  *
@@ -914,7 +912,7 @@ declare const randf: () => float
     
     
 /**
- * Returns a random unsigned 32 bit integer. Use remainder to obtain a random value in the interval `[0, N - 1]` (where N is smaller than 2^32).
+ * Returns a random unsigned 32-bit integer. Use remainder to obtain a random value in the interval `[0, N - 1]` (where N is smaller than 2^32).
  *
  * @example 
  * 
@@ -944,7 +942,9 @@ declare const randomize: () => void
     
     
 /**
- * Returns an array with the given range. Range can be 1 argument N (0 to N-1), two arguments (initial, final-1) or three arguments (initial, final-1, increment).
+ * Returns an array with the given range. Range can be 1 argument `N` (0 to `N` - 1), two arguments (`initial`, `final - 1`) or three arguments (`initial`, `final - 1`, `increment`). Returns an empty array if the range isn't valid (e.g. `range(2, 5, -1)` or `range(5, 5, 1)`).
+ *
+ * Returns an array with the given range. `range()` can have 1 argument N (`0` to `N - 1`), two arguments (`initial`, `final - 1`) or three arguments (`initial`, `final - 1`, `increment`). `increment` can be negative. If `increment` is negative, `final - 1` will become `final + 1`. Also, the initial value must be greater than the final value for the loop to run.
  *
  * @example 
  * 
@@ -961,6 +961,28 @@ declare const randomize: () => void
  * [0, 1, 2, 3]
  * [2, 3, 4]
  * [0, 2, 4]
+ * @summary 
+ * 
+ *
+ * To iterate over an [Array] backwards, use:
+ *
+ * @example 
+ * 
+ * var array = [3, 6, 9]
+ * var i := array.size() - 1
+ * while i >= 0:
+ *     print(array**)
+ *     i -= 1
+ * @summary 
+ * 
+ *
+ * Output:
+ *
+ * @example 
+ * 
+ * 9
+ * 6
+ * 3
  * @summary 
  * 
  *
@@ -986,11 +1008,13 @@ declare const range_lerp: (value: float, istart: float, istop: float, ostart: fl
  *
  * @example 
  * 
- * round(2.6) # Returns 3
+ * a = round(2.49) # a is 2.0
+ * a = round(2.5)  # a is 3.0
+ * a = round(2.51) # a is 3.0
  * @summary 
  * 
  *
- * See also [method floor], [method ceil], and [method stepify].
+ * See also [method floor], [method ceil], [method stepify], and [int].
  *
 */
 declare const round: (s: float) => float
@@ -1053,18 +1077,27 @@ declare const sinh: (s: float) => float
     
     
 /**
- * Returns a number smoothly interpolated between the `from` and `to`, based on the `weight`. Similar to [method lerp], but interpolates faster at the beginning and slower at the end.
+ * Returns the result of smoothly interpolating the value of `s` between `0` and `1`, based on the where `s` lies with respect to the edges `from` and `to`.
+ *
+ * The return value is `0` if `s <= from`, and `1` if `s >= to`. If `s` lies between `from` and `to`, the returned value follows an S-shaped curve that maps `s` between `0` and `1`.
+ *
+ * This S-shaped curve is the cubic Hermite interpolator, given by `f(y) = 3*y^2 - 2*y^3` where `y = (x-from) / (to-from)`.
  *
  * @example 
  * 
- * smoothstep(0, 2, 0.5) # Returns 0.15
+ * smoothstep(0, 2, -5.0) # Returns 0.0
+ * smoothstep(0, 2, 0.5) # Returns 0.15625
  * smoothstep(0, 2, 1.0) # Returns 0.5
  * smoothstep(0, 2, 2.0) # Returns 1.0
  * @summary 
  * 
  *
+ * Compared to [method ease] with a curve value of `-1.6521`, [method smoothstep] returns the smoothest possible curve with no sudden changes in the derivative. If you need to perform more advanced transitions, use [Tween] or [AnimationPlayer].
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/3.4/img/smoothstep_ease_comparison.png]Comparison between smoothstep() and ease(x, -1.6521) return values[/url]
+ *
 */
-declare const smoothstep: (from: float, to: float, weight: float) => float
+declare const smoothstep: (from: float, to: float, s: float) => float
     
     
 /**
@@ -1076,7 +1109,7 @@ declare const smoothstep: (from: float, to: float, weight: float) => float
  * @summary 
  * 
  *
- * If you need negative inputs, use `System.Numerics.Complex` in C#.
+ * **Note:** Negative values of `s` return NaN. If you need negative inputs, use `System.Numerics.Complex` in C#.
  *
 */
 declare const sqrt: (s: float) => float
@@ -1087,12 +1120,9 @@ declare const sqrt: (s: float) => float
  *
  * @example 
  * 
- * # n is 0
- * n = step_decimals(5)
- * # n is 4
- * n = step_decimals(1.0005)
- * # n is 9
- * n = step_decimals(0.000000005)
+ * n = step_decimals(5)           # n is 0
+ * n = step_decimals(1.0005)      # n is 4
+ * n = step_decimals(0.000000005) # n is 9
  * @summary 
  * 
  *
@@ -1105,19 +1135,19 @@ declare const step_decimals: (step: float) => int
  *
  * @example 
  * 
- * stepify(100, 32) # Returns 96
+ * stepify(100, 32) # Returns 96.0
  * stepify(3.14159, 0.01) # Returns 3.14
  * @summary 
  * 
  *
- * See also [method ceil], [method floor], and [method round].
+ * See also [method ceil], [method floor], [method round], and [int].
  *
 */
 declare const stepify: (s: float, step: float) => float
     
     
 /**
- * Converts one or more arguments to string in the best way possible.
+ * Converts one or more arguments of any type to string in the best way possible.
  *
  * @example 
  * 
@@ -1165,8 +1195,8 @@ declare const tan: (s: float) => float
  *
  * @example 
  * 
- * a = log(2.0) # Returns 0.693147
- * tanh(a)      # Returns 0.6
+ * a = log(2.0) # a is 0.693147
+ * b = tanh(a)  # b is 0.6
  * @summary 
  * 
  *

@@ -60,11 +60,14 @@ set_blend_point_node(point: int, node: AnimationRootNode): void;
 /** Updates the position of the point at index [code]point[/code] on the blend axis. */
 set_blend_point_position(point: int, pos: float): void;
 
-  connect<T extends SignalsOf<AnimationNodeBlendSpace1D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeBlendSpace1D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeBlendSpace1DSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace1DSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeBlendSpace1DSignals extends AnimationRootNodeSignals {
   
 }

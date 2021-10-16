@@ -23,11 +23,14 @@ radius: float;
 
 
 
-  connect<T extends SignalsOf<CapsuleShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CapsuleShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CapsuleShapeSignals>>(signal: T, method: SignalFunction<CapsuleShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class CapsuleShapeSignals extends ShapeSignals {
   
 }

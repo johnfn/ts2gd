@@ -23,11 +23,14 @@ occluder: OccluderPolygon2D;
 
 
 
-  connect<T extends SignalsOf<LightOccluder2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<LightOccluder2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<LightOccluder2DSignals>>(signal: T, method: SignalFunction<LightOccluder2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class LightOccluder2DSignals extends Node2DSignals {
   
 }

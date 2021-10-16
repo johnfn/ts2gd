@@ -87,7 +87,8 @@ normalized(): Plane;
 /** Returns the orthogonal projection of [code]point[/code] into a point in the plane. */
 project(point: Vector3): Vector3;
 
-  connect<T extends SignalsOf<Plane>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Plane>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PlaneSignals>>(signal: T, method: SignalFunction<PlaneSignals[T]>): number;
 
 
 
@@ -109,6 +110,8 @@ static PLANE_XZ: Plane;
 */
 static PLANE_XY: Plane;
 
+}
 
+declare class PlaneSignals {
   
 }

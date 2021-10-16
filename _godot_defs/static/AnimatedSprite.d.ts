@@ -55,12 +55,15 @@ play(anim?: string, backwards?: boolean): void;
 /** Stops the current animation (does not reset the frame counter). */
 stop(): void;
 
-  connect<T extends SignalsOf<AnimatedSprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimatedSprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimatedSpriteSignals>>(signal: T, method: SignalFunction<AnimatedSpriteSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimatedSpriteSignals extends Node2DSignals {
   /**
  * Emitted when the animation is finished (when it plays the last frame). If the animation is looping, this signal is emitted every time the last frame is drawn.
  *

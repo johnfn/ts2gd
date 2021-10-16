@@ -31,18 +31,19 @@ get_connected_port(): int;
 /** Returns the status of the connection, see [enum Status]. */
 get_status(): int;
 
-/** Returns [code]true[/code] if this peer is currently connected to a host, [code]false[/code] otherwise. */
+/** Returns [code]true[/code] if this peer is currently connected or is connecting to a host, [code]false[/code] otherwise. */
 is_connected_to_host(): boolean;
 
 /**
- * Disables Nagle's algorithm to improve latency for small packets.
+ * If `enabled` is `true`, packets will be sent immediately. If `enabled` is `false` (the default), packet transfers will be delayed and combined using [url=https://en.wikipedia.org/wiki/Nagle%27s_algorithm]Nagle's algorithm[/url].
  *
- * **Note:** For applications that send large packets or need to transfer a lot of data, this can decrease the total available bandwidth.
+ * **Note:** It's recommended to leave this disabled for applications that send large packets or need to transfer a lot of data, as enabling this can decrease the total available bandwidth.
  *
 */
 set_no_delay(enabled: boolean): void;
 
-  connect<T extends SignalsOf<StreamPeerTCP>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StreamPeerTCP>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StreamPeerTCPSignals>>(signal: T, method: SignalFunction<StreamPeerTCPSignals[T]>): number;
 
 
 
@@ -50,26 +51,28 @@ set_no_delay(enabled: boolean): void;
  * The initial status of the [StreamPeerTCP]. This is also the status after disconnecting.
  *
 */
-static STATUS_NONE: 0;
+static STATUS_NONE: any;
 
 /**
  * A status representing a [StreamPeerTCP] that is connecting to a host.
  *
 */
-static STATUS_CONNECTING: 1;
+static STATUS_CONNECTING: any;
 
 /**
  * A status representing a [StreamPeerTCP] that is connected to a host.
  *
 */
-static STATUS_CONNECTED: 2;
+static STATUS_CONNECTED: any;
 
 /**
  * A status representing a [StreamPeerTCP] in error state.
  *
 */
-static STATUS_ERROR: 3;
+static STATUS_ERROR: any;
 
+}
 
+declare class StreamPeerTCPSignals extends StreamPeerSignals {
   
 }

@@ -128,16 +128,19 @@ setup(key: CryptoKey, certificate: X509Certificate, chain?: X509Certificate): in
 /**
  * Try to initiate the DTLS handshake with the given `udp_peer` which must be already connected (see [method PacketPeerUDP.connect_to_host]).
  *
- * **Note**: You must check that the state of the return PacketPeerUDP is [constant PacketPeerDTLS.STATUS_HANDSHAKING], as it is normal that 50% of the new connections will be invalid due to cookie exchange.
+ * **Note:** You must check that the state of the return PacketPeerUDP is [constant PacketPeerDTLS.STATUS_HANDSHAKING], as it is normal that 50% of the new connections will be invalid due to cookie exchange.
  *
 */
 take_connection(udp_peer: PacketPeerUDP): PacketPeerDTLS;
 
-  connect<T extends SignalsOf<DTLSServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<DTLSServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DTLSServerSignals>>(signal: T, method: SignalFunction<DTLSServerSignals[T]>): number;
 
 
 
 
+}
 
+declare class DTLSServerSignals extends ReferenceSignals {
   
 }

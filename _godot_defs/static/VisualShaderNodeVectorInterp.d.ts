@@ -18,11 +18,14 @@ declare class VisualShaderNodeVectorInterp extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorInterp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorInterp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorInterpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorInterpSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorInterpSignals extends VisualShaderNodeSignals {
   
 }

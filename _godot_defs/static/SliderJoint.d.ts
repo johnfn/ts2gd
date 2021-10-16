@@ -1,13 +1,13 @@
 
 /**
- * Slides across the X axis of the pivot object.
+ * Slides across the X axis of the pivot object. See also [Generic6DOFJoint].
  *
 */
 declare class SliderJoint extends Joint {
 
   
 /**
- * Slides across the X axis of the pivot object.
+ * Slides across the X axis of the pivot object. See also [Generic6DOFJoint].
  *
 */
   "new"(): SliderJoint;
@@ -102,7 +102,8 @@ get_param(param: int): float;
 /** No documentation provided. */
 set_param(param: int, value: float): void;
 
-  connect<T extends SignalsOf<SliderJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SliderJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SliderJointSignals>>(signal: T, method: SignalFunction<SliderJointSignals[T]>): number;
 
 
 
@@ -110,140 +111,142 @@ set_param(param: int, value: float): void;
  * The maximum difference between the pivot points on their X axis before damping happens.
  *
 */
-static PARAM_LINEAR_LIMIT_UPPER: 0;
+static PARAM_LINEAR_LIMIT_UPPER: any;
 
 /**
  * The minimum difference between the pivot points on their X axis before damping happens.
  *
 */
-static PARAM_LINEAR_LIMIT_LOWER: 1;
+static PARAM_LINEAR_LIMIT_LOWER: any;
 
 /**
  * A factor applied to the movement across the slider axis once the limits get surpassed. The lower, the slower the movement.
  *
 */
-static PARAM_LINEAR_LIMIT_SOFTNESS: 2;
+static PARAM_LINEAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution once the limits are surpassed. The lower, the more velocityenergy gets lost.
  *
 */
-static PARAM_LINEAR_LIMIT_RESTITUTION: 3;
+static PARAM_LINEAR_LIMIT_RESTITUTION: any;
 
 /**
  * The amount of damping once the slider limits are surpassed.
  *
 */
-static PARAM_LINEAR_LIMIT_DAMPING: 4;
+static PARAM_LINEAR_LIMIT_DAMPING: any;
 
 /**
  * A factor applied to the movement across the slider axis as long as the slider is in the limits. The lower, the slower the movement.
  *
 */
-static PARAM_LINEAR_MOTION_SOFTNESS: 5;
+static PARAM_LINEAR_MOTION_SOFTNESS: any;
 
 /**
  * The amount of restitution inside the slider limits.
  *
 */
-static PARAM_LINEAR_MOTION_RESTITUTION: 6;
+static PARAM_LINEAR_MOTION_RESTITUTION: any;
 
 /**
  * The amount of damping inside the slider limits.
  *
 */
-static PARAM_LINEAR_MOTION_DAMPING: 7;
+static PARAM_LINEAR_MOTION_DAMPING: any;
 
 /**
  * A factor applied to the movement across axes orthogonal to the slider.
  *
 */
-static PARAM_LINEAR_ORTHOGONAL_SOFTNESS: 8;
+static PARAM_LINEAR_ORTHOGONAL_SOFTNESS: any;
 
 /**
  * The amount of restitution when movement is across axes orthogonal to the slider.
  *
 */
-static PARAM_LINEAR_ORTHOGONAL_RESTITUTION: 9;
+static PARAM_LINEAR_ORTHOGONAL_RESTITUTION: any;
 
 /**
  * The amount of damping when movement is across axes orthogonal to the slider.
  *
 */
-static PARAM_LINEAR_ORTHOGONAL_DAMPING: 10;
+static PARAM_LINEAR_ORTHOGONAL_DAMPING: any;
 
 /**
  * The upper limit of rotation in the slider.
  *
 */
-static PARAM_ANGULAR_LIMIT_UPPER: 11;
+static PARAM_ANGULAR_LIMIT_UPPER: any;
 
 /**
  * The lower limit of rotation in the slider.
  *
 */
-static PARAM_ANGULAR_LIMIT_LOWER: 12;
+static PARAM_ANGULAR_LIMIT_LOWER: any;
 
 /**
  * A factor applied to the all rotation once the limit is surpassed.
  *
 */
-static PARAM_ANGULAR_LIMIT_SOFTNESS: 13;
+static PARAM_ANGULAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation when the limit is surpassed.
  *
 */
-static PARAM_ANGULAR_LIMIT_RESTITUTION: 14;
+static PARAM_ANGULAR_LIMIT_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation when the limit is surpassed.
  *
 */
-static PARAM_ANGULAR_LIMIT_DAMPING: 15;
+static PARAM_ANGULAR_LIMIT_DAMPING: any;
 
 /**
  * A factor applied to the all rotation in the limits.
  *
 */
-static PARAM_ANGULAR_MOTION_SOFTNESS: 16;
+static PARAM_ANGULAR_MOTION_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation in the limits.
  *
 */
-static PARAM_ANGULAR_MOTION_RESTITUTION: 17;
+static PARAM_ANGULAR_MOTION_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation in the limits.
  *
 */
-static PARAM_ANGULAR_MOTION_DAMPING: 18;
+static PARAM_ANGULAR_MOTION_DAMPING: any;
 
 /**
  * A factor applied to the all rotation across axes orthogonal to the slider.
  *
 */
-static PARAM_ANGULAR_ORTHOGONAL_SOFTNESS: 19;
+static PARAM_ANGULAR_ORTHOGONAL_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation across axes orthogonal to the slider.
  *
 */
-static PARAM_ANGULAR_ORTHOGONAL_RESTITUTION: 20;
+static PARAM_ANGULAR_ORTHOGONAL_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation across axes orthogonal to the slider.
  *
 */
-static PARAM_ANGULAR_ORTHOGONAL_DAMPING: 21;
+static PARAM_ANGULAR_ORTHOGONAL_DAMPING: any;
 
 /**
  * Represents the size of the [enum Param] enum.
  *
 */
-static PARAM_MAX: 22;
+static PARAM_MAX: any;
 
+}
 
+declare class SliderJointSignals extends JointSignals {
   
 }

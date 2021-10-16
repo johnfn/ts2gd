@@ -87,11 +87,14 @@ set_hidden(hidden: boolean): void;
 /** Sets the reference [Spatial] node for the gizmo. [code]node[/code] must inherit from [Spatial]. */
 set_spatial_node(node: Node): void;
 
-  connect<T extends SignalsOf<EditorSpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorSpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorSpatialGizmoSignals>>(signal: T, method: SignalFunction<EditorSpatialGizmoSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorSpatialGizmoSignals extends SpatialGizmoSignals {
   
 }

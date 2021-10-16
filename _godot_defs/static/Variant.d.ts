@@ -158,11 +158,14 @@ declare class Variant {
 
 
 
-  connect<T extends SignalsOf<Variant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Variant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VariantSignals>>(signal: T, method: SignalFunction<VariantSignals[T]>): number;
 
 
 
 
+}
 
+declare class VariantSignals {
   
 }

@@ -22,11 +22,14 @@ load_path: string;
 /** Loads the texture from the given path. */
 load(path: string): int;
 
-  connect<T extends SignalsOf<StreamTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StreamTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StreamTextureSignals>>(signal: T, method: SignalFunction<StreamTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class StreamTextureSignals extends TextureSignals {
   
 }

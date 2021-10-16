@@ -18,11 +18,14 @@ declare class VisualShaderNodeVectorDecompose extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorDecompose>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorDecompose>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorDecomposeSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorDecomposeSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorDecomposeSignals extends VisualShaderNodeSignals {
   
 }

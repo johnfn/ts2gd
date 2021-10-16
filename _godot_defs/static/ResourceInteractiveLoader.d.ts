@@ -47,11 +47,14 @@ poll(): int;
 */
 wait(): int;
 
-  connect<T extends SignalsOf<ResourceInteractiveLoader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourceInteractiveLoader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourceInteractiveLoaderSignals>>(signal: T, method: SignalFunction<ResourceInteractiveLoaderSignals[T]>): number;
 
 
 
 
+}
 
+declare class ResourceInteractiveLoaderSignals extends ReferenceSignals {
   
 }

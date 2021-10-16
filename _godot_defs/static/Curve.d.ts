@@ -81,7 +81,8 @@ set_point_right_tangent(index: int, tangent: float): void;
 /** Assigns the vertical position [code]y[/code] to the point at [code]index[/code]. */
 set_point_value(index: int, y: float): void;
 
-  connect<T extends SignalsOf<Curve>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Curve>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CurveSignals>>(signal: T, method: SignalFunction<CurveSignals[T]>): number;
 
 
 
@@ -89,21 +90,23 @@ set_point_value(index: int, y: float): void;
  * The tangent on this side of the point is user-defined.
  *
 */
-static TANGENT_FREE: 0;
+static TANGENT_FREE: any;
 
 /**
  * The curve calculates the tangent on this side of the point as the slope halfway towards the adjacent point.
  *
 */
-static TANGENT_LINEAR: 1;
+static TANGENT_LINEAR: any;
 
 /**
  * The total number of available tangent modes.
  *
 */
-static TANGENT_MODE_COUNT: 2;
+static TANGENT_MODE_COUNT: any;
 
+}
 
+declare class CurveSignals extends ResourceSignals {
   /**
  * Emitted when [member max_value] or [member min_value] is changed.
  *

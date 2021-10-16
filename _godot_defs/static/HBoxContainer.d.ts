@@ -18,11 +18,14 @@ declare class HBoxContainer extends BoxContainer {
 
 
 
-  connect<T extends SignalsOf<HBoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HBoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HBoxContainerSignals>>(signal: T, method: SignalFunction<HBoxContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class HBoxContainerSignals extends BoxContainerSignals {
   
 }

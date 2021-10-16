@@ -1,10 +1,14 @@
 
 /**
+ * Visual shader graphs consist of various nodes. Each node in the graph is a separate object and they are represented as a rectangular boxes with title and a set of properties. Each node has also connection ports that allow to connect it to another nodes and control the flow of the shader.
+ *
 */
 declare class VisualShaderNode extends Resource {
 
   
 /**
+ * Visual shader graphs consist of various nodes. Each node in the graph is a separate object and they are represented as a rectangular boxes with title and a set of properties. Each node has also connection ports that allow to connect it to another nodes and control the flow of the shader.
+ *
 */
   "new"(): VisualShaderNode;
   static "new"(): VisualShaderNode;
@@ -26,7 +30,8 @@ set_default_input_values(values: any[]): void;
 /** Sets the default value for the selected input [code]port[/code]. */
 set_input_port_default_value(port: int, value: any): void;
 
-  connect<T extends SignalsOf<VisualShaderNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeSignals>>(signal: T, method: SignalFunction<VisualShaderNodeSignals[T]>): number;
 
 
 
@@ -34,39 +39,41 @@ set_input_port_default_value(port: int, value: any): void;
  * Floating-point scalar. Translated to `float` type in shader code.
  *
 */
-static PORT_TYPE_SCALAR: 0;
+static PORT_TYPE_SCALAR: any;
 
 /**
  * 3D vector of floating-point values. Translated to `vec3` type in shader code.
  *
 */
-static PORT_TYPE_VECTOR: 1;
+static PORT_TYPE_VECTOR: any;
 
 /**
  * Boolean type. Translated to `bool` type in shader code.
  *
 */
-static PORT_TYPE_BOOLEAN: 2;
+static PORT_TYPE_BOOLEAN: any;
 
 /**
  * Transform type. Translated to `mat4` type in shader code.
  *
 */
-static PORT_TYPE_TRANSFORM: 3;
+static PORT_TYPE_TRANSFORM: any;
 
 /**
  * Sampler type. Translated to reference of sampler uniform in shader code. Can only be used for input ports in non-uniform nodes.
  *
 */
-static PORT_TYPE_SAMPLER: 4;
+static PORT_TYPE_SAMPLER: any;
 
 /**
  * Represents the size of the [enum PortType] enum.
  *
 */
-static PORT_TYPE_MAX: 5;
+static PORT_TYPE_MAX: any;
 
+}
 
+declare class VisualShaderNodeSignals extends ResourceSignals {
   /**
  * Emitted when the node requests an editor refresh. Currently called only in setter of [member VisualShaderNodeTexture.source], [VisualShaderNodeTexture], and [VisualShaderNodeCubeMap] (and their derivatives).
  *

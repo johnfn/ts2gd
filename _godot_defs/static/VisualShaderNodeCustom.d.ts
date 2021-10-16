@@ -37,7 +37,7 @@ declare class VisualShaderNodeCustom extends VisualShaderNode {
 
 
 /**
- * Override this method to define the category of the associated custom node in the Visual Shader Editor's members dialog.
+ * Override this method to define the category of the associated custom node in the Visual Shader Editor's members dialog. The path may look like `"MyGame/MyFunctions/Noise"`.
  *
  * Defining this method is **optional**. If not overridden, the node will be filed under the "Custom" category.
  *
@@ -150,11 +150,14 @@ protected _get_return_icon_type(): int;
 */
 protected _get_subcategory(): string;
 
-  connect<T extends SignalsOf<VisualShaderNodeCustom>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeCustom>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeCustomSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCustomSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeCustomSignals extends VisualShaderNodeSignals {
   
 }

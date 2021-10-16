@@ -33,16 +33,19 @@ get_mix_mode(): int;
 /** No documentation provided. */
 set_mix_mode(mode: int): void;
 
-  connect<T extends SignalsOf<AnimationNodeOneShot>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeOneShot>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeOneShotSignals>>(signal: T, method: SignalFunction<AnimationNodeOneShotSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static MIX_MODE_BLEND: 0;
+static MIX_MODE_BLEND: any;
 
 /** No documentation provided. */
-static MIX_MODE_ADD: 1;
+static MIX_MODE_ADD: any;
 
+}
 
+declare class AnimationNodeOneShotSignals extends AnimationNodeSignals {
   
 }

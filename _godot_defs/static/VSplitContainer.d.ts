@@ -18,11 +18,14 @@ declare class VSplitContainer extends SplitContainer {
 
 
 
-  connect<T extends SignalsOf<VSplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VSplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VSplitContainerSignals>>(signal: T, method: SignalFunction<VSplitContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class VSplitContainerSignals extends SplitContainerSignals {
   
 }

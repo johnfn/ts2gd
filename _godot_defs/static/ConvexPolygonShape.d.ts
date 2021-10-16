@@ -20,11 +20,14 @@ points: PoolVector3Array;
 
 
 
-  connect<T extends SignalsOf<ConvexPolygonShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConvexPolygonShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConvexPolygonShapeSignals>>(signal: T, method: SignalFunction<ConvexPolygonShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class ConvexPolygonShapeSignals extends ShapeSignals {
   
 }

@@ -13,7 +13,7 @@
  * func get_importer_name():
  *     return "my.special.plugin"
  * func get_visible_name():
- *     return "Special Mesh Importer"
+ *     return "Special Mesh"
  * func get_recognized_extensions():
  *     return ["special", "spec"]
  * func get_save_extension():
@@ -33,8 +33,7 @@
  *     var mesh = Mesh.new()
  *     # Fill the Mesh with data read in "file", left as an exercise to the reader
  *     var filename = save_path + "." + get_save_extension()
- *     ResourceSaver.save(filename, mesh)
- *     return OK
+ *     return ResourceSaver.save(filename, mesh)
  * @summary 
  * 
  *
@@ -56,7 +55,7 @@ declare class EditorImportPlugin extends ResourceImporter {
  * func get_importer_name():
  *     return "my.special.plugin"
  * func get_visible_name():
- *     return "Special Mesh Importer"
+ *     return "Special Mesh"
  * func get_recognized_extensions():
  *     return ["special", "spec"]
  * func get_save_extension():
@@ -76,8 +75,7 @@ declare class EditorImportPlugin extends ResourceImporter {
  *     var mesh = Mesh.new()
  *     # Fill the Mesh with data read in "file", left as an exercise to the reader
  *     var filename = save_path + "." + get_save_extension()
- *     ResourceSaver.save(filename, mesh)
- *     return OK
+ *     return ResourceSaver.save(filename, mesh)
  * @summary 
  * 
  *
@@ -91,7 +89,7 @@ declare class EditorImportPlugin extends ResourceImporter {
 /** Gets the options and default values for the preset at this index. Returns an Array of Dictionaries with the following keys: [code]name[/code], [code]default_value[/code], [code]property_hint[/code] (optional), [code]hint_string[/code] (optional), [code]usage[/code] (optional). */
 get_import_options(preset: int): any[];
 
-/** Gets the order of this importer to be run when importing resources. Higher values will be called later. Use this to ensure the importer runs after the dependencies are already imported. */
+/** Gets the order of this importer to be run when importing resources. Importers with [i]lower[/i] import orders will be called first, and higher values will be called later. Use this to ensure the importer runs after the dependencies are already imported. The default import order is [code]0[/code] unless overridden by a specific importer. See [enum ResourceImporter.ImportOrder] for some predefined values. */
 get_import_order(): int;
 
 /** Gets the unique name of the importer. */
@@ -113,7 +111,7 @@ get_importer_name(): string;
  * Return `true` to make all options always visible.
  *
 */
-get_option_visibility(option: string, options: Dictionary): boolean;
+get_option_visibility(option: string, options: Dictionary<any, any>): boolean;
 
 /** Gets the number of initial presets defined by the plugin. Use [method get_import_options] to get the default options for the preset and [method get_preset_name] to get the name of the preset. */
 get_preset_count(): int;
@@ -133,7 +131,7 @@ get_resource_type(): string;
 /** Gets the extension used to save this resource in the [code].import[/code] directory. */
 get_save_extension(): string;
 
-/** Gets the name to display in the import window. */
+/** Gets the name to display in the import window. You should choose this name as a continuation to "Import as", e.g. "Import as Special Mesh". */
 get_visible_name(): string;
 
 /**
@@ -142,13 +140,16 @@ get_visible_name(): string;
  * This method must be overridden to do the actual importing work. See this class' description for an example of overriding this method.
  *
 */
-import(source_file: string, save_path: string, options: Dictionary, platform_variants: any[], gen_files: any[]): int;
+import(source_file: string, save_path: string, options: Dictionary<any, any>, platform_variants: any[], gen_files: any[]): int;
 
-  connect<T extends SignalsOf<EditorImportPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-
-
-
+  // connect<T extends SignalsOf<EditorImportPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorImportPluginSignals>>(signal: T, method: SignalFunction<EditorImportPluginSignals[T]>): number;
 
 
+
+
+}
+
+declare class EditorImportPluginSignals extends ResourceImporterSignals {
   
 }

@@ -20,12 +20,24 @@ declare class GraphEdit extends Control {
 
 
 
+/** If [code]true[/code], the minimap is visible. */
+minimap_enabled: boolean;
+
+/** The opacity of the minimap rectangle. */
+minimap_opacity: float;
+
+/** The size of the minimap rectangle. The map itself is based on the size of the grid area and is scaled to fit this rectangle. */
+minimap_size: Vector2;
+
 
 /** If [code]true[/code], enables disconnection of existing connections in the GraphEdit by dragging the right end. */
 right_disconnects: boolean;
 
 /** The scroll offset. */
 scroll_offset: Vector2;
+
+/** If [code]true[/code], makes a label with the current zoom level visible. The zoom value is displayed in percents. */
+show_zoom_label: boolean;
 
 /** The snapping distance in pixels. */
 snap_distance: int;
@@ -35,6 +47,15 @@ use_snap: boolean;
 
 /** The current zoom value. */
 zoom: float;
+
+/** The upper zoom limit. */
+zoom_max: float;
+
+/** The lower zoom limit. */
+zoom_min: float;
+
+/** The step of each zoom level. */
+zoom_step: float;
 
 /** Makes possible the connection between two different slot types. The type is defined with the [method GraphNode.set_slot] method. */
 add_valid_connection_type(from_type: int, to_type: int): void;
@@ -60,7 +81,7 @@ get_connection_list(): any[];
 /**
  * Gets the [HBoxContainer] that contains the zooming and grid snap controls in the top left of the graph.
  *
- * Warning: The intended usage of this function is to allow you to reposition or add your own custom controls to the container. This is an internal control and as such should not be freed. If you wish to hide this or any of it's children use their [member CanvasItem.visible] property instead.
+ * Warning: The intended usage of this function is to allow you to reposition or add your own custom controls to the container. This is an internal control and as such should not be freed. If you wish to hide this or any of its children, use their [member CanvasItem.visible] property instead.
  *
 */
 get_zoom_hbox(): HBoxContainer;
@@ -86,12 +107,15 @@ set_connection_activity(from: string, from_port: int, to: string, to_port: int, 
 /** Sets the specified [code]node[/code] as the one selected. */
 set_selected(node: Node): void;
 
-  connect<T extends SignalsOf<GraphEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<GraphEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GraphEditSignals>>(signal: T, method: SignalFunction<GraphEditSignals[T]>): number;
 
 
 
 
+}
 
+declare class GraphEditSignals extends ControlSignals {
   /**
  * Emitted at the beginning of a GraphNode movement.
  *

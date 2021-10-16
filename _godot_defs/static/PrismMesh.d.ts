@@ -32,11 +32,14 @@ subdivide_width: int;
 
 
 
-  connect<T extends SignalsOf<PrismMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PrismMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PrismMeshSignals>>(signal: T, method: SignalFunction<PrismMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class PrismMeshSignals extends PrimitiveMeshSignals {
   
 }

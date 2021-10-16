@@ -32,7 +32,7 @@ autoplay: string;
 /**
  * The name of the currently playing animation. If no animation is playing, the property's value is an empty string. Changing this value does not restart the animation. See [method play] for more information on playing animations.
  *
- * **Note**: while this property appears in the inspector, it's not meant to be edited and it's not saved in the scene. This property is mainly used to get the currently playing animation, and internally for animation playback tracks. For more information, see [Animation].
+ * **Note:** While this property appears in the inspector, it's not meant to be edited, and it's not saved in the scene. This property is mainly used to get the currently playing animation, and internally for animation playback tracks. For more information, see [Animation].
  *
 */
 current_animation: string;
@@ -57,6 +57,14 @@ playback_process_mode: int;
 
 /** The speed scaling ratio. For instance, if this value is 1, then the animation plays at normal speed. If it's 0.5, then it plays at half speed. If it's 2, then it plays at double speed. */
 playback_speed: float;
+
+/**
+ * This is used by the editor. If set to `true`, the scene will be saved with the effects of the reset animation applied (as if it had been seeked to time 0), then reverted after saving.
+ *
+ * In other words, the saved scene file will contain the "default pose", as defined by the reset animation, if any, with the editor keeping the values that the nodes had before saving.
+ *
+*/
+reset_on_save: boolean;
 
 /** The node from which node path references will travel. */
 root_node: NodePathType;
@@ -149,7 +157,8 @@ set_blend_time(anim_from: string, anim_to: string, sec: float): void;
 */
 stop(reset?: boolean): void;
 
-  connect<T extends SignalsOf<AnimationPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationPlayerSignals>>(signal: T, method: SignalFunction<AnimationPlayerSignals[T]>): number;
 
 
 
@@ -157,35 +166,39 @@ stop(reset?: boolean): void;
  * Process animation during the physics process. This is especially useful when animating physics bodies.
  *
 */
-static ANIMATION_PROCESS_PHYSICS: 0;
+static ANIMATION_PROCESS_PHYSICS: any;
 
 /**
  * Process animation during the idle process.
  *
 */
-static ANIMATION_PROCESS_IDLE: 1;
+static ANIMATION_PROCESS_IDLE: any;
 
 /**
  * Do not process animation. Use [method advance] to process the animation manually.
  *
 */
-static ANIMATION_PROCESS_MANUAL: 2;
+static ANIMATION_PROCESS_MANUAL: any;
 
 /**
  * Batch method calls during the animation process, then do the calls after events are processed. This avoids bugs involving deleting nodes or modifying the AnimationPlayer while playing.
  *
 */
-static ANIMATION_METHOD_CALL_DEFERRED: 0;
+static ANIMATION_METHOD_CALL_DEFERRED: any;
 
 /**
  * Make method calls immediately when reached in the animation.
  *
 */
-static ANIMATION_METHOD_CALL_IMMEDIATE: 1;
+static ANIMATION_METHOD_CALL_IMMEDIATE: any;
 
+}
 
+declare class AnimationPlayerSignals extends NodeSignals {
   /**
- * If the currently being played animation changes, this signal will notify of such change.
+ * Emitted when a queued animation plays after the previous animation was finished. See [method queue].
+ *
+ * **Note:** The signal is not emitted when the animation is changed via [method play] or from [AnimationTree].
  *
 */
 animation_changed: Signal<(old_name: string, new_name: string) => void>

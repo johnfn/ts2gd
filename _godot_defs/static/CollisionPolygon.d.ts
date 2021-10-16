@@ -21,6 +21,9 @@ depth: float;
 /** If [code]true[/code], no collision will be produced. */
 disabled: boolean;
 
+/** The collision margin for the generated [Shape]. See [member Shape.margin] for more details. */
+margin: float;
+
 /**
  * Array of vertices which define the polygon.
  *
@@ -31,11 +34,14 @@ polygon: PoolVector2Array;
 
 
 
-  connect<T extends SignalsOf<CollisionPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CollisionPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CollisionPolygonSignals>>(signal: T, method: SignalFunction<CollisionPolygonSignals[T]>): number;
 
 
 
 
+}
 
+declare class CollisionPolygonSignals extends SpatialSignals {
   
 }

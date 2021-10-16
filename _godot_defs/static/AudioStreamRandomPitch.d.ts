@@ -23,11 +23,14 @@ random_pitch: float;
 
 
 
-  connect<T extends SignalsOf<AudioStreamRandomPitch>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioStreamRandomPitch>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioStreamRandomPitchSignals>>(signal: T, method: SignalFunction<AudioStreamRandomPitchSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioStreamRandomPitchSignals extends AudioStreamSignals {
   
 }

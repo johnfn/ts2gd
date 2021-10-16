@@ -18,11 +18,14 @@ declare class HScrollBar extends ScrollBar {
 
 
 
-  connect<T extends SignalsOf<HScrollBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HScrollBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HScrollBarSignals>>(signal: T, method: SignalFunction<HScrollBarSignals[T]>): number;
 
 
 
 
+}
 
+declare class HScrollBarSignals extends ScrollBarSignals {
   
 }

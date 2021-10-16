@@ -23,11 +23,14 @@ width: int;
 
 
 
-  connect<T extends SignalsOf<CurveTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CurveTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CurveTextureSignals>>(signal: T, method: SignalFunction<CurveTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class CurveTextureSignals extends TextureSignals {
   
 }

@@ -30,11 +30,14 @@ resize(size: int): void;
 /** No documentation provided. */
 seek(position: int): void;
 
-  connect<T extends SignalsOf<StreamPeerBuffer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StreamPeerBuffer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StreamPeerBufferSignals>>(signal: T, method: SignalFunction<StreamPeerBufferSignals[T]>): number;
 
 
 
 
+}
 
+declare class StreamPeerBufferSignals extends StreamPeerSignals {
   
 }

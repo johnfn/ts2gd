@@ -34,7 +34,7 @@ z: float;
 /** Returns a new vector with all components in absolute values (i.e. positive). */
 abs(): Vector3;
 
-/** Returns the minimum angle to the given vector, in radians. */
+/** Returns the unsigned minimum angle to the given vector, in radians. */
 angle_to(to: Vector3): float;
 
 /** Returns the vector "bounced off" from a plane defined by the given normal. */
@@ -46,10 +46,10 @@ ceil(): Vector3;
 /** Returns the cross product of this vector and [code]b[/code]. */
 cross(b: Vector3): Vector3;
 
-/** Performs a cubic interpolation between vectors [code]pre_a[/code], [code]a[/code], [code]b[/code], [code]post_b[/code] ([code]a[/code] is current), by the given amount [code]t[/code]. [code]t[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
-cubic_interpolate(b: Vector3, pre_a: Vector3, post_b: Vector3, t: float): Vector3;
+/** Performs a cubic interpolation between vectors [code]pre_a[/code], [code]a[/code], [code]b[/code], [code]post_b[/code] ([code]a[/code] is current), by the given amount [code]weight[/code]. [code]weight[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
+cubic_interpolate(b: Vector3, pre_a: Vector3, post_b: Vector3, weight: float): Vector3;
 
-/** Returns the normalized vector pointing from this vector to [code]b[/code]. */
+/** Returns the normalized vector pointing from this vector to [code]b[/code]. This is equivalent to using [code](b - a).normalized()[/code]. */
 direction_to(b: Vector3): Vector3;
 
 /**
@@ -84,7 +84,7 @@ inverse(): Vector3;
 /** Returns [code]true[/code] if this vector and [code]v[/code] are approximately equal, by running [method @GDScript.is_equal_approx] on each component. */
 is_equal_approx(v: Vector3): boolean;
 
-/** Returns [code]true[/code] if the vector is normalized, and false otherwise. */
+/** Returns [code]true[/code] if the vector is normalized, [code]false[/code] otherwise. */
 is_normalized(): boolean;
 
 /** Returns the length (magnitude) of this vector. */
@@ -98,8 +98,8 @@ length(): float;
 */
 length_squared(): float;
 
-/** Returns the result of the linear interpolation between this vector and [code]b[/code] by amount [code]t[/code]. [code]t[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
-linear_interpolate(b: Vector3, t: float): Vector3;
+/** Returns the result of the linear interpolation between this vector and [code]to[/code] by amount [code]t[/code]. [code]weight[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
+linear_interpolate(to: Vector3, weight: float): Vector3;
 
 /** Returns the axis of the vector's largest value. See [code]AXIS_*[/code] constants. If all components are equal, this method returns [constant AXIS_X]. */
 max_axis(): int;
@@ -134,16 +134,19 @@ rotated(axis: Vector3, phi: float): Vector3;
 /** Returns this vector with all components rounded to the nearest integer, with halfway cases rounded away from zero. */
 round(): Vector3;
 
-/** Returns a vector with each component set to one or negative one, depending on the signs of this vector's components, or zero if the component is zero, by calling [method @GDScript.sign] on each component. */
+/** Returns a vector with each component set to one or negative one, depending on the signs of this vector's components. If a component is zero, it returns positive one. */
 sign(): Vector3;
 
+/** Returns the signed angle to the given vector, in radians. The sign of the angle is positive in a counter-clockwise direction and negative in a clockwise direction when viewed from the side specified by the [code]axis[/code]. */
+signed_angle_to(to: Vector3, axis: Vector3): float;
+
 /**
- * Returns the result of spherical linear interpolation between this vector and `b`, by amount `t`. `t` is on the range of 0.0 to 1.0, representing the amount of interpolation.
+ * Returns the result of spherical linear interpolation between this vector and `to`, by amount `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
  *
  * **Note:** Both vectors must be normalized.
  *
 */
-slerp(b: Vector3, t: float): Vector3;
+slerp(to: Vector3, weight: float): Vector3;
 
 /** Returns this vector slid along a plane defined by the given normal. */
 slide(n: Vector3): Vector3;
@@ -159,7 +162,8 @@ snapped(by: Vector3): Vector3;
 */
 to_diagonal_matrix(): Basis;
 
-  connect<T extends SignalsOf<Vector3>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Vector3>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Vector3Signals>>(signal: T, method: SignalFunction<Vector3Signals[T]>): number;
 
 
 add(other: number | Vector3): Vector3;
@@ -172,19 +176,19 @@ div(other: number | Vector3): Vector3;
  * Enumerated value for the X axis. Returned by [method max_axis] and [method min_axis].
  *
 */
-static AXIS_X: 0;
+static AXIS_X: any;
 
 /**
  * Enumerated value for the Y axis. Returned by [method max_axis] and [method min_axis].
  *
 */
-static AXIS_Y: 1;
+static AXIS_Y: any;
 
 /**
  * Enumerated value for the Z axis. Returned by [method max_axis] and [method min_axis].
  *
 */
-static AXIS_Z: 2;
+static AXIS_Z: any;
 
 /**
  * Zero vector, a vector with all components set to `0`.
@@ -240,6 +244,8 @@ static FORWARD: Vector3;
 */
 static BACK: Vector3;
 
+}
 
+declare class Vector3Signals {
   
 }

@@ -13,23 +13,26 @@ declare class FileSystemDock extends VBoxContainer {
 
 
 /** No documentation provided. */
-can_drop_data_fw(arg0: Vector2, arg1: any, arg2: Control): boolean;
+can_drop_data_fw(point: Vector2, data: any, from: Control): boolean;
 
 /** No documentation provided. */
-drop_data_fw(arg0: Vector2, arg1: any, arg2: Control): void;
+drop_data_fw(point: Vector2, data: any, from: Control): void;
 
 /** No documentation provided. */
-get_drag_data_fw(arg0: Vector2, arg1: Control): any;
+get_drag_data_fw(point: Vector2, from: Control): any;
 
 /** No documentation provided. */
-navigate_to_path(arg0: string): void;
+navigate_to_path(path: string): void;
 
-  connect<T extends SignalsOf<FileSystemDock>, U extends Node>(signal: T, node: U, method: keyof U): number;
-
-
-
+  // connect<T extends SignalsOf<FileSystemDock>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<FileSystemDockSignals>>(signal: T, method: SignalFunction<FileSystemDockSignals[T]>): number;
 
 
+
+
+}
+
+declare class FileSystemDockSignals extends VBoxContainerSignals {
   /**
 */
 display_mode_changed: Signal<() => void>

@@ -19,6 +19,8 @@
  *
  * [method _estimate_cost] should return a lower bound of the distance, i.e. `_estimate_cost(u, v) <= _compute_cost(u, v)`. This serves as a hint to the algorithm because the custom `_compute_cost` might be computation-heavy. If this is not the case, make [method _estimate_cost] return the same value as [method _compute_cost] to provide the algorithm with the most accurate information.
  *
+ * If the default [method _estimate_cost] and [method _compute_cost] methods are used, or if the supplied [method _estimate_cost] method returns a lower bound of the cost, then the paths returned by A* will be the lowest-cost paths. Here, the cost of a path equals the sum of the [method _compute_cost] results of all segments in the path multiplied by the `weight_scale`s of the endpoints of the respective segments. If the default methods are used and the `weight_scale`s of all points are set to `1.0`, then this equals the sum of Euclidean distances of all segments in the path.
+ *
 */
 declare class AStar extends Reference {
 
@@ -42,6 +44,8 @@ declare class AStar extends Reference {
  * 
  *
  * [method _estimate_cost] should return a lower bound of the distance, i.e. `_estimate_cost(u, v) <= _compute_cost(u, v)`. This serves as a hint to the algorithm because the custom `_compute_cost` might be computation-heavy. If this is not the case, make [method _estimate_cost] return the same value as [method _compute_cost] to provide the algorithm with the most accurate information.
+ *
+ * If the default [method _estimate_cost] and [method _compute_cost] methods are used, or if the supplied [method _estimate_cost] method returns a lower bound of the cost, then the paths returned by A* will be the lowest-cost paths. Here, the cost of a path equals the sum of the [method _compute_cost] results of all segments in the path multiplied by the `weight_scale`s of the endpoints of the respective segments. If the default methods are used and the `weight_scale`s of all points are set to `1.0`, then this equals the sum of Euclidean distances of all segments in the path.
  *
 */
   "new"(): AStar;
@@ -67,7 +71,9 @@ protected _compute_cost(from_id: int, to_id: int): float;
 protected _estimate_cost(from_id: int, to_id: int): float;
 
 /**
- * Adds a new point at the given position with the given identifier. The algorithm prefers points with lower `weight_scale` to form a path. The `id` must be 0 or larger, and the `weight_scale` must be 1 or larger.
+ * Adds a new point at the given position with the given identifier. The `id` must be 0 or larger, and the `weight_scale` must be 1 or larger.
+ *
+ * The `weight_scale` is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. Thus, all else being equal, the algorithm prefers points with lower `weight_scale`s to form a path.
  *
  * @example 
  * 
@@ -182,7 +188,12 @@ get_point_connections(id: int): PoolIntArray;
 /** Returns the number of points currently in the points pool. */
 get_point_count(): int;
 
-/** Returns an array with the points that are in the path found by AStar between the given points. The array is ordered from the starting point to the ending point of the path. */
+/**
+ * Returns an array with the points that are in the path found by AStar between the given points. The array is ordered from the starting point to the ending point of the path.
+ *
+ * **Note:** This method is not thread-safe. If called from a [Thread], it will return an empty [PoolVector3Array] and will print an error message.
+ *
+*/
 get_point_path(from_id: int, to_id: int): PoolVector3Array;
 
 /** Returns the position of the point associated with the given [code]id[/code]. */
@@ -212,14 +223,17 @@ set_point_disabled(id: int, disabled?: boolean): void;
 /** Sets the [code]position[/code] for the point with the given [code]id[/code]. */
 set_point_position(id: int, position: Vector3): void;
 
-/** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. */
+/** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. The [code]weight_scale[/code] is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. */
 set_point_weight_scale(id: int, weight_scale: float): void;
 
-  connect<T extends SignalsOf<AStar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AStar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AStarSignals>>(signal: T, method: SignalFunction<AStarSignals[T]>): number;
 
 
 
 
+}
 
+declare class AStarSignals extends ReferenceSignals {
   
 }

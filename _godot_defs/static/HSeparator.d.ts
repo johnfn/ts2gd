@@ -18,11 +18,14 @@ declare class HSeparator extends Separator {
 
 
 
-  connect<T extends SignalsOf<HSeparator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HSeparator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HSeparatorSignals>>(signal: T, method: SignalFunction<HSeparatorSignals[T]>): number;
 
 
 
 
+}
 
+declare class HSeparatorSignals extends SeparatorSignals {
   
 }

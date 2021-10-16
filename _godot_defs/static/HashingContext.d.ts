@@ -79,7 +79,8 @@ start(type: int): int;
 /** Updates the computation with the given [code]chunk[/code] of data. */
 update(chunk: PoolByteArray): int;
 
-  connect<T extends SignalsOf<HashingContext>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HashingContext>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HashingContextSignals>>(signal: T, method: SignalFunction<HashingContextSignals[T]>): number;
 
 
 
@@ -87,20 +88,22 @@ update(chunk: PoolByteArray): int;
  * Hashing algorithm: MD5.
  *
 */
-static HASH_MD5: 0;
+static HASH_MD5: any;
 
 /**
  * Hashing algorithm: SHA-1.
  *
 */
-static HASH_SHA1: 1;
+static HASH_SHA1: any;
 
 /**
  * Hashing algorithm: SHA-256.
  *
 */
-static HASH_SHA256: 2;
+static HASH_SHA256: any;
 
+}
 
+declare class HashingContextSignals extends ReferenceSignals {
   
 }

@@ -42,7 +42,8 @@ popup_centered_ratio(ratio?: float): void;
 /** Shrink popup to keep to the minimum size of content. */
 set_as_minsize(): void;
 
-  connect<T extends SignalsOf<Popup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Popup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PopupSignals>>(signal: T, method: SignalFunction<PopupSignals[T]>): number;
 
 
 
@@ -50,15 +51,17 @@ set_as_minsize(): void;
  * Notification sent right after the popup is shown.
  *
 */
-static NOTIFICATION_POST_POPUP: 80;
+static NOTIFICATION_POST_POPUP: any;
 
 /**
  * Notification sent right after the popup is hidden.
  *
 */
-static NOTIFICATION_POPUP_HIDE: 81;
+static NOTIFICATION_POPUP_HIDE: any;
 
+}
 
+declare class PopupSignals extends ControlSignals {
   /**
  * Emitted when a popup is about to be shown. This is often used in [PopupMenu] to clear the list of options then create a new one according to the current context.
  *

@@ -10,7 +10,7 @@
  *
  * This means that when adding a node to the scene tree, the following order will be used for the callbacks: [method _enter_tree] of the parent, [method _enter_tree] of the children, [method _ready] of the children and finally [method _ready] of the parent (recursively for the entire scene tree).
  *
- * **Processing:** Nodes can override the "process" state, so that they receive a callback on each frame requesting them to process (do something). Normal processing (callback [method _process], toggled with [method set_process]) happens as fast as possible and is dependent on the frame rate, so the processing time **delta** is passed as an argument. Physics processing (callback [method _physics_process], toggled with [method set_physics_process]) happens a fixed number of times per second (60 by default) and is useful for code related to the physics engine.
+ * **Processing:** Nodes can override the "process" state, so that they receive a callback on each frame requesting them to process (do something). Normal processing (callback [method _process], toggled with [method set_process]) happens as fast as possible and is dependent on the frame rate, so the processing time **delta** (in seconds) is passed as an argument. Physics processing (callback [method _physics_process], toggled with [method set_physics_process]) happens a fixed number of times per second (60 by default) and is useful for code related to the physics engine.
  *
  * Nodes can also process input events. When present, the [method _input] function will be called for each input that the program receives. In many cases, this can be overkill (unless used for simple projects), and the [method _unhandled_input] function might be preferred; it is called when the input event was not handled by anyone else (typically, GUI [Control] nodes), ensuring that the node only receives the events that were meant for it.
  *
@@ -37,7 +37,7 @@ declare class Node extends Object {
  *
  * This means that when adding a node to the scene tree, the following order will be used for the callbacks: [method _enter_tree] of the parent, [method _enter_tree] of the children, [method _ready] of the children and finally [method _ready] of the parent (recursively for the entire scene tree).
  *
- * **Processing:** Nodes can override the "process" state, so that they receive a callback on each frame requesting them to process (do something). Normal processing (callback [method _process], toggled with [method set_process]) happens as fast as possible and is dependent on the frame rate, so the processing time **delta** is passed as an argument. Physics processing (callback [method _physics_process], toggled with [method set_physics_process]) happens a fixed number of times per second (60 by default) and is useful for code related to the physics engine.
+ * **Processing:** Nodes can override the "process" state, so that they receive a callback on each frame requesting them to process (do something). Normal processing (callback [method _process], toggled with [method set_process]) happens as fast as possible and is dependent on the frame rate, so the processing time **delta** (in seconds) is passed as an argument. Physics processing (callback [method _physics_process], toggled with [method set_physics_process]) happens a fixed number of times per second (60 by default) and is useful for code related to the physics engine.
  *
  * Nodes can also process input events. When present, the [method _input] function will be called for each input that the program receives. In many cases, this can be overkill (unless used for simple projects), and the [method _unhandled_input] function might be preferred; it is called when the input event was not handled by anyone else (typically, GUI [Control] nodes), ensuring that the node only receives the events that were meant for it.
  *
@@ -58,13 +58,18 @@ declare class Node extends Object {
 /** The override to the default [MultiplayerAPI]. Set to [code]null[/code] to use the default [SceneTree] one. */
 custom_multiplayer: MultiplayerAPI;
 
-/** When a scene is instanced from a file, its topmost node contains the filename from which it was loaded. */
+/** If a scene is instantiated from a file, its topmost node contains the absolute file path from which it was loaded in [member filename] (e.g. [code]res://levels/1.tscn[/code]). Otherwise, [member filename] is set to an empty string. */
 filename: string;
 
 /** The [MultiplayerAPI] instance associated with this node. Either the [member custom_multiplayer], or the default SceneTree one (if inside tree). */
 multiplayer: MultiplayerAPI;
 
-/** The name of the node. This name is unique among the siblings (other child nodes from the same parent). When set to an existing name, the node will be automatically renamed. */
+/**
+ * The name of the node. This name is unique among the siblings (other child nodes from the same parent). When set to an existing name, the node will be automatically renamed.
+ *
+ * **Note:** Auto-generated names might include the `@` character, which is reserved for unique names when using [method add_child]. When setting the name manually, any `@` will be removed.
+ *
+*/
 name: string;
 
 /** The node owner. A node can have any other node as owner (as long as it is a valid parent, grandparent, etc. ascending in the tree). When saving a node (using [PackedScene]), all the nodes it owns will be saved with it. This allows for the creation of complex [SceneTree]s, with instancing and subinstancing. */
@@ -117,7 +122,7 @@ protected _get_configuration_warning(): string;
 protected _input(event: InputEvent): void;
 
 /**
- * Called during the physics processing step of the main loop. Physics processing means that the frame rate is synced to the physics, i.e. the `delta` variable should be constant.
+ * Called during the physics processing step of the main loop. Physics processing means that the frame rate is synced to the physics, i.e. the `delta` variable should be constant. `delta` is in seconds.
  *
  * It is only called if physics processing is enabled, which is done automatically if this method is overridden, and can be toggled with [method set_physics_process].
  *
@@ -129,7 +134,7 @@ protected _input(event: InputEvent): void;
 protected _physics_process(delta: float): void;
 
 /**
- * Called during the processing step of the main loop. Processing happens at every frame and as fast as possible, so the `delta` time since the previous frame is not constant.
+ * Called during the processing step of the main loop. Processing happens at every frame and as fast as possible, so the `delta` time since the previous frame is not constant. `delta` is in seconds.
  *
  * It is only called if processing is enabled, which is done automatically if this method is overridden, and can be toggled with [method set_process].
  *
@@ -183,7 +188,7 @@ protected _unhandled_key_input(event: InputEventKey): void;
 /**
  * Adds a child node. Nodes can have any number of children, but every child must have a unique name. Child nodes are automatically deleted when the parent node is deleted, so an entire scene can be removed by deleting its topmost node.
  *
- * If `legible_unique_name` is `true`, the child node will have an human-readable name based on the name of the node being instanced instead of its type.
+ * If `legible_unique_name` is `true`, the child node will have a human-readable name based on the name of the node being instanced instead of its type.
  *
  * **Note:** If the child node already has a parent, the function will fail. Use [method remove_child] first to remove the node from its current parent. For example:
  *
@@ -195,7 +200,7 @@ protected _unhandled_key_input(event: InputEventKey): void;
  * @summary 
  * 
  *
- * **Note:** If you want a child to be persisted to a [PackedScene], you must set [member owner] in addition to calling [method add_child]. This is typically relevant for [url=https://godot.readthedocs.io/en/latest/tutorials/misc/running_code_in_the_editor.html]tool scripts[/url] and [url=https://godot.readthedocs.io/en/latest/tutorials/plugins/editor/index.html]editor plugins[/url]. If [method add_child] is called without setting [member owner], the newly added [Node] will not be visible in the scene tree, though it will be visible in the 2D/3D view.
+ * **Note:** If you want a child to be persisted to a [PackedScene], you must set [member owner] in addition to calling [method add_child]. This is typically relevant for [url=https://godot.readthedocs.io/en/3.2/tutorials/misc/running_code_in_the_editor.html]tool scripts[/url] and [url=https://godot.readthedocs.io/en/latest/tutorials/plugins/editor/index.html]editor plugins[/url]. If [method add_child] is called without setting [member owner], the newly added [Node] will not be visible in the scene tree, though it will be visible in the 2D/3D view.
  *
 */
 add_child(node: Node, legible_unique_name?: boolean): void;
@@ -203,7 +208,7 @@ add_child(node: Node, legible_unique_name?: boolean): void;
 /**
  * Adds `child_node` as a child. The child is placed below the given `node` in the list of children.
  *
- * If `legible_unique_name` is `true`, the child node will have an human-readable name based on the name of the node being instanced instead of its type.
+ * If `legible_unique_name` is `true`, the child node will have a human-readable name based on the name of the node being instanced instead of its type.
  *
 */
 add_child_below_node(node: Node, child_node: Node, legible_unique_name?: boolean): void;
@@ -212,6 +217,8 @@ add_child_below_node(node: Node, child_node: Node, legible_unique_name?: boolean
  * Adds the node to a group. Groups are helpers to name and organize a subset of nodes, for example "enemies" or "collectables". A node can be in any number of groups. Nodes can be assigned a group at any time, but will not be added until they are inside the scene tree (see [method is_inside_tree]). See notes in the description, and the group methods in [SceneTree].
  *
  * The `persistent` option is used when packing node to [PackedScene] and saving to file. Non-persistent groups aren't stored.
+ *
+ * **Note:** For performance reasons, the order of node groups is **not** guaranteed. The order of node groups should not be relied upon as it can vary across project runs.
  *
 */
 add_to_group(group: string, persistent?: boolean): void;
@@ -265,7 +272,12 @@ get_child_count(): int;
 /** Returns an array of references to node's children. */
 get_children(): any[];
 
-/** Returns an array listing the groups that the node is a member of. */
+/**
+ * Returns an array listing the groups that the node is a member of.
+ *
+ * **Note:** For performance reasons, the order of node groups is **not** guaranteed. The order of node groups should not be relied upon as it can vary across project runs.
+ *
+*/
 get_groups(): any[];
 
 /** Returns the node's index, i.e. its position among the siblings of its parent. */
@@ -338,7 +350,7 @@ get_path(): NodePathType;
 /** Returns the relative [NodePath] from this node to the specified [code]node[/code]. Both nodes must be in the same scene or the function will fail. */
 get_path_to(node: Node): NodePathType;
 
-/** Returns the time elapsed since the last physics-bound frame (see [method _physics_process]). This is always a constant value in physics processing unless the frames per second is changed via [member Engine.iterations_per_second]. */
+/** Returns the time elapsed (in seconds) since the last physics-bound frame (see [method _physics_process]). This is always a constant value in physics processing unless the frames per second is changed via [member Engine.iterations_per_second]. */
 get_physics_process_delta_time(): float;
 
 /** Returns the node's order in the scene tree branch. For example, if called on the first child node the position is [code]0[/code]. */
@@ -451,10 +463,15 @@ propagate_call(method: string, args?: any[], parent_first?: boolean): void;
 /** Notifies the current node and all its children recursively by calling [method Object.notification] on all of them. */
 propagate_notification(what: int): void;
 
-/** Queues a node for deletion at the end of the current frame. When deleted, all of its child nodes will be deleted as well. This method ensures it's safe to delete the node, contrary to [method Object.free]. Use [method Object.is_queued_for_deletion] to check whether a node will be deleted at the end of the frame. */
+/**
+ * Queues a node for deletion at the end of the current frame. When deleted, all of its child nodes will be deleted as well. This method ensures it's safe to delete the node, contrary to [method Object.free]. Use [method Object.is_queued_for_deletion] to check whether a node will be deleted at the end of the frame.
+ *
+ * **Important:** If you have a variable pointing to a node, it will **not** be assigned to `null` once the node is freed. Instead, it will point to a **previously freed instance** and you should validate it with [method @GDScript.is_instance_valid] before attempting to call its methods or access its properties.
+ *
+*/
 queue_free(): void;
 
-/** Moves this node to the bottom of parent node's children hierarchy. This is often useful in GUIs ([Control] nodes), because their order of drawing depends on their order in the tree, i.e. the further they are on the node list, the higher they are drawn. After using [code]raise[/code], a Control will be drawn on top of their siblings. */
+/** Moves this node to the bottom of parent node's children hierarchy. This is often useful in GUIs ([Control] nodes), because their order of drawing depends on their order in the tree. The top Node is drawn first, then any siblings below the top Node in the hierarchy are successively drawn on top of it. After using [code]raise[/code], a Control will be drawn on top of its siblings. */
 raise(): void;
 
 /** Removes a node and sets all its children as children of the parent node (if it exists). All event subscriptions that pass by the removed node will be unsubscribed. */
@@ -516,7 +533,12 @@ set_network_master(id: int, recursive?: boolean): void;
 /** Enables or disables physics (i.e. fixed framerate) processing. When a node is being processed, it will receive a [constant NOTIFICATION_PHYSICS_PROCESS] at a fixed (usually 60 FPS, see [member Engine.iterations_per_second] to change) interval (and the [method _physics_process] callback will be called if exists). Enabled automatically if [method _physics_process] is overridden. Any calls to this before [method _ready] will be ignored. */
 set_physics_process(enable: boolean): void;
 
-/** Enables or disables internal physics for this node. Internal physics processing happens in isolation from the normal [method _physics_process] calls and is used by some nodes internally to guarantee proper functioning even if the node is paused or physics processing is disabled for scripting ([method set_physics_process]). Only useful for advanced uses to manipulate built-in nodes' behaviour. */
+/**
+ * Enables or disables internal physics for this node. Internal physics processing happens in isolation from the normal [method _physics_process] calls and is used by some nodes internally to guarantee proper functioning even if the node is paused or physics processing is disabled for scripting ([method set_physics_process]). Only useful for advanced uses to manipulate built-in nodes' behavior.
+ *
+ * **Warning:** Built-in Nodes rely on the internal processing for their own logic, so changing this value from your code may lead to unexpected behavior. Script access to this internal logic is provided for specific advanced uses, but is unsafe and not supported.
+ *
+*/
 set_physics_process_internal(enable: boolean): void;
 
 /** Enables or disables processing. When a node is being processed, it will receive a [constant NOTIFICATION_PROCESS] on every drawn frame (and the [method _process] callback will be called if exists). Enabled automatically if [method _process] is overridden. Any calls to this before [method _ready] will be ignored. */
@@ -525,7 +547,12 @@ set_process(enable: boolean): void;
 /** Enables or disables input processing. This is not required for GUI controls! Enabled automatically if [method _input] is overridden. Any calls to this before [method _ready] will be ignored. */
 set_process_input(enable: boolean): void;
 
-/** Enables or disabled internal processing for this node. Internal processing happens in isolation from the normal [method _process] calls and is used by some nodes internally to guarantee proper functioning even if the node is paused or processing is disabled for scripting ([method set_process]). Only useful for advanced uses to manipulate built-in nodes' behaviour. */
+/**
+ * Enables or disabled internal processing for this node. Internal processing happens in isolation from the normal [method _process] calls and is used by some nodes internally to guarantee proper functioning even if the node is paused or processing is disabled for scripting ([method set_process]). Only useful for advanced uses to manipulate built-in nodes' behavior.
+ *
+ * **Warning:** Built-in Nodes rely on the internal processing for their own logic, so changing this value from your code may lead to unexpected behavior. Script access to this internal logic is provided for specific advanced uses, but is unsafe and not supported.
+ *
+*/
 set_process_internal(enable: boolean): void;
 
 /** Enables unhandled input processing. This is not required for GUI controls! It enables the node to receive all input that was not previously handled (usually by a [Control]). Enabled automatically if [method _unhandled_input] is overridden. Any calls to this before [method _ready] will be ignored. */
@@ -545,7 +572,8 @@ set_scene_instance_load_placeholder(load_placeholder: boolean): void;
 */
 update_configuration_warning(): void;
 
-  connect<T extends SignalsOf<Node>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Node>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<NodeSignals>>(signal: T, method: SignalFunction<NodeSignals[T]>): number;
 
 
 
@@ -553,49 +581,49 @@ update_configuration_warning(): void;
  * Notification received when the node enters a [SceneTree].
  *
 */
-static NOTIFICATION_ENTER_TREE: 10;
+static NOTIFICATION_ENTER_TREE: any;
 
 /**
  * Notification received when the node is about to exit a [SceneTree].
  *
 */
-static NOTIFICATION_EXIT_TREE: 11;
+static NOTIFICATION_EXIT_TREE: any;
 
 /**
  * Notification received when the node is moved in the parent.
  *
 */
-static NOTIFICATION_MOVED_IN_PARENT: 12;
+static NOTIFICATION_MOVED_IN_PARENT: any;
 
 /**
  * Notification received when the node is ready. See [method _ready].
  *
 */
-static NOTIFICATION_READY: 13;
+static NOTIFICATION_READY: any;
 
 /**
  * Notification received when the node is paused.
  *
 */
-static NOTIFICATION_PAUSED: 14;
+static NOTIFICATION_PAUSED: any;
 
 /**
  * Notification received when the node is unpaused.
  *
 */
-static NOTIFICATION_UNPAUSED: 15;
+static NOTIFICATION_UNPAUSED: any;
 
 /**
  * Notification received every frame when the physics process flag is set (see [method set_physics_process]).
  *
 */
-static NOTIFICATION_PHYSICS_PROCESS: 16;
+static NOTIFICATION_PHYSICS_PROCESS: any;
 
 /**
  * Notification received every frame when the process flag is set (see [method set_process]).
  *
 */
-static NOTIFICATION_PROCESS: 17;
+static NOTIFICATION_PROCESS: any;
 
 /**
  * Notification received when a node is set as a child of another node.
@@ -603,55 +631,55 @@ static NOTIFICATION_PROCESS: 17;
  * **Note:** This doesn't mean that a node entered the [SceneTree].
  *
 */
-static NOTIFICATION_PARENTED: 18;
+static NOTIFICATION_PARENTED: any;
 
 /**
  * Notification received when a node is unparented (parent removed it from the list of children).
  *
 */
-static NOTIFICATION_UNPARENTED: 19;
+static NOTIFICATION_UNPARENTED: any;
 
 /**
  * Notification received when the node is instanced.
  *
 */
-static NOTIFICATION_INSTANCED: 20;
+static NOTIFICATION_INSTANCED: any;
 
 /**
  * Notification received when a drag begins.
  *
 */
-static NOTIFICATION_DRAG_BEGIN: 21;
+static NOTIFICATION_DRAG_BEGIN: any;
 
 /**
  * Notification received when a drag ends.
  *
 */
-static NOTIFICATION_DRAG_END: 22;
+static NOTIFICATION_DRAG_END: any;
 
 /**
  * Notification received when the node's [NodePath] changed.
  *
 */
-static NOTIFICATION_PATH_CHANGED: 23;
+static NOTIFICATION_PATH_CHANGED: any;
 
 /**
  * Notification received every frame when the internal process flag is set (see [method set_process_internal]).
  *
 */
-static NOTIFICATION_INTERNAL_PROCESS: 25;
+static NOTIFICATION_INTERNAL_PROCESS: any;
 
 /**
  * Notification received every frame when the internal physics process flag is set (see [method set_physics_process_internal]).
  *
 */
-static NOTIFICATION_INTERNAL_PHYSICS_PROCESS: 26;
+static NOTIFICATION_INTERNAL_PHYSICS_PROCESS: any;
 
 /**
  * Notification received when the node is ready, just before [constant NOTIFICATION_READY] is received. Unlike the latter, it's sent every time the node enters tree, instead of only once.
  *
 */
-static NOTIFICATION_POST_ENTER_TREE: 27;
+static NOTIFICATION_POST_ENTER_TREE: any;
 
 /**
  * Notification received from the OS when the mouse enters the game window.
@@ -659,7 +687,7 @@ static NOTIFICATION_POST_ENTER_TREE: 27;
  * Implemented on desktop and web platforms.
  *
 */
-static NOTIFICATION_WM_MOUSE_ENTER: 1002;
+static NOTIFICATION_WM_MOUSE_ENTER: any;
 
 /**
  * Notification received from the OS when the mouse leaves the game window.
@@ -667,7 +695,7 @@ static NOTIFICATION_WM_MOUSE_ENTER: 1002;
  * Implemented on desktop and web platforms.
  *
 */
-static NOTIFICATION_WM_MOUSE_EXIT: 1003;
+static NOTIFICATION_WM_MOUSE_EXIT: any;
 
 /**
  * Notification received from the OS when the game window is focused.
@@ -675,7 +703,7 @@ static NOTIFICATION_WM_MOUSE_EXIT: 1003;
  * Implemented on all platforms.
  *
 */
-static NOTIFICATION_WM_FOCUS_IN: 1004;
+static NOTIFICATION_WM_FOCUS_IN: any;
 
 /**
  * Notification received from the OS when the game window is unfocused.
@@ -683,7 +711,7 @@ static NOTIFICATION_WM_FOCUS_IN: 1004;
  * Implemented on all platforms.
  *
 */
-static NOTIFICATION_WM_FOCUS_OUT: 1005;
+static NOTIFICATION_WM_FOCUS_OUT: any;
 
 /**
  * Notification received from the OS when a quit request is sent (e.g. closing the window with a "Close" button or Alt+F4).
@@ -691,7 +719,7 @@ static NOTIFICATION_WM_FOCUS_OUT: 1005;
  * Implemented on desktop platforms.
  *
 */
-static NOTIFICATION_WM_QUIT_REQUEST: 1006;
+static NOTIFICATION_WM_QUIT_REQUEST: any;
 
 /**
  * Notification received from the OS when a go back request is sent (e.g. pressing the "Back" button on Android).
@@ -699,7 +727,7 @@ static NOTIFICATION_WM_QUIT_REQUEST: 1006;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_WM_GO_BACK_REQUEST: 1007;
+static NOTIFICATION_WM_GO_BACK_REQUEST: any;
 
 /**
  * Notification received from the OS when an unfocus request is sent (e.g. another OS window wants to take the focus).
@@ -707,7 +735,7 @@ static NOTIFICATION_WM_GO_BACK_REQUEST: 1007;
  * No supported platforms currently send this notification.
  *
 */
-static NOTIFICATION_WM_UNFOCUS_REQUEST: 1008;
+static NOTIFICATION_WM_UNFOCUS_REQUEST: any;
 
 /**
  * Notification received from the OS when the application is exceeding its allocated memory.
@@ -715,13 +743,13 @@ static NOTIFICATION_WM_UNFOCUS_REQUEST: 1008;
  * Specific to the iOS platform.
  *
 */
-static NOTIFICATION_OS_MEMORY_WARNING: 1009;
+static NOTIFICATION_OS_MEMORY_WARNING: any;
 
 /**
  * Notification received when translations may have changed. Can be triggered by the user changing the locale. Can be used to respond to language changes, for example to change the UI strings on the fly. Useful when working with the built-in translation support, like [method Object.tr].
  *
 */
-static NOTIFICATION_TRANSLATION_CHANGED: 1010;
+static NOTIFICATION_TRANSLATION_CHANGED: any;
 
 /**
  * Notification received from the OS when a request for "About" information is sent.
@@ -729,7 +757,7 @@ static NOTIFICATION_TRANSLATION_CHANGED: 1010;
  * Specific to the macOS platform.
  *
 */
-static NOTIFICATION_WM_ABOUT: 1011;
+static NOTIFICATION_WM_ABOUT: any;
 
 /**
  * Notification received from Godot's crash handler when the engine is about to crash.
@@ -737,7 +765,7 @@ static NOTIFICATION_WM_ABOUT: 1011;
  * Implemented on desktop platforms if the crash handler is enabled.
  *
 */
-static NOTIFICATION_CRASH: 1012;
+static NOTIFICATION_CRASH: any;
 
 /**
  * Notification received from the OS when an update of the Input Method Engine occurs (e.g. change of IME cursor position or composition string).
@@ -745,7 +773,7 @@ static NOTIFICATION_CRASH: 1012;
  * Specific to the macOS platform.
  *
 */
-static NOTIFICATION_OS_IME_UPDATE: 1013;
+static NOTIFICATION_OS_IME_UPDATE: any;
 
 /**
  * Notification received from the OS when the app is resumed.
@@ -753,7 +781,7 @@ static NOTIFICATION_OS_IME_UPDATE: 1013;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_APP_RESUMED: 1014;
+static NOTIFICATION_APP_RESUMED: any;
 
 /**
  * Notification received from the OS when the app is paused.
@@ -761,43 +789,43 @@ static NOTIFICATION_APP_RESUMED: 1014;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_APP_PAUSED: 1015;
+static NOTIFICATION_APP_PAUSED: any;
 
 /**
  * Inherits pause mode from the node's parent. For the root node, it is equivalent to [constant PAUSE_MODE_STOP]. Default.
  *
 */
-static PAUSE_MODE_INHERIT: 0;
+static PAUSE_MODE_INHERIT: any;
 
 /**
  * Stops processing when the [SceneTree] is paused.
  *
 */
-static PAUSE_MODE_STOP: 1;
+static PAUSE_MODE_STOP: any;
 
 /**
  * Continue to process regardless of the [SceneTree] pause state.
  *
 */
-static PAUSE_MODE_PROCESS: 2;
+static PAUSE_MODE_PROCESS: any;
 
 /**
  * Duplicate the node's signals.
  *
 */
-static DUPLICATE_SIGNALS: 1;
+static DUPLICATE_SIGNALS: any;
 
 /**
  * Duplicate the node's groups.
  *
 */
-static DUPLICATE_GROUPS: 2;
+static DUPLICATE_GROUPS: any;
 
 /**
  * Duplicate the node's scripts.
  *
 */
-static DUPLICATE_SCRIPTS: 4;
+static DUPLICATE_SCRIPTS: any;
 
 /**
  * Duplicate using instancing.
@@ -805,9 +833,11 @@ static DUPLICATE_SCRIPTS: 4;
  * An instance stays linked to the original so when the original changes, the instance changes too.
  *
 */
-static DUPLICATE_USE_INSTANCING: 8;
+static DUPLICATE_USE_INSTANCING: any;
 
+}
 
+declare class NodeSignals extends ObjectSignals {
   /**
  * Emitted when the node is ready.
  *

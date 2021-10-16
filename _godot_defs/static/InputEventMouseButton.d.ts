@@ -29,11 +29,14 @@ pressed: boolean;
 
 
 
-  connect<T extends SignalsOf<InputEventMouseButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventMouseButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventMouseButtonSignals>>(signal: T, method: SignalFunction<InputEventMouseButtonSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventMouseButtonSignals extends InputEventMouseSignals {
   
 }

@@ -36,11 +36,14 @@ set_point_penalty(idx: int, penalty: float): void;
 /** No documentation provided. */
 setup(points: PoolVector2Array, connections: PoolIntArray): void;
 
-  connect<T extends SignalsOf<PolygonPathFinder>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PolygonPathFinder>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PolygonPathFinderSignals>>(signal: T, method: SignalFunction<PolygonPathFinderSignals[T]>): number;
 
 
 
 
+}
 
+declare class PolygonPathFinderSignals extends ResourceSignals {
   
 }

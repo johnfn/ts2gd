@@ -4,6 +4,8 @@
  *
  * Can be used to make HTTP requests, i.e. download or upload files or web content via HTTP.
  *
+ * **Warning:** See the notes and warnings on [HTTPClient] for limitations, especially regarding SSL security.
+ *
  * **Example of contacting a REST API and printing one of its returned fields:**
  *
  * @example 
@@ -21,7 +23,7 @@
  *     # Note: Don't make simultaneous requests using a single HTTPRequest node.
  *     # The snippet below is provided for reference only.
  *     var body = {"name": "Godette"}
- *     var error = http_request.request("https://httpbin.org/post", [], true, HTTPClient.METHOD_POST, body)
+ *     error = http_request.request("https://httpbin.org/post", [], true, HTTPClient.METHOD_POST, body)
  *     if error != OK:
  *         push_error("An error occurred in the HTTP request.")
  * # Called when the HTTP request is completed.
@@ -60,7 +62,13 @@
  * @summary 
  * 
  *
- * **Note:** When performing HTTP requests from a project exported to HTML5, keep in mind the remote server may not allow requests from foreign origins due to [url=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS]CORS[/url]. If you host the server in question, you should modify its backend to allow requests from foreign origins by adding the `Access-Control-Allow-Origin: *` HTTP header.
+ * **Gzipped response bodies**
+ *
+ * HttpRequest will automatically handle decompression of response bodies.
+ *
+ * A "Accept-Encoding" header will be automatically added to each of your requests, unless one is already specified.
+ *
+ * Any response with a "Content-Encoding: gzip" header will automatically be decompressed and delivered to you as a uncompressed bytes.
  *
 */
 declare class HTTPRequest extends Node {
@@ -71,6 +79,8 @@ declare class HTTPRequest extends Node {
  *
  * Can be used to make HTTP requests, i.e. download or upload files or web content via HTTP.
  *
+ * **Warning:** See the notes and warnings on [HTTPClient] for limitations, especially regarding SSL security.
+ *
  * **Example of contacting a REST API and printing one of its returned fields:**
  *
  * @example 
@@ -88,7 +98,7 @@ declare class HTTPRequest extends Node {
  *     # Note: Don't make simultaneous requests using a single HTTPRequest node.
  *     # The snippet below is provided for reference only.
  *     var body = {"name": "Godette"}
- *     var error = http_request.request("https://httpbin.org/post", [], true, HTTPClient.METHOD_POST, body)
+ *     error = http_request.request("https://httpbin.org/post", [], true, HTTPClient.METHOD_POST, body)
  *     if error != OK:
  *         push_error("An error occurred in the HTTP request.")
  * # Called when the HTTP request is completed.
@@ -127,7 +137,13 @@ declare class HTTPRequest extends Node {
  * @summary 
  * 
  *
- * **Note:** When performing HTTP requests from a project exported to HTML5, keep in mind the remote server may not allow requests from foreign origins due to [url=https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS]CORS[/url]. If you host the server in question, you should modify its backend to allow requests from foreign origins by adding the `Access-Control-Allow-Origin: *` HTTP header.
+ * **Gzipped response bodies**
+ *
+ * HttpRequest will automatically handle decompression of response bodies.
+ *
+ * A "Accept-Encoding" header will be automatically added to each of your requests, unless one is already specified.
+ *
+ * Any response with a "Content-Encoding: gzip" header will automatically be decompressed and delivered to you as a uncompressed bytes.
  *
 */
   "new"(): HTTPRequest;
@@ -135,13 +151,25 @@ declare class HTTPRequest extends Node {
 
 
 
-/** Maximum allowed size for response bodies. */
+/**
+ * If `true`, this header will be added to each request: `Accept-Encoding: gzip, deflate` telling servers that it's okay to compress response bodies.
+ *
+ * Any Reponse body declaring a `Content-Encoding` of either `gzip` or `deflate` will then be automatically decompressed, and the uncompressed bytes will be delivered via `request_completed`.
+ *
+ * If the user has specified their own `Accept-Encoding` header, then no header will be added regaurdless of `accept_gzip`.
+ *
+ * If `false` no header will be added, and no decompression will be performed on response bodies. The raw bytes of the response body will be returned via `request_completed`.
+ *
+*/
+accept_gzip: boolean;
+
+/** Maximum allowed size for response bodies. If the response body is compressed, this will be used as the maximum allowed size for the decompressed body. */
 body_size_limit: int;
 
 /**
  * The size of the buffer used and maximum bytes to read per iteration. See [member HTTPClient.read_chunk_size].
  *
- * Set this to a higher value (e.g. 65536 for 64 KiB) when downloading large files to achieve better speeds at the cost of memory.
+ * Set this to a lower value (e.g. 4096 for 4 KiB) when downloading small files to decrease memory usage at the cost of download speeds.
  *
 */
 download_chunk_size: int;
@@ -178,12 +206,21 @@ get_http_client_status(): int;
  *
  * Returns [constant OK] if request is successfully created. (Does not imply that the server has responded), [constant ERR_UNCONFIGURED] if not in the tree, [constant ERR_BUSY] if still processing previous request, [constant ERR_INVALID_PARAMETER] if given string is not a valid URL format, or [constant ERR_CANT_CONNECT] if not using thread and the [HTTPClient] cannot connect to host.
  *
- * **Note:** The `request_data` parameter is ignored if `method` is [constant HTTPClient.METHOD_GET]. This is because GET methods can't contain request data. As a workaround, you can pass request data as a query string in the URL. See [method String.http_escape] for an example.
+ * **Note:** When `method` is [constant HTTPClient.METHOD_GET], the payload sent via `request_data` might be ignored by the server or even cause the server to reject the request (check [url=https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1]RFC 7231 section 4.3.1[/url] for more details). As a workaround, you can send data as a query string in the URL. See [method String.http_escape] for an example.
  *
 */
 request(url: string, custom_headers?: PoolStringArray, ssl_validate_domain?: boolean, method?: int, request_data?: string): int;
 
-  connect<T extends SignalsOf<HTTPRequest>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/**
+ * Creates request on the underlying [HTTPClient] using a raw array of bytes for the request body. If there is no configuration errors, it tries to connect using [method HTTPClient.connect_to_host] and passes parameters onto [method HTTPClient.request].
+ *
+ * Returns [constant OK] if request is successfully created. (Does not imply that the server has responded), [constant ERR_UNCONFIGURED] if not in the tree, [constant ERR_BUSY] if still processing previous request, [constant ERR_INVALID_PARAMETER] if given string is not a valid URL format, or [constant ERR_CANT_CONNECT] if not using thread and the [HTTPClient] cannot connect to host.
+ *
+*/
+request_raw(url: string, custom_headers?: PoolStringArray, ssl_validate_domain?: boolean, method?: int, request_data_raw?: PoolByteArray): int;
+
+  // connect<T extends SignalsOf<HTTPRequest>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HTTPRequestSignals>>(signal: T, method: SignalFunction<HTTPRequestSignals[T]>): number;
 
 
 
@@ -191,75 +228,80 @@ request(url: string, custom_headers?: PoolStringArray, ssl_validate_domain?: boo
  * Request successful.
  *
 */
-static RESULT_SUCCESS: 0;
+static RESULT_SUCCESS: any;
 
 /** No documentation provided. */
-static RESULT_CHUNKED_BODY_SIZE_MISMATCH: 1;
+static RESULT_CHUNKED_BODY_SIZE_MISMATCH: any;
 
 /**
  * Request failed while connecting.
  *
 */
-static RESULT_CANT_CONNECT: 2;
+static RESULT_CANT_CONNECT: any;
 
 /**
  * Request failed while resolving.
  *
 */
-static RESULT_CANT_RESOLVE: 3;
+static RESULT_CANT_RESOLVE: any;
 
 /**
  * Request failed due to connection (read/write) error.
  *
 */
-static RESULT_CONNECTION_ERROR: 4;
+static RESULT_CONNECTION_ERROR: any;
 
 /**
  * Request failed on SSL handshake.
  *
 */
-static RESULT_SSL_HANDSHAKE_ERROR: 5;
+static RESULT_SSL_HANDSHAKE_ERROR: any;
 
 /**
  * Request does not have a response (yet).
  *
 */
-static RESULT_NO_RESPONSE: 6;
+static RESULT_NO_RESPONSE: any;
+
+/** No documentation provided. */
+static RESULT_BODY_DECOMPRESS_FAILED: any;
 
 /**
  * Request exceeded its maximum size limit, see [member body_size_limit].
  *
 */
-static RESULT_BODY_SIZE_LIMIT_EXCEEDED: 7;
+static RESULT_BODY_SIZE_LIMIT_EXCEEDED: any;
 
 /**
  * Request failed (currently unused).
  *
 */
-static RESULT_REQUEST_FAILED: 8;
+static RESULT_REQUEST_FAILED: any;
 
 /**
  * HTTPRequest couldn't open the download file.
  *
 */
-static RESULT_DOWNLOAD_FILE_CANT_OPEN: 9;
+static RESULT_DOWNLOAD_FILE_CANT_OPEN: any;
 
 /**
  * HTTPRequest couldn't write to the download file.
  *
 */
-static RESULT_DOWNLOAD_FILE_WRITE_ERROR: 10;
+static RESULT_DOWNLOAD_FILE_WRITE_ERROR: any;
 
 /**
  * Request reached its maximum redirect limit, see [member max_redirects].
  *
 */
-static RESULT_REDIRECT_LIMIT_REACHED: 11;
+static RESULT_REDIRECT_LIMIT_REACHED: any;
 
 /** No documentation provided. */
-static RESULT_TIMEOUT: 12;
+static RESULT_TIMEOUT: any;
 
+}
 
+declare class HTTPRequestSignals extends NodeSignals {
   /**
  * Emitted when a request is completed.
  *

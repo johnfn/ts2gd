@@ -31,7 +31,12 @@ declare class RigidBody extends PhysicsBody {
 
 
 
-/** Damps RigidBody's rotational forces. */
+/**
+ * Damps RigidBody's rotational forces.
+ *
+ * See [member ProjectSettings.physics/3d/default_angular_damp] for more details about damping.
+ *
+*/
 angular_damp: float;
 
 /** RigidBody's rotational velocity. */
@@ -104,7 +109,12 @@ friction: float;
 /** This is multiplied by the global 3D gravity setting found in [b]Project > Project Settings > Physics > 3d[/b] to produce RigidBody's gravity. For example, a value of 1 will be normal gravity, 2 will apply double gravity, and 0.5 will apply half gravity to this object. */
 gravity_scale: float;
 
-/** The body's linear damp. Cannot be less than -1.0. If this value is different from -1.0, any linear damp derived from the world or areas will be overridden. */
+/**
+ * The body's linear damp. Cannot be less than -1.0. If this value is different from -1.0, any linear damp derived from the world or areas will be overridden.
+ *
+ * See [member ProjectSettings.physics/3d/default_linear_damp] for more details about damping.
+ *
+*/
 linear_damp: float;
 
 /** The body's linear velocity. Can be used sporadically, but [b]don't set this every frame[/b], because physics may run in another thread and runs at a different granularity. Use [method _integrate_forces] as your process loop for precise control of the body state. */
@@ -186,7 +196,8 @@ set_axis_lock(axis: int, lock: boolean): void;
 /** Sets an axis velocity. The velocity in the given vector axis will be set as the given vector length. This is useful for jumping behavior. */
 set_axis_velocity(axis_velocity: Vector3): void;
 
-  connect<T extends SignalsOf<RigidBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RigidBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RigidBodySignals>>(signal: T, method: SignalFunction<RigidBodySignals[T]>): number;
 
 
 
@@ -194,54 +205,76 @@ set_axis_velocity(axis_velocity: Vector3): void;
  * Rigid body mode. This is the "natural" state of a rigid body. It is affected by forces, and can move, rotate, and be affected by user code.
  *
 */
-static MODE_RIGID: 0;
+static MODE_RIGID: any;
 
 /**
  * Static mode. The body behaves like a [StaticBody], and can only move by user code.
  *
 */
-static MODE_STATIC: 1;
+static MODE_STATIC: any;
 
 /**
  * Character body mode. This behaves like a rigid body, but can not rotate.
  *
 */
-static MODE_CHARACTER: 2;
+static MODE_CHARACTER: any;
 
 /**
  * Kinematic body mode. The body behaves like a [KinematicBody], and can only move by user code.
  *
 */
-static MODE_KINEMATIC: 3;
+static MODE_KINEMATIC: any;
 
+}
 
+declare class RigidBodySignals extends PhysicsBodySignals {
   /**
- * Emitted when a body enters into contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when a collision with another [PhysicsBody] or [GridMap] occurs. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
 body_entered: Signal<(body: Node) => void>
 
 /**
- * Emitted when a body shape exits contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when the collision with another [PhysicsBody] or [GridMap] ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
 body_exited: Signal<(body: Node) => void>
 
 /**
- * Emitted when a body enters into contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when one of this RigidBody's [Shape]s collides with another [PhysicsBody] or [GridMap]'s [Shape]s. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * This signal not only receives the body that collided with this one, but also its [RID] (`body_id`), the shape index from the colliding body (`body_shape`), and the shape index from this body (`local_shape`) the other body collided with.
+ * `body_id` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
+ *
+ * `body_shape` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ *
+ * `local_shape` the index of the [Shape] of this RigidBody used by the [PhysicsServer].
+ *
+ * **Note:** Bullet physics cannot identify the shape index when using a [ConcavePolygonShape]. Don't use multiple [CollisionShape]s when using a [ConcavePolygonShape] with Bullet physics if you need shape indices.
  *
 */
-body_shape_entered: Signal<(body_id: int, body: Node, body_shape: int, local_shape: int) => void>
+body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
 
 /**
- * Emitted when a body shape exits contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when the collision between one of this RigidBody's [Shape]s and another [PhysicsBody] or [GridMap]'s [Shape]s ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * This signal not only receives the body that stopped colliding with this one, but also its [RID] (`body_id`), the shape index from the colliding body (`body_shape`), and the shape index from this body (`local_shape`) the other body stopped colliding with.
+ * `body_id` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer]. [GridMap]s are detected if the Meshes have [Shape]s.
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
+ *
+ * `body_shape` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ *
+ * `local_shape` the index of the [Shape] of this RigidBody used by the [PhysicsServer].
+ *
+ * **Note:** Bullet physics cannot identify the shape index when using a [ConcavePolygonShape]. Don't use multiple [CollisionShape]s when using a [ConcavePolygonShape] with Bullet physics if you need shape indices.
  *
 */
-body_shape_exited: Signal<(body_id: int, body: Node, body_shape: int, local_shape: int) => void>
+body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
 
 /**
  * Emitted when the physics engine changes the body's sleeping state.

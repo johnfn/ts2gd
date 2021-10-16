@@ -37,7 +37,8 @@ texture: Texture;
 
 
 
-  connect<T extends SignalsOf<TextureRect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TextureRect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TextureRectSignals>>(signal: T, method: SignalFunction<TextureRectSignals[T]>): number;
 
 
 
@@ -45,50 +46,52 @@ texture: Texture;
  * Scale to fit the node's bounding rectangle, only if `expand` is `true`. Default `stretch_mode`, for backwards compatibility. Until you set `expand` to `true`, the texture will behave like [constant STRETCH_KEEP].
  *
 */
-static STRETCH_SCALE_ON_EXPAND: 0;
+static STRETCH_SCALE_ON_EXPAND: any;
 
 /**
  * Scale to fit the node's bounding rectangle.
  *
 */
-static STRETCH_SCALE: 1;
+static STRETCH_SCALE: any;
 
 /**
  * Tile inside the node's bounding rectangle.
  *
 */
-static STRETCH_TILE: 2;
+static STRETCH_TILE: any;
 
 /**
  * The texture keeps its original size and stays in the bounding rectangle's top-left corner.
  *
 */
-static STRETCH_KEEP: 3;
+static STRETCH_KEEP: any;
 
 /**
  * The texture keeps its original size and stays centered in the node's bounding rectangle.
  *
 */
-static STRETCH_KEEP_CENTERED: 4;
+static STRETCH_KEEP_CENTERED: any;
 
 /**
  * Scale the texture to fit the node's bounding rectangle, but maintain the texture's aspect ratio.
  *
 */
-static STRETCH_KEEP_ASPECT: 5;
+static STRETCH_KEEP_ASPECT: any;
 
 /**
  * Scale the texture to fit the node's bounding rectangle, center it and maintain its aspect ratio.
  *
 */
-static STRETCH_KEEP_ASPECT_CENTERED: 6;
+static STRETCH_KEEP_ASPECT_CENTERED: any;
 
 /**
  * Scale the texture so that the shorter side fits the bounding rectangle. The other side clips to the node's limits.
  *
 */
-static STRETCH_KEEP_ASPECT_COVERED: 7;
+static STRETCH_KEEP_ASPECT_COVERED: any;
 
+}
 
+declare class TextureRectSignals extends ControlSignals {
   
 }

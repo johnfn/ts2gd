@@ -2,12 +2,16 @@
 /**
  * An Omnidirectional light is a type of [Light] that emits light in all directions. The light is attenuated by distance and this attenuation can be configured by changing its energy, radius, and attenuation parameters.
  *
+ * **Note:** By default, only 32 OmniLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
+ *
 */
 declare class OmniLight extends Light {
 
   
 /**
  * An Omnidirectional light is a type of [Light] that emits light in all directions. The light is attenuated by distance and this attenuation can be configured by changing its energy, radius, and attenuation parameters.
+ *
+ * **Note:** By default, only 32 OmniLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
  *
 */
   "new"(): OmniLight;
@@ -29,7 +33,8 @@ omni_shadow_mode: int;
 
 
 
-  connect<T extends SignalsOf<OmniLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<OmniLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<OmniLightSignals>>(signal: T, method: SignalFunction<OmniLightSignals[T]>): number;
 
 
 
@@ -37,26 +42,28 @@ omni_shadow_mode: int;
  * Shadows are rendered to a dual-paraboloid texture. Faster than [constant SHADOW_CUBE], but lower-quality.
  *
 */
-static SHADOW_DUAL_PARABOLOID: 0;
+static SHADOW_DUAL_PARABOLOID: any;
 
 /**
  * Shadows are rendered to a cubemap. Slower than [constant SHADOW_DUAL_PARABOLOID], but higher-quality.
  *
 */
-static SHADOW_CUBE: 1;
+static SHADOW_CUBE: any;
 
 /**
  * Use more detail vertically when computing the shadow.
  *
 */
-static SHADOW_DETAIL_VERTICAL: 0;
+static SHADOW_DETAIL_VERTICAL: any;
 
 /**
  * Use more detail horizontally when computing the shadow.
  *
 */
-static SHADOW_DETAIL_HORIZONTAL: 1;
+static SHADOW_DETAIL_HORIZONTAL: any;
 
+}
 
+declare class OmniLightSignals extends LightSignals {
   
 }

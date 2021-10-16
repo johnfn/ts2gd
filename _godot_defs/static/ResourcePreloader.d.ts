@@ -38,11 +38,14 @@ remove_resource(name: string): void;
 /** Renames a resource inside the preloader from [code]name[/code] to [code]newname[/code]. */
 rename_resource(name: string, newname: string): void;
 
-  connect<T extends SignalsOf<ResourcePreloader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourcePreloader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourcePreloaderSignals>>(signal: T, method: SignalFunction<ResourcePreloaderSignals[T]>): number;
 
 
 
 
+}
 
+declare class ResourcePreloaderSignals extends NodeSignals {
   
 }

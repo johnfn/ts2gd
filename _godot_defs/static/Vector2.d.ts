@@ -36,15 +36,27 @@ abs(): Vector2;
  *
  * For example, `Vector2.RIGHT.angle()` will return zero, `Vector2.DOWN.angle()` will return `PI / 2` (a quarter turn, or 90 degrees), and `Vector2(1, -1).angle()` will return `-PI / 4` (a negative eighth turn, or -45 degrees).
  *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/vector2_angle.png]Illustration of the returned angle.[/url]
+ *
  * Equivalent to the result of [method @GDScript.atan2] when called with the vector's [member y] and [member x] as parameters: `atan2(y, x)`.
  *
 */
 angle(): float;
 
-/** Returns the angle to the given vector, in radians. */
+/**
+ * Returns the angle to the given vector, in radians.
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/vector2_angle_to.png]Illustration of the returned angle.[/url]
+ *
+*/
 angle_to(to: Vector2): float;
 
-/** Returns the angle between the line connecting the two points and the X axis, in radians. */
+/**
+ * Returns the angle between the line connecting the two points and the X axis, in radians.
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/vector2_angle_to_point.png]Illustration of the returned angle.[/url]
+ *
+*/
 angle_to_point(to: Vector2): float;
 
 /** Returns the aspect ratio of this vector, the ratio of [member x] to [member y]. */
@@ -62,10 +74,10 @@ clamped(length: float): Vector2;
 /** Returns the cross product of this vector and [code]with[/code]. */
 cross(_with: Vector2): float;
 
-/** Cubically interpolates between this vector and [code]b[/code] using [code]pre_a[/code] and [code]post_b[/code] as handles, and returns the result at position [code]t[/code]. [code]t[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
-cubic_interpolate(b: Vector2, pre_a: Vector2, post_b: Vector2, t: float): Vector2;
+/** Cubically interpolates between this vector and [code]b[/code] using [code]pre_a[/code] and [code]post_b[/code] as handles, and returns the result at position [code]weight[/code]. [code]weight[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
+cubic_interpolate(b: Vector2, pre_a: Vector2, post_b: Vector2, weight: float): Vector2;
 
-/** Returns the normalized vector pointing from this vector to [code]b[/code]. */
+/** Returns the normalized vector pointing from this vector to [code]b[/code]. This is equivalent to using [code](b - a).normalized()[/code]. */
 direction_to(b: Vector2): Vector2;
 
 /**
@@ -97,7 +109,7 @@ floor(): Vector2;
 /** Returns [code]true[/code] if this vector and [code]v[/code] are approximately equal, by running [method @GDScript.is_equal_approx] on each component. */
 is_equal_approx(v: Vector2): boolean;
 
-/** Returns [code]true[/code] if the vector is normalized, and false otherwise. */
+/** Returns [code]true[/code] if the vector is normalized, [code]false[/code] otherwise. */
 is_normalized(): boolean;
 
 /** Returns the length (magnitude) of this vector. */
@@ -111,8 +123,8 @@ length(): float;
 */
 length_squared(): float;
 
-/** Returns the result of the linear interpolation between this vector and [code]b[/code] by amount [code]t[/code]. [code]t[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
-linear_interpolate(b: Vector2, t: float): Vector2;
+/** Returns the result of the linear interpolation between this vector and [code]to[/code] by amount [code]weight[/code]. [code]weight[/code] is on the range of 0.0 to 1.0, representing the amount of interpolation. */
+linear_interpolate(to: Vector2, weight: float): Vector2;
 
 /** Moves the vector toward [code]to[/code] by the fixed [code]delta[/code] amount. */
 move_toward(to: Vector2, delta: float): Vector2;
@@ -138,16 +150,16 @@ rotated(phi: float): Vector2;
 /** Returns the vector with all components rounded to the nearest integer, with halfway cases rounded away from zero. */
 round(): Vector2;
 
-/** Returns the vector with each component set to one or negative one, depending on the signs of the components, or zero if the component is zero, by calling [method @GDScript.sign] on each component. */
+/** Returns the vector with each component set to one or negative one, depending on the signs of the components. If a component is zero, it returns positive one. */
 sign(): Vector2;
 
 /**
- * Returns the result of spherical linear interpolation between this vector and `b`, by amount `t`. `t` is on the range of 0.0 to 1.0, representing the amount of interpolation.
+ * Returns the result of spherical linear interpolation between this vector and `to`, by amount `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
  *
  * **Note:** Both vectors must be normalized.
  *
 */
-slerp(b: Vector2, t: float): Vector2;
+slerp(to: Vector2, weight: float): Vector2;
 
 /** Returns this vector slid along a plane defined by the given normal. */
 slide(n: Vector2): Vector2;
@@ -158,7 +170,8 @@ snapped(by: Vector2): Vector2;
 /** Returns a perpendicular vector rotated 90 degrees counter-clockwise compared to the original, with the same length. */
 tangent(): Vector2;
 
-  connect<T extends SignalsOf<Vector2>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Vector2>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Vector2Signals>>(signal: T, method: SignalFunction<Vector2Signals[T]>): number;
 
 
 add(other: number | Vector2): Vector2;
@@ -171,13 +184,13 @@ div(other: number | Vector2): Vector2;
  * Enumerated value for the X axis.
  *
 */
-static AXIS_X: 0;
+static AXIS_X: any;
 
 /**
  * Enumerated value for the Y axis.
  *
 */
-static AXIS_Y: 1;
+static AXIS_Y: any;
 
 /**
  * Zero vector, a vector with all components set to `0`.
@@ -221,6 +234,8 @@ static UP: Vector2;
 */
 static DOWN: Vector2;
 
+}
 
+declare class Vector2Signals {
   
 }

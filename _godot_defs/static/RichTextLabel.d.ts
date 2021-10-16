@@ -4,7 +4,13 @@
  *
  * **Note:** Assignments to [member bbcode_text] clear the tag stack and reconstruct it from the property's contents. Any edits made to [member bbcode_text] will erase previous edits made from other manual sources such as [method append_bbcode] and the `push_*` / [method pop] methods.
  *
+ * **Note:** RichTextLabel doesn't support entangled BBCode tags. For example, instead of using `**bold**bold italic**italic**`, use `**bold**bold italic******italic**`.
+ *
+ * **Note:** `push_*/pop` functions won't affect BBCode.
+ *
  * **Note:** Unlike [Label], RichTextLabel doesn't have a **property** to horizontally align text to the center. Instead, enable [member bbcode_enabled] and surround the text in a `[center]` tag as follows: `[center]Example[/center]`. There is currently no built-in way to vertically align text either, but this can be emulated by relying on anchors/containers and the [member fit_content_height] property.
+ *
+ * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
 declare class RichTextLabel extends Control {
@@ -15,7 +21,13 @@ declare class RichTextLabel extends Control {
  *
  * **Note:** Assignments to [member bbcode_text] clear the tag stack and reconstruct it from the property's contents. Any edits made to [member bbcode_text] will erase previous edits made from other manual sources such as [method append_bbcode] and the `push_*` / [method pop] methods.
  *
+ * **Note:** RichTextLabel doesn't support entangled BBCode tags. For example, instead of using `**bold**bold italic**italic**`, use `**bold**bold italic******italic**`.
+ *
+ * **Note:** `push_*/pop` functions won't affect BBCode.
+ *
  * **Note:** Unlike [Label], RichTextLabel doesn't have a **property** to horizontally align text to the center. Instead, enable [member bbcode_enabled] and surround the text in a `[center]` tag as follows: `[center]Example[/center]`. There is currently no built-in way to vertically align text either, but this can be emulated by relying on anchors/containers and the [member fit_content_height] property.
+ *
+ * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
   "new"(): RichTextLabel;
@@ -23,13 +35,18 @@ declare class RichTextLabel extends Control {
 
 
 
-/** If [code]true[/code], the label uses BBCode formatting. */
+/**
+ * If `true`, the label uses BBCode formatting.
+ *
+ * **Note:** Trying to alter the [RichTextLabel]'s text with [method add_text] will reset this to `false`. Use instead [method append_bbcode] to preserve BBCode formatting.
+ *
+*/
 bbcode_enabled: boolean;
 
 /**
  * The label's text in BBCode format. Is not representative of manual modifications to the internal tag stack. Erases changes made by other methods when edited.
  *
- * **Note:** It is unadvised to use `+=` operator with `bbcode_text` (e.g. `bbcode_text += "some string"`) as it replaces the whole text and can cause slowdowns. Use [method append_bbcode] for adding text instead.
+ * **Note:** It is unadvised to use the `+=` operator with `bbcode_text` (e.g. `bbcode_text += "some string"`) as it replaces the whole text and can cause slowdowns. Use [method append_bbcode] for adding text instead, unless you absolutely need to close a tag that was opened in an earlier method call.
  *
 */
 bbcode_text: string;
@@ -85,7 +102,12 @@ tab_size: int;
 */
 text: string;
 
-/** The restricted number of characters to display in the label. If [code]-1[/code], all characters will be displayed. */
+/**
+ * The restricted number of characters to display in the label. If `-1`, all characters will be displayed.
+ *
+ * **Note:** Setting this property updates [member percent_visible] based on current [method get_total_character_count].
+ *
+*/
 visible_characters: int;
 
 /**
@@ -99,7 +121,12 @@ add_image(image: Texture, width?: int, height?: int): void;
 /** Adds raw non-BBCode-parsed text to the tag stack. */
 add_text(text: string): void;
 
-/** Parses [code]bbcode[/code] and adds tags to the tag stack as needed. Returns the result of the parsing, [constant OK] if successful. */
+/**
+ * Parses `bbcode` and adds tags to the tag stack as needed. Returns the result of the parsing, [constant OK] if successful.
+ *
+ * **Note:** Using this method, you can't close a tag that was opened in a previous [method append_bbcode] call. This is done to improve performance, especially when updating large RichTextLabels since rebuilding the whole BBCode every time would be slower. If you absolutely need to close a tag in a future method call, append the [member bbcode_text] instead of using [method append_bbcode].
+ *
+*/
 append_bbcode(bbcode: string): int;
 
 /** Clears the tag stack and sets [member bbcode_text] to an empty string. */
@@ -130,7 +157,7 @@ newline(): void;
 parse_bbcode(bbcode: string): int;
 
 /** Parses BBCode parameter [code]expressions[/code] into a dictionary. */
-parse_expressions_for_values(expressions: PoolStringArray): Dictionary;
+parse_expressions_for_values(expressions: PoolStringArray): Dictionary<any, any>;
 
 /** Terminates the current tag. Use after [code]push_*[/code] methods to close BBCodes manually. Does not need to follow [code]add_*[/code] methods. */
 pop(): void;
@@ -201,7 +228,8 @@ scroll_to_line(line: int): void;
 */
 set_table_column_expand(column: int, expand: boolean, ratio: int): void;
 
-  connect<T extends SignalsOf<RichTextLabel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RichTextLabel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RichTextLabelSignals>>(signal: T, method: SignalFunction<RichTextLabelSignals[T]>): number;
 
 
 
@@ -209,102 +237,104 @@ set_table_column_expand(column: int, expand: boolean, ratio: int): void;
  * Makes text left aligned.
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Makes text centered.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Makes text right aligned.
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
 /**
  * Makes text fill width.
  *
 */
-static ALIGN_FILL: 3;
+static ALIGN_FILL: any;
 
 /**
  * Each list item has a number marker.
  *
 */
-static LIST_NUMBERS: 0;
+static LIST_NUMBERS: any;
 
 /**
  * Each list item has a letter marker.
  *
 */
-static LIST_LETTERS: 1;
+static LIST_LETTERS: any;
 
 /**
  * Each list item has a filled circle marker.
  *
 */
-static LIST_DOTS: 2;
+static LIST_DOTS: any;
 
 /** No documentation provided. */
-static ITEM_FRAME: 0;
+static ITEM_FRAME: any;
 
 /** No documentation provided. */
-static ITEM_TEXT: 1;
+static ITEM_TEXT: any;
 
 /** No documentation provided. */
-static ITEM_IMAGE: 2;
+static ITEM_IMAGE: any;
 
 /** No documentation provided. */
-static ITEM_NEWLINE: 3;
+static ITEM_NEWLINE: any;
 
 /** No documentation provided. */
-static ITEM_FONT: 4;
+static ITEM_FONT: any;
 
 /** No documentation provided. */
-static ITEM_COLOR: 5;
+static ITEM_COLOR: any;
 
 /** No documentation provided. */
-static ITEM_UNDERLINE: 6;
+static ITEM_UNDERLINE: any;
 
 /** No documentation provided. */
-static ITEM_STRIKETHROUGH: 7;
+static ITEM_STRIKETHROUGH: any;
 
 /** No documentation provided. */
-static ITEM_ALIGN: 8;
+static ITEM_ALIGN: any;
 
 /** No documentation provided. */
-static ITEM_INDENT: 9;
+static ITEM_INDENT: any;
 
 /** No documentation provided. */
-static ITEM_LIST: 10;
+static ITEM_LIST: any;
 
 /** No documentation provided. */
-static ITEM_TABLE: 11;
+static ITEM_TABLE: any;
 
 /** No documentation provided. */
-static ITEM_FADE: 12;
+static ITEM_FADE: any;
 
 /** No documentation provided. */
-static ITEM_SHAKE: 13;
+static ITEM_SHAKE: any;
 
 /** No documentation provided. */
-static ITEM_WAVE: 14;
+static ITEM_WAVE: any;
 
 /** No documentation provided. */
-static ITEM_TORNADO: 15;
+static ITEM_TORNADO: any;
 
 /** No documentation provided. */
-static ITEM_RAINBOW: 16;
+static ITEM_RAINBOW: any;
 
 /** No documentation provided. */
-static ITEM_CUSTOMFX: 18;
+static ITEM_CUSTOMFX: any;
 
 /** No documentation provided. */
-static ITEM_META: 17;
+static ITEM_META: any;
 
+}
 
+declare class RichTextLabelSignals extends ControlSignals {
   /**
  * Triggered when the user clicks on content between meta tags. If the meta is defined in text, e.g. `[url={"data"="hi"}]hi[/url]`, then the parameter for this signal will be a [String] type. If a particular type or an object is desired, the [method push_meta] method must be used to manually insert the data into the tag stack.
  *

@@ -28,7 +28,7 @@ area_attach_object_instance_id(area: RID, id: int): void;
 /** Removes all shapes from an area. It does not delete the shapes, so they can be reassigned later. */
 area_clear_shapes(area: RID): void;
 
-/** Creates an [Area2D]. */
+/** Creates an [Area2D]. After creating an [Area2D] with this method, assign it to a space using [method area_set_space] to use the created [Area2D] in the physics world. */
 area_create(): RID;
 
 /** No documentation provided. */
@@ -259,7 +259,7 @@ body_set_space(body: RID, space: RID): void;
 body_set_state(body: RID, state: int, value: any): void;
 
 /** Returns [code]true[/code] if a collision would result from moving in the given direction from a given point in space. Margin increases the size of the shapes involved in the collision detection. [Physics2DTestMotionResult] can be passed to return additional information in. */
-body_test_motion(body: RID, from: Transform2D, motion: Vector2, infinite_inertia: boolean, margin?: float, result?: Physics2DTestMotionResult): boolean;
+body_test_motion(body: RID, from: Transform2D, motion: Vector2, infinite_inertia: boolean, margin?: float, result?: Physics2DTestMotionResult, exclude_raycast_shapes?: boolean, exclude?: any[]): boolean;
 
 /** No documentation provided. */
 capsule_shape_create(): RID;
@@ -318,6 +318,9 @@ segment_shape_create(): RID;
 /** Activates or deactivates the 2D physics engine. */
 set_active(active: boolean): void;
 
+/** Sets the amount of iterations for calculating velocities of colliding bodies. The greater the amount of iterations, the more accurate the collisions will be. However, a greater amount of iterations requires more CPU power, which can decrease performance. The default value is [code]8[/code]. */
+set_collision_iterations(iterations: int): void;
+
 /** Returns the shape data. */
 shape_get_data(shape: RID): any;
 
@@ -345,7 +348,8 @@ space_set_active(space: RID, active: boolean): void;
 /** Sets the value for a space parameter. See [enum SpaceParameter] for a list of available parameters. */
 space_set_param(space: RID, param: int, value: float): void;
 
-  connect<T extends SignalsOf<Physics2DServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Physics2DServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Physics2DServerClassSignals>>(signal: T, method: SignalFunction<Physics2DServerClassSignals[T]>): number;
 
 
 
@@ -353,371 +357,370 @@ space_set_param(space: RID, param: int, value: float): void;
  * Constant to set/get the maximum distance a pair of bodies has to move before their collision status has to be recalculated.
  *
 */
-static SPACE_PARAM_CONTACT_RECYCLE_RADIUS: 0;
+static SPACE_PARAM_CONTACT_RECYCLE_RADIUS: any;
 
 /**
  * Constant to set/get the maximum distance a shape can be from another before they are considered separated.
  *
 */
-static SPACE_PARAM_CONTACT_MAX_SEPARATION: 1;
+static SPACE_PARAM_CONTACT_MAX_SEPARATION: any;
 
 /**
  * Constant to set/get the maximum distance a shape can penetrate another shape before it is considered a collision.
  *
 */
-static SPACE_PARAM_BODY_MAX_ALLOWED_PENETRATION: 2;
+static SPACE_PARAM_BODY_MAX_ALLOWED_PENETRATION: any;
 
 /**
  * Constant to set/get the threshold linear velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
  *
 */
-static SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: 3;
+static SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: any;
 
 /**
  * Constant to set/get the threshold angular velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
  *
 */
-static SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: 4;
+static SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: any;
 
 /**
  * Constant to set/get the maximum time of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after this time.
  *
 */
-static SPACE_PARAM_BODY_TIME_TO_SLEEP: 5;
+static SPACE_PARAM_BODY_TIME_TO_SLEEP: any;
 
 /**
  * Constant to set/get the default solver bias for all physics constraints. A solver bias is a factor controlling how much two objects "rebound", after violating a constraint, to avoid leaving them in that state because of numerical imprecision.
  *
 */
-static SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: 6;
-
-/** No documentation provided. */
-static SPACE_PARAM_TEST_MOTION_MIN_CONTACT_DEPTH: 7;
+static SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: any;
 
 /**
  * This is the constant for creating line shapes. A line shape is an infinite line with an origin point, and a normal. Thus, it can be used for front/behind checks.
  *
 */
-static SHAPE_LINE: 0;
+static SHAPE_LINE: any;
 
 /** No documentation provided. */
-static SHAPE_RAY: 1;
+static SHAPE_RAY: any;
 
 /**
  * This is the constant for creating segment shapes. A segment shape is a line from a point A to a point B. It can be checked for intersections.
  *
 */
-static SHAPE_SEGMENT: 2;
+static SHAPE_SEGMENT: any;
 
 /**
  * This is the constant for creating circle shapes. A circle shape only has a radius. It can be used for intersections and inside/outside checks.
  *
 */
-static SHAPE_CIRCLE: 3;
+static SHAPE_CIRCLE: any;
 
 /**
  * This is the constant for creating rectangle shapes. A rectangle shape is defined by a width and a height. It can be used for intersections and inside/outside checks.
  *
 */
-static SHAPE_RECTANGLE: 4;
+static SHAPE_RECTANGLE: any;
 
 /**
  * This is the constant for creating capsule shapes. A capsule shape is defined by a radius and a length. It can be used for intersections and inside/outside checks.
  *
 */
-static SHAPE_CAPSULE: 5;
+static SHAPE_CAPSULE: any;
 
 /**
  * This is the constant for creating convex polygon shapes. A polygon is defined by a list of points. It can be used for intersections and inside/outside checks. Unlike the [member CollisionPolygon2D.polygon] property, polygons modified with [method shape_set_data] do not verify that the points supplied form is a convex polygon.
  *
 */
-static SHAPE_CONVEX_POLYGON: 6;
+static SHAPE_CONVEX_POLYGON: any;
 
 /**
  * This is the constant for creating concave polygon shapes. A polygon is defined by a list of points. It can be used for intersections checks, but not for inside/outside checks.
  *
 */
-static SHAPE_CONCAVE_POLYGON: 7;
+static SHAPE_CONCAVE_POLYGON: any;
 
 /**
  * This constant is used internally by the engine. Any attempt to create this kind of shape results in an error.
  *
 */
-static SHAPE_CUSTOM: 8;
+static SHAPE_CUSTOM: any;
 
 /**
  * Constant to set/get gravity strength in an area.
  *
 */
-static AREA_PARAM_GRAVITY: 0;
+static AREA_PARAM_GRAVITY: any;
 
 /**
  * Constant to set/get gravity vector/center in an area.
  *
 */
-static AREA_PARAM_GRAVITY_VECTOR: 1;
+static AREA_PARAM_GRAVITY_VECTOR: any;
 
 /**
  * Constant to set/get whether the gravity vector of an area is a direction, or a center point.
  *
 */
-static AREA_PARAM_GRAVITY_IS_POINT: 2;
+static AREA_PARAM_GRAVITY_IS_POINT: any;
 
 /**
  * Constant to set/get the falloff factor for point gravity of an area. The greater this value is, the faster the strength of gravity decreases with the square of distance.
  *
 */
-static AREA_PARAM_GRAVITY_DISTANCE_SCALE: 3;
+static AREA_PARAM_GRAVITY_DISTANCE_SCALE: any;
 
 /**
  * This constant was used to set/get the falloff factor for point gravity. It has been superseded by [constant AREA_PARAM_GRAVITY_DISTANCE_SCALE].
  *
 */
-static AREA_PARAM_GRAVITY_POINT_ATTENUATION: 4;
+static AREA_PARAM_GRAVITY_POINT_ATTENUATION: any;
 
 /**
  * Constant to set/get the linear dampening factor of an area.
  *
 */
-static AREA_PARAM_LINEAR_DAMP: 5;
+static AREA_PARAM_LINEAR_DAMP: any;
 
 /**
  * Constant to set/get the angular dampening factor of an area.
  *
 */
-static AREA_PARAM_ANGULAR_DAMP: 6;
+static AREA_PARAM_ANGULAR_DAMP: any;
 
 /**
  * Constant to set/get the priority (order of processing) of an area.
  *
 */
-static AREA_PARAM_PRIORITY: 7;
+static AREA_PARAM_PRIORITY: any;
 
 /**
  * This area does not affect gravity/damp. These are generally areas that exist only to detect collisions, and objects entering or exiting them.
  *
 */
-static AREA_SPACE_OVERRIDE_DISABLED: 0;
+static AREA_SPACE_OVERRIDE_DISABLED: any;
 
 /**
  * This area adds its gravity/damp values to whatever has been calculated so far. This way, many overlapping areas can combine their physics to make interesting effects.
  *
 */
-static AREA_SPACE_OVERRIDE_COMBINE: 1;
+static AREA_SPACE_OVERRIDE_COMBINE: any;
 
 /**
  * This area adds its gravity/damp values to whatever has been calculated so far. Then stops taking into account the rest of the areas, even the default one.
  *
 */
-static AREA_SPACE_OVERRIDE_COMBINE_REPLACE: 2;
+static AREA_SPACE_OVERRIDE_COMBINE_REPLACE: any;
 
 /**
  * This area replaces any gravity/damp, even the default one, and stops taking into account the rest of the areas.
  *
 */
-static AREA_SPACE_OVERRIDE_REPLACE: 3;
+static AREA_SPACE_OVERRIDE_REPLACE: any;
 
 /**
  * This area replaces any gravity/damp calculated so far, but keeps calculating the rest of the areas, down to the default one.
  *
 */
-static AREA_SPACE_OVERRIDE_REPLACE_COMBINE: 4;
+static AREA_SPACE_OVERRIDE_REPLACE_COMBINE: any;
 
 /**
  * Constant for static bodies.
  *
 */
-static BODY_MODE_STATIC: 0;
+static BODY_MODE_STATIC: any;
 
 /**
  * Constant for kinematic bodies.
  *
 */
-static BODY_MODE_KINEMATIC: 1;
+static BODY_MODE_KINEMATIC: any;
 
 /**
  * Constant for rigid bodies.
  *
 */
-static BODY_MODE_RIGID: 2;
+static BODY_MODE_RIGID: any;
 
 /**
  * Constant for rigid bodies in character mode. In this mode, a body can not rotate, and only its linear velocity is affected by physics.
  *
 */
-static BODY_MODE_CHARACTER: 3;
+static BODY_MODE_CHARACTER: any;
 
 /**
  * Constant to set/get a body's bounce factor.
  *
 */
-static BODY_PARAM_BOUNCE: 0;
+static BODY_PARAM_BOUNCE: any;
 
 /**
  * Constant to set/get a body's friction.
  *
 */
-static BODY_PARAM_FRICTION: 1;
+static BODY_PARAM_FRICTION: any;
 
 /**
  * Constant to set/get a body's mass.
  *
 */
-static BODY_PARAM_MASS: 2;
+static BODY_PARAM_MASS: any;
 
 /**
  * Constant to set/get a body's inertia.
  *
 */
-static BODY_PARAM_INERTIA: 3;
+static BODY_PARAM_INERTIA: any;
 
 /**
  * Constant to set/get a body's gravity multiplier.
  *
 */
-static BODY_PARAM_GRAVITY_SCALE: 4;
+static BODY_PARAM_GRAVITY_SCALE: any;
 
 /**
  * Constant to set/get a body's linear dampening factor.
  *
 */
-static BODY_PARAM_LINEAR_DAMP: 5;
+static BODY_PARAM_LINEAR_DAMP: any;
 
 /**
  * Constant to set/get a body's angular dampening factor.
  *
 */
-static BODY_PARAM_ANGULAR_DAMP: 6;
+static BODY_PARAM_ANGULAR_DAMP: any;
 
 /**
  * Represents the size of the [enum BodyParameter] enum.
  *
 */
-static BODY_PARAM_MAX: 7;
+static BODY_PARAM_MAX: any;
 
 /**
  * Constant to set/get the current transform matrix of the body.
  *
 */
-static BODY_STATE_TRANSFORM: 0;
+static BODY_STATE_TRANSFORM: any;
 
 /**
  * Constant to set/get the current linear velocity of the body.
  *
 */
-static BODY_STATE_LINEAR_VELOCITY: 1;
+static BODY_STATE_LINEAR_VELOCITY: any;
 
 /**
  * Constant to set/get the current angular velocity of the body.
  *
 */
-static BODY_STATE_ANGULAR_VELOCITY: 2;
+static BODY_STATE_ANGULAR_VELOCITY: any;
 
 /**
  * Constant to sleep/wake up a body, or to get whether it is sleeping.
  *
 */
-static BODY_STATE_SLEEPING: 3;
+static BODY_STATE_SLEEPING: any;
 
 /**
  * Constant to set/get whether the body can sleep.
  *
 */
-static BODY_STATE_CAN_SLEEP: 4;
+static BODY_STATE_CAN_SLEEP: any;
 
 /**
  * Constant to create pin joints.
  *
 */
-static JOINT_PIN: 0;
+static JOINT_PIN: any;
 
 /**
  * Constant to create groove joints.
  *
 */
-static JOINT_GROOVE: 1;
+static JOINT_GROOVE: any;
 
 /**
  * Constant to create damped spring joints.
  *
 */
-static JOINT_DAMPED_SPRING: 2;
+static JOINT_DAMPED_SPRING: any;
 
 /** No documentation provided. */
-static JOINT_PARAM_BIAS: 0;
+static JOINT_PARAM_BIAS: any;
 
 /** No documentation provided. */
-static JOINT_PARAM_MAX_BIAS: 1;
+static JOINT_PARAM_MAX_BIAS: any;
 
 /** No documentation provided. */
-static JOINT_PARAM_MAX_FORCE: 2;
+static JOINT_PARAM_MAX_FORCE: any;
 
 /**
  * Sets the resting length of the spring joint. The joint will always try to go to back this length when pulled apart.
  *
 */
-static DAMPED_STRING_REST_LENGTH: 0;
+static DAMPED_STRING_REST_LENGTH: any;
 
 /**
  * Sets the stiffness of the spring joint. The joint applies a force equal to the stiffness times the distance from its resting length.
  *
 */
-static DAMPED_STRING_STIFFNESS: 1;
+static DAMPED_STRING_STIFFNESS: any;
 
 /**
  * Sets the damping ratio of the spring joint. A value of 0 indicates an undamped spring, while 1 causes the system to reach equilibrium as fast as possible (critical damping).
  *
 */
-static DAMPED_STRING_DAMPING: 2;
+static DAMPED_STRING_DAMPING: any;
 
 /**
  * Disables continuous collision detection. This is the fastest way to detect body collisions, but can miss small, fast-moving objects.
  *
 */
-static CCD_MODE_DISABLED: 0;
+static CCD_MODE_DISABLED: any;
 
 /**
  * Enables continuous collision detection by raycasting. It is faster than shapecasting, but less precise.
  *
 */
-static CCD_MODE_CAST_RAY: 1;
+static CCD_MODE_CAST_RAY: any;
 
 /**
  * Enables continuous collision detection by shapecasting. It is the slowest CCD method, and the most precise.
  *
 */
-static CCD_MODE_CAST_SHAPE: 2;
+static CCD_MODE_CAST_SHAPE: any;
 
 /**
  * The value of the first parameter and area callback function receives, when an object enters one of its shapes.
  *
 */
-static AREA_BODY_ADDED: 0;
+static AREA_BODY_ADDED: any;
 
 /**
  * The value of the first parameter and area callback function receives, when an object exits one of its shapes.
  *
 */
-static AREA_BODY_REMOVED: 1;
+static AREA_BODY_REMOVED: any;
 
 /**
  * Constant to get the number of objects that are not sleeping.
  *
 */
-static INFO_ACTIVE_OBJECTS: 0;
+static INFO_ACTIVE_OBJECTS: any;
 
 /**
  * Constant to get the number of possible collisions.
  *
 */
-static INFO_COLLISION_PAIRS: 1;
+static INFO_COLLISION_PAIRS: any;
 
 /**
  * Constant to get the number of space regions where a collision could occur.
  *
 */
-static INFO_ISLAND_COUNT: 2;
+static INFO_ISLAND_COUNT: any;
 
+}
 
+declare class Physics2DServerClassSignals extends ObjectSignals {
   
 }

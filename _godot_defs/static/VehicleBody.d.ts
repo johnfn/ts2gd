@@ -43,11 +43,14 @@ steering: float;
 
 
 
-  connect<T extends SignalsOf<VehicleBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VehicleBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VehicleBodySignals>>(signal: T, method: SignalFunction<VehicleBodySignals[T]>): number;
 
 
 
 
+}
 
+declare class VehicleBodySignals extends RigidBodySignals {
   
 }

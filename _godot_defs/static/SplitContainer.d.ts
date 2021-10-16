@@ -27,7 +27,8 @@ split_offset: int;
 /** Clamps the [member split_offset] value to not go outside the currently possible minimal and maximum values. */
 clamp_split_offset(): void;
 
-  connect<T extends SignalsOf<SplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SplitContainerSignals>>(signal: T, method: SignalFunction<SplitContainerSignals[T]>): number;
 
 
 
@@ -35,21 +36,23 @@ clamp_split_offset(): void;
  * The split dragger is visible when the cursor hovers it.
  *
 */
-static DRAGGER_VISIBLE: 0;
+static DRAGGER_VISIBLE: any;
 
 /**
  * The split dragger is never visible.
  *
 */
-static DRAGGER_HIDDEN: 1;
+static DRAGGER_HIDDEN: any;
 
 /**
  * The split dragger is never visible and its space collapsed.
  *
 */
-static DRAGGER_HIDDEN_COLLAPSED: 2;
+static DRAGGER_HIDDEN_COLLAPSED: any;
 
+}
 
+declare class SplitContainerSignals extends ContainerSignals {
   /**
  * Emitted when the dragger is dragged by user.
  *

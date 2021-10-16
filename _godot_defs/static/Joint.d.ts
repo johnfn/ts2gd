@@ -29,11 +29,14 @@ declare class Joint extends Spatial {
 
 
 
-  connect<T extends SignalsOf<Joint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Joint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<JointSignals>>(signal: T, method: SignalFunction<JointSignals[T]>): number;
 
 
 
 
+}
 
+declare class JointSignals extends SpatialSignals {
   
 }

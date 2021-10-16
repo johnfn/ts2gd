@@ -40,8 +40,19 @@ collide_with_areas: boolean;
 /** If [code]true[/code], collision with [PhysicsBody]s will be reported. */
 collide_with_bodies: boolean;
 
-/** The ray's collision mask. Only objects in at least one collision layer enabled in the mask will be detected. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The ray's collision mask. Only objects in at least one collision layer enabled in the mask will be detected. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
+
+/**
+ * The custom color to use to draw the shape in the editor and at run-time if **Visible Collision Shapes** is enabled in the **Debug** menu. This color will be highlighted at run-time if the [RayCast] is colliding with something.
+ *
+ * If set to `Color(0.0, 0.0, 0.0)` (by default), the color set in [member ProjectSettings.debug/shapes/collision/shape_color] is used.
+ *
+*/
+debug_shape_custom_color: Color;
+
+/** If set to [code]1[/code], a line is used as the debug shape. Otherwise, a truncated pyramid is drawn to represent the [RayCast]. Requires [b]Visible Collision Shapes[/b] to be enabled in the [b]Debug[/b] menu for the debug shape to be visible at run-time. */
+debug_shape_thickness: float;
 
 /** If [code]true[/code], collisions will be reported. */
 enabled: boolean;
@@ -110,11 +121,14 @@ remove_exception_rid(rid: RID): void;
 */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  connect<T extends SignalsOf<RayCast>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RayCast>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RayCastSignals>>(signal: T, method: SignalFunction<RayCastSignals[T]>): number;
 
 
 
 
+}
 
+declare class RayCastSignals extends SpatialSignals {
   
 }

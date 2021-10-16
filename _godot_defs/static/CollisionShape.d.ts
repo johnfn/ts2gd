@@ -27,11 +27,14 @@ make_convex_from_brothers(): void;
 /** If this method exists within a script it will be called whenever the shape resource has been modified. */
 resource_changed(resource: Resource): void;
 
-  connect<T extends SignalsOf<CollisionShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CollisionShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CollisionShapeSignals>>(signal: T, method: SignalFunction<CollisionShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class CollisionShapeSignals extends SpatialSignals {
   
 }

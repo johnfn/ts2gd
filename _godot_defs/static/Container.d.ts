@@ -26,7 +26,8 @@ fit_child_in_rect(child: Control, rect: Rect2): void;
 /** Queue resort of the contained children. This is called automatically anyway, but can be called upon request. */
 queue_sort(): void;
 
-  connect<T extends SignalsOf<Container>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Container>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ContainerSignals>>(signal: T, method: SignalFunction<ContainerSignals[T]>): number;
 
 
 
@@ -34,9 +35,11 @@ queue_sort(): void;
  * Notification for when sorting the children, it must be obeyed immediately.
  *
 */
-static NOTIFICATION_SORT_CHILDREN: 50;
+static NOTIFICATION_SORT_CHILDREN: any;
 
+}
 
+declare class ContainerSignals extends ControlSignals {
   /**
  * Emitted when sorting the children is needed.
  *

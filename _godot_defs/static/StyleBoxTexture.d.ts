@@ -116,7 +116,8 @@ set_expand_margin_size(margin: int, size: float): void;
 /** Sets the margin to [code]size[/code] pixels for the given [code]margin[/code]. See [enum Margin] for possible values. */
 set_margin_size(margin: int, size: float): void;
 
-  connect<T extends SignalsOf<StyleBoxTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StyleBoxTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StyleBoxTextureSignals>>(signal: T, method: SignalFunction<StyleBoxTextureSignals[T]>): number;
 
 
 
@@ -124,21 +125,23 @@ set_margin_size(margin: int, size: float): void;
  * Stretch the stylebox's texture. This results in visible distortion unless the texture size matches the stylebox's size perfectly.
  *
 */
-static AXIS_STRETCH_MODE_STRETCH: 0;
+static AXIS_STRETCH_MODE_STRETCH: any;
 
 /**
  * Repeats the stylebox's texture to match the stylebox's size according to the nine-patch system.
  *
 */
-static AXIS_STRETCH_MODE_TILE: 1;
+static AXIS_STRETCH_MODE_TILE: any;
 
 /**
  * Repeats the stylebox's texture to match the stylebox's size according to the nine-patch system. Unlike [constant AXIS_STRETCH_MODE_TILE], the texture may be slightly stretched to make the nine-patch texture tile seamlessly.
  *
 */
-static AXIS_STRETCH_MODE_TILE_FIT: 2;
+static AXIS_STRETCH_MODE_TILE_FIT: any;
 
+}
 
+declare class StyleBoxTextureSignals extends StyleBoxSignals {
   /**
  * Emitted when the stylebox's texture is changed.
  *

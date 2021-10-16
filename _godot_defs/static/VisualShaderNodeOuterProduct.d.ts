@@ -18,11 +18,14 @@ declare class VisualShaderNodeOuterProduct extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeOuterProduct>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeOuterProduct>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeOuterProductSignals>>(signal: T, method: SignalFunction<VisualShaderNodeOuterProductSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeOuterProductSignals extends VisualShaderNodeSignals {
   
 }

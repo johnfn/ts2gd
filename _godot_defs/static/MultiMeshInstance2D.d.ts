@@ -35,12 +35,15 @@ texture: Texture;
 
 
 
-  connect<T extends SignalsOf<MultiMeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MultiMeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MultiMeshInstance2DSignals>>(signal: T, method: SignalFunction<MultiMeshInstance2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class MultiMeshInstance2DSignals extends Node2DSignals {
   /**
  * Emitted when the [member texture] is changed.
  *

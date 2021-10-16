@@ -24,11 +24,14 @@ window_title: string;
 /** Returns the close [TextureButton]. */
 get_close_button(): TextureButton;
 
-  connect<T extends SignalsOf<WindowDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<WindowDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<WindowDialogSignals>>(signal: T, method: SignalFunction<WindowDialogSignals[T]>): number;
 
 
 
 
+}
 
+declare class WindowDialogSignals extends PopupSignals {
   
 }

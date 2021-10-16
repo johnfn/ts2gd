@@ -20,11 +20,14 @@ use_top_left: boolean;
 
 
 
-  connect<T extends SignalsOf<CenterContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CenterContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CenterContainerSignals>>(signal: T, method: SignalFunction<CenterContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class CenterContainerSignals extends ContainerSignals {
   
 }

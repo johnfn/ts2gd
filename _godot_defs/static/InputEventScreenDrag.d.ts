@@ -29,11 +29,14 @@ speed: Vector2;
 
 
 
-  connect<T extends SignalsOf<InputEventScreenDrag>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventScreenDrag>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventScreenDragSignals>>(signal: T, method: SignalFunction<InputEventScreenDragSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventScreenDragSignals extends InputEventSignals {
   
 }

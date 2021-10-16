@@ -18,11 +18,14 @@ declare class VisualShaderNodeGlobalExpression extends VisualShaderNodeExpressio
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeGlobalExpression>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeGlobalExpression>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeGlobalExpressionSignals>>(signal: T, method: SignalFunction<VisualShaderNodeGlobalExpressionSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeGlobalExpressionSignals extends VisualShaderNodeExpressionSignals {
   
 }

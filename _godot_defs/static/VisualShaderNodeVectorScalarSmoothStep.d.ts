@@ -22,11 +22,14 @@ declare class VisualShaderNodeVectorScalarSmoothStep extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStep>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStep>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStepSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarSmoothStepSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorScalarSmoothStepSignals extends VisualShaderNodeSignals {
   
 }

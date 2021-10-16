@@ -67,7 +67,8 @@ seek(position: int): int;
 /** Skips the current section. If the node contains other elements, they will be ignored and the cursor will go to the closing of the current element. */
 skip_section(): void;
 
-  connect<T extends SignalsOf<XMLParser>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<XMLParser>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<XMLParserSignals>>(signal: T, method: SignalFunction<XMLParserSignals[T]>): number;
 
 
 
@@ -75,44 +76,46 @@ skip_section(): void;
  * There's no node (no file or buffer opened).
  *
 */
-static NODE_NONE: 0;
+static NODE_NONE: any;
 
 /**
  * Element (tag).
  *
 */
-static NODE_ELEMENT: 1;
+static NODE_ELEMENT: any;
 
 /**
  * End of element.
  *
 */
-static NODE_ELEMENT_END: 2;
+static NODE_ELEMENT_END: any;
 
 /**
  * Text node.
  *
 */
-static NODE_TEXT: 3;
+static NODE_TEXT: any;
 
 /**
  * Comment node.
  *
 */
-static NODE_COMMENT: 4;
+static NODE_COMMENT: any;
 
 /**
  * CDATA content.
  *
 */
-static NODE_CDATA: 5;
+static NODE_CDATA: any;
 
 /**
  * Unknown node.
  *
 */
-static NODE_UNKNOWN: 6;
+static NODE_UNKNOWN: any;
 
+}
 
+declare class XMLParserSignals extends ReferenceSignals {
   
 }

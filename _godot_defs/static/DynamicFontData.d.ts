@@ -26,7 +26,8 @@ hinting: int;
 
 
 
-  connect<T extends SignalsOf<DynamicFontData>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<DynamicFontData>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DynamicFontDataSignals>>(signal: T, method: SignalFunction<DynamicFontDataSignals[T]>): number;
 
 
 
@@ -34,20 +35,22 @@ hinting: int;
  * Disables font hinting (smoother but less crisp).
  *
 */
-static HINTING_NONE: 0;
+static HINTING_NONE: any;
 
 /**
  * Use the light font hinting mode.
  *
 */
-static HINTING_LIGHT: 1;
+static HINTING_LIGHT: any;
 
 /**
  * Use the default font hinting mode (crisper but less smooth).
  *
 */
-static HINTING_NORMAL: 2;
+static HINTING_NORMAL: any;
 
+}
 
+declare class DynamicFontDataSignals extends ResourceSignals {
   
 }

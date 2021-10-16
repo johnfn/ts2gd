@@ -19,11 +19,14 @@ declare class WeakRef extends Reference {
 /** Returns the [Object] this weakref is referring to. */
 get_ref(): any;
 
-  connect<T extends SignalsOf<WeakRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<WeakRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<WeakRefSignals>>(signal: T, method: SignalFunction<WeakRefSignals[T]>): number;
 
 
 
 
+}
 
+declare class WeakRefSignals extends ReferenceSignals {
   
 }

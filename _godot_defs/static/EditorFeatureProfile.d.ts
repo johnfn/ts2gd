@@ -53,7 +53,8 @@ set_disable_class_property(class_name: string, property: string, disable: boolea
 /** If [code]disable[/code] is [code]true[/code], disables the editor feature specified in [code]feature[/code]. When a feature is disabled, it will disappear from the editor entirely. */
 set_disable_feature(feature: int, disable: boolean): void;
 
-  connect<T extends SignalsOf<EditorFeatureProfile>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorFeatureProfile>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorFeatureProfileSignals>>(signal: T, method: SignalFunction<EditorFeatureProfileSignals[T]>): number;
 
 
 
@@ -61,50 +62,52 @@ set_disable_feature(feature: int, disable: boolean): void;
  * The 3D editor. If this feature is disabled, the 3D editor won't display but 3D nodes will still display in the Create New Node dialog.
  *
 */
-static FEATURE_3D: 0;
+static FEATURE_3D: any;
 
 /**
  * The Script tab, which contains the script editor and class reference browser. If this feature is disabled, the Script tab won't display.
  *
 */
-static FEATURE_SCRIPT: 1;
+static FEATURE_SCRIPT: any;
 
 /**
  * The AssetLib tab. If this feature is disabled, the AssetLib tab won't display.
  *
 */
-static FEATURE_ASSET_LIB: 2;
+static FEATURE_ASSET_LIB: any;
 
 /**
  * Scene tree editing. If this feature is disabled, the Scene tree dock will still be visible but will be read-only.
  *
 */
-static FEATURE_SCENE_TREE: 3;
-
-/**
- * The Import dock. If this feature is disabled, the Import dock won't be visible.
- *
-*/
-static FEATURE_IMPORT_DOCK: 4;
+static FEATURE_SCENE_TREE: any;
 
 /**
  * The Node dock. If this feature is disabled, signals and groups won't be visible and modifiable from the editor.
  *
 */
-static FEATURE_NODE_DOCK: 5;
+static FEATURE_NODE_DOCK: any;
 
 /**
  * The FileSystem dock. If this feature is disabled, the FileSystem dock won't be visible.
  *
 */
-static FEATURE_FILESYSTEM_DOCK: 6;
+static FEATURE_FILESYSTEM_DOCK: any;
+
+/**
+ * The Import dock. If this feature is disabled, the Import dock won't be visible.
+ *
+*/
+static FEATURE_IMPORT_DOCK: any;
 
 /**
  * Represents the size of the [enum Feature] enum.
  *
 */
-static FEATURE_MAX: 7;
+static FEATURE_MAX: any;
 
+}
 
+declare class EditorFeatureProfileSignals extends ReferenceSignals {
   
 }

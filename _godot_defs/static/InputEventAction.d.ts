@@ -21,16 +21,19 @@ action: string;
 /** If [code]true[/code], the action's state is pressed. If [code]false[/code], the action's state is released. */
 pressed: boolean;
 
-/** The action's strength between 0 and 1. This value is considered as equal to 0 if pressed is [code]false[/code]. The event strength allows faking analog joypad motion events, by precising how strongly is the joypad axis bent or pressed. */
+/** The action's strength between 0 and 1. This value is considered as equal to 0 if pressed is [code]false[/code]. The event strength allows faking analog joypad motion events, by specifying how strongly the joypad axis is bent or pressed. */
 strength: float;
 
 
 
-  connect<T extends SignalsOf<InputEventAction>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventAction>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventActionSignals>>(signal: T, method: SignalFunction<InputEventActionSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventActionSignals extends InputEventSignals {
   
 }

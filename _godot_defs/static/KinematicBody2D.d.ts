@@ -4,7 +4,7 @@
  *
  * **Simulated motion:** When these bodies are moved manually, either from code or from an [AnimationPlayer] (with [member AnimationPlayer.playback_process_mode] set to "physics"), the physics will automatically compute an estimate of their linear and angular velocity. This makes them very useful for moving platforms or other AnimationPlayer-controlled objects (like a door, a bridge that opens, etc).
  *
- * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but that don't require advanced physics.
+ * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
 declare class KinematicBody2D extends PhysicsBody2D {
@@ -15,7 +15,7 @@ declare class KinematicBody2D extends PhysicsBody2D {
  *
  * **Simulated motion:** When these bodies are moved manually, either from code or from an [AnimationPlayer] (with [member AnimationPlayer.playback_process_mode] set to "physics"), the physics will automatically compute an estimate of their linear and angular velocity. This makes them very useful for moving platforms or other AnimationPlayer-controlled objects (like a door, a bridge that opens, etc).
  *
- * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but that don't require advanced physics.
+ * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
   "new"(): KinematicBody2D;
@@ -23,11 +23,23 @@ declare class KinematicBody2D extends PhysicsBody2D {
 
 
 
-/** If the body is at least this close to another body, this body will consider them to be colliding. */
+/**
+ * Extra margin used for collision recovery in motion functions (see [method move_and_collide], [method move_and_slide], [method move_and_slide_with_snap]).
+ *
+ * If the body is at least this close to another body, it will consider them to be colliding and will be pushed away before performing the actual motion.
+ *
+ * A higher value means it's more flexible for detecting collision, which helps with consistently detecting walls and floors.
+ *
+ * A lower value forces the collision algorithm to use more exact detection, so it can be used in cases that specifically require precision, e.g at very low scale to avoid visible jittering, or for stability with a stack of kinematic bodies.
+ *
+*/
 "collision/safe_margin": float;
 
 /** If [code]true[/code], the body's movement will be synchronized to the physics frame. This is useful when animating movement via [AnimationPlayer], for example on moving platforms. Do [b]not[/b] use together with [method move_and_slide] or [method move_and_collide] functions. */
 "motion/sync_to_physics": boolean;
+
+/** Returns the floor's collision angle at the last collision point according to [code]up_direction[/code], which is [code]Vector2.UP[/code] by default. This value is always positive and only valid after calling [method move_and_slide] and when [method is_on_floor] returns [code]true[/code]. */
+get_floor_angle(up_direction?: Vector2): float;
 
 /** Returns the surface normal of the floor at the last collision point. Only valid after calling [method move_and_slide] or [method move_and_slide_with_snap] and when [method is_on_floor] returns [code]true[/code]. */
 get_floor_normal(): Vector2;
@@ -35,8 +47,11 @@ get_floor_normal(): Vector2;
 /** Returns the linear velocity of the floor at the last collision point. Only valid after calling [method move_and_slide] or [method move_and_slide_with_snap] and when [method is_on_floor] returns [code]true[/code]. */
 get_floor_velocity(): Vector2;
 
+/** Returns a [KinematicCollision2D], which contains information about the latest collision that occurred during the last call to [method move_and_slide]. */
+get_last_slide_collision(): KinematicCollision2D;
+
 /**
- * Returns a [KinematicCollision2D], which contains information about a collision that occurred during the last [method move_and_slide] call. Since the body can collide several times in a single call to [method move_and_slide], you must specify the index of the collision in the range 0 to ([method get_slide_count] - 1).
+ * Returns a [KinematicCollision2D], which contains information about a collision that occurred during the last call to [method move_and_slide] or [method move_and_slide_with_snap]. Since the body can collide several times in a single call to [method move_and_slide], you must specify the index of the collision in the range 0 to ([method get_slide_count] - 1).
  *
  * **Example usage:**
  *
@@ -51,16 +66,16 @@ get_floor_velocity(): Vector2;
 */
 get_slide_collision(slide_idx: int): KinematicCollision2D;
 
-/** Returns the number of times the body collided and changed direction during the last call to [method move_and_slide]. */
+/** Returns the number of times the body collided and changed direction during the last call to [method move_and_slide] or [method move_and_slide_with_snap]. */
 get_slide_count(): int;
 
-/** Returns [code]true[/code] if the body is on the ceiling. Only updates when calling [method move_and_slide]. */
+/** Returns [code]true[/code] if the body collided with the ceiling on the last call of [method move_and_slide] or [method move_and_slide_with_snap]. Otherwise, returns [code]false[/code]. */
 is_on_ceiling(): boolean;
 
-/** Returns [code]true[/code] if the body is on the floor. Only updates when calling [method move_and_slide]. */
+/** Returns [code]true[/code] if the body collided with the floor on the last call of [method move_and_slide] or [method move_and_slide_with_snap]. Otherwise, returns [code]false[/code]. */
 is_on_floor(): boolean;
 
-/** Returns [code]true[/code] if the body is on a wall. Only updates when calling [method move_and_slide]. */
+/** Returns [code]true[/code] if the body collided with a wall on the last call of [method move_and_slide] or [method move_and_slide_with_snap]. Otherwise, returns [code]false[/code]. */
 is_on_wall(): boolean;
 
 /**
@@ -72,7 +87,7 @@ is_on_wall(): boolean;
 move_and_collide(rel_vec: Vector2, infinite_inertia?: boolean, exclude_raycast_shapes?: boolean, test_only?: boolean): KinematicCollision2D;
 
 /**
- * Moves the body along a vector. If the body collides with another, it will slide along the other body rather than stop immediately. If the other body is a [KinematicBody2D] or [RigidBody2D], it will also be affected by the motion of the other body. You can use this to make moving or rotating platforms, or to make nodes push other nodes.
+ * Moves the body along a vector. If the body collides with another, it will slide along the other body rather than stop immediately. If the other body is a [KinematicBody2D] or [RigidBody2D], it will also be affected by the motion of the other body. You can use this to make moving and rotating platforms, or to make nodes push other nodes.
  *
  * This method should be used in [method Node._physics_process] (or in a method called by [method Node._physics_process]), as it uses the physics step's `delta` value automatically in calculations. Otherwise, the simulation will run at an incorrect speed.
  *
@@ -90,6 +105,8 @@ move_and_collide(rel_vec: Vector2, infinite_inertia?: boolean, exclude_raycast_s
  *
  * Returns the `linear_velocity` vector, rotated and/or scaled if a slide collision occurred. To get detailed information about collisions that occurred, use [method get_slide_collision].
  *
+ * When the body touches a moving platform, the platform's velocity is automatically added to the body motion. If a collision occurs due to the platform's motion, it will always be first in the slide collisions.
+ *
 */
 move_and_slide(linear_velocity: Vector2, up_direction?: Vector2, stop_on_slope?: boolean, max_slides?: int, floor_max_angle?: float, infinite_inertia?: boolean): Vector2;
 
@@ -104,11 +121,14 @@ move_and_slide_with_snap(linear_velocity: Vector2, snap: Vector2, up_direction?:
 /** Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform2D], then tries to move the body along the vector [code]rel_vec[/code]. Returns [code]true[/code] if a collision would occur. */
 test_move(from: Transform2D, rel_vec: Vector2, infinite_inertia?: boolean): boolean;
 
-  connect<T extends SignalsOf<KinematicBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<KinematicBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<KinematicBody2DSignals>>(signal: T, method: SignalFunction<KinematicBody2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class KinematicBody2DSignals extends PhysicsBody2DSignals {
   
 }

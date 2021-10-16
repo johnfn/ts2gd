@@ -22,12 +22,15 @@ custom_step: float;
 
 
 
-  connect<T extends SignalsOf<ScrollBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ScrollBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ScrollBarSignals>>(signal: T, method: SignalFunction<ScrollBarSignals[T]>): number;
 
 
 
 
+}
 
+declare class ScrollBarSignals extends RangeSignals {
   /**
  * Emitted when the scrollbar is being scrolled.
  *

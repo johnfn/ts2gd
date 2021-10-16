@@ -31,11 +31,14 @@ threshold_db: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectLimiter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectLimiter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectLimiterSignals>>(signal: T, method: SignalFunction<AudioEffectLimiterSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectLimiterSignals extends AudioEffectSignals {
   
 }

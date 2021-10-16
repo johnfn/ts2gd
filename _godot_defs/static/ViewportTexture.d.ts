@@ -26,11 +26,14 @@ viewport_path: NodePathType;
 
 
 
-  connect<T extends SignalsOf<ViewportTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ViewportTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ViewportTextureSignals>>(signal: T, method: SignalFunction<ViewportTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class ViewportTextureSignals extends TextureSignals {
   
 }

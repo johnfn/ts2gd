@@ -33,17 +33,38 @@ action_release(action: string): void;
 add_joy_mapping(mapping: string, update_existing?: boolean): void;
 
 /**
- * Returns the acceleration of the device's accelerometer, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
+ * Returns the acceleration of the device's accelerometer sensor, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
  *
  * Note this method returns an empty [Vector3] when running from the editor even when your device has an accelerometer. You must export your project to a supported device to read values from the accelerometer.
  *
- * **Note:** This method only works on iOS, Android, and UWP. On other platforms, it always returns [constant Vector3.ZERO].
+ * **Note:** This method only works on iOS, Android, and UWP. On other platforms, it always returns [constant Vector3.ZERO]. On Android the unit of measurement for each axis is m/s² while on iOS and UWP it's a multiple of the Earth's gravitational acceleration `g` (~9.81 m/s²).
  *
 */
 get_accelerometer(): Vector3;
 
-/** Returns a value between 0 and 1 representing the intensity of the given action. In a joypad, for example, the further away the axis (analog sticks or L2, R2 triggers) is from the dead zone, the closer the value will be to 1. If the action is mapped to a control that has no axis as the keyboard, the value returned will be 0 or 1. */
-get_action_strength(action: string): float;
+/**
+ * Returns a value between 0 and 1 representing the raw intensity of the given action, ignoring the action's deadzone. In most cases, you should use [method get_action_strength] instead.
+ *
+ * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
+*/
+get_action_raw_strength(action: string, exact?: boolean): float;
+
+/**
+ * Returns a value between 0 and 1 representing the intensity of the given action. In a joypad, for example, the further away the axis (analog sticks or L2, R2 triggers) is from the dead zone, the closer the value will be to 1. If the action is mapped to a control that has no axis as the keyboard, the value returned will be 0 or 1.
+ *
+ * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
+*/
+get_action_strength(action: string, exact?: boolean): float;
+
+/**
+ * Get axis input by specifying two actions, one negative and one positive.
+ *
+ * This is a shorthand for writing `Input.get_action_strength("positive_action") - Input.get_action_strength("negative_action")`.
+ *
+*/
+get_axis(negative_action: string, positive_action: string): float;
 
 /** Returns an [Array] containing the device IDs of all currently connected joypads. */
 get_connected_joypads(): any[];
@@ -52,17 +73,17 @@ get_connected_joypads(): any[];
 get_current_cursor_shape(): int;
 
 /**
- * Returns the gravity of the device's accelerometer, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
+ * Returns the gravity of the device's accelerometer sensor, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
  *
- * **Note:** This method only works on Android and iOS. On other platforms, it always returns [constant Vector3.ZERO].
+ * **Note:** This method only works on Android and iOS. On other platforms, it always returns [constant Vector3.ZERO]. On Android the unit of measurement for each axis is m/s² while on iOS it's a multiple of the Earth's gravitational acceleration `g` (~9.81 m/s²).
  *
 */
 get_gravity(): Vector3;
 
 /**
- * Returns the rotation rate in rad/s around a device's X, Y, and Z axes of the gyroscope, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
+ * Returns the rotation rate in rad/s around a device's X, Y, and Z axes of the gyroscope sensor, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
  *
- * **Note:** This method only works on Android. On other platforms, it always returns [constant Vector3.ZERO].
+ * **Note:** This method only works on Android and iOS. On other platforms, it always returns [constant Vector3.ZERO].
  *
 */
 get_gyroscope(): Vector3;
@@ -98,9 +119,9 @@ get_joy_vibration_strength(device: int): Vector2;
 get_last_mouse_speed(): Vector2;
 
 /**
- * Returns the the magnetic field strength in micro-Tesla for all axes of the device's magnetometer, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
+ * Returns the magnetic field strength in micro-Tesla for all axes of the device's magnetometer sensor, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
  *
- * **Note:** This method only works on Android and UWP. On other platforms, it always returns [constant Vector3.ZERO].
+ * **Note:** This method only works on Android, iOS and UWP. On other platforms, it always returns [constant Vector3.ZERO].
  *
 */
 get_magnetometer(): Vector3;
@@ -112,18 +133,40 @@ get_mouse_button_mask(): int;
 get_mouse_mode(): int;
 
 /**
+ * Gets an input vector by specifying four actions for the positive and negative X and Y axes.
+ *
+ * This method is useful when getting vector input, such as from a joystick, directional pad, arrows, or WASD. The vector has its length limited to 1 and has a circular deadzone, which is useful for using vector input as movement.
+ *
+ * By default, the deadzone is automatically calculated from the average of the action deadzones. However, you can override the deadzone to be whatever you want (on the range of 0 to 1).
+ *
+*/
+get_vector(negative_x: string, positive_x: string, negative_y: string, positive_y: string, deadzone?: float): Vector2;
+
+/**
  * Returns `true` when the user starts pressing the action event, meaning it's `true` only on the frame that the user pressed down the button.
  *
  * This is useful for code that needs to run only once when an action is pressed, instead of every frame while it's pressed.
  *
+ * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
 */
-is_action_just_pressed(action: string): boolean;
+is_action_just_pressed(action: string, exact?: boolean): boolean;
 
-/** Returns [code]true[/code] when the user stops pressing the action event, meaning it's [code]true[/code] only on the frame that the user released the button. */
-is_action_just_released(action: string): boolean;
+/**
+ * Returns `true` when the user stops pressing the action event, meaning it's `true` only on the frame that the user released the button.
+ *
+ * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
+*/
+is_action_just_released(action: string, exact?: boolean): boolean;
 
-/** Returns [code]true[/code] if you are pressing the action event. Note that if an action has multiple buttons assigned and more than one of them is pressed, releasing one button will release the action, even if some other button assigned to this action is still pressed. */
-is_action_pressed(action: string): boolean;
+/**
+ * Returns `true` if you are pressing the action event. Note that if an action has multiple buttons assigned and more than one of them is pressed, releasing one button will release the action, even if some other button assigned to this action is still pressed.
+ *
+ * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
+*/
+is_action_pressed(action: string, exact?: boolean): boolean;
 
 /** Returns [code]true[/code] if you are pressing the joypad button (see [enum JoystickList]). */
 is_joy_button_pressed(device: int, button: int): boolean;
@@ -214,7 +257,7 @@ stop_joy_vibration(device: int): void;
 /**
  * Vibrate Android and iOS devices.
  *
- * **Note:** It needs VIBRATE permission for Android at export settings. iOS does not support duration.
+ * **Note:** It needs `VIBRATE` permission for Android at export settings. iOS does not support duration.
  *
 */
 vibrate_handheld(duration_ms?: int): void;
@@ -222,7 +265,8 @@ vibrate_handheld(duration_ms?: int): void;
 /** Sets the mouse position to the specified vector. */
 warp_mouse_position(to: Vector2): void;
 
-  connect<T extends SignalsOf<InputClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputClassSignals>>(signal: T, method: SignalFunction<InputClassSignals[T]>): number;
 
 
 
@@ -230,13 +274,13 @@ warp_mouse_position(to: Vector2): void;
  * Makes the mouse cursor visible if it is hidden.
  *
 */
-static MOUSE_MODE_VISIBLE: 0;
+static MOUSE_MODE_VISIBLE: any;
 
 /**
  * Makes the mouse cursor hidden if it is visible.
  *
 */
-static MOUSE_MODE_HIDDEN: 1;
+static MOUSE_MODE_HIDDEN: any;
 
 /**
  * Captures the mouse. The mouse will be hidden and its position locked at the center of the screen.
@@ -244,117 +288,119 @@ static MOUSE_MODE_HIDDEN: 1;
  * **Note:** If you want to process the mouse's movement in this mode, you need to use [member InputEventMouseMotion.relative].
  *
 */
-static MOUSE_MODE_CAPTURED: 2;
+static MOUSE_MODE_CAPTURED: any;
 
 /**
  * Makes the mouse cursor visible but confines it to the game window.
  *
 */
-static MOUSE_MODE_CONFINED: 3;
+static MOUSE_MODE_CONFINED: any;
 
 /**
  * Arrow cursor. Standard, default pointing cursor.
  *
 */
-static CURSOR_ARROW: 0;
+static CURSOR_ARROW: any;
 
 /**
  * I-beam cursor. Usually used to show where the text cursor will appear when the mouse is clicked.
  *
 */
-static CURSOR_IBEAM: 1;
+static CURSOR_IBEAM: any;
 
 /**
  * Pointing hand cursor. Usually used to indicate the pointer is over a link or other interactable item.
  *
 */
-static CURSOR_POINTING_HAND: 2;
+static CURSOR_POINTING_HAND: any;
 
 /**
  * Cross cursor. Typically appears over regions in which a drawing operation can be performed or for selections.
  *
 */
-static CURSOR_CROSS: 3;
+static CURSOR_CROSS: any;
 
 /**
  * Wait cursor. Indicates that the application is busy performing an operation. This cursor shape denotes that the application is still usable during the operation.
  *
 */
-static CURSOR_WAIT: 4;
+static CURSOR_WAIT: any;
 
 /**
  * Busy cursor. Indicates that the application is busy performing an operation. This cursor shape denotes that the application isn't usable during the operation (e.g. something is blocking its main thread).
  *
 */
-static CURSOR_BUSY: 5;
+static CURSOR_BUSY: any;
 
 /**
  * Drag cursor. Usually displayed when dragging something.
  *
 */
-static CURSOR_DRAG: 6;
+static CURSOR_DRAG: any;
 
 /**
  * Can drop cursor. Usually displayed when dragging something to indicate that it can be dropped at the current position.
  *
 */
-static CURSOR_CAN_DROP: 7;
+static CURSOR_CAN_DROP: any;
 
 /**
  * Forbidden cursor. Indicates that the current action is forbidden (for example, when dragging something) or that the control at a position is disabled.
  *
 */
-static CURSOR_FORBIDDEN: 8;
+static CURSOR_FORBIDDEN: any;
 
 /**
  * Vertical resize mouse cursor. A double-headed vertical arrow. It tells the user they can resize the window or the panel vertically.
  *
 */
-static CURSOR_VSIZE: 9;
+static CURSOR_VSIZE: any;
 
 /**
  * Horizontal resize mouse cursor. A double-headed horizontal arrow. It tells the user they can resize the window or the panel horizontally.
  *
 */
-static CURSOR_HSIZE: 10;
+static CURSOR_HSIZE: any;
 
 /**
  * Window resize mouse cursor. The cursor is a double-headed arrow that goes from the bottom left to the top right. It tells the user they can resize the window or the panel both horizontally and vertically.
  *
 */
-static CURSOR_BDIAGSIZE: 11;
+static CURSOR_BDIAGSIZE: any;
 
 /**
  * Window resize mouse cursor. The cursor is a double-headed arrow that goes from the top left to the bottom right, the opposite of [constant CURSOR_BDIAGSIZE]. It tells the user they can resize the window or the panel both horizontally and vertically.
  *
 */
-static CURSOR_FDIAGSIZE: 12;
+static CURSOR_FDIAGSIZE: any;
 
 /**
  * Move cursor. Indicates that something can be moved.
  *
 */
-static CURSOR_MOVE: 13;
+static CURSOR_MOVE: any;
 
 /**
  * Vertical split mouse cursor. On Windows, it's the same as [constant CURSOR_VSIZE].
  *
 */
-static CURSOR_VSPLIT: 14;
+static CURSOR_VSPLIT: any;
 
 /**
  * Horizontal split mouse cursor. On Windows, it's the same as [constant CURSOR_HSIZE].
  *
 */
-static CURSOR_HSPLIT: 15;
+static CURSOR_HSPLIT: any;
 
 /**
  * Help cursor. Usually a question mark.
  *
 */
-static CURSOR_HELP: 16;
+static CURSOR_HELP: any;
 
+}
 
+declare class InputClassSignals extends ObjectSignals {
   /**
  * Emitted when a joypad device has been connected or disconnected.
  *

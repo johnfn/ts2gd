@@ -15,10 +15,10 @@ declare class Sprite3D extends SpriteBase3D {
 
 
 
-/** Current frame to display from sprite sheet. [member vframes] or [member hframes] must be greater than 1. */
+/** Current frame to display from sprite sheet. [member hframes] or [member vframes] must be greater than 1. */
 frame: int;
 
-/** Coordinates of the frame to display from sprite sheet. This is as an alias for the [member frame] property. [member vframes] or [member hframes] must be greater than 1. */
+/** Coordinates of the frame to display from sprite sheet. This is as an alias for the [member frame] property. [member hframes] or [member vframes] must be greater than 1. */
 frame_coords: Vector2;
 
 /** The number of columns in the sprite sheet. */
@@ -38,12 +38,15 @@ vframes: int;
 
 
 
-  connect<T extends SignalsOf<Sprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Sprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Sprite3DSignals>>(signal: T, method: SignalFunction<Sprite3DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Sprite3DSignals extends SpriteBase3DSignals {
   /**
  * Emitted when the [member frame] changes.
  *

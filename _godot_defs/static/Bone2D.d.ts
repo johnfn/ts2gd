@@ -42,11 +42,14 @@ get_index_in_skeleton(): int;
 /** Returns the node's [member rest] [code]Transform2D[/code] if it doesn't have a parent, or its rest pose relative to its parent. */
 get_skeleton_rest(): Transform2D;
 
-  connect<T extends SignalsOf<Bone2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Bone2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Bone2DSignals>>(signal: T, method: SignalFunction<Bone2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Bone2DSignals extends Node2DSignals {
   
 }

@@ -8,6 +8,8 @@
  *
  * **Note:** In a boolean context, a Color will evaluate to `false` if it's equal to `Color(0, 0, 0, 1)` (opaque black). Otherwise, a Color will always evaluate to `true`.
  *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/color_constants.png]Color constants cheatsheet[/url]
+ *
 */
 declare class Color {
 
@@ -20,6 +22,8 @@ declare class Color {
  * If you want to supply values in a range of 0 to 255, you should use [method @GDScript.Color8].
  *
  * **Note:** In a boolean context, a Color will evaluate to `false` if it's equal to `Color(0, 0, 0, 1)` (opaque black). Otherwise, a Color will always evaluate to `true`.
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/color_constants.png]Color constants cheatsheet[/url]
  *
 */
 
@@ -144,8 +148,8 @@ gray(): float;
  *
  * @example 
  * 
- * var c = Color(0.3, 0.4, 0.9)
- * var inverted_color = c.inverted() # A color of an RGBA(178, 153, 26, 255)
+ * var color = Color(0.3, 0.4, 0.9)
+ * var inverted_color = color.inverted() # Equivalent to Color(0.7, 0.6, 0.1)
  * @summary 
  * 
  *
@@ -169,26 +173,26 @@ is_equal_approx(color: Color): boolean;
 lightened(amount: float): Color;
 
 /**
- * Returns the linear interpolation with another color. The interpolation factor `t` is between 0 and 1.
+ * Returns the linear interpolation with another color. The interpolation factor `weight` is between 0 and 1.
  *
  * @example 
  * 
  * var c1 = Color(1.0, 0.0, 0.0)
  * var c2 = Color(0.0, 1.0, 0.0)
- * var li_c = c1.linear_interpolate(c2, 0.5) # A color of an RGBA(128, 128, 0, 255)
+ * var li_c = c1.linear_interpolate(c2, 0.5) # Equivalent to Color(0.5, 0.5, 0.0)
  * @summary 
  * 
  *
 */
-linear_interpolate(b: Color, t: float): Color;
+linear_interpolate(to: Color, weight: float): Color;
 
 /**
- * Returns the color's 32-bit integer in ABGR format (each byte represents a component of the ABGR profile). ABGR is the reversed version of the default format.
+ * Returns the color converted to a 32-bit integer in ABGR format (each byte represents a color channel). ABGR is the reversed version of the default format.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_abgr32()) # Prints 4281565439
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_abgr32()) # Prints 4281565439
  * @summary 
  * 
  *
@@ -196,12 +200,12 @@ linear_interpolate(b: Color, t: float): Color;
 to_abgr32(): int;
 
 /**
- * Returns the color's 64-bit integer in ABGR format (each word represents a component of the ABGR profile). ABGR is the reversed version of the default format.
+ * Returns the color converted to a 64-bit integer in ABGR format (each word represents a color channel). ABGR is the reversed version of the default format.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_abgr64()) # Prints -225178692812801
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_abgr64()) # Prints -225178692812801
  * @summary 
  * 
  *
@@ -209,12 +213,12 @@ to_abgr32(): int;
 to_abgr64(): int;
 
 /**
- * Returns the color's 32-bit integer in ARGB format (each byte represents a component of the ARGB profile). ARGB is more compatible with DirectX.
+ * Returns the color converted to a 32-bit integer in ARGB format (each byte represents a color channel). ARGB is more compatible with DirectX.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_argb32()) # Prints 4294934323
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_argb32()) # Prints 4294934323
  * @summary 
  * 
  *
@@ -222,12 +226,12 @@ to_abgr64(): int;
 to_argb32(): int;
 
 /**
- * Returns the color's 64-bit integer in ARGB format (each word represents a component of the ARGB profile). ARGB is more compatible with DirectX.
+ * Returns the color converted to a 64-bit integer in ARGB format (each word represents a color channel). ARGB is more compatible with DirectX.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_argb64()) # Prints -2147470541
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_argb64()) # Prints -2147470541
  * @summary 
  * 
  *
@@ -251,12 +255,12 @@ to_argb64(): int;
 to_html(with_alpha?: boolean): string;
 
 /**
- * Returns the color's 32-bit integer in RGBA format (each byte represents a component of the RGBA profile). RGBA is Godot's default format.
+ * Returns the color converted to a 32-bit integer in RGBA format (each byte represents a color channel). RGBA is Godot's default format.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_rgba32()) # Prints 4286526463
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_rgba32()) # Prints 4286526463
  * @summary 
  * 
  *
@@ -264,19 +268,20 @@ to_html(with_alpha?: boolean): string;
 to_rgba32(): int;
 
 /**
- * Returns the color's 64-bit integer in RGBA format (each word represents a component of the RGBA profile). RGBA is Godot's default format.
+ * Returns the color converted to a 64-bit integer in RGBA format (each word represents a color channel). RGBA is Godot's default format.
  *
  * @example 
  * 
- * var c = Color(1, 0.5, 0.2)
- * print(c.to_rgba64()) # Prints -140736629309441
+ * var color = Color(1, 0.5, 0.2)
+ * print(color.to_rgba64()) # Prints -140736629309441
  * @summary 
  * 
  *
 */
 to_rgba64(): int;
 
-  connect<T extends SignalsOf<Color>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Color>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ColorSignals>>(signal: T, method: SignalFunction<ColorSignals[T]>): number;
 
 
 
@@ -1156,6 +1161,8 @@ static yellow: Color;
 */
 static yellowgreen: Color;
 
+}
 
+declare class ColorSignals {
   
 }

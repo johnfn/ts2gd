@@ -7,7 +7,7 @@
  * The [ARVRController] and [ARVRAnchor] both consume objects of this type and should be used in your project. The positional trackers are just under-the-hood objects that make this all work. These are mostly exposed so that GDNative-based interfaces can interact with them.
  *
 */
-declare class ARVRPositionalTracker extends Object {
+declare class ARVRPositionalTracker extends Reference {
 
   
 /**
@@ -59,7 +59,8 @@ get_transform(adjust_by_reference_frame: boolean): Transform;
 /** Returns the tracker's type. */
 get_type(): int;
 
-  connect<T extends SignalsOf<ARVRPositionalTracker>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVRPositionalTracker>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRPositionalTrackerSignals>>(signal: T, method: SignalFunction<ARVRPositionalTrackerSignals[T]>): number;
 
 
 
@@ -67,20 +68,22 @@ get_type(): int;
  * The hand this tracker is held in is unknown or not applicable.
  *
 */
-static TRACKER_HAND_UNKNOWN: 0;
+static TRACKER_HAND_UNKNOWN: any;
 
 /**
  * This tracker is the left hand controller.
  *
 */
-static TRACKER_LEFT_HAND: 1;
+static TRACKER_LEFT_HAND: any;
 
 /**
  * This tracker is the right hand controller.
  *
 */
-static TRACKER_RIGHT_HAND: 2;
+static TRACKER_RIGHT_HAND: any;
 
+}
 
+declare class ARVRPositionalTrackerSignals extends ReferenceSignals {
   
 }

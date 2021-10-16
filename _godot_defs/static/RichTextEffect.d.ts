@@ -41,11 +41,14 @@ declare class RichTextEffect extends Resource {
 /** Override this method to modify properties in [code]char_fx[/code]. The method must return [code]true[/code] if the character could be transformed successfully. If the method returns [code]false[/code], it will skip transformation to avoid displaying broken text. */
 protected _process_custom_fx(char_fx: CharFXTransform): boolean;
 
-  connect<T extends SignalsOf<RichTextEffect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RichTextEffect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RichTextEffectSignals>>(signal: T, method: SignalFunction<RichTextEffectSignals[T]>): number;
 
 
 
 
+}
 
+declare class RichTextEffectSignals extends ResourceSignals {
   
 }

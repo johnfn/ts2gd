@@ -22,11 +22,14 @@ declare class ARVRCamera extends Camera {
 
 
 
-  connect<T extends SignalsOf<ARVRCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVRCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRCameraSignals>>(signal: T, method: SignalFunction<ARVRCameraSignals[T]>): number;
 
 
 
 
+}
 
+declare class ARVRCameraSignals extends CameraSignals {
   
 }

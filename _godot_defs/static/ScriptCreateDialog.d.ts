@@ -41,12 +41,15 @@ declare class ScriptCreateDialog extends ConfirmationDialog {
 /** Prefills required fields to configure the ScriptCreateDialog for use. */
 config(inherits: string, path: string, built_in_enabled?: boolean, load_enabled?: boolean): void;
 
-  connect<T extends SignalsOf<ScriptCreateDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ScriptCreateDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ScriptCreateDialogSignals>>(signal: T, method: SignalFunction<ScriptCreateDialogSignals[T]>): number;
 
 
 
 
+}
 
+declare class ScriptCreateDialogSignals extends ConfirmationDialogSignals {
   /**
  * Emitted when the user clicks the OK button.
  *

@@ -64,7 +64,8 @@ get_vbox(): VBoxContainer;
 /** Invalidate and update the current dialog content list. */
 invalidate(): void;
 
-  connect<T extends SignalsOf<FileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<FileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<FileDialogSignals>>(signal: T, method: SignalFunction<FileDialogSignals[T]>): number;
 
 
 
@@ -72,51 +73,53 @@ invalidate(): void;
  * The dialog allows selecting one, and only one file.
  *
 */
-static MODE_OPEN_FILE: 0;
+static MODE_OPEN_FILE: any;
 
 /**
  * The dialog allows selecting multiple files.
  *
 */
-static MODE_OPEN_FILES: 1;
+static MODE_OPEN_FILES: any;
 
 /**
  * The dialog only allows selecting a directory, disallowing the selection of any file.
  *
 */
-static MODE_OPEN_DIR: 2;
+static MODE_OPEN_DIR: any;
 
 /**
  * The dialog allows selecting one file or directory.
  *
 */
-static MODE_OPEN_ANY: 3;
+static MODE_OPEN_ANY: any;
 
 /**
  * The dialog will warn when a file exists.
  *
 */
-static MODE_SAVE_FILE: 4;
+static MODE_SAVE_FILE: any;
 
 /**
  * The dialog only allows accessing files under the [Resource] path (`res://`).
  *
 */
-static ACCESS_RESOURCES: 0;
+static ACCESS_RESOURCES: any;
 
 /**
  * The dialog only allows accessing files under user data path (`user://`).
  *
 */
-static ACCESS_USERDATA: 1;
+static ACCESS_USERDATA: any;
 
 /**
  * The dialog allows accessing files on the whole file system.
  *
 */
-static ACCESS_FILESYSTEM: 2;
+static ACCESS_FILESYSTEM: any;
 
+}
 
+declare class FileDialogSignals extends ConfirmationDialogSignals {
   /**
  * Emitted when the user selects a directory.
  *

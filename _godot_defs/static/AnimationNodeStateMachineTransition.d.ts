@@ -12,7 +12,7 @@ declare class AnimationNodeStateMachineTransition extends Resource {
 
 
 /**
- * Turn on auto advance when this condition is set. The provided name will become a boolean parameter on the [AnimationTree] that can be controlled from code (see [url=https://docs.godotengine.org/en/latest/tutorials/animation/animation_tree.html#controlling-from-code][/url]). For example, if [member AnimationTree.tree_root] is an [AnimationNodeStateMachine] and [member advance_condition] is set to `"idle"`:
+ * Turn on auto advance when this condition is set. The provided name will become a boolean parameter on the [AnimationTree] that can be controlled from code (see [url=https://docs.godotengine.org/en/3.4/tutorials/animation/animation_tree.html#controlling-from-code][/url]). For example, if [member AnimationTree.tree_root] is an [AnimationNodeStateMachine] and [member advance_condition] is set to `"idle"`:
  *
  * @example 
  * 
@@ -40,7 +40,8 @@ xfade_time: float;
 
 
 
-  connect<T extends SignalsOf<AnimationNodeStateMachineTransition>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeStateMachineTransition>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachineTransitionSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachineTransitionSignals[T]>): number;
 
 
 
@@ -48,21 +49,23 @@ xfade_time: float;
  * Switch to the next state immediately. The current state will end and blend into the beginning of the new one.
  *
 */
-static SWITCH_MODE_IMMEDIATE: 0;
+static SWITCH_MODE_IMMEDIATE: any;
 
 /**
  * Switch to the next state immediately, but will seek the new state to the playback position of the old state.
  *
 */
-static SWITCH_MODE_SYNC: 1;
+static SWITCH_MODE_SYNC: any;
 
 /**
  * Wait for the current state playback to end, then switch to the beginning of the next state animation.
  *
 */
-static SWITCH_MODE_AT_END: 2;
+static SWITCH_MODE_AT_END: any;
 
+}
 
+declare class AnimationNodeStateMachineTransitionSignals extends ResourceSignals {
   /**
  * Emitted when [member advance_condition] is changed.
  *

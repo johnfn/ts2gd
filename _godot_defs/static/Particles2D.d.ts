@@ -4,6 +4,12 @@
  *
  * Use the `process_material` property to add a [ParticlesMaterial] to configure particle appearance and behavior. Alternatively, you can add a [ShaderMaterial] which will be applied to all particles.
  *
+ * **Note:** [Particles2D] only work when using the GLES3 renderer. If using the GLES2 renderer, use [CPUParticles2D] instead. You can convert [Particles2D] to [CPUParticles2D] by selecting the node, clicking the **Particles** menu at the top of the 2D editor viewport then choosing **Convert to CPUParticles2D**.
+ *
+ * **Note:** After working on a Particles node, remember to update its [member visibility_rect] by selecting it, clicking the **Particles** menu at the top of the 2D editor viewport then choose **Generate Visibility Rect**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
+ *
+ * **Note:** Unlike [CPUParticles2D], [Particles2D] currently ignore the texture region defined in [AtlasTexture]s.
+ *
 */
 declare class Particles2D extends Node2D {
 
@@ -13,13 +19,24 @@ declare class Particles2D extends Node2D {
  *
  * Use the `process_material` property to add a [ParticlesMaterial] to configure particle appearance and behavior. Alternatively, you can add a [ShaderMaterial] which will be applied to all particles.
  *
+ * **Note:** [Particles2D] only work when using the GLES3 renderer. If using the GLES2 renderer, use [CPUParticles2D] instead. You can convert [Particles2D] to [CPUParticles2D] by selecting the node, clicking the **Particles** menu at the top of the 2D editor viewport then choosing **Convert to CPUParticles2D**.
+ *
+ * **Note:** After working on a Particles node, remember to update its [member visibility_rect] by selecting it, clicking the **Particles** menu at the top of the 2D editor viewport then choose **Generate Visibility Rect**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
+ *
+ * **Note:** Unlike [CPUParticles2D], [Particles2D] currently ignore the texture region defined in [AtlasTexture]s.
+ *
 */
   "new"(): Particles2D;
   static "new"(): Particles2D;
 
 
 
-/** Number of particles emitted in one emission cycle. */
+/**
+ * The number of particles emitted in one emission cycle (corresponding to the [member lifetime]).
+ *
+ * **Note:** Changing [member amount] will reset the particle emission, therefore removing all particles that were already emitted before changing [member amount].
+ *
+*/
 amount: int;
 
 /** Particle draw order. Uses [enum DrawOrder] values. */
@@ -37,7 +54,7 @@ fixed_fps: int;
 /** If [code]true[/code], results in fractional delta calculation which has a smoother particles display effect. */
 fract_delta: boolean;
 
-/** Amount of time each particle will exist. */
+/** The amount of time each particle will exist (in seconds). */
 lifetime: float;
 
 /** If [code]true[/code], particles use the parent node's coordinate space. If [code]false[/code], they use global coordinates. */
@@ -69,7 +86,12 @@ speed_scale: float;
 /** Particle texture. If [code]null[/code], particles will be squares. */
 texture: Texture;
 
-/** Editor visibility helper. */
+/**
+ * The [Rect2] that determines the node's region which needs to be visible on screen for the particle system to be active.
+ *
+ * Grow the rect if particles suddenly appear/disappear when the node enters/exits the screen. The [Rect2] can be grown via code or with the **Particles → Generate Visibility Rect** editor tool.
+ *
+*/
 visibility_rect: Rect2;
 
 /** Returns a rectangle containing the positions of all existing particles. */
@@ -78,7 +100,8 @@ capture_rect(): Rect2;
 /** Restarts all the existing particles. */
 restart(): void;
 
-  connect<T extends SignalsOf<Particles2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Particles2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Particles2DSignals>>(signal: T, method: SignalFunction<Particles2DSignals[T]>): number;
 
 
 
@@ -86,14 +109,16 @@ restart(): void;
  * Particles are drawn in the order emitted.
  *
 */
-static DRAW_ORDER_INDEX: 0;
+static DRAW_ORDER_INDEX: any;
 
 /**
  * Particles are drawn in order of remaining lifetime.
  *
 */
-static DRAW_ORDER_LIFETIME: 1;
+static DRAW_ORDER_LIFETIME: any;
 
+}
 
+declare class Particles2DSignals extends Node2DSignals {
   
 }

@@ -18,11 +18,14 @@ declare class VisualShaderNodeFresnel extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeFresnel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeFresnel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeFresnelSignals>>(signal: T, method: SignalFunction<VisualShaderNodeFresnelSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeFresnelSignals extends VisualShaderNodeSignals {
   
 }

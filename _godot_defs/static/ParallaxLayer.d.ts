@@ -34,11 +34,14 @@ motion_scale: Vector2;
 
 
 
-  connect<T extends SignalsOf<ParallaxLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ParallaxLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ParallaxLayerSignals>>(signal: T, method: SignalFunction<ParallaxLayerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ParallaxLayerSignals extends Node2DSignals {
   
 }

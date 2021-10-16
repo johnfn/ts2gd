@@ -43,11 +43,14 @@ set_bit(position: Vector2, bit: boolean): void;
 /** Sets a rectangular portion of the bitmap to the specified value. */
 set_bit_rect(rect: Rect2, bit: boolean): void;
 
-  connect<T extends SignalsOf<BitMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<BitMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BitMapSignals>>(signal: T, method: SignalFunction<BitMapSignals[T]>): number;
 
 
 
 
+}
 
+declare class BitMapSignals extends ResourceSignals {
   
 }

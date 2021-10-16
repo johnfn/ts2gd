@@ -22,7 +22,7 @@ close(): void;
 /**
  * Calling this method connects this UDP peer to the given `host`/`port` pair. UDP is in reality connectionless, so this option only means that incoming packets from different addresses are automatically discarded, and that outgoing packets are always sent to the connected address (future calls to [method set_dest_address] are not allowed). This method does not send any data to the remote peer, to do that, use [method PacketPeer.put_var] or [method PacketPeer.put_packet] as usual. See also [UDPServer].
  *
- * Note: Connecting to the remote peer does not help to protect from malicious attacks like IP spoofing, etc. Think about using an encryption technique like SSL or DTLS if you feel like your application is transfering sensitive information.
+ * **Note:** Connecting to the remote peer does not help to protect from malicious attacks like IP spoofing, etc. Think about using an encryption technique like SSL or DTLS if you feel like your application is transferring sensitive information.
  *
 */
 connect_to_host(host: string, port: int): int;
@@ -44,7 +44,7 @@ is_listening(): boolean;
  *
  * You can join the same multicast group with multiple interfaces. Use [method IP.get_local_interfaces] to know which are available.
  *
- * Note: Some Android devices might require the `CHANGE_WIFI_MULTICAST_STATE` permission for multicast to work.
+ * **Note:** Some Android devices might require the `CHANGE_WIFI_MULTICAST_STATE` permission for multicast to work.
  *
 */
 join_multicast_group(multicast_address: string, interface_name: string): int;
@@ -67,7 +67,7 @@ listen(port: int, bind_address?: string, recv_buf_size?: int): int;
 /**
  * Enable or disable sending of broadcast packets (e.g. `set_dest_address("255.255.255.255", 4343)`. This option is disabled by default.
  *
- * Note: Some Android devices might require the `CHANGE_WIFI_MULTICAST_STATE` permission and this option to be enabled to receive broadcast packets too.
+ * **Note:** Some Android devices might require the `CHANGE_WIFI_MULTICAST_STATE` permission and this option to be enabled to receive broadcast packets too.
  *
 */
 set_broadcast_enabled(enabled: boolean): void;
@@ -75,19 +75,40 @@ set_broadcast_enabled(enabled: boolean): void;
 /**
  * Sets the destination address and port for sending packets and variables. A hostname will be resolved using DNS if needed.
  *
- * Note: [method set_broadcast_enabled] must be enabled before sending packets to a broadcast address (e.g. `255.255.255.255`).
+ * **Note:** [method set_broadcast_enabled] must be enabled before sending packets to a broadcast address (e.g. `255.255.255.255`).
  *
 */
 set_dest_address(host: string, port: int): int;
 
-/** Waits for a packet to arrive on the listening port. See [method listen]. */
+/**
+ * Waits for a packet to arrive on the listening port. See [method listen].
+ *
+ * **Note:** [method wait] can't be interrupted once it has been called. This can be worked around by allowing the other party to send a specific "death pill" packet like this:
+ *
+ * @example 
+ * 
+ * # Server
+ * socket.set_dest_address("127.0.0.1", 789)
+ * socket.put_packet("Time to stop".to_ascii())
+ * # Client
+ * while socket.wait() == OK:
+ *     var data = socket.get_packet().get_string_from_ascii()
+ *     if data == "Time to stop":
+ *         return
+ * @summary 
+ * 
+ *
+*/
 wait(): int;
 
-  connect<T extends SignalsOf<PacketPeerUDP>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PacketPeerUDP>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PacketPeerUDPSignals>>(signal: T, method: SignalFunction<PacketPeerUDPSignals[T]>): number;
 
 
 
 
+}
 
+declare class PacketPeerUDPSignals extends PacketPeerSignals {
   
 }

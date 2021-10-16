@@ -23,11 +23,14 @@ declare class VSlider extends Slider {
 
 
 
-  connect<T extends SignalsOf<VSlider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VSlider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VSliderSignals>>(signal: T, method: SignalFunction<VSliderSignals[T]>): number;
 
 
 
 
+}
 
+declare class VSliderSignals extends SliderSignals {
   
 }

@@ -53,11 +53,14 @@ collide_with_motion_and_get_contacts(local_xform: Transform2D, local_motion: Vec
 /** Draws a solid shape onto a [CanvasItem] with the [VisualServer] API filled with the specified [code]color[/code]. The exact drawing method is specific for each shape and cannot be configured. */
 draw(canvas_item: RID, color: Color): void;
 
-  connect<T extends SignalsOf<Shape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Shape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Shape2DSignals>>(signal: T, method: SignalFunction<Shape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Shape2DSignals extends ResourceSignals {
   
 }

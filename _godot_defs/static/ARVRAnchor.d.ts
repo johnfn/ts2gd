@@ -41,12 +41,15 @@ get_plane(): Plane;
 /** Returns the estimated size of the plane that was detected. Say when the anchor relates to a table in the real world, this is the estimated size of the surface of that table. */
 get_size(): Vector3;
 
-  connect<T extends SignalsOf<ARVRAnchor>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVRAnchor>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRAnchorSignals>>(signal: T, method: SignalFunction<ARVRAnchorSignals[T]>): number;
 
 
 
 
+}
 
+declare class ARVRAnchorSignals extends SpatialSignals {
   /**
  * Emitted when the mesh associated with the anchor changes or when one becomes available. This is especially important for topology that is constantly being `mesh_updated`.
  *

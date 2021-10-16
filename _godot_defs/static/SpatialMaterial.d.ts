@@ -48,7 +48,12 @@ ao_texture_channel: int;
 /** Sets the strength of the clearcoat effect. Setting to [code]0[/code] looks the same as disabling the clearcoat effect. */
 clearcoat: float;
 
-/** If [code]true[/code], clearcoat rendering is enabled. Adds a secondary transparent pass to the lighting calculation resulting in an added specular blob. This makes materials appear as if they have a clear layer on them that can be either glossy or rough. */
+/**
+ * If `true`, clearcoat rendering is enabled. Adds a secondary transparent pass to the lighting calculation resulting in an added specular blob. This makes materials appear as if they have a clear layer on them that can be either glossy or rough.
+ *
+ * **Note:** Clearcoat rendering is not visible if the material has [member flags_unshaded] set to `true`.
+ *
+*/
 clearcoat_enabled: boolean;
 
 /** Sets the roughness of the clearcoat pass. A higher value results in a smoother clearcoat while a lower value results in a rougher clearcoat. */
@@ -60,7 +65,12 @@ clearcoat_texture: Texture;
 /** If [code]true[/code], the shader will read depth texture at multiple points along the view ray to determine occlusion and parrallax. This can be very performance demanding, but results in more realistic looking depth mapping. */
 depth_deep_parallax: boolean;
 
-/** If [code]true[/code], depth mapping is enabled (also called "parallax mapping" or "height mapping"). See also [member normal_enabled]. */
+/**
+ * If `true`, depth mapping is enabled (also called "parallax mapping" or "height mapping"). See also [member normal_enabled].
+ *
+ * **Note:** Depth mapping is not supported if triplanar mapping is used on the same material. The value of [member depth_enabled] will be ignored if [member uv1_triplanar] is enabled.
+ *
+*/
 depth_enabled: boolean;
 
 /** If [code]true[/code], direction of the binormal is flipped before using in the depth effect. This may be necessary if you have encoded your binormals in a way that is conflicting with the depth effect. */
@@ -104,10 +114,20 @@ detail_normal: Texture;
 /** Specifies whether to use [code]UV[/code] or [code]UV2[/code] for the detail layer. See [enum DetailUV] for options. */
 detail_uv_layer: int;
 
-/** Distance at which the object fades fully and is no longer visible. */
+/**
+ * Distance at which the object appears fully opaque.
+ *
+ * **Note:** If `distance_fade_max_distance` is less than `distance_fade_min_distance`, the behavior will be reversed. The object will start to fade away at `distance_fade_max_distance` and will fully disappear once it reaches `distance_fade_min_distance`.
+ *
+*/
 distance_fade_max_distance: float;
 
-/** Distance at which the object starts to fade. If the object is less than this distance away it will appear normal. */
+/**
+ * Distance at which the object starts to become visible. If the object is less than this distance away, it will be invisible.
+ *
+ * **Note:** If `distance_fade_min_distance` is greater than `distance_fade_max_distance`, the behavior will be reversed. The object will start to fade away at `distance_fade_max_distance` and will fully disappear once it reaches `distance_fade_min_distance`.
+ *
+*/
 distance_fade_min_distance: float;
 
 /** Specifies which type of fade to use. Can be any of the [enum DistanceFadeMode]s. */
@@ -158,7 +178,7 @@ flags_unshaded: boolean;
 /**
  * If `true`, render point size can be changed.
  *
- * **Note:** this is only effective for objects whose geometry is point-based rather than triangle-based. See also [member params_point_size].
+ * **Note:** This is only effective for objects whose geometry is point-based rather than triangle-based. See also [member params_point_size].
  *
 */
 flags_use_point_size: boolean;
@@ -178,7 +198,7 @@ metallic: float;
 /**
  * Sets the size of the specular lobe. The specular lobe is the bright spot that is reflected from light sources.
  *
- * **Note:** unlike [member metallic], this is not energy-conserving, so it should be left at `0.5` in most cases. See also [member roughness].
+ * **Note:** Unlike [member metallic], this is not energy-conserving, so it should be left at `0.5` in most cases. See also [member roughness].
  *
 */
 metallic_specular: float;
@@ -196,7 +216,9 @@ normal_enabled: boolean;
 normal_scale: float;
 
 /**
- * Texture used to specify the normal at a given pixel. The `normal_texture` only uses the red and green channels. The normal read from `normal_texture` is oriented around the surface normal provided by the [Mesh].
+ * Texture used to specify the normal at a given pixel. The `normal_texture` only uses the red and green channels; the blue and alpha channels are ignored. The normal read from `normal_texture` is oriented around the surface normal provided by the [Mesh].
+ *
+ * **Note:** The mesh must have both normals and tangents defined in its vertex data. Otherwise, the normal map won't render correctly and will only appear to darken the whole surface. If creating geometry with [SurfaceTool], you can use [method SurfaceTool.generate_normals] and [method SurfaceTool.generate_tangents] to automatically generate normals and tangents respectively.
  *
  * **Note:** Godot expects the normal map to use X+, Y-, and Z+ coordinates. See [url=http://wiki.polycount.com/wiki/Normal_Map_Technical_Details#Common_Swizzle_Coordinates]this page[/url] for a comparison of normal map coordinates expected by popular engines.
  *
@@ -209,7 +231,12 @@ params_alpha_scissor_threshold: float;
 /** If [code]true[/code], the shader will keep the scale set for the mesh. Otherwise the scale is lost when billboarding. Only applies when [member params_billboard_mode] is [constant BILLBOARD_ENABLED]. */
 params_billboard_keep_scale: boolean;
 
-/** Controls how the object faces the camera. See [enum BillboardMode]. */
+/**
+ * Controls how the object faces the camera. See [enum BillboardMode].
+ *
+ * **Note:** Billboard mode is not suitable for VR because the left-right vector of the camera is not horizontal when the screen is attached to your head instead of on the table. See [url=https://github.com/godotengine/godot/issues/41567]GitHub issue #41567[/url] for details.
+ *
+*/
 params_billboard_mode: int;
 
 /**
@@ -262,22 +289,27 @@ proximity_fade_distance: float;
 /** If [code]true[/code], the proximity fade effect is enabled. The proximity fade effect fades out each pixel based on its distance to another object. */
 proximity_fade_enable: boolean;
 
-/** If [code]true[/code], the refraction effect is enabled. Distorts transparency based on light from behind the object. */
+/** If [code]true[/code], the refraction effect is enabled. Refraction distorts transparency based on light from behind the object. When using the GLES3 backend, the material's roughness value will affect the blurriness of the refraction. Higher roughness values will make the refraction look blurrier. */
 refraction_enabled: boolean;
 
-/** The strength of the refraction effect. */
+/** The strength of the refraction effect. Higher values result in a more distorted appearance for the refraction. */
 refraction_scale: float;
 
 /** Texture that controls the strength of the refraction per-pixel. Multiplied by [member refraction_scale]. */
 refraction_texture: Texture;
 
-/** Specifies the channel of the [member ao_texture] in which the ambient occlusion information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored metallic in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use. */
+/** Specifies the channel of the [member refraction_texture] in which the refraction information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored metallic in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use. */
 refraction_texture_channel: int;
 
 /** Sets the strength of the rim lighting effect. */
 rim: float;
 
-/** If [code]true[/code], rim effect is enabled. Rim lighting increases the brightness at glancing angles on an object. */
+/**
+ * If `true`, rim effect is enabled. Rim lighting increases the brightness at glancing angles on an object.
+ *
+ * **Note:** Rim lighting is not visible if the material has [member flags_unshaded] set to `true`.
+ *
+*/
 rim_enabled: boolean;
 
 /** Texture used to set the strength of the rim lighting effect per-pixel. Multiplied by [member rim]. */
@@ -361,7 +393,8 @@ set_flag(flag: int, enable: boolean): void;
 /** Sets the [Texture] to be used by the specified [enum TextureParam]. This function is called when setting members ending in [code]*_texture[/code]. */
 set_texture(param: int, texture: Texture): void;
 
-  connect<T extends SignalsOf<SpatialMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpatialMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpatialMaterialSignals>>(signal: T, method: SignalFunction<SpatialMaterialSignals[T]>): number;
 
 
 
@@ -369,457 +402,457 @@ set_texture(param: int, texture: Texture): void;
  * Texture specifying per-pixel color.
  *
 */
-static TEXTURE_ALBEDO: 0;
+static TEXTURE_ALBEDO: any;
 
 /**
  * Texture specifying per-pixel metallic value.
  *
 */
-static TEXTURE_METALLIC: 1;
+static TEXTURE_METALLIC: any;
 
 /**
  * Texture specifying per-pixel roughness value.
  *
 */
-static TEXTURE_ROUGHNESS: 2;
+static TEXTURE_ROUGHNESS: any;
 
 /**
  * Texture specifying per-pixel emission color.
  *
 */
-static TEXTURE_EMISSION: 3;
+static TEXTURE_EMISSION: any;
 
 /**
  * Texture specifying per-pixel normal vector.
  *
 */
-static TEXTURE_NORMAL: 4;
+static TEXTURE_NORMAL: any;
 
 /**
  * Texture specifying per-pixel rim value.
  *
 */
-static TEXTURE_RIM: 5;
+static TEXTURE_RIM: any;
 
 /**
  * Texture specifying per-pixel clearcoat value.
  *
 */
-static TEXTURE_CLEARCOAT: 6;
+static TEXTURE_CLEARCOAT: any;
 
 /**
  * Texture specifying per-pixel flowmap direction for use with [member anisotropy].
  *
 */
-static TEXTURE_FLOWMAP: 7;
+static TEXTURE_FLOWMAP: any;
 
 /**
  * Texture specifying per-pixel ambient occlusion value.
  *
 */
-static TEXTURE_AMBIENT_OCCLUSION: 8;
+static TEXTURE_AMBIENT_OCCLUSION: any;
 
 /**
  * Texture specifying per-pixel depth.
  *
 */
-static TEXTURE_DEPTH: 9;
+static TEXTURE_DEPTH: any;
 
 /**
  * Texture specifying per-pixel subsurface scattering.
  *
 */
-static TEXTURE_SUBSURFACE_SCATTERING: 10;
+static TEXTURE_SUBSURFACE_SCATTERING: any;
 
 /**
  * Texture specifying per-pixel transmission color.
  *
 */
-static TEXTURE_TRANSMISSION: 11;
+static TEXTURE_TRANSMISSION: any;
 
 /**
  * Texture specifying per-pixel refraction strength.
  *
 */
-static TEXTURE_REFRACTION: 12;
+static TEXTURE_REFRACTION: any;
 
 /**
  * Texture specifying per-pixel detail mask blending value.
  *
 */
-static TEXTURE_DETAIL_MASK: 13;
+static TEXTURE_DETAIL_MASK: any;
 
 /**
  * Texture specifying per-pixel detail color.
  *
 */
-static TEXTURE_DETAIL_ALBEDO: 14;
+static TEXTURE_DETAIL_ALBEDO: any;
 
 /**
  * Texture specifying per-pixel detail normal.
  *
 */
-static TEXTURE_DETAIL_NORMAL: 15;
+static TEXTURE_DETAIL_NORMAL: any;
 
 /**
  * Represents the size of the [enum TextureParam] enum.
  *
 */
-static TEXTURE_MAX: 16;
+static TEXTURE_MAX: any;
 
 /**
  * Use `UV` with the detail texture.
  *
 */
-static DETAIL_UV_1: 0;
+static DETAIL_UV_1: any;
 
 /**
  * Use `UV2` with the detail texture.
  *
 */
-static DETAIL_UV_2: 1;
+static DETAIL_UV_2: any;
 
 /**
  * Constant for setting [member flags_transparent].
  *
 */
-static FEATURE_TRANSPARENT: 0;
+static FEATURE_TRANSPARENT: any;
 
 /**
  * Constant for setting [member emission_enabled].
  *
 */
-static FEATURE_EMISSION: 1;
+static FEATURE_EMISSION: any;
 
 /**
  * Constant for setting [member normal_enabled].
  *
 */
-static FEATURE_NORMAL_MAPPING: 2;
+static FEATURE_NORMAL_MAPPING: any;
 
 /**
  * Constant for setting [member rim_enabled].
  *
 */
-static FEATURE_RIM: 3;
+static FEATURE_RIM: any;
 
 /**
  * Constant for setting [member clearcoat_enabled].
  *
 */
-static FEATURE_CLEARCOAT: 4;
+static FEATURE_CLEARCOAT: any;
 
 /**
  * Constant for setting [member anisotropy_enabled].
  *
 */
-static FEATURE_ANISOTROPY: 5;
+static FEATURE_ANISOTROPY: any;
 
 /**
  * Constant for setting [member ao_enabled].
  *
 */
-static FEATURE_AMBIENT_OCCLUSION: 6;
+static FEATURE_AMBIENT_OCCLUSION: any;
 
 /**
  * Constant for setting [member depth_enabled].
  *
 */
-static FEATURE_DEPTH_MAPPING: 7;
+static FEATURE_DEPTH_MAPPING: any;
 
 /**
  * Constant for setting [member subsurf_scatter_enabled].
  *
 */
-static FEATURE_SUBSURACE_SCATTERING: 8;
+static FEATURE_SUBSURACE_SCATTERING: any;
 
 /**
  * Constant for setting [member transmission_enabled].
  *
 */
-static FEATURE_TRANSMISSION: 9;
+static FEATURE_TRANSMISSION: any;
 
 /**
  * Constant for setting [member refraction_enabled].
  *
 */
-static FEATURE_REFRACTION: 10;
+static FEATURE_REFRACTION: any;
 
 /**
  * Constant for setting [member detail_enabled].
  *
 */
-static FEATURE_DETAIL: 11;
+static FEATURE_DETAIL: any;
 
 /**
  * Represents the size of the [enum Feature] enum.
  *
 */
-static FEATURE_MAX: 12;
+static FEATURE_MAX: any;
 
 /**
  * Default blend mode. The color of the object is blended over the background based on the object's alpha value.
  *
 */
-static BLEND_MODE_MIX: 0;
+static BLEND_MODE_MIX: any;
 
 /**
  * The color of the object is added to the background.
  *
 */
-static BLEND_MODE_ADD: 1;
+static BLEND_MODE_ADD: any;
 
 /**
  * The color of the object is subtracted from the background.
  *
 */
-static BLEND_MODE_SUB: 2;
+static BLEND_MODE_SUB: any;
 
 /**
  * The color of the object is multiplied by the background.
  *
 */
-static BLEND_MODE_MUL: 3;
+static BLEND_MODE_MUL: any;
 
 /**
  * Default depth draw mode. Depth is drawn only for opaque objects.
  *
 */
-static DEPTH_DRAW_OPAQUE_ONLY: 0;
+static DEPTH_DRAW_OPAQUE_ONLY: any;
 
 /**
  * Depth draw is calculated for both opaque and transparent objects.
  *
 */
-static DEPTH_DRAW_ALWAYS: 1;
+static DEPTH_DRAW_ALWAYS: any;
 
 /**
  * No depth draw.
  *
 */
-static DEPTH_DRAW_DISABLED: 2;
+static DEPTH_DRAW_DISABLED: any;
 
 /**
  * For transparent objects, an opaque pass is made first with the opaque parts, then transparency is drawn.
  *
 */
-static DEPTH_DRAW_ALPHA_OPAQUE_PREPASS: 3;
+static DEPTH_DRAW_ALPHA_OPAQUE_PREPASS: any;
 
 /**
  * Default cull mode. The back of the object is culled when not visible.
  *
 */
-static CULL_BACK: 0;
+static CULL_BACK: any;
 
 /**
  * The front of the object is culled when not visible.
  *
 */
-static CULL_FRONT: 1;
+static CULL_FRONT: any;
 
 /**
  * No culling is performed.
  *
 */
-static CULL_DISABLED: 2;
+static CULL_DISABLED: any;
 
 /**
  * No lighting is used on the object. Color comes directly from `ALBEDO`.
  *
 */
-static FLAG_UNSHADED: 0;
+static FLAG_UNSHADED: any;
 
 /**
  * Lighting is calculated per-vertex rather than per-pixel. This can be used to increase the speed of the shader at the cost of quality.
  *
 */
-static FLAG_USE_VERTEX_LIGHTING: 1;
+static FLAG_USE_VERTEX_LIGHTING: any;
 
 /**
  * Disables the depth test, so this object is drawn on top of all others. However, objects drawn after it in the draw order may cover it.
  *
 */
-static FLAG_DISABLE_DEPTH_TEST: 2;
+static FLAG_DISABLE_DEPTH_TEST: any;
 
 /**
  * Set `ALBEDO` to the per-vertex color specified in the mesh.
  *
 */
-static FLAG_ALBEDO_FROM_VERTEX_COLOR: 3;
+static FLAG_ALBEDO_FROM_VERTEX_COLOR: any;
 
 /**
  * Vertex color is in sRGB space and needs to be converted to linear. Only applies in the GLES3 renderer.
  *
 */
-static FLAG_SRGB_VERTEX_COLOR: 4;
+static FLAG_SRGB_VERTEX_COLOR: any;
 
 /**
  * Uses point size to alter the size of primitive points. Also changes the albedo texture lookup to use `POINT_COORD` instead of `UV`.
  *
 */
-static FLAG_USE_POINT_SIZE: 5;
+static FLAG_USE_POINT_SIZE: any;
 
 /**
  * Object is scaled by depth so that it always appears the same size on screen.
  *
 */
-static FLAG_FIXED_SIZE: 6;
+static FLAG_FIXED_SIZE: any;
 
 /**
  * Shader will keep the scale set for the mesh. Otherwise the scale is lost when billboarding. Only applies when [member params_billboard_mode] is [constant BILLBOARD_ENABLED].
  *
 */
-static FLAG_BILLBOARD_KEEP_SCALE: 7;
+static FLAG_BILLBOARD_KEEP_SCALE: any;
 
 /**
  * Use triplanar texture lookup for all texture lookups that would normally use `UV`.
  *
 */
-static FLAG_UV1_USE_TRIPLANAR: 8;
+static FLAG_UV1_USE_TRIPLANAR: any;
 
 /**
  * Use triplanar texture lookup for all texture lookups that would normally use `UV2`.
  *
 */
-static FLAG_UV2_USE_TRIPLANAR: 9;
+static FLAG_UV2_USE_TRIPLANAR: any;
 
 /**
  * Use `UV2` coordinates to look up from the [member ao_texture].
  *
 */
-static FLAG_AO_ON_UV2: 11;
+static FLAG_AO_ON_UV2: any;
 
 /**
  * Use `UV2` coordinates to look up from the [member emission_texture].
  *
 */
-static FLAG_EMISSION_ON_UV2: 12;
+static FLAG_EMISSION_ON_UV2: any;
 
 /**
  * Use alpha scissor. Set by [member params_use_alpha_scissor].
  *
 */
-static FLAG_USE_ALPHA_SCISSOR: 13;
+static FLAG_USE_ALPHA_SCISSOR: any;
 
 /**
  * Use world coordinates in the triplanar texture lookup instead of local coordinates.
  *
 */
-static FLAG_TRIPLANAR_USE_WORLD: 10;
+static FLAG_TRIPLANAR_USE_WORLD: any;
 
 /**
  * Forces the shader to convert albedo from sRGB space to linear space.
  *
 */
-static FLAG_ALBEDO_TEXTURE_FORCE_SRGB: 14;
+static FLAG_ALBEDO_TEXTURE_FORCE_SRGB: any;
 
 /**
  * Disables receiving shadows from other objects.
  *
 */
-static FLAG_DONT_RECEIVE_SHADOWS: 15;
+static FLAG_DONT_RECEIVE_SHADOWS: any;
 
 /**
  * Disables receiving ambient light.
  *
 */
-static FLAG_DISABLE_AMBIENT_LIGHT: 17;
+static FLAG_DISABLE_AMBIENT_LIGHT: any;
 
 /**
  * Ensures that normals appear correct, even with non-uniform scaling.
  *
 */
-static FLAG_ENSURE_CORRECT_NORMALS: 16;
+static FLAG_ENSURE_CORRECT_NORMALS: any;
 
 /**
  * Enables the shadow to opacity feature.
  *
 */
-static FLAG_USE_SHADOW_TO_OPACITY: 18;
+static FLAG_USE_SHADOW_TO_OPACITY: any;
 
 /**
  * Represents the size of the [enum Flags] enum.
  *
 */
-static FLAG_MAX: 19;
+static FLAG_MAX: any;
 
 /**
  * Default diffuse scattering algorithm.
  *
 */
-static DIFFUSE_BURLEY: 0;
+static DIFFUSE_BURLEY: any;
 
 /**
  * Diffuse scattering ignores roughness.
  *
 */
-static DIFFUSE_LAMBERT: 1;
+static DIFFUSE_LAMBERT: any;
 
 /**
  * Extends Lambert to cover more than 90 degrees when roughness increases.
  *
 */
-static DIFFUSE_LAMBERT_WRAP: 2;
+static DIFFUSE_LAMBERT_WRAP: any;
 
 /**
  * Attempts to use roughness to emulate microsurfacing.
  *
 */
-static DIFFUSE_OREN_NAYAR: 3;
+static DIFFUSE_OREN_NAYAR: any;
 
 /**
  * Uses a hard cut for lighting, with smoothing affected by roughness.
  *
 */
-static DIFFUSE_TOON: 4;
+static DIFFUSE_TOON: any;
 
 /**
  * Default specular blob.
  *
 */
-static SPECULAR_SCHLICK_GGX: 0;
+static SPECULAR_SCHLICK_GGX: any;
 
 /**
  * Older specular algorithm, included for compatibility.
  *
 */
-static SPECULAR_BLINN: 1;
+static SPECULAR_BLINN: any;
 
 /**
  * Older specular algorithm, included for compatibility.
  *
 */
-static SPECULAR_PHONG: 2;
+static SPECULAR_PHONG: any;
 
 /**
  * Toon blob which changes size based on roughness.
  *
 */
-static SPECULAR_TOON: 3;
+static SPECULAR_TOON: any;
 
 /**
  * No specular blob.
  *
 */
-static SPECULAR_DISABLED: 4;
+static SPECULAR_DISABLED: any;
 
 /**
  * Billboard mode is disabled.
  *
 */
-static BILLBOARD_DISABLED: 0;
+static BILLBOARD_DISABLED: any;
 
 /**
  * The object's Z axis will always face the camera.
  *
 */
-static BILLBOARD_ENABLED: 1;
+static BILLBOARD_ENABLED: any;
 
 /**
  * The object's X axis will always face the camera.
  *
 */
-static BILLBOARD_FIXED_Y: 2;
+static BILLBOARD_FIXED_Y: any;
 
 /**
  * Used for particle systems when assigned to [Particles] and [CPUParticles] nodes. Enables `particles_anim_*` properties.
@@ -827,74 +860,76 @@ static BILLBOARD_FIXED_Y: 2;
  * The [member ParticlesMaterial.anim_speed] or [member CPUParticles.anim_speed] should also be set to a positive value for the animation to play.
  *
 */
-static BILLBOARD_PARTICLES: 3;
+static BILLBOARD_PARTICLES: any;
 
 /**
  * Used to read from the red channel of a texture.
  *
 */
-static TEXTURE_CHANNEL_RED: 0;
+static TEXTURE_CHANNEL_RED: any;
 
 /**
  * Used to read from the green channel of a texture.
  *
 */
-static TEXTURE_CHANNEL_GREEN: 1;
+static TEXTURE_CHANNEL_GREEN: any;
 
 /**
  * Used to read from the blue channel of a texture.
  *
 */
-static TEXTURE_CHANNEL_BLUE: 2;
+static TEXTURE_CHANNEL_BLUE: any;
 
 /**
  * Used to read from the alpha channel of a texture.
  *
 */
-static TEXTURE_CHANNEL_ALPHA: 3;
+static TEXTURE_CHANNEL_ALPHA: any;
 
 /**
  * Currently unused.
  *
 */
-static TEXTURE_CHANNEL_GRAYSCALE: 4;
+static TEXTURE_CHANNEL_GRAYSCALE: any;
 
 /**
  * Adds the emission color to the color from the emission texture.
  *
 */
-static EMISSION_OP_ADD: 0;
+static EMISSION_OP_ADD: any;
 
 /**
  * Multiplies the emission color by the color from the emission texture.
  *
 */
-static EMISSION_OP_MULTIPLY: 1;
+static EMISSION_OP_MULTIPLY: any;
 
 /**
  * Do not use distance fade.
  *
 */
-static DISTANCE_FADE_DISABLED: 0;
+static DISTANCE_FADE_DISABLED: any;
 
 /**
  * Smoothly fades the object out based on each pixel's distance from the camera using the alpha channel.
  *
 */
-static DISTANCE_FADE_PIXEL_ALPHA: 1;
+static DISTANCE_FADE_PIXEL_ALPHA: any;
 
 /**
  * Smoothly fades the object out based on each pixel's distance from the camera using a dither approach. Dithering discards pixels based on a set pattern to smoothly fade without enabling transparency. On certain hardware this can be faster than [constant DISTANCE_FADE_PIXEL_ALPHA].
  *
 */
-static DISTANCE_FADE_PIXEL_DITHER: 2;
+static DISTANCE_FADE_PIXEL_DITHER: any;
 
 /**
  * Smoothly fades the object out based on the object's distance from the camera using a dither approach. Dithering discards pixels based on a set pattern to smoothly fade without enabling transparency. On certain hardware this can be faster than [constant DISTANCE_FADE_PIXEL_ALPHA].
  *
 */
-static DISTANCE_FADE_OBJECT_DITHER: 3;
+static DISTANCE_FADE_OBJECT_DITHER: any;
 
+}
 
+declare class SpatialMaterialSignals extends MaterialSignals {
   
 }

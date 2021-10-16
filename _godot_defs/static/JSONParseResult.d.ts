@@ -46,11 +46,14 @@ result: any;
 
 
 
-  connect<T extends SignalsOf<JSONParseResult>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<JSONParseResult>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<JSONParseResultSignals>>(signal: T, method: SignalFunction<JSONParseResultSignals[T]>): number;
 
 
 
 
+}
 
+declare class JSONParseResultSignals extends ReferenceSignals {
   
 }

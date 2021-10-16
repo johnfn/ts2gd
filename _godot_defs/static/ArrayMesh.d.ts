@@ -79,17 +79,18 @@ add_blend_shape(name: string): void;
 /**
  * Creates a new surface.
  *
- * Surfaces are created to be rendered using a `primitive`, which may be any of the types defined in [enum Mesh.PrimitiveType]. (As a note, when using indices, it is recommended to only use points, lines or triangles.) [method Mesh.get_surface_count] will become the `surf_idx` for this new surface.
+ * Surfaces are created to be rendered using a `primitive`, which may be any of the types defined in [enum Mesh.PrimitiveType]. (As a note, when using indices, it is recommended to only use points, lines, or triangles.) [method Mesh.get_surface_count] will become the `surf_idx` for this new surface.
  *
  * The `arrays` argument is an array of arrays. See [enum ArrayType] for the values used in this array. For example, `arrays[0]` is the array of vertices. That first vertex sub-array is always required; the others are optional. Adding an index array puts this function into "index mode" where the vertex and other arrays become the sources of data and the index array defines the vertex order. All sub-arrays must have the same length as the vertex array or be empty, except for [constant ARRAY_INDEX] if it is used.
- *
- * Adding an index array puts this function into "index mode" where the vertex and other arrays become the sources of data, and the index array defines the order of the vertices.
  *
 */
 add_surface_from_arrays(primitive: int, arrays: any[], blend_shapes?: any[], compress_flags?: int): void;
 
 /** Removes all blend shapes from this [ArrayMesh]. */
 clear_blend_shapes(): void;
+
+/** Removes all surfaces from this [ArrayMesh]. */
+clear_surfaces(): void;
 
 /** Returns the number of blend shapes that the [ArrayMesh] holds. */
 get_blend_shape_count(): int;
@@ -102,6 +103,9 @@ lightmap_unwrap(transform: Transform, texel_size: float): int;
 
 /** Will regenerate normal maps for the [ArrayMesh]. */
 regen_normalmaps(): void;
+
+/** No documentation provided. */
+set_blend_shape_name(index: int, name: string): void;
 
 /** Returns the index of the first surface with this name held within this [ArrayMesh]. If none are found, -1 is returned. */
 surface_find_by_name(name: string): int;
@@ -135,7 +139,8 @@ surface_set_name(surf_idx: int, name: string): void;
 */
 surface_update_region(surf_idx: int, offset: int, data: PoolByteArray): void;
 
-  connect<T extends SignalsOf<ArrayMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ArrayMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ArrayMeshSignals>>(signal: T, method: SignalFunction<ArrayMeshSignals[T]>): number;
 
 
 
@@ -143,61 +148,61 @@ surface_update_region(surf_idx: int, offset: int, data: PoolByteArray): void;
  * Default value used for index_array_len when no indices are present.
  *
 */
- static NO_INDEX_ARRAY: null;
+static NO_INDEX_ARRAY: any;
 
 /**
  * Amount of weights/bone indices per vertex (always 4).
  *
 */
-static ARRAY_WEIGHTS_SIZE: 4;
+static ARRAY_WEIGHTS_SIZE: any;
 
 /**
  * [PoolVector3Array], [PoolVector2Array], or [Array] of vertex positions.
  *
 */
-static ARRAY_VERTEX: 0;
+static ARRAY_VERTEX: any;
 
 /**
  * [PoolVector3Array] of vertex normals.
  *
 */
-static ARRAY_NORMAL: 1;
+static ARRAY_NORMAL: any;
 
 /**
  * [PoolRealArray] of vertex tangents. Each element in groups of 4 floats, first 3 floats determine the tangent, and the last the binormal direction as -1 or 1.
  *
 */
-static ARRAY_TANGENT: 2;
+static ARRAY_TANGENT: any;
 
 /**
  * [PoolColorArray] of vertex colors.
  *
 */
-static ARRAY_COLOR: 3;
+static ARRAY_COLOR: any;
 
 /**
  * [PoolVector2Array] for UV coordinates.
  *
 */
-static ARRAY_TEX_UV: 4;
+static ARRAY_TEX_UV: any;
 
 /**
  * [PoolVector2Array] for second UV coordinates.
  *
 */
-static ARRAY_TEX_UV2: 5;
+static ARRAY_TEX_UV2: any;
 
 /**
  * [PoolRealArray] or [PoolIntArray] of bone indices. Each element in groups of 4 floats.
  *
 */
-static ARRAY_BONES: 6;
+static ARRAY_BONES: any;
 
 /**
  * [PoolRealArray] of bone weights. Each element in groups of 4 floats.
  *
 */
-static ARRAY_WEIGHTS: 7;
+static ARRAY_WEIGHTS: any;
 
 /**
  * [PoolIntArray] of integers used as indices referencing vertices, colors, normals, tangents, and textures. All of those arrays must have the same number of elements as the vertex array. No index can be beyond the vertex array size. When this index array is present, it puts the function into "index mode," where the index selects the *i*'th vertex, normal, tangent, color, UV, etc. This means if you want to have different normals or colors along an edge, you have to duplicate the vertices.
@@ -205,68 +210,70 @@ static ARRAY_WEIGHTS: 7;
  * For triangles, the index array is interpreted as triples, referring to the vertices of each triangle. For lines, the index array is in pairs indicating the start and end of each line.
  *
 */
-static ARRAY_INDEX: 8;
+static ARRAY_INDEX: any;
 
 /**
  * Represents the size of the [enum ArrayType] enum.
  *
 */
-static ARRAY_MAX: 9;
+static ARRAY_MAX: any;
 
 /**
  * Array format will include vertices (mandatory).
  *
 */
-static ARRAY_FORMAT_VERTEX: 1;
+static ARRAY_FORMAT_VERTEX: any;
 
 /**
  * Array format will include normals.
  *
 */
-static ARRAY_FORMAT_NORMAL: 2;
+static ARRAY_FORMAT_NORMAL: any;
 
 /**
  * Array format will include tangents.
  *
 */
-static ARRAY_FORMAT_TANGENT: 4;
+static ARRAY_FORMAT_TANGENT: any;
 
 /**
  * Array format will include a color array.
  *
 */
-static ARRAY_FORMAT_COLOR: 8;
+static ARRAY_FORMAT_COLOR: any;
 
 /**
  * Array format will include UVs.
  *
 */
-static ARRAY_FORMAT_TEX_UV: 16;
+static ARRAY_FORMAT_TEX_UV: any;
 
 /**
  * Array format will include another set of UVs.
  *
 */
-static ARRAY_FORMAT_TEX_UV2: 32;
+static ARRAY_FORMAT_TEX_UV2: any;
 
 /**
  * Array format will include bone indices.
  *
 */
-static ARRAY_FORMAT_BONES: 64;
+static ARRAY_FORMAT_BONES: any;
 
 /**
  * Array format will include bone weights.
  *
 */
-static ARRAY_FORMAT_WEIGHTS: 128;
+static ARRAY_FORMAT_WEIGHTS: any;
 
 /**
  * Index array will be used.
  *
 */
-static ARRAY_FORMAT_INDEX: 256;
+static ARRAY_FORMAT_INDEX: any;
 
+}
 
+declare class ArrayMeshSignals extends MeshSignals {
   
 }

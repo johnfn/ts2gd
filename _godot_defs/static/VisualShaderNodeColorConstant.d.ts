@@ -24,11 +24,14 @@ constant: Color;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeColorConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeColorConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorConstantSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorConstantSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeColorConstantSignals extends VisualShaderNodeSignals {
   
 }

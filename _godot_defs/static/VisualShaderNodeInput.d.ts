@@ -21,12 +21,15 @@ input_name: string;
 /** No documentation provided. */
 get_input_real_name(): string;
 
-  connect<T extends SignalsOf<VisualShaderNodeInput>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeInput>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeInputSignals>>(signal: T, method: SignalFunction<VisualShaderNodeInputSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeInputSignals extends VisualShaderNodeSignals {
   /**
 */
 input_type_changed: Signal<() => void>

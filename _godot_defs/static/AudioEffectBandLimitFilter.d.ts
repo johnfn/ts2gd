@@ -18,11 +18,14 @@ declare class AudioEffectBandLimitFilter extends AudioEffectFilter {
 
 
 
-  connect<T extends SignalsOf<AudioEffectBandLimitFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectBandLimitFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectBandLimitFilterSignals>>(signal: T, method: SignalFunction<AudioEffectBandLimitFilterSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectBandLimitFilterSignals extends AudioEffectFilterSignals {
   
 }

@@ -23,11 +23,14 @@ length: float;
 
 
 
-  connect<T extends SignalsOf<GrooveJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<GrooveJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GrooveJoint2DSignals>>(signal: T, method: SignalFunction<GrooveJoint2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class GrooveJoint2DSignals extends Joint2DSignals {
   
 }

@@ -78,11 +78,14 @@ has_execute_failed(): boolean;
 */
 parse(expression: string, input_names?: PoolStringArray): int;
 
-  connect<T extends SignalsOf<Expression>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Expression>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ExpressionSignals>>(signal: T, method: SignalFunction<ExpressionSignals[T]>): number;
 
 
 
 
+}
 
+declare class ExpressionSignals extends ReferenceSignals {
   
 }

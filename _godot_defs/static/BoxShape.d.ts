@@ -20,11 +20,14 @@ extents: Vector3;
 
 
 
-  connect<T extends SignalsOf<BoxShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<BoxShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BoxShapeSignals>>(signal: T, method: SignalFunction<BoxShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class BoxShapeSignals extends ShapeSignals {
   
 }

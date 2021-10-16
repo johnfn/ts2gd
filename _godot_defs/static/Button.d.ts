@@ -18,6 +18,10 @@
  *
  * Buttons (like all Control nodes) can also be created in the editor, but some situations may require creating them from code.
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
+ * **Note:** Buttons do not interpret touch input and therefore don't support multitouch, since mouse emulation can only press one button at a given time. Use [TouchScreenButton] for buttons that trigger gameplay movement or actions, as [TouchScreenButton] supports multitouch.
+ *
 */
 declare class Button extends BaseButton {
 
@@ -40,6 +44,10 @@ declare class Button extends BaseButton {
  * 
  *
  * Buttons (like all Control nodes) can also be created in the editor, but some situations may require creating them from code.
+ *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
+ * **Note:** Buttons do not interpret touch input and therefore don't support multitouch, since mouse emulation can only press one button at a given time. Use [TouchScreenButton] for buttons that trigger gameplay movement or actions, as [TouchScreenButton] supports multitouch.
  *
 */
   "new"(): Button;
@@ -67,7 +75,8 @@ text: string;
 
 
 
-  connect<T extends SignalsOf<Button>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Button>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ButtonSignals>>(signal: T, method: SignalFunction<ButtonSignals[T]>): number;
 
 
 
@@ -75,20 +84,22 @@ text: string;
  * Align the text to the left.
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Align the text to the center.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Align the text to the right.
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
+}
 
+declare class ButtonSignals extends BaseButtonSignals {
   
 }

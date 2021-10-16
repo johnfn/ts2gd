@@ -28,6 +28,9 @@ collider_id: int;
 /** The colliding body's metadata. See [Object]. */
 collider_metadata: any;
 
+/** The colliding body's [RID] used by the [PhysicsServer]. */
+collider_rid: RID;
+
 /** The colliding body's shape. */
 collider_shape: Object;
 
@@ -52,13 +55,17 @@ remainder: Vector3;
 /** The distance the moving object traveled before collision. */
 travel: Vector3;
 
+/** The collision angle according to [code]up_direction[/code], which is [code]Vector3.UP[/code] by default. This value is always positive. */
+get_angle(up_direction?: Vector3): float;
+
+  // connect<T extends SignalsOf<KinematicCollision>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<KinematicCollisionSignals>>(signal: T, method: SignalFunction<KinematicCollisionSignals[T]>): number;
 
 
-  connect<T extends SignalsOf<KinematicCollision>, U extends Node>(signal: T, node: U, method: keyof U): number;
 
 
+}
 
-
-
+declare class KinematicCollisionSignals extends ReferenceSignals {
   
 }

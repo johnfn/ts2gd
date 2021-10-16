@@ -22,11 +22,14 @@ stream_peer: StreamPeer;
 
 
 
-  connect<T extends SignalsOf<PacketPeerStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PacketPeerStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PacketPeerStreamSignals>>(signal: T, method: SignalFunction<PacketPeerStreamSignals[T]>): number;
 
 
 
 
+}
 
+declare class PacketPeerStreamSignals extends PacketPeerSignals {
   
 }

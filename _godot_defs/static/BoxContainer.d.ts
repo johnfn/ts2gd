@@ -22,7 +22,8 @@ alignment: int;
 /** Adds a control to the box as a spacer. If [code]true[/code], [code]begin[/code] will insert the spacer control in front of other children. */
 add_spacer(begin: boolean): void;
 
-  connect<T extends SignalsOf<BoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<BoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BoxContainerSignals>>(signal: T, method: SignalFunction<BoxContainerSignals[T]>): number;
 
 
 
@@ -30,20 +31,22 @@ add_spacer(begin: boolean): void;
  * Aligns children with the beginning of the container.
  *
 */
-static ALIGN_BEGIN: 0;
+static ALIGN_BEGIN: any;
 
 /**
  * Aligns children with the center of the container.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Aligns children with the end of the container.
  *
 */
-static ALIGN_END: 2;
+static ALIGN_END: any;
 
+}
 
+declare class BoxContainerSignals extends ContainerSignals {
   
 }

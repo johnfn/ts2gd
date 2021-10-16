@@ -63,7 +63,8 @@ is_stereo(): boolean;
 /** Turns the interface off. */
 uninitialize(): void;
 
-  connect<T extends SignalsOf<ARVRInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVRInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRInterfaceSignals>>(signal: T, method: SignalFunction<ARVRInterfaceSignals[T]>): number;
 
 
 
@@ -71,80 +72,82 @@ uninitialize(): void;
  * No ARVR capabilities.
  *
 */
-static ARVR_NONE: 0;
+static ARVR_NONE: any;
 
 /**
  * This interface can work with normal rendering output (non-HMD based AR).
  *
 */
-static ARVR_MONO: 1;
+static ARVR_MONO: any;
 
 /**
  * This interface supports stereoscopic rendering.
  *
 */
-static ARVR_STEREO: 2;
+static ARVR_STEREO: any;
 
 /**
  * This interface supports AR (video background and real world tracking).
  *
 */
-static ARVR_AR: 4;
+static ARVR_AR: any;
 
 /**
  * This interface outputs to an external device. If the main viewport is used, the on screen output is an unmodified buffer of either the left or right eye (stretched if the viewport size is not changed to the same aspect ratio of [method get_render_targetsize]). Using a separate viewport node frees up the main viewport for other purposes.
  *
 */
-static ARVR_EXTERNAL: 8;
+static ARVR_EXTERNAL: any;
 
 /**
  * Mono output, this is mostly used internally when retrieving positioning information for our camera node or when stereo scopic rendering is not supported.
  *
 */
-static EYE_MONO: 0;
+static EYE_MONO: any;
 
 /**
  * Left eye output, this is mostly used internally when rendering the image for the left eye and obtaining positioning and projection information.
  *
 */
-static EYE_LEFT: 1;
+static EYE_LEFT: any;
 
 /**
  * Right eye output, this is mostly used internally when rendering the image for the right eye and obtaining positioning and projection information.
  *
 */
-static EYE_RIGHT: 2;
+static EYE_RIGHT: any;
 
 /**
  * Tracking is behaving as expected.
  *
 */
-static ARVR_NORMAL_TRACKING: 0;
+static ARVR_NORMAL_TRACKING: any;
 
 /**
  * Tracking is hindered by excessive motion (the player is moving faster than tracking can keep up).
  *
 */
-static ARVR_EXCESSIVE_MOTION: 1;
+static ARVR_EXCESSIVE_MOTION: any;
 
 /**
  * Tracking is hindered by insufficient features, it's too dark (for camera-based tracking), player is blocked, etc.
  *
 */
-static ARVR_INSUFFICIENT_FEATURES: 2;
+static ARVR_INSUFFICIENT_FEATURES: any;
 
 /**
  * We don't know the status of the tracking or this interface does not provide feedback.
  *
 */
-static ARVR_UNKNOWN_TRACKING: 3;
+static ARVR_UNKNOWN_TRACKING: any;
 
 /**
  * Tracking is not functional (camera not plugged in or obscured, lighthouses turned off, etc.).
  *
 */
-static ARVR_NOT_TRACKING: 4;
+static ARVR_NOT_TRACKING: any;
 
+}
 
+declare class ARVRInterfaceSignals extends ReferenceSignals {
   
 }

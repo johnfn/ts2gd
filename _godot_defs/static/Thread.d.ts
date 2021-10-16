@@ -34,10 +34,18 @@ is_active(): boolean;
 */
 start(instance: Object, method: string, userdata?: any, priority?: int): int;
 
-/** Joins the [Thread] and waits for it to finish. Returns what the method called returned. */
+/**
+ * Joins the [Thread] and waits for it to finish. Returns what the method called returned.
+ *
+ * Should either be used when you want to retrieve the value returned from the method called by the [Thread] or before freeing the instance that contains the [Thread].
+ *
+ * **Note:** After the [Thread] finishes joining it will be disposed. If you want to use it again you will have to create a new instance of it.
+ *
+*/
 wait_to_finish(): any;
 
-  connect<T extends SignalsOf<Thread>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Thread>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ThreadSignals>>(signal: T, method: SignalFunction<ThreadSignals[T]>): number;
 
 
 
@@ -45,20 +53,22 @@ wait_to_finish(): any;
  * A thread running with lower priority than normally.
  *
 */
-static PRIORITY_LOW: 0;
+static PRIORITY_LOW: any;
 
 /**
  * A thread with a standard priority.
  *
 */
-static PRIORITY_NORMAL: 1;
+static PRIORITY_NORMAL: any;
 
 /**
  * A thread running with higher priority than normally.
  *
 */
-static PRIORITY_HIGH: 2;
+static PRIORITY_HIGH: any;
 
+}
 
+declare class ThreadSignals extends ReferenceSignals {
   
 }

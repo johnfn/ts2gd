@@ -18,11 +18,14 @@ declare class VBoxContainer extends BoxContainer {
 
 
 
-  connect<T extends SignalsOf<VBoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VBoxContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VBoxContainerSignals>>(signal: T, method: SignalFunction<VBoxContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class VBoxContainerSignals extends BoxContainerSignals {
   
 }

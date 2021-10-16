@@ -23,7 +23,8 @@ texture_type: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTextureUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTextureUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTextureUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTextureUniformSignals[T]>): number;
 
 
 
@@ -31,38 +32,40 @@ texture_type: int;
  * No hints are added to the uniform declaration.
  *
 */
-static TYPE_DATA: 0;
+static TYPE_DATA: any;
 
 /**
  * Adds `hint_albedo` as hint to the uniform declaration for proper sRGB to linear conversion.
  *
 */
-static TYPE_COLOR: 1;
+static TYPE_COLOR: any;
 
 /**
  * Adds `hint_normal` as hint to the uniform declaration, which internally converts the texture for proper usage as normal map.
  *
 */
-static TYPE_NORMALMAP: 2;
+static TYPE_NORMALMAP: any;
 
 /**
  * Adds `hint_aniso` as hint to the uniform declaration to use for a flowmap.
  *
 */
-static TYPE_ANISO: 3;
+static TYPE_ANISO: any;
 
 /**
  * Defaults to white color.
  *
 */
-static COLOR_DEFAULT_WHITE: 0;
+static COLOR_DEFAULT_WHITE: any;
 
 /**
  * Defaults to black color.
  *
 */
-static COLOR_DEFAULT_BLACK: 1;
+static COLOR_DEFAULT_BLACK: any;
 
+}
 
+declare class VisualShaderNodeTextureUniformSignals extends VisualShaderNodeUniformSignals {
   
 }

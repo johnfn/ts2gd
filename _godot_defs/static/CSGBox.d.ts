@@ -29,11 +29,14 @@ width: float;
 
 
 
-  connect<T extends SignalsOf<CSGBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGBoxSignals>>(signal: T, method: SignalFunction<CSGBoxSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGBoxSignals extends CSGPrimitiveSignals {
   
 }

@@ -22,11 +22,14 @@ declare class HSlider extends Slider {
 
 
 
-  connect<T extends SignalsOf<HSlider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HSlider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HSliderSignals>>(signal: T, method: SignalFunction<HSliderSignals[T]>): number;
 
 
 
 
+}
 
+declare class HSliderSignals extends SliderSignals {
   
 }

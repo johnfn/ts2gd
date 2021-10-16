@@ -20,7 +20,7 @@ declare class EditorFileSystem extends Node {
 
 
 
-/** Gets the type of the file, given the full path. */
+/** Returns the resource type of the file, given the full path. This returns a string such as [code]"Resource"[/code] or [code]"GDScript"[/code], [i]not[/i] a file extension such as [code]".gd"[/code]. */
 get_file_type(path: string): string;
 
 /** Gets the root directory object. */
@@ -47,12 +47,15 @@ update_file(path: string): void;
 /** Scans the script files and updates the list of custom class names. */
 update_script_classes(): void;
 
-  connect<T extends SignalsOf<EditorFileSystem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorFileSystem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorFileSystemSignals>>(signal: T, method: SignalFunction<EditorFileSystemSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorFileSystemSignals extends NodeSignals {
   /**
  * Emitted if the filesystem changed.
  *
@@ -60,7 +63,7 @@ update_script_classes(): void;
 filesystem_changed: Signal<() => void>
 
 /**
- * Remitted if a resource is reimported.
+ * Emitted if a resource is reimported.
  *
 */
 resources_reimported: Signal<(resources: PoolStringArray) => void>

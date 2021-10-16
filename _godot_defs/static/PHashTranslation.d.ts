@@ -19,11 +19,14 @@ declare class PHashTranslation extends Translation {
 /** Generates and sets an optimized translation from the given [Translation] resource. */
 generate(from: Translation): void;
 
-  connect<T extends SignalsOf<PHashTranslation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PHashTranslation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PHashTranslationSignals>>(signal: T, method: SignalFunction<PHashTranslationSignals[T]>): number;
 
 
 
 
+}
 
+declare class PHashTranslationSignals extends TranslationSignals {
   
 }

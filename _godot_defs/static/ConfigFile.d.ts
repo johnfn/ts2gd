@@ -13,26 +13,49 @@
  *
  * The stored data can be saved to or parsed from a file, though ConfigFile objects can also be used directly without accessing the filesystem.
  *
- * The following example shows how to parse an INI-style file from the system, read its contents and store new values in it:
+ * The following example shows how to create a simple [ConfigFile] and save it on disk:
  *
  * @example 
  * 
+ * # Create new ConfigFile object.
  * var config = ConfigFile.new()
- * var err = config.load("user://settings.cfg")
- * if err == OK: # If not, something went wrong with the file loading
- *     # Look for the display/width pair, and default to 1024 if missing
- *     var screen_width = config.get_value("display", "width", 1024)
- *     # Store a variable if and only if it hasn't been defined yet
- *     if not config.has_section_key("audio", "mute"):
- *         config.set_value("audio", "mute", false)
- *     # Save the changes by overwriting the previous file
- *     config.save("user://settings.cfg")
+ * # Store some values.
+ * config.set_value("Player1", "player_name", "Steve")
+ * config.set_value("Player1", "best_score", 10)
+ * config.set_value("Player2", "player_name", "V3geta")
+ * config.set_value("Player2", "best_score", 9001)
+ * # Save it to a file (overwrite if already exists).
+ * config.save("user://scores.cfg")
  * @summary 
  * 
+ *
+ * This example shows how the above file could be loaded:
+ *
+ * @example 
+ * 
+ * var score_data = {}
+ * var config = ConfigFile.new()
+ * # Load data from a file.
+ * var err = config.load("user://scores.cfg")
+ * # If the file didn't load, ignore it.
+ * if err != OK:
+ *     return
+ * # Iterate over all sections.
+ * for player in config.get_sections():
+ *     # Fetch the data for each section.
+ *     var player_name = config.get_value(player, "player_name")
+ *     var player_score = config.get_value(player, "best_score")
+ *     score_data[player_name] = player_score
+ * @summary 
+ * 
+ *
+ * Any operation that mutates the ConfigFile such as [method set_value], [method clear], or [method erase_section], only changes what is loaded in memory. If you want to write the change to a file, you have to save the changes with [method save], [method save_encrypted], or [method save_encrypted_pass].
  *
  * Keep in mind that section and property names can't contain spaces. Anything after a space will be ignored on save and on load.
  *
  * ConfigFiles can also contain manually written comment lines starting with a semicolon (`;`). Those lines will be ignored when parsing the file. Note that comments will be lost when saving the ConfigFile. This can still be useful for dedicated server configuration files, which are typically never overwritten without explicit user action.
+ *
+ * **Note:** The file extension given to a ConfigFile does not have any impact on its formatting or behavior. By convention, the `.cfg` extension is used here, but any other extension such as `.ini` is also valid. Since neither `.cfg` nor `.ini` are standardized, Godot's ConfigFile formatting may differ from files written by other programs.
  *
 */
 declare class ConfigFile extends Reference {
@@ -52,26 +75,49 @@ declare class ConfigFile extends Reference {
  *
  * The stored data can be saved to or parsed from a file, though ConfigFile objects can also be used directly without accessing the filesystem.
  *
- * The following example shows how to parse an INI-style file from the system, read its contents and store new values in it:
+ * The following example shows how to create a simple [ConfigFile] and save it on disk:
  *
  * @example 
  * 
+ * # Create new ConfigFile object.
  * var config = ConfigFile.new()
- * var err = config.load("user://settings.cfg")
- * if err == OK: # If not, something went wrong with the file loading
- *     # Look for the display/width pair, and default to 1024 if missing
- *     var screen_width = config.get_value("display", "width", 1024)
- *     # Store a variable if and only if it hasn't been defined yet
- *     if not config.has_section_key("audio", "mute"):
- *         config.set_value("audio", "mute", false)
- *     # Save the changes by overwriting the previous file
- *     config.save("user://settings.cfg")
+ * # Store some values.
+ * config.set_value("Player1", "player_name", "Steve")
+ * config.set_value("Player1", "best_score", 10)
+ * config.set_value("Player2", "player_name", "V3geta")
+ * config.set_value("Player2", "best_score", 9001)
+ * # Save it to a file (overwrite if already exists).
+ * config.save("user://scores.cfg")
  * @summary 
  * 
+ *
+ * This example shows how the above file could be loaded:
+ *
+ * @example 
+ * 
+ * var score_data = {}
+ * var config = ConfigFile.new()
+ * # Load data from a file.
+ * var err = config.load("user://scores.cfg")
+ * # If the file didn't load, ignore it.
+ * if err != OK:
+ *     return
+ * # Iterate over all sections.
+ * for player in config.get_sections():
+ *     # Fetch the data for each section.
+ *     var player_name = config.get_value(player, "player_name")
+ *     var player_score = config.get_value(player, "best_score")
+ *     score_data[player_name] = player_score
+ * @summary 
+ * 
+ *
+ * Any operation that mutates the ConfigFile such as [method set_value], [method clear], or [method erase_section], only changes what is loaded in memory. If you want to write the change to a file, you have to save the changes with [method save], [method save_encrypted], or [method save_encrypted_pass].
  *
  * Keep in mind that section and property names can't contain spaces. Anything after a space will be ignored on save and on load.
  *
  * ConfigFiles can also contain manually written comment lines starting with a semicolon (`;`). Those lines will be ignored when parsing the file. Note that comments will be lost when saving the ConfigFile. This can still be useful for dedicated server configuration files, which are typically never overwritten without explicit user action.
+ *
+ * **Note:** The file extension given to a ConfigFile does not have any impact on its formatting or behavior. By convention, the `.cfg` extension is used here, but any other extension such as `.ini` is also valid. Since neither `.cfg` nor `.ini` are standardized, Godot's ConfigFile formatting may differ from files written by other programs.
  *
 */
   "new"(): ConfigFile;
@@ -79,6 +125,9 @@ declare class ConfigFile extends Reference {
 
 
 
+
+/** Removes the entire contents of the config. */
+clear(): void;
 
 /** Deletes the specified section along with all the key-value pairs inside. Raises an error if the section does not exist. */
 erase_section(section: string): void;
@@ -126,7 +175,7 @@ load_encrypted(path: string, key: PoolByteArray): int;
 load_encrypted_pass(path: string, password: string): int;
 
 /**
- * Parses the the passed string as the contents of a config file. The string is parsed and loaded in the ConfigFile object which the method was called on.
+ * Parses the passed string as the contents of a config file. The string is parsed and loaded in the ConfigFile object which the method was called on.
  *
  * Returns one of the [enum Error] code constants (`OK` on success).
  *
@@ -160,11 +209,14 @@ save_encrypted_pass(path: string, password: string): int;
 /** Assigns a value to the specified key of the specified section. If either the section or the key do not exist, they are created. Passing a [code]null[/code] value deletes the specified key if it exists, and deletes the section if it ends up empty once the key has been removed. */
 set_value(section: string, key: string, value: any): void;
 
-  connect<T extends SignalsOf<ConfigFile>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConfigFile>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConfigFileSignals>>(signal: T, method: SignalFunction<ConfigFileSignals[T]>): number;
 
 
 
 
+}
 
+declare class ConfigFileSignals extends ReferenceSignals {
   
 }

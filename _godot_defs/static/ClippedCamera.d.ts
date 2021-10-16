@@ -21,7 +21,7 @@ clip_to_areas: boolean;
 /** If [code]true[/code], the camera stops on contact with [PhysicsBody]s. */
 clip_to_bodies: boolean;
 
-/** The camera's collision mask. Only objects in at least one collision layer matching the mask will be detected. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The camera's collision mask. Only objects in at least one collision layer matching the mask will be detected. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
 
 /** The camera's collision margin. The camera can't get closer than this distance to a colliding object. */
@@ -64,7 +64,8 @@ remove_exception_rid(rid: RID): void;
 */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  connect<T extends SignalsOf<ClippedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ClippedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ClippedCameraSignals>>(signal: T, method: SignalFunction<ClippedCameraSignals[T]>): number;
 
 
 
@@ -72,14 +73,16 @@ set_collision_mask_bit(bit: int, value: boolean): void;
  * The camera updates with the `_physics_process` callback.
  *
 */
-static CLIP_PROCESS_PHYSICS: 0;
+static CLIP_PROCESS_PHYSICS: any;
 
 /**
  * The camera updates with the `_process` callback.
  *
 */
-static CLIP_PROCESS_IDLE: 1;
+static CLIP_PROCESS_IDLE: any;
 
+}
 
+declare class ClippedCameraSignals extends CameraSignals {
   
 }

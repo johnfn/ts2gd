@@ -20,11 +20,14 @@ pan: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectPanner>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectPanner>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectPannerSignals>>(signal: T, method: SignalFunction<AudioEffectPannerSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectPannerSignals extends AudioEffectSignals {
   
 }

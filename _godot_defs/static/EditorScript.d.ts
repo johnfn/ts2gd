@@ -63,11 +63,14 @@ get_editor_interface(): EditorInterface;
 /** Returns the Editor's currently active scene. */
 get_scene(): Node;
 
-  connect<T extends SignalsOf<EditorScript>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorScript>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorScriptSignals>>(signal: T, method: SignalFunction<EditorScriptSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorScriptSignals extends ReferenceSignals {
   
 }

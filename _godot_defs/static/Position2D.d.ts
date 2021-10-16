@@ -18,11 +18,14 @@ declare class Position2D extends Node2D {
 
 
 
-  connect<T extends SignalsOf<Position2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Position2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Position2DSignals>>(signal: T, method: SignalFunction<Position2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Position2DSignals extends Node2DSignals {
   
 }

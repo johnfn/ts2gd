@@ -32,11 +32,14 @@ smooth_faces: boolean;
 
 
 
-  connect<T extends SignalsOf<CSGSphere>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGSphere>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGSphereSignals>>(signal: T, method: SignalFunction<CSGSphereSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGSphereSignals extends CSGPrimitiveSignals {
   
 }

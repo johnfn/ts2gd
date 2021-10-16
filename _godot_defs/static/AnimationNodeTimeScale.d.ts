@@ -18,11 +18,14 @@ declare class AnimationNodeTimeScale extends AnimationNode {
 
 
 
-  connect<T extends SignalsOf<AnimationNodeTimeScale>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeTimeScale>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeTimeScaleSignals>>(signal: T, method: SignalFunction<AnimationNodeTimeScaleSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeTimeScaleSignals extends AnimationNodeSignals {
   
 }

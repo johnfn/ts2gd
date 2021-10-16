@@ -18,11 +18,14 @@ declare class Position3D extends Spatial {
 
 
 
-  connect<T extends SignalsOf<Position3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Position3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Position3DSignals>>(signal: T, method: SignalFunction<Position3DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Position3DSignals extends SpatialSignals {
   
 }

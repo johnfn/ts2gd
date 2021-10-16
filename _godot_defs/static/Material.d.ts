@@ -18,7 +18,7 @@ declare class Material extends Resource {
 /**
  * Sets the [Material] to be used for the next pass. This renders the object again using a different material.
  *
- * **Note:** only applies to [SpatialMaterial]s and [ShaderMaterial]s with type "Spatial".
+ * **Note:** This only applies to [SpatialMaterial]s and [ShaderMaterial]s with type "Spatial".
  *
 */
 next_pass: Material;
@@ -26,14 +26,15 @@ next_pass: Material;
 /**
  * Sets the render priority for transparent objects in 3D scenes. Higher priority objects will be sorted in front of lower priority objects.
  *
- * **Note:** this only applies to sorting of transparent objects. This will not impact how transparent objects are sorted relative to opaque objects. This is because opaque objects are not sorted, while transparent objects are sorted from back to front (subject to priority).
+ * **Note:** This only applies to sorting of transparent objects. This will not impact how transparent objects are sorted relative to opaque objects. This is because opaque objects are not sorted, while transparent objects are sorted from back to front (subject to priority).
  *
 */
 render_priority: int;
 
 
 
-  connect<T extends SignalsOf<Material>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Material>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MaterialSignals>>(signal: T, method: SignalFunction<MaterialSignals[T]>): number;
 
 
 
@@ -41,14 +42,16 @@ render_priority: int;
  * Maximum value for the [member render_priority] parameter.
  *
 */
-static RENDER_PRIORITY_MAX: 127;
+static RENDER_PRIORITY_MAX: any;
 
 /**
  * Minimum value for the [member render_priority] parameter.
  *
 */
- static RENDER_PRIORITY_MIN: null;
+static RENDER_PRIORITY_MIN: any;
 
+}
 
+declare class MaterialSignals extends ResourceSignals {
   
 }

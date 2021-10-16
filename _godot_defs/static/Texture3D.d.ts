@@ -17,12 +17,17 @@ declare class Texture3D extends TextureLayered {
 
 
 
+/** Creates the Texture3D with specified [code]width[/code], [code]height[/code], and [code]depth[/code]. See [enum Image.Format] for [code]format[/code] options. See [enum TextureLayered.Flags] enumerator for [code]flags[/code] options. */
+create(width: int, height: int, depth: int, format: int, flags?: int): void;
 
-  connect<T extends SignalsOf<Texture3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Texture3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Texture3DSignals>>(signal: T, method: SignalFunction<Texture3DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Texture3DSignals extends TextureLayeredSignals {
   
 }

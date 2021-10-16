@@ -22,6 +22,9 @@ declare class EditorInterface extends Node {
 /** If [code]true[/code], enables distraction-free mode which hides side docks to increase the space available for the main view. */
 distraction_free_mode: boolean;
 
+/** Edits the given [Node]. The node will be also selected if it's inside the scene tree. */
+edit_node(node: Node): void;
+
 /** Edits the given [Resource]. */
 edit_resource(resource: Resource): void;
 
@@ -33,6 +36,14 @@ get_current_path(): string;
 
 /** Returns the edited (current) scene's root [Node]. */
 get_edited_scene_root(): Node;
+
+/**
+ * Returns the actual scale of the editor UI (`1.0` being 100% scale). This can be used to adjust position and dimensions of the UI added by plugins.
+ *
+ * **Note:** This value is set via the `interface/editor/display_scale` and `interface/editor/custom_display_scale` editor settings. Editor must be restarted for changes to be properly applied.
+ *
+*/
+get_editor_scale(): float;
 
 /** Returns the editor's [EditorSettings] instance. */
 get_editor_settings(): EditorSettings;
@@ -72,8 +83,8 @@ get_selected_path(): string;
 /** Returns the editor's [EditorSelection] instance. */
 get_selection(): EditorSelection;
 
-/** Shows the given property on the given [code]object[/code] in the editor's Inspector dock. */
-inspect_object(object: Object, for_property?: string): void;
+/** Shows the given property on the given [code]object[/code] in the editor's Inspector dock. If [code]inspector_only[/code] is [code]true[/code], plugins will not attempt to edit [code]object[/code]. */
+inspect_object(object: Object, for_property?: string, inspector_only?: boolean): void;
 
 /** Returns [code]true[/code] if a scene is currently being played, [code]false[/code] otherwise. Paused scenes are considered as being played. */
 is_playing_scene(): boolean;
@@ -117,11 +128,14 @@ set_plugin_enabled(plugin: string, enabled: boolean): void;
 /** Stops the scene that is currently playing. */
 stop_playing_scene(): void;
 
-  connect<T extends SignalsOf<EditorInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorInterfaceSignals>>(signal: T, method: SignalFunction<EditorInterfaceSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorInterfaceSignals extends NodeSignals {
   
 }

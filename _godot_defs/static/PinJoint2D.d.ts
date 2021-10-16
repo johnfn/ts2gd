@@ -20,11 +20,14 @@ softness: float;
 
 
 
-  connect<T extends SignalsOf<PinJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PinJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PinJoint2DSignals>>(signal: T, method: SignalFunction<PinJoint2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class PinJoint2DSignals extends Joint2DSignals {
   
 }

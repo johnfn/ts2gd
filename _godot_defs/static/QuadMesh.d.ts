@@ -15,16 +15,22 @@ declare class QuadMesh extends PrimitiveMesh {
 
 
 
+/** Offset of the generated Quad. Useful for particles. */
+center_offset: Vector3;
+
 /** Size on the X and Y axes. */
 size: Vector2;
 
 
 
-  connect<T extends SignalsOf<QuadMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<QuadMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<QuadMeshSignals>>(signal: T, method: SignalFunction<QuadMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class QuadMeshSignals extends PrimitiveMeshSignals {
   
 }

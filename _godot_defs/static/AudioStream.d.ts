@@ -19,11 +19,14 @@ declare class AudioStream extends Resource {
 /** Returns the length of the audio stream in seconds. */
 get_length(): float;
 
-  connect<T extends SignalsOf<AudioStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioStreamSignals>>(signal: T, method: SignalFunction<AudioStreamSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioStreamSignals extends ResourceSignals {
   
 }

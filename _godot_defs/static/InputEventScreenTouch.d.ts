@@ -26,11 +26,14 @@ pressed: boolean;
 
 
 
-  connect<T extends SignalsOf<InputEventScreenTouch>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventScreenTouch>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventScreenTouchSignals>>(signal: T, method: SignalFunction<InputEventScreenTouchSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventScreenTouchSignals extends InputEventSignals {
   
 }

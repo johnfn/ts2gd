@@ -2,7 +2,11 @@
 /**
  * Control node for playing video streams using [VideoStream] resources.
  *
- * Supported video formats are [url=https://www.webmproject.org/]WebM[/url] ([VideoStreamWebm]), [url=https://www.theora.org/]Ogg Theora[/url] ([VideoStreamTheora]), and any format exposed via a GDNative plugin using [VideoStreamGDNative].
+ * Supported video formats are [url=https://www.webmproject.org/]WebM[/url] (`.webm`, [VideoStreamWebm]), [url=https://www.theora.org/]Ogg Theora[/url] (`.ogv`, [VideoStreamTheora]), and any format exposed via a GDNative plugin using [VideoStreamGDNative].
+ *
+ * **Note:** Due to a bug, VideoPlayer does not support localization remapping yet.
+ *
+ * **Warning:** On HTML5, video playback **will** perform poorly due to missing architecture-specific assembly optimizations, especially for VP8/VP9.
  *
 */
 declare class VideoPlayer extends Control {
@@ -11,7 +15,11 @@ declare class VideoPlayer extends Control {
 /**
  * Control node for playing video streams using [VideoStream] resources.
  *
- * Supported video formats are [url=https://www.webmproject.org/]WebM[/url] ([VideoStreamWebm]), [url=https://www.theora.org/]Ogg Theora[/url] ([VideoStreamTheora]), and any format exposed via a GDNative plugin using [VideoStreamGDNative].
+ * Supported video formats are [url=https://www.webmproject.org/]WebM[/url] (`.webm`, [VideoStreamWebm]), [url=https://www.theora.org/]Ogg Theora[/url] (`.ogv`, [VideoStreamTheora]), and any format exposed via a GDNative plugin using [VideoStreamGDNative].
+ *
+ * **Note:** Due to a bug, VideoPlayer does not support localization remapping yet.
+ *
+ * **Warning:** On HTML5, video playback **will** perform poorly due to missing architecture-specific assembly optimizations, especially for VP8/VP9.
  *
 */
   "new"(): VideoPlayer;
@@ -40,7 +48,12 @@ paused: boolean;
 /** The assigned video stream. See description for supported formats. */
 stream: VideoStream;
 
-/** The current position of the stream, in seconds. */
+/**
+ * The current position of the stream, in seconds.
+ *
+ * **Note:** Changing this value won't have any effect as seeking is not implemented yet, except in video formats implemented by a GDNative add-on.
+ *
+*/
 stream_position: float;
 
 /** Audio volume as a linear value. */
@@ -74,12 +87,15 @@ play(): void;
 */
 stop(): void;
 
-  connect<T extends SignalsOf<VideoPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VideoPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VideoPlayerSignals>>(signal: T, method: SignalFunction<VideoPlayerSignals[T]>): number;
 
 
 
 
+}
 
+declare class VideoPlayerSignals extends ControlSignals {
   /**
  * Emitted when playback is finished.
  *

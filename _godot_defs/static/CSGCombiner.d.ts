@@ -18,11 +18,14 @@ declare class CSGCombiner extends CSGShape {
 
 
 
-  connect<T extends SignalsOf<CSGCombiner>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGCombiner>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGCombinerSignals>>(signal: T, method: SignalFunction<CSGCombinerSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGCombinerSignals extends CSGShapeSignals {
   
 }

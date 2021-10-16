@@ -91,11 +91,14 @@ set_bone_path(index: int, path: NodePathType): void;
 /** Sets the weight values for the specified bone. */
 set_bone_weights(index: int, weights: PoolRealArray): void;
 
-  connect<T extends SignalsOf<Polygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Polygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Polygon2DSignals>>(signal: T, method: SignalFunction<Polygon2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Polygon2DSignals extends Node2DSignals {
   
 }

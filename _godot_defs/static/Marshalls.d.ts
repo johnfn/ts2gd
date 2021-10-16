@@ -39,11 +39,14 @@ utf8_to_base64(utf8_str: string): string;
 /** Returns a Base64-encoded string of the [Variant] [code]variant[/code]. If [code]full_objects[/code] is [code]true[/code], encoding objects is allowed (and can potentially include code). */
 variant_to_base64(variant: any, full_objects?: boolean): string;
 
-  connect<T extends SignalsOf<MarshallsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MarshallsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MarshallsClassSignals>>(signal: T, method: SignalFunction<MarshallsClassSignals[T]>): number;
 
 
 
 
+}
 
+declare class MarshallsClassSignals extends ObjectSignals {
   
 }

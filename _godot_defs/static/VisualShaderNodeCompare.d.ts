@@ -26,7 +26,8 @@ type: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeCompare>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeCompare>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeCompareSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCompareSignals[T]>): number;
 
 
 
@@ -34,74 +35,76 @@ type: int;
  * A floating-point scalar.
  *
 */
-static CTYPE_SCALAR: 0;
+static CTYPE_SCALAR: any;
 
 /**
  * A 3D vector type.
  *
 */
-static CTYPE_VECTOR: 1;
+static CTYPE_VECTOR: any;
 
 /**
  * A boolean type.
  *
 */
-static CTYPE_BOOLEAN: 2;
+static CTYPE_BOOLEAN: any;
 
 /**
  * A transform (`mat4`) type.
  *
 */
-static CTYPE_TRANSFORM: 3;
+static CTYPE_TRANSFORM: any;
 
 /**
  * Comparison for equality (`a == b`).
  *
 */
-static FUNC_EQUAL: 0;
+static FUNC_EQUAL: any;
 
 /**
  * Comparison for inequality (`a != b`).
  *
 */
-static FUNC_NOT_EQUAL: 1;
+static FUNC_NOT_EQUAL: any;
 
 /**
  * Comparison for greater than (`a > b`). Cannot be used if [member type] set to [constant CTYPE_BOOLEAN] or [constant CTYPE_TRANSFORM].
  *
 */
-static FUNC_GREATER_THAN: 2;
+static FUNC_GREATER_THAN: any;
 
 /**
  * Comparison for greater than or equal (`a >= b`). Cannot be used if [member type] set to [constant CTYPE_BOOLEAN] or [constant CTYPE_TRANSFORM].
  *
 */
-static FUNC_GREATER_THAN_EQUAL: 3;
+static FUNC_GREATER_THAN_EQUAL: any;
 
 /**
  * Comparison for less than (`a < b`). Cannot be used if [member type] set to [constant CTYPE_BOOLEAN] or [constant CTYPE_TRANSFORM].
  *
 */
-static FUNC_LESS_THAN: 4;
+static FUNC_LESS_THAN: any;
 
 /**
  * Comparison for less than or equal (`a < b`). Cannot be used if [member type] set to [constant CTYPE_BOOLEAN] or [constant CTYPE_TRANSFORM].
  *
 */
-static FUNC_LESS_THAN_EQUAL: 5;
+static FUNC_LESS_THAN_EQUAL: any;
 
 /**
  * The result will be true if all of component in vector satisfy the comparison condition.
  *
 */
-static COND_ALL: 0;
+static COND_ALL: any;
 
 /**
  * The result will be true if any of component in vector satisfy the comparison condition.
  *
 */
-static COND_ANY: 1;
+static COND_ANY: any;
 
+}
 
+declare class VisualShaderNodeCompareSignals extends VisualShaderNodeSignals {
   
 }

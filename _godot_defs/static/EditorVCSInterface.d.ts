@@ -40,7 +40,7 @@ commit(msg: string): void;
 get_file_diff(file_path: string): any[];
 
 /**
- * Returns a [Dictionary] containing the path of the detected file change mapped to an integer signifying what kind of a change the corresponding file has experienced.
+ * Returns a [Dictionary] containing the path of the detected file change mapped to an integer signifying what kind of change the corresponding file has experienced.
  *
  * The following integer values are being used to signify that the detected file is:
  *
@@ -55,7 +55,7 @@ get_file_diff(file_path: string): any[];
  * - `4`: Typechanged
  *
 */
-get_modified_files_data(): Dictionary;
+get_modified_files_data(): Dictionary<any, any>;
 
 /** Returns the project name of the VCS working directory. */
 get_project_name(): string;
@@ -81,11 +81,14 @@ stage_file(file_path: string): void;
 /** Unstages the file which was staged previously to be committed, so that it is no longer committed when [method EditorVCSInterface.commit] is called. Argument should contain the absolute path. */
 unstage_file(file_path: string): void;
 
-  connect<T extends SignalsOf<EditorVCSInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorVCSInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorVCSInterfaceSignals>>(signal: T, method: SignalFunction<EditorVCSInterfaceSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorVCSInterfaceSignals extends ObjectSignals {
   
 }

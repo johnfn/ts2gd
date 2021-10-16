@@ -18,11 +18,14 @@ declare class AudioStreamPlayback extends Reference {
 
 
 
-  connect<T extends SignalsOf<AudioStreamPlayback>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioStreamPlayback>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioStreamPlaybackSignals>>(signal: T, method: SignalFunction<AudioStreamPlaybackSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioStreamPlaybackSignals extends ReferenceSignals {
   
 }

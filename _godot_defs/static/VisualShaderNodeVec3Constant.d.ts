@@ -20,11 +20,14 @@ constant: Vector3;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVec3Constant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVec3Constant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVec3ConstantSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVec3ConstantSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVec3ConstantSignals extends VisualShaderNodeSignals {
   
 }

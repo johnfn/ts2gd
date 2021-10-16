@@ -20,11 +20,14 @@ bone_name: string;
 
 
 
-  connect<T extends SignalsOf<BoneAttachment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<BoneAttachment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BoneAttachmentSignals>>(signal: T, method: SignalFunction<BoneAttachmentSignals[T]>): number;
 
 
 
 
+}
 
+declare class BoneAttachmentSignals extends SpatialSignals {
   
 }

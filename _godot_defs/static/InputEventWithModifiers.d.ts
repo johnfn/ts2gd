@@ -32,11 +32,14 @@ shift: boolean;
 
 
 
-  connect<T extends SignalsOf<InputEventWithModifiers>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventWithModifiers>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventWithModifiersSignals>>(signal: T, method: SignalFunction<InputEventWithModifiersSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventWithModifiersSignals extends InputEventSignals {
   
 }

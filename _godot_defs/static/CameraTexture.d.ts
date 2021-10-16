@@ -31,11 +31,14 @@ which_feed: int;
 
 
 
-  connect<T extends SignalsOf<CameraTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CameraTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CameraTextureSignals>>(signal: T, method: SignalFunction<CameraTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class CameraTextureSignals extends TextureSignals {
   
 }

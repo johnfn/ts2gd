@@ -24,10 +24,10 @@ flip_h: boolean;
 /** If [code]true[/code], texture is flipped vertically. */
 flip_v: boolean;
 
-/** Current frame to display from sprite sheet. [member vframes] or [member hframes] must be greater than 1. */
+/** Current frame to display from sprite sheet. [member hframes] or [member vframes] must be greater than 1. */
 frame: int;
 
-/** Coordinates of the frame to display from sprite sheet. This is as an alias for the [member frame] property. [member vframes] or [member hframes] must be greater than 1. */
+/** Coordinates of the frame to display from sprite sheet. This is as an alias for the [member frame] property. [member hframes] or [member vframes] must be greater than 1. */
 frame_coords: Vector2;
 
 /** The number of columns in the sprite sheet. */
@@ -82,12 +82,15 @@ get_rect(): Rect2;
 */
 is_pixel_opaque(pos: Vector2): boolean;
 
-  connect<T extends SignalsOf<Sprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Sprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpriteSignals>>(signal: T, method: SignalFunction<SpriteSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpriteSignals extends Node2DSignals {
   /**
  * Emitted when the [member frame] changes.
  *

@@ -77,7 +77,8 @@ set_blend_point_node(point: int, node: AnimationRootNode): void;
 /** Updates the position of the point at index [code]point[/code] on the blend axis. */
 set_blend_point_position(point: int, pos: Vector2): void;
 
-  connect<T extends SignalsOf<AnimationNodeBlendSpace2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeBlendSpace2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeBlendSpace2DSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace2DSignals[T]>): number;
 
 
 
@@ -85,21 +86,23 @@ set_blend_point_position(point: int, pos: Vector2): void;
  * The interpolation between animations is linear.
  *
 */
-static BLEND_MODE_INTERPOLATED: 0;
+static BLEND_MODE_INTERPOLATED: any;
 
 /**
  * The blend space plays the animation of the node the blending position is closest to. Useful for frame-by-frame 2D animations.
  *
 */
-static BLEND_MODE_DISCRETE: 1;
+static BLEND_MODE_DISCRETE: any;
 
 /**
  * Similar to [constant BLEND_MODE_DISCRETE], but starts the new animation at the last animation's playback position.
  *
 */
-static BLEND_MODE_DISCRETE_CARRY: 2;
+static BLEND_MODE_DISCRETE_CARRY: any;
 
+}
 
+declare class AnimationNodeBlendSpace2DSignals extends AnimationRootNodeSignals {
   /**
  * Emitted every time the blend space's triangles are created, removed, or when one of their vertices changes position.
  *

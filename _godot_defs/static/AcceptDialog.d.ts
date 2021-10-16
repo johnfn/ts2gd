@@ -35,10 +35,17 @@ dialog_text: string;
  *
  * If `true`, `right` will place the button to the right of any sibling buttons.
  *
+ * You can use [method remove_button] method to remove a button created with this method from the dialog.
+ *
 */
 add_button(text: string, right?: boolean, action?: string): Button;
 
-/** Adds a button with label [code]name[/code] and a cancel action to the dialog and returns the created button. */
+/**
+ * Adds a button with label `name` and a cancel action to the dialog and returns the created button.
+ *
+ * You can use [method remove_button] method to remove a button created with this method from the dialog.
+ *
+*/
 add_cancel(name: string): Button;
 
 /** Returns the label used for built-in text. */
@@ -50,12 +57,18 @@ get_ok(): Button;
 /** Registers a [LineEdit] in the dialog. When the enter key is pressed, the dialog will be accepted. */
 register_text_enter(line_edit: Node): void;
 
-  connect<T extends SignalsOf<AcceptDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/** Removes the [code]button[/code] from the dialog. Does NOT free the [code]button[/code]. The [code]button[/code] must be a [Button] added with [method add_button] or [method add_cancel] method. After removal, pressing the [code]button[/code] will no longer emit this dialog's [signal custom_action] signal or cancel this dialog. */
+remove_button(button: Control): void;
+
+  // connect<T extends SignalsOf<AcceptDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AcceptDialogSignals>>(signal: T, method: SignalFunction<AcceptDialogSignals[T]>): number;
 
 
 
 
+}
 
+declare class AcceptDialogSignals extends WindowDialogSignals {
   /**
  * Emitted when the dialog is accepted, i.e. the OK button is pressed.
  *

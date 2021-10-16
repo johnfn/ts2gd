@@ -24,12 +24,15 @@ curve: Curve3D;
 
 
 
-  connect<T extends SignalsOf<Path>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Path>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PathSignals>>(signal: T, method: SignalFunction<PathSignals[T]>): number;
 
 
 
 
+}
 
+declare class PathSignals extends SpatialSignals {
   /**
  * Emitted when the [member curve] changes.
  *

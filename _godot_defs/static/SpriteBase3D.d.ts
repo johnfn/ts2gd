@@ -38,7 +38,7 @@ modulate: Color;
 /** The texture's drawing offset. */
 offset: Vector2;
 
-/** The objects visibility on a scale from [code]0[/code] fully invisible to [code]1[/code] fully visible. */
+/** The objects' visibility on a scale from [code]0[/code] fully invisible to [code]1[/code] fully visible. */
 opacity: float;
 
 /** The size of one pixel's width on the sprite to scale it in 3D. */
@@ -62,7 +62,8 @@ get_item_rect(): Rect2;
 /** If [code]true[/code], the specified flag will be enabled. */
 set_draw_flag(flag: int, enabled: boolean): void;
 
-  connect<T extends SignalsOf<SpriteBase3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpriteBase3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpriteBase3DSignals>>(signal: T, method: SignalFunction<SpriteBase3DSignals[T]>): number;
 
 
 
@@ -70,35 +71,37 @@ set_draw_flag(flag: int, enabled: boolean): void;
  * If set, the texture's transparency and the opacity are used to make those parts of the sprite invisible.
  *
 */
-static FLAG_TRANSPARENT: 0;
+static FLAG_TRANSPARENT: any;
 
 /**
  * If set, lights in the environment affect the sprite.
  *
 */
-static FLAG_SHADED: 1;
+static FLAG_SHADED: any;
 
 /**
  * If set, texture can be seen from the back as well, if not, it is invisible when looking at it from behind.
  *
 */
-static FLAG_DOUBLE_SIDED: 2;
+static FLAG_DOUBLE_SIDED: any;
 
 /**
  * Represents the size of the [enum DrawFlags] enum.
  *
 */
-static FLAG_MAX: 3;
+static FLAG_MAX: any;
 
 /** No documentation provided. */
-static ALPHA_CUT_DISABLED: 0;
+static ALPHA_CUT_DISABLED: any;
 
 /** No documentation provided. */
-static ALPHA_CUT_DISCARD: 1;
+static ALPHA_CUT_DISCARD: any;
 
 /** No documentation provided. */
-static ALPHA_CUT_OPAQUE_PREPASS: 2;
+static ALPHA_CUT_OPAQUE_PREPASS: any;
 
+}
 
+declare class SpriteBase3DSignals extends GeometryInstanceSignals {
   
 }

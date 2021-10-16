@@ -4,7 +4,7 @@
  *
  * The [ReflectionProbe] is used to create high-quality reflections at the cost of performance. It can be combined with [GIProbe]s and Screen Space Reflections to achieve high quality reflections. [ReflectionProbe]s render all objects within their [member cull_mask], so updating them can be quite expensive. It is best to update them once with the important static objects and then leave them.
  *
- * Note: By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
+ * **Note:** By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
  *
 */
 declare class ReflectionProbe extends VisualInstance {
@@ -15,7 +15,7 @@ declare class ReflectionProbe extends VisualInstance {
  *
  * The [ReflectionProbe] is used to create high-quality reflections at the cost of performance. It can be combined with [GIProbe]s and Screen Space Reflections to achieve high quality reflections. [ReflectionProbe]s render all objects within their [member cull_mask], so updating them can be quite expensive. It is best to update them once with the important static objects and then leave them.
  *
- * Note: By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
+ * **Note:** By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
  *
 */
   "new"(): ReflectionProbe;
@@ -61,7 +61,8 @@ update_mode: int;
 
 
 
-  connect<T extends SignalsOf<ReflectionProbe>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ReflectionProbe>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ReflectionProbeSignals>>(signal: T, method: SignalFunction<ReflectionProbeSignals[T]>): number;
 
 
 
@@ -69,14 +70,16 @@ update_mode: int;
  * Update the probe once on the next frame.
  *
 */
-static UPDATE_ONCE: 0;
+static UPDATE_ONCE: any;
 
 /**
  * Update the probe every frame. This is needed when you want to capture dynamic objects. However, it results in an increased render time. Use [constant UPDATE_ONCE] whenever possible.
  *
 */
-static UPDATE_ALWAYS: 1;
+static UPDATE_ALWAYS: any;
 
+}
 
+declare class ReflectionProbeSignals extends VisualInstanceSignals {
   
 }

@@ -266,6 +266,9 @@ body_set_space(body: RID, space: RID): void;
 /** Sets a body state (see [enum BodyState] constants). */
 body_set_state(body: RID, state: int, value: any): void;
 
+/** Returns [code]true[/code] if a collision would result from moving in the given direction from a given point in space. [PhysicsTestMotionResult] can be passed to return additional information in. */
+body_test_motion(body: RID, from: Transform, motion: Vector3, infinite_inertia: boolean, result?: PhysicsTestMotionResult, exclude_raycast_shapes?: boolean, exclude?: any[]): boolean;
+
 /** Gets a cone_twist_joint parameter (see [enum ConeTwistJointParam] constants). */
 cone_twist_joint_get_param(joint: RID, param: int): float;
 
@@ -347,6 +350,14 @@ pin_joint_set_param(joint: RID, param: int, value: float): void;
 /** Activates or deactivates the 3D physics engine. */
 set_active(active: boolean): void;
 
+/**
+ * Sets the amount of iterations for calculating velocities of colliding bodies. The greater the amount of iterations, the more accurate the collisions will be. However, a greater amount of iterations requires more CPU power, which can decrease performance. The default value is `8`.
+ *
+ * **Note:** Only has an effect when using the GodotPhysics engine, not the default Bullet physics engine.
+ *
+*/
+set_collision_iterations(iterations: int): void;
+
 /** Creates a shape of a type from [enum ShapeType]. Does not assign it to a body or an area. To do so, you must use [method area_set_shape] or [method body_set_shape]. */
 shape_create(type: int): RID;
 
@@ -383,7 +394,8 @@ space_set_active(space: RID, active: boolean): void;
 /** Sets the value for a space parameter. A list of available parameters is on the [enum SpaceParameter] constants. */
 space_set_param(space: RID, param: int, value: float): void;
 
-  connect<T extends SignalsOf<PhysicsServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PhysicsServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PhysicsServerClassSignals>>(signal: T, method: SignalFunction<PhysicsServerClassSignals[T]>): number;
 
 
 
@@ -391,31 +403,31 @@ space_set_param(space: RID, param: int, value: float): void;
  * The [Joint] is a [PinJoint].
  *
 */
-static JOINT_PIN: 0;
+static JOINT_PIN: any;
 
 /**
  * The [Joint] is a [HingeJoint].
  *
 */
-static JOINT_HINGE: 1;
+static JOINT_HINGE: any;
 
 /**
  * The [Joint] is a [SliderJoint].
  *
 */
-static JOINT_SLIDER: 2;
+static JOINT_SLIDER: any;
 
 /**
  * The [Joint] is a [ConeTwistJoint].
  *
 */
-static JOINT_CONE_TWIST: 3;
+static JOINT_CONE_TWIST: any;
 
 /**
  * The [Joint] is a [Generic6DOFJoint].
  *
 */
-static JOINT_6DOF: 4;
+static JOINT_6DOF: any;
 
 /**
  * The strength with which the pinned objects try to stay in positional relation to each other.
@@ -423,7 +435,7 @@ static JOINT_6DOF: 4;
  * The higher, the stronger.
  *
 */
-static PIN_JOINT_BIAS: 0;
+static PIN_JOINT_BIAS: any;
 
 /**
  * The strength with which the pinned objects try to stay in velocity relation to each other.
@@ -431,220 +443,220 @@ static PIN_JOINT_BIAS: 0;
  * The higher, the stronger.
  *
 */
-static PIN_JOINT_DAMPING: 1;
+static PIN_JOINT_DAMPING: any;
 
 /**
  * If above 0, this value is the maximum value for an impulse that this Joint puts on its ends.
  *
 */
-static PIN_JOINT_IMPULSE_CLAMP: 2;
+static PIN_JOINT_IMPULSE_CLAMP: any;
 
 /**
  * The speed with which the two bodies get pulled together when they move in different directions.
  *
 */
-static HINGE_JOINT_BIAS: 0;
+static HINGE_JOINT_BIAS: any;
 
 /**
  * The maximum rotation across the Hinge.
  *
 */
-static HINGE_JOINT_LIMIT_UPPER: 1;
+static HINGE_JOINT_LIMIT_UPPER: any;
 
 /**
  * The minimum rotation across the Hinge.
  *
 */
-static HINGE_JOINT_LIMIT_LOWER: 2;
+static HINGE_JOINT_LIMIT_LOWER: any;
 
 /**
  * The speed with which the rotation across the axis perpendicular to the hinge gets corrected.
  *
 */
-static HINGE_JOINT_LIMIT_BIAS: 3;
+static HINGE_JOINT_LIMIT_BIAS: any;
 
 /** No documentation provided. */
-static HINGE_JOINT_LIMIT_SOFTNESS: 4;
+static HINGE_JOINT_LIMIT_SOFTNESS: any;
 
 /**
  * The lower this value, the more the rotation gets slowed down.
  *
 */
-static HINGE_JOINT_LIMIT_RELAXATION: 5;
+static HINGE_JOINT_LIMIT_RELAXATION: any;
 
 /**
  * Target speed for the motor.
  *
 */
-static HINGE_JOINT_MOTOR_TARGET_VELOCITY: 6;
+static HINGE_JOINT_MOTOR_TARGET_VELOCITY: any;
 
 /**
  * Maximum acceleration for the motor.
  *
 */
-static HINGE_JOINT_MOTOR_MAX_IMPULSE: 7;
+static HINGE_JOINT_MOTOR_MAX_IMPULSE: any;
 
 /**
  * If `true`, the Hinge has a maximum and a minimum rotation.
  *
 */
-static HINGE_JOINT_FLAG_USE_LIMIT: 0;
+static HINGE_JOINT_FLAG_USE_LIMIT: any;
 
 /**
  * If `true`, a motor turns the Hinge.
  *
 */
-static HINGE_JOINT_FLAG_ENABLE_MOTOR: 1;
+static HINGE_JOINT_FLAG_ENABLE_MOTOR: any;
 
 /**
  * The maximum difference between the pivot points on their X axis before damping happens.
  *
 */
-static SLIDER_JOINT_LINEAR_LIMIT_UPPER: 0;
+static SLIDER_JOINT_LINEAR_LIMIT_UPPER: any;
 
 /**
  * The minimum difference between the pivot points on their X axis before damping happens.
  *
 */
-static SLIDER_JOINT_LINEAR_LIMIT_LOWER: 1;
+static SLIDER_JOINT_LINEAR_LIMIT_LOWER: any;
 
 /**
  * A factor applied to the movement across the slider axis once the limits get surpassed. The lower, the slower the movement.
  *
 */
-static SLIDER_JOINT_LINEAR_LIMIT_SOFTNESS: 2;
+static SLIDER_JOINT_LINEAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution once the limits are surpassed. The lower, the more velocityenergy gets lost.
  *
 */
-static SLIDER_JOINT_LINEAR_LIMIT_RESTITUTION: 3;
+static SLIDER_JOINT_LINEAR_LIMIT_RESTITUTION: any;
 
 /**
  * The amount of damping once the slider limits are surpassed.
  *
 */
-static SLIDER_JOINT_LINEAR_LIMIT_DAMPING: 4;
+static SLIDER_JOINT_LINEAR_LIMIT_DAMPING: any;
 
 /**
  * A factor applied to the movement across the slider axis as long as the slider is in the limits. The lower, the slower the movement.
  *
 */
-static SLIDER_JOINT_LINEAR_MOTION_SOFTNESS: 5;
+static SLIDER_JOINT_LINEAR_MOTION_SOFTNESS: any;
 
 /**
  * The amount of restitution inside the slider limits.
  *
 */
-static SLIDER_JOINT_LINEAR_MOTION_RESTITUTION: 6;
+static SLIDER_JOINT_LINEAR_MOTION_RESTITUTION: any;
 
 /**
  * The amount of damping inside the slider limits.
  *
 */
-static SLIDER_JOINT_LINEAR_MOTION_DAMPING: 7;
+static SLIDER_JOINT_LINEAR_MOTION_DAMPING: any;
 
 /**
  * A factor applied to the movement across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_LINEAR_ORTHOGONAL_SOFTNESS: 8;
+static SLIDER_JOINT_LINEAR_ORTHOGONAL_SOFTNESS: any;
 
 /**
  * The amount of restitution when movement is across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_LINEAR_ORTHOGONAL_RESTITUTION: 9;
+static SLIDER_JOINT_LINEAR_ORTHOGONAL_RESTITUTION: any;
 
 /**
  * The amount of damping when movement is across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_LINEAR_ORTHOGONAL_DAMPING: 10;
+static SLIDER_JOINT_LINEAR_ORTHOGONAL_DAMPING: any;
 
 /**
  * The upper limit of rotation in the slider.
  *
 */
-static SLIDER_JOINT_ANGULAR_LIMIT_UPPER: 11;
+static SLIDER_JOINT_ANGULAR_LIMIT_UPPER: any;
 
 /**
  * The lower limit of rotation in the slider.
  *
 */
-static SLIDER_JOINT_ANGULAR_LIMIT_LOWER: 12;
+static SLIDER_JOINT_ANGULAR_LIMIT_LOWER: any;
 
 /**
  * A factor applied to the all rotation once the limit is surpassed.
  *
 */
-static SLIDER_JOINT_ANGULAR_LIMIT_SOFTNESS: 13;
+static SLIDER_JOINT_ANGULAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation when the limit is surpassed.
  *
 */
-static SLIDER_JOINT_ANGULAR_LIMIT_RESTITUTION: 14;
+static SLIDER_JOINT_ANGULAR_LIMIT_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation when the limit is surpassed.
  *
 */
-static SLIDER_JOINT_ANGULAR_LIMIT_DAMPING: 15;
+static SLIDER_JOINT_ANGULAR_LIMIT_DAMPING: any;
 
 /**
  * A factor that gets applied to the all rotation in the limits.
  *
 */
-static SLIDER_JOINT_ANGULAR_MOTION_SOFTNESS: 16;
+static SLIDER_JOINT_ANGULAR_MOTION_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation in the limits.
  *
 */
-static SLIDER_JOINT_ANGULAR_MOTION_RESTITUTION: 17;
+static SLIDER_JOINT_ANGULAR_MOTION_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation in the limits.
  *
 */
-static SLIDER_JOINT_ANGULAR_MOTION_DAMPING: 18;
+static SLIDER_JOINT_ANGULAR_MOTION_DAMPING: any;
 
 /**
  * A factor that gets applied to the all rotation across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_ANGULAR_ORTHOGONAL_SOFTNESS: 19;
+static SLIDER_JOINT_ANGULAR_ORTHOGONAL_SOFTNESS: any;
 
 /**
  * The amount of restitution of the rotation across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_ANGULAR_ORTHOGONAL_RESTITUTION: 20;
+static SLIDER_JOINT_ANGULAR_ORTHOGONAL_RESTITUTION: any;
 
 /**
  * The amount of damping of the rotation across axes orthogonal to the slider.
  *
 */
-static SLIDER_JOINT_ANGULAR_ORTHOGONAL_DAMPING: 21;
+static SLIDER_JOINT_ANGULAR_ORTHOGONAL_DAMPING: any;
 
 /**
  * Represents the size of the [enum SliderJointParam] enum.
  *
 */
-static SLIDER_JOINT_MAX: 22;
+static SLIDER_JOINT_MAX: any;
 
 /**
  * Swing is rotation from side to side, around the axis perpendicular to the twist axis.
  *
- * The swing span defines, how much rotation will not get corrected allong the swing axis.
+ * The swing span defines, how much rotation will not get corrected along the swing axis.
  *
  * Could be defined as looseness in the [ConeTwistJoint].
  *
  * If below 0.05, this behavior is locked.
  *
 */
-static CONE_TWIST_JOINT_SWING_SPAN: 0;
+static CONE_TWIST_JOINT_SWING_SPAN: any;
 
 /**
  * Twist is the rotation around the twist axis, this value defined how far the joint can twist.
@@ -652,7 +664,7 @@ static CONE_TWIST_JOINT_SWING_SPAN: 0;
  * Twist is locked if below 0.05.
  *
 */
-static CONE_TWIST_JOINT_TWIST_SPAN: 1;
+static CONE_TWIST_JOINT_TWIST_SPAN: any;
 
 /**
  * The speed with which the swing or twist will take place.
@@ -660,470 +672,469 @@ static CONE_TWIST_JOINT_TWIST_SPAN: 1;
  * The higher, the faster.
  *
 */
-static CONE_TWIST_JOINT_BIAS: 2;
+static CONE_TWIST_JOINT_BIAS: any;
 
 /**
  * The ease with which the Joint twists, if it's too low, it takes more force to twist the joint.
  *
 */
-static CONE_TWIST_JOINT_SOFTNESS: 3;
+static CONE_TWIST_JOINT_SOFTNESS: any;
 
 /**
  * Defines, how fast the swing- and twist-speed-difference on both sides gets synced.
  *
 */
-static CONE_TWIST_JOINT_RELAXATION: 4;
+static CONE_TWIST_JOINT_RELAXATION: any;
 
 /**
  * The minimum difference between the pivot points' axes.
  *
 */
-static G6DOF_JOINT_LINEAR_LOWER_LIMIT: 0;
+static G6DOF_JOINT_LINEAR_LOWER_LIMIT: any;
 
 /**
  * The maximum difference between the pivot points' axes.
  *
 */
-static G6DOF_JOINT_LINEAR_UPPER_LIMIT: 1;
+static G6DOF_JOINT_LINEAR_UPPER_LIMIT: any;
 
 /**
  * A factor that gets applied to the movement across the axes. The lower, the slower the movement.
  *
 */
-static G6DOF_JOINT_LINEAR_LIMIT_SOFTNESS: 2;
+static G6DOF_JOINT_LINEAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution on the axes movement. The lower, the more velocity-energy gets lost.
  *
 */
-static G6DOF_JOINT_LINEAR_RESTITUTION: 3;
+static G6DOF_JOINT_LINEAR_RESTITUTION: any;
 
 /**
  * The amount of damping that happens at the linear motion across the axes.
  *
 */
-static G6DOF_JOINT_LINEAR_DAMPING: 4;
+static G6DOF_JOINT_LINEAR_DAMPING: any;
 
 /**
  * The velocity that the joint's linear motor will attempt to reach.
  *
 */
-static G6DOF_JOINT_LINEAR_MOTOR_TARGET_VELOCITY: 5;
+static G6DOF_JOINT_LINEAR_MOTOR_TARGET_VELOCITY: any;
 
 /**
  * The maximum force that the linear motor can apply while trying to reach the target velocity.
  *
 */
-static G6DOF_JOINT_LINEAR_MOTOR_FORCE_LIMIT: 6;
+static G6DOF_JOINT_LINEAR_MOTOR_FORCE_LIMIT: any;
 
 /**
  * The minimum rotation in negative direction to break loose and rotate around the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_LOWER_LIMIT: 10;
+static G6DOF_JOINT_ANGULAR_LOWER_LIMIT: any;
 
 /**
  * The minimum rotation in positive direction to break loose and rotate around the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_UPPER_LIMIT: 11;
+static G6DOF_JOINT_ANGULAR_UPPER_LIMIT: any;
 
 /**
  * A factor that gets multiplied onto all rotations across the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_LIMIT_SOFTNESS: 12;
+static G6DOF_JOINT_ANGULAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of rotational damping across the axes. The lower, the more dampening occurs.
  *
 */
-static G6DOF_JOINT_ANGULAR_DAMPING: 13;
+static G6DOF_JOINT_ANGULAR_DAMPING: any;
 
 /**
  * The amount of rotational restitution across the axes. The lower, the more restitution occurs.
  *
 */
-static G6DOF_JOINT_ANGULAR_RESTITUTION: 14;
+static G6DOF_JOINT_ANGULAR_RESTITUTION: any;
 
 /**
  * The maximum amount of force that can occur, when rotating around the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_FORCE_LIMIT: 15;
+static G6DOF_JOINT_ANGULAR_FORCE_LIMIT: any;
 
 /**
  * When correcting the crossing of limits in rotation across the axes, this error tolerance factor defines how much the correction gets slowed down. The lower, the slower.
  *
 */
-static G6DOF_JOINT_ANGULAR_ERP: 16;
+static G6DOF_JOINT_ANGULAR_ERP: any;
 
 /**
  * Target speed for the motor at the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_MOTOR_TARGET_VELOCITY: 17;
+static G6DOF_JOINT_ANGULAR_MOTOR_TARGET_VELOCITY: any;
 
 /**
  * Maximum acceleration for the motor at the axes.
  *
 */
-static G6DOF_JOINT_ANGULAR_MOTOR_FORCE_LIMIT: 18;
+static G6DOF_JOINT_ANGULAR_MOTOR_FORCE_LIMIT: any;
 
 /**
  * If `set` there is linear motion possible within the given limits.
  *
 */
-static G6DOF_JOINT_FLAG_ENABLE_LINEAR_LIMIT: 0;
+static G6DOF_JOINT_FLAG_ENABLE_LINEAR_LIMIT: any;
 
 /**
  * If `set` there is rotational motion possible.
  *
 */
-static G6DOF_JOINT_FLAG_ENABLE_ANGULAR_LIMIT: 1;
+static G6DOF_JOINT_FLAG_ENABLE_ANGULAR_LIMIT: any;
 
 /**
  * If `set` there is a rotational motor across these axes.
  *
 */
-static G6DOF_JOINT_FLAG_ENABLE_MOTOR: 4;
+static G6DOF_JOINT_FLAG_ENABLE_MOTOR: any;
 
 /**
  * If `set` there is a linear motor on this axis that targets a specific velocity.
  *
 */
-static G6DOF_JOINT_FLAG_ENABLE_LINEAR_MOTOR: 5;
+static G6DOF_JOINT_FLAG_ENABLE_LINEAR_MOTOR: any;
 
 /**
  * The [Shape] is a [PlaneShape].
  *
 */
-static SHAPE_PLANE: 0;
+static SHAPE_PLANE: any;
 
 /**
  * The [Shape] is a [RayShape].
  *
 */
-static SHAPE_RAY: 1;
+static SHAPE_RAY: any;
 
 /**
  * The [Shape] is a [SphereShape].
  *
 */
-static SHAPE_SPHERE: 2;
+static SHAPE_SPHERE: any;
 
 /**
  * The [Shape] is a [BoxShape].
  *
 */
-static SHAPE_BOX: 3;
+static SHAPE_BOX: any;
 
 /**
  * The [Shape] is a [CapsuleShape].
  *
 */
-static SHAPE_CAPSULE: 4;
+static SHAPE_CAPSULE: any;
 
 /**
  * The [Shape] is a [CylinderShape].
  *
 */
-static SHAPE_CYLINDER: 5;
+static SHAPE_CYLINDER: any;
 
 /**
  * The [Shape] is a [ConvexPolygonShape].
  *
 */
-static SHAPE_CONVEX_POLYGON: 6;
+static SHAPE_CONVEX_POLYGON: any;
 
 /**
  * The [Shape] is a [ConcavePolygonShape].
  *
 */
-static SHAPE_CONCAVE_POLYGON: 7;
+static SHAPE_CONCAVE_POLYGON: any;
 
 /**
  * The [Shape] is a [HeightMapShape].
  *
 */
-static SHAPE_HEIGHTMAP: 8;
+static SHAPE_HEIGHTMAP: any;
 
 /**
  * This constant is used internally by the engine. Any attempt to create this kind of shape results in an error.
  *
 */
-static SHAPE_CUSTOM: 9;
+static SHAPE_CUSTOM: any;
 
 /**
  * Constant to set/get gravity strength in an area.
  *
 */
-static AREA_PARAM_GRAVITY: 0;
+static AREA_PARAM_GRAVITY: any;
 
 /**
  * Constant to set/get gravity vector/center in an area.
  *
 */
-static AREA_PARAM_GRAVITY_VECTOR: 1;
+static AREA_PARAM_GRAVITY_VECTOR: any;
 
 /**
  * Constant to set/get whether the gravity vector of an area is a direction, or a center point.
  *
 */
-static AREA_PARAM_GRAVITY_IS_POINT: 2;
+static AREA_PARAM_GRAVITY_IS_POINT: any;
 
 /**
  * Constant to set/get the falloff factor for point gravity of an area. The greater this value is, the faster the strength of gravity decreases with the square of distance.
  *
 */
-static AREA_PARAM_GRAVITY_DISTANCE_SCALE: 3;
+static AREA_PARAM_GRAVITY_DISTANCE_SCALE: any;
 
 /**
  * This constant was used to set/get the falloff factor for point gravity. It has been superseded by [constant AREA_PARAM_GRAVITY_DISTANCE_SCALE].
  *
 */
-static AREA_PARAM_GRAVITY_POINT_ATTENUATION: 4;
+static AREA_PARAM_GRAVITY_POINT_ATTENUATION: any;
 
 /**
  * Constant to set/get the linear dampening factor of an area.
  *
 */
-static AREA_PARAM_LINEAR_DAMP: 5;
+static AREA_PARAM_LINEAR_DAMP: any;
 
 /**
  * Constant to set/get the angular dampening factor of an area.
  *
 */
-static AREA_PARAM_ANGULAR_DAMP: 6;
+static AREA_PARAM_ANGULAR_DAMP: any;
 
 /**
  * Constant to set/get the priority (order of processing) of an area.
  *
 */
-static AREA_PARAM_PRIORITY: 7;
+static AREA_PARAM_PRIORITY: any;
 
 /**
  * This area does not affect gravity/damp. These are generally areas that exist only to detect collisions, and objects entering or exiting them.
  *
 */
-static AREA_SPACE_OVERRIDE_DISABLED: 0;
+static AREA_SPACE_OVERRIDE_DISABLED: any;
 
 /**
  * This area adds its gravity/damp values to whatever has been calculated so far. This way, many overlapping areas can combine their physics to make interesting effects.
  *
 */
-static AREA_SPACE_OVERRIDE_COMBINE: 1;
+static AREA_SPACE_OVERRIDE_COMBINE: any;
 
 /**
  * This area adds its gravity/damp values to whatever has been calculated so far. Then stops taking into account the rest of the areas, even the default one.
  *
 */
-static AREA_SPACE_OVERRIDE_COMBINE_REPLACE: 2;
+static AREA_SPACE_OVERRIDE_COMBINE_REPLACE: any;
 
 /**
  * This area replaces any gravity/damp, even the default one, and stops taking into account the rest of the areas.
  *
 */
-static AREA_SPACE_OVERRIDE_REPLACE: 3;
+static AREA_SPACE_OVERRIDE_REPLACE: any;
 
 /**
  * This area replaces any gravity/damp calculated so far, but keeps calculating the rest of the areas, down to the default one.
  *
 */
-static AREA_SPACE_OVERRIDE_REPLACE_COMBINE: 4;
+static AREA_SPACE_OVERRIDE_REPLACE_COMBINE: any;
 
 /**
  * Constant for static bodies.
  *
 */
-static BODY_MODE_STATIC: 0;
+static BODY_MODE_STATIC: any;
 
 /**
  * Constant for kinematic bodies.
  *
 */
-static BODY_MODE_KINEMATIC: 1;
+static BODY_MODE_KINEMATIC: any;
 
 /**
  * Constant for rigid bodies.
  *
 */
-static BODY_MODE_RIGID: 2;
+static BODY_MODE_RIGID: any;
 
 /**
  * Constant for rigid bodies in character mode. In this mode, a body can not rotate, and only its linear velocity is affected by physics.
  *
 */
-static BODY_MODE_CHARACTER: 3;
+static BODY_MODE_CHARACTER: any;
 
 /**
  * Constant to set/get a body's bounce factor.
  *
 */
-static BODY_PARAM_BOUNCE: 0;
+static BODY_PARAM_BOUNCE: any;
 
 /**
  * Constant to set/get a body's friction.
  *
 */
-static BODY_PARAM_FRICTION: 1;
+static BODY_PARAM_FRICTION: any;
 
 /**
  * Constant to set/get a body's mass.
  *
 */
-static BODY_PARAM_MASS: 2;
+static BODY_PARAM_MASS: any;
 
 /**
  * Constant to set/get a body's gravity multiplier.
  *
 */
-static BODY_PARAM_GRAVITY_SCALE: 3;
+static BODY_PARAM_GRAVITY_SCALE: any;
 
 /**
  * Constant to set/get a body's linear dampening factor.
  *
 */
-static BODY_PARAM_LINEAR_DAMP: 4;
+static BODY_PARAM_LINEAR_DAMP: any;
 
 /**
  * Constant to set/get a body's angular dampening factor.
  *
 */
-static BODY_PARAM_ANGULAR_DAMP: 5;
+static BODY_PARAM_ANGULAR_DAMP: any;
 
 /**
  * Represents the size of the [enum BodyParameter] enum.
  *
 */
-static BODY_PARAM_MAX: 6;
+static BODY_PARAM_MAX: any;
 
 /**
  * Constant to set/get the current transform matrix of the body.
  *
 */
-static BODY_STATE_TRANSFORM: 0;
+static BODY_STATE_TRANSFORM: any;
 
 /**
  * Constant to set/get the current linear velocity of the body.
  *
 */
-static BODY_STATE_LINEAR_VELOCITY: 1;
+static BODY_STATE_LINEAR_VELOCITY: any;
 
 /**
  * Constant to set/get the current angular velocity of the body.
  *
 */
-static BODY_STATE_ANGULAR_VELOCITY: 2;
+static BODY_STATE_ANGULAR_VELOCITY: any;
 
 /**
  * Constant to sleep/wake up a body, or to get whether it is sleeping.
  *
 */
-static BODY_STATE_SLEEPING: 3;
+static BODY_STATE_SLEEPING: any;
 
 /**
  * Constant to set/get whether the body can sleep.
  *
 */
-static BODY_STATE_CAN_SLEEP: 4;
+static BODY_STATE_CAN_SLEEP: any;
 
 /**
  * The value of the first parameter and area callback function receives, when an object enters one of its shapes.
  *
 */
-static AREA_BODY_ADDED: 0;
+static AREA_BODY_ADDED: any;
 
 /**
  * The value of the first parameter and area callback function receives, when an object exits one of its shapes.
  *
 */
-static AREA_BODY_REMOVED: 1;
+static AREA_BODY_REMOVED: any;
 
 /**
  * Constant to get the number of objects that are not sleeping.
  *
 */
-static INFO_ACTIVE_OBJECTS: 0;
+static INFO_ACTIVE_OBJECTS: any;
 
 /**
  * Constant to get the number of possible collisions.
  *
 */
-static INFO_COLLISION_PAIRS: 1;
+static INFO_COLLISION_PAIRS: any;
 
 /**
  * Constant to get the number of space regions where a collision could occur.
  *
 */
-static INFO_ISLAND_COUNT: 2;
+static INFO_ISLAND_COUNT: any;
 
 /**
  * Constant to set/get the maximum distance a pair of bodies has to move before their collision status has to be recalculated.
  *
 */
-static SPACE_PARAM_CONTACT_RECYCLE_RADIUS: 0;
+static SPACE_PARAM_CONTACT_RECYCLE_RADIUS: any;
 
 /**
  * Constant to set/get the maximum distance a shape can be from another before they are considered separated.
  *
 */
-static SPACE_PARAM_CONTACT_MAX_SEPARATION: 1;
+static SPACE_PARAM_CONTACT_MAX_SEPARATION: any;
 
 /**
  * Constant to set/get the maximum distance a shape can penetrate another shape before it is considered a collision.
  *
 */
-static SPACE_PARAM_BODY_MAX_ALLOWED_PENETRATION: 2;
+static SPACE_PARAM_BODY_MAX_ALLOWED_PENETRATION: any;
 
 /**
  * Constant to set/get the threshold linear velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
  *
 */
-static SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: 3;
+static SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: any;
 
 /**
  * Constant to set/get the threshold angular velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
  *
 */
-static SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: 4;
+static SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: any;
 
 /**
  * Constant to set/get the maximum time of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after this time.
  *
 */
-static SPACE_PARAM_BODY_TIME_TO_SLEEP: 5;
+static SPACE_PARAM_BODY_TIME_TO_SLEEP: any;
 
 /** No documentation provided. */
-static SPACE_PARAM_BODY_ANGULAR_VELOCITY_DAMP_RATIO: 6;
+static SPACE_PARAM_BODY_ANGULAR_VELOCITY_DAMP_RATIO: any;
 
 /**
  * Constant to set/get the default solver bias for all physics constraints. A solver bias is a factor controlling how much two objects "rebound", after violating a constraint, to avoid leaving them in that state because of numerical imprecision.
  *
 */
-static SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: 7;
+static SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: any;
 
 /** No documentation provided. */
-static SPACE_PARAM_TEST_MOTION_MIN_CONTACT_DEPTH: 8;
+static BODY_AXIS_LINEAR_X: any;
 
 /** No documentation provided. */
-static BODY_AXIS_LINEAR_X: 1;
+static BODY_AXIS_LINEAR_Y: any;
 
 /** No documentation provided. */
-static BODY_AXIS_LINEAR_Y: 2;
+static BODY_AXIS_LINEAR_Z: any;
 
 /** No documentation provided. */
-static BODY_AXIS_LINEAR_Z: 4;
+static BODY_AXIS_ANGULAR_X: any;
 
 /** No documentation provided. */
-static BODY_AXIS_ANGULAR_X: 8;
+static BODY_AXIS_ANGULAR_Y: any;
 
 /** No documentation provided. */
-static BODY_AXIS_ANGULAR_Y: 16;
+static BODY_AXIS_ANGULAR_Z: any;
 
-/** No documentation provided. */
-static BODY_AXIS_ANGULAR_Z: 32;
+}
 
-
+declare class PhysicsServerClassSignals extends ObjectSignals {
   
 }

@@ -22,11 +22,14 @@ percent_visible: boolean;
 
 
 
-  connect<T extends SignalsOf<ProgressBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ProgressBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ProgressBarSignals>>(signal: T, method: SignalFunction<ProgressBarSignals[T]>): number;
 
 
 
 
+}
 
+declare class ProgressBarSignals extends RangeSignals {
   
 }

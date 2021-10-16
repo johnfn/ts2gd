@@ -18,11 +18,14 @@ declare class AudioBusLayout extends Resource {
 
 
 
-  connect<T extends SignalsOf<AudioBusLayout>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioBusLayout>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioBusLayoutSignals>>(signal: T, method: SignalFunction<AudioBusLayoutSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioBusLayoutSignals extends ResourceSignals {
   
 }

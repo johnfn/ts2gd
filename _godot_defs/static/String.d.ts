@@ -26,7 +26,7 @@ declare class String {
   constructor(from: Color);
   constructor(from: NodePathType);
   constructor(from: RID);
-  constructor(from: Dictionary);
+  constructor(from: Dictionary<any, any>);
   constructor(from: any[]);
   constructor(from: PoolByteArray);
   constructor(from: PoolIntArray);
@@ -108,7 +108,16 @@ c_unescape(): string;
 /** Changes the case of some letters. Replaces underscores with spaces, adds spaces before in-word uppercase characters, converts all letters to lowercase, then capitalizes the first letter and every letter following a space character. For [code]capitalize camelCase mixed_with_underscores[/code], it will return [code]Capitalize Camel Case Mixed With Underscores[/code]. */
 capitalize(): string;
 
-/** Performs a case-sensitive comparison to another string. Returns [code]-1[/code] if less than, [code]+1[/code] if greater than, or [code]0[/code] if equal. */
+/**
+ * Performs a case-sensitive comparison to another string. Returns `-1` if less than, `1` if greater than, or `0` if equal. "less than" or "greater than" are determined by the [url=https://en.wikipedia.org/wiki/List_of_Unicode_characters]Unicode code points[/url] of each string, which roughly matches the alphabetical order.
+ *
+ * **Behavior with different string lengths:** Returns `1` if the "base" string is longer than the `to` string or `-1` if the "base" string is shorter than the `to` string. Keep in mind this length is determined by the number of Unicode codepoints, **not** the actual visible characters.
+ *
+ * **Behavior with empty strings:** Returns `-1` if the "base" string is empty, `1` if the `to` string is empty or `0` if both strings are empty.
+ *
+ * To get a boolean result from a string comparison, use the `==` operator instead. See also [method nocasecmp_to].
+ *
+*/
 casecmp_to(to: string): int;
 
 /** Returns the number of occurrences of substring [code]what[/code] between [code]from[/code] and [code]to[/code] positions. If [code]from[/code] and [code]to[/code] equals 0 the whole string will be used. If only [code]to[/code] equals 0 the remained substring will be used. */
@@ -160,7 +169,23 @@ get_base_dir(): string;
 /** If the string is a valid file path, returns the full file path without the extension. */
 get_basename(): string;
 
-/** If the string is a valid file path, returns the extension. */
+/**
+ * Returns the extension without the leading period character (`.`) if the string is a valid file name or path. If the string does not contain an extension, returns an empty string instead.
+ *
+ * @example 
+ * 
+ * print("/path/to/file.txt".get_extension())  # "txt"
+ * print("file.txt".get_extension())  # "txt"
+ * print("file.sample.txt".get_extension())  # "txt"
+ * print(".txt".get_extension())  # "txt"
+ * print("file.txt.".get_extension())  # "" (empty string)
+ * print("file.txt..".get_extension())  # "" (empty string)
+ * print("txt".get_extension())  # "" (empty string)
+ * print("".get_extension())  # "" (empty string)
+ * @summary 
+ * 
+ *
+*/
 get_extension(): string;
 
 /** If the string is a valid file path, returns the filename. */
@@ -257,7 +282,7 @@ is_valid_identifier(): boolean;
 /** Returns [code]true[/code] if this string contains a valid integer. */
 is_valid_integer(): boolean;
 
-/** Returns [code]true[/code] if this string contains a valid IP address. */
+/** Returns [code]true[/code] if this string contains only a well-formatted IPv4 or IPv6 address. This method considers [url=https://en.wikipedia.org/wiki/Reserved_IP_addresses]reserved IP addresses[/url] such as [code]0.0.0.0[/code] as valid. */
 is_valid_ip_address(): boolean;
 
 /** Returns a copy of the string with special characters escaped using the JSON standard. */
@@ -269,7 +294,12 @@ left(position: int): string;
 /** Returns the string's amount of characters. */
 length(): int;
 
-/** Returns a copy of the string with characters removed from the left. */
+/**
+ * Returns a copy of the string with characters removed from the left. The `chars` argument is a string specifying the set of characters to be removed.
+ *
+ * **Note:** The `chars` is not a prefix. See [method trim_prefix] method that will remove a single prefix string rather than a set of characters.
+ *
+*/
 lstrip(chars: string): string;
 
 /** Does a simple case-sensitive expression match, where [code]"*"[/code] matches zero or more arbitrary characters and [code]"?"[/code] matches any single character except a period ([code]"."[/code]). */
@@ -284,7 +314,30 @@ md5_buffer(): PoolByteArray;
 /** Returns the MD5 hash of the string as a string. */
 md5_text(): string;
 
-/** Performs a case-insensitive comparison to another string. Returns [code]-1[/code] if less than, [code]+1[/code] if greater than, or [code]0[/code] if equal. */
+/**
+ * Performs a case-insensitive **natural order** comparison to another string. Returns `-1` if less than, `1` if greater than, or `0` if equal. "less than" or "greater than" are determined by the [url=https://en.wikipedia.org/wiki/List_of_Unicode_characters]Unicode code points[/url] of each string, which roughly matches the alphabetical order. Internally, lowercase characters will be converted to uppercase during the comparison.
+ *
+ * When used for sorting, natural order comparison will order suites of numbers as expected by most people. If you sort the numbers from 1 to 10 using natural order, you will get `[1, 2, 3, ...]` instead of `[1, 10, 2, 3, ...]`.
+ *
+ * **Behavior with different string lengths:** Returns `1` if the "base" string is longer than the `to` string or `-1` if the "base" string is shorter than the `to` string. Keep in mind this length is determined by the number of Unicode codepoints, **not** the actual visible characters.
+ *
+ * **Behavior with empty strings:** Returns `-1` if the "base" string is empty, `1` if the `to` string is empty or `0` if both strings are empty.
+ *
+ * To get a boolean result from a string comparison, use the `==` operator instead. See also [method nocasecmp_to] and [method casecmp_to].
+ *
+*/
+naturalnocasecmp_to(to: string): int;
+
+/**
+ * Performs a case-insensitive comparison to another string. Returns `-1` if less than, `1` if greater than, or `0` if equal. "less than" or "greater than" are determined by the [url=https://en.wikipedia.org/wiki/List_of_Unicode_characters]Unicode code points[/url] of each string, which roughly matches the alphabetical order. Internally, lowercase characters will be converted to uppercase during the comparison.
+ *
+ * **Behavior with different string lengths:** Returns `1` if the "base" string is longer than the `to` string or `-1` if the "base" string is shorter than the `to` string. Keep in mind this length is determined by the number of Unicode codepoints, **not** the actual visible characters.
+ *
+ * **Behavior with empty strings:** Returns `-1` if the "base" string is empty, `1` if the `to` string is empty or `0` if both strings are empty.
+ *
+ * To get a boolean result from a string comparison, use the `==` operator instead. See also [method casecmp_to].
+ *
+*/
 nocasecmp_to(to: string): int;
 
 /** Returns the character code at position [code]at[/code]. */
@@ -345,7 +398,12 @@ right(position: int): string;
 */
 rsplit(delimiter: string, allow_empty?: boolean, maxsplit?: int): PoolStringArray;
 
-/** Returns a copy of the string with characters removed from the right. */
+/**
+ * Returns a copy of the string with characters removed from the right. The `chars` argument is a string specifying the set of characters to be removed.
+ *
+ * **Note:** The `chars` is not a suffix. See [method trim_suffix] method that will remove a single suffix string rather than a set of characters.
+ *
+*/
 rstrip(chars: string): string;
 
 /** Returns the SHA-1 hash of the string as an array of bytes. */
@@ -362,6 +420,9 @@ sha256_text(): string;
 
 /** Returns the similarity index of the text compared to this string. 1 means totally similar and 0 means totally dissimilar. */
 similarity(text: string): float;
+
+/** Returns a simplified canonical path. */
+simplify_path(): string;
 
 /**
  * Splits the string by a `delimiter` string and returns an array of the substrings. The `delimiter` can be of any length.
@@ -420,11 +481,17 @@ to_upper(): string;
 /** Converts the String (which is an array of characters) to [PoolByteArray] (which is an array of bytes). The conversion is a bit slower than [method to_ascii], but supports all UTF-8 characters. Therefore, you should prefer this function over [method to_ascii]. */
 to_utf8(): PoolByteArray;
 
+/** Converts the String (which is an array of characters) to [PoolByteArray] (which is an array of bytes). */
+to_wchar(): PoolByteArray;
+
 /** Removes a given string from the start if it starts with it or leaves the string unchanged. */
 trim_prefix(prefix: string): string;
 
 /** Removes a given string from the end if it ends with it or leaves the string unchanged. */
 trim_suffix(suffix: string): string;
+
+/** Removes any characters from the string that are prohibited in [Node] names ([code].[/code] [code]:[/code] [code]@[/code] [code]/[/code] [code]"[/code]). */
+validate_node_name(): string;
 
 /** Returns a copy of the string with special characters escaped using the XML standard. */
 xml_escape(): string;
@@ -432,11 +499,14 @@ xml_escape(): string;
 /** Returns a copy of the string with escaped characters replaced by their meanings according to the XML standard. */
 xml_unescape(): string;
 
-  connect<T extends SignalsOf<String>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<String>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StringSignals>>(signal: T, method: SignalFunction<StringSignals[T]>): number;
 
 
 
 
+}
 
+declare class StringSignals {
   
 }

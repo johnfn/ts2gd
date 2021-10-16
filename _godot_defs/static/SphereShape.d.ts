@@ -20,11 +20,14 @@ radius: float;
 
 
 
-  connect<T extends SignalsOf<SphereShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SphereShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SphereShapeSignals>>(signal: T, method: SignalFunction<SphereShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class SphereShapeSignals extends ShapeSignals {
   
 }

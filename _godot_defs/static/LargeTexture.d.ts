@@ -1,6 +1,6 @@
 
 /**
- * A [Texture] capable of storing many smaller textures with offsets.
+ * **Deprecated (will be removed in Godot 4.0).** A [Texture] capable of storing many smaller textures with offsets.
  *
  * You can dynamically add pieces ([Texture]s) to this [LargeTexture] using different offsets.
  *
@@ -9,7 +9,7 @@ declare class LargeTexture extends Texture {
 
   
 /**
- * A [Texture] capable of storing many smaller textures with offsets.
+ * **Deprecated (will be removed in Godot 4.0).** A [Texture] capable of storing many smaller textures with offsets.
  *
  * You can dynamically add pieces ([Texture]s) to this [LargeTexture] using different offsets.
  *
@@ -44,11 +44,14 @@ set_piece_texture(idx: int, texture: Texture): void;
 /** Sets the size of this [LargeTexture]. */
 set_size(size: Vector2): void;
 
-  connect<T extends SignalsOf<LargeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<LargeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<LargeTextureSignals>>(signal: T, method: SignalFunction<LargeTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class LargeTextureSignals extends TextureSignals {
   
 }

@@ -56,11 +56,14 @@ set(idx: int, string: string): any;
 /** Returns the size of the array. */
 size(): int;
 
-  connect<T extends SignalsOf<PoolStringArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PoolStringArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PoolStringArraySignals>>(signal: T, method: SignalFunction<PoolStringArraySignals[T]>): number;
 
 
 
 
+}
 
+declare class PoolStringArraySignals {
   
 }

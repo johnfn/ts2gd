@@ -2,7 +2,7 @@
 /**
  * Camera node for 2D scenes. It forces the screen (current layer) to scroll following this node. This makes it easier (and faster) to program scrollable scenes than manually changing the position of [CanvasItem]-based nodes.
  *
- * This node is intended to be a simple helper to get things going quickly and it may happen that more functionality is desired to change how the camera works. To make your own custom camera node, inherit from [Node2D] and change the transform of the canvas by setting [member Viewport.canvas_transform] in [Viewport] (you can obtain the current [Viewport] by using [method Node.get_viewport]).
+ * This node is intended to be a simple helper to get things going quickly, but more functionality may be desired to change how the camera works. To make your own custom camera node, inherit it from [Node2D] and change the transform of the canvas by setting [member Viewport.canvas_transform] in [Viewport] (you can obtain the current [Viewport] by using [method Node.get_viewport]).
  *
  * Note that the [Camera2D] node's `position` doesn't represent the actual position of the screen, which may differ due to applied smoothing or limits. You can use [method get_camera_screen_center] to get the real position.
  *
@@ -13,7 +13,7 @@ declare class Camera2D extends Node2D {
 /**
  * Camera node for 2D scenes. It forces the screen (current layer) to scroll following this node. This makes it easier (and faster) to program scrollable scenes than manually changing the position of [CanvasItem]-based nodes.
  *
- * This node is intended to be a simple helper to get things going quickly and it may happen that more functionality is desired to change how the camera works. To make your own custom camera node, inherit from [Node2D] and change the transform of the canvas by setting [member Viewport.canvas_transform] in [Viewport] (you can obtain the current [Viewport] by using [method Node.get_viewport]).
+ * This node is intended to be a simple helper to get things going quickly, but more functionality may be desired to change how the camera works. To make your own custom camera node, inherit it from [Node2D] and change the transform of the canvas by setting [member Viewport.canvas_transform] in [Viewport] (you can obtain the current [Viewport] by using [method Node.get_viewport]).
  *
  * Note that the [Camera2D] node's `position` doesn't represent the actual position of the screen, which may differ due to applied smoothing or limits. You can use [method get_camera_screen_center] to get the real position.
  *
@@ -68,7 +68,14 @@ limit_left: int;
 /** Right scroll limit in pixels. The camera stops moving when reaching this value. */
 limit_right: int;
 
-/** If [code]true[/code], the camera smoothly stops when reaches its limits. */
+/**
+ * If `true`, the camera smoothly stops when reaches its limits.
+ *
+ * This has no effect if smoothing is disabled.
+ *
+ * **Note:** To immediately update the camera's position to be within limits without smoothing, even with this setting enabled, invoke [method reset_smoothing].
+ *
+*/
 limit_smoothed: boolean;
 
 /** Top scroll limit in pixels. The camera stops moving when reaching this value. */
@@ -146,7 +153,8 @@ set_drag_margin(margin: int, drag_margin: float): void;
 /** Sets the specified camera limit. See also [member limit_bottom], [member limit_top], [member limit_left], and [member limit_right]. */
 set_limit(margin: int, limit: int): void;
 
-  connect<T extends SignalsOf<Camera2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Camera2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Camera2DSignals>>(signal: T, method: SignalFunction<Camera2DSignals[T]>): number;
 
 
 
@@ -154,26 +162,28 @@ set_limit(margin: int, limit: int): void;
  * The camera's position is fixed so that the top-left corner is always at the origin.
  *
 */
-static ANCHOR_MODE_FIXED_TOP_LEFT: 0;
+static ANCHOR_MODE_FIXED_TOP_LEFT: any;
 
 /**
  * The camera's position takes into account vertical/horizontal offsets and the screen size.
  *
 */
-static ANCHOR_MODE_DRAG_CENTER: 1;
+static ANCHOR_MODE_DRAG_CENTER: any;
 
 /**
  * The camera updates with the `_physics_process` callback.
  *
 */
-static CAMERA2D_PROCESS_PHYSICS: 0;
+static CAMERA2D_PROCESS_PHYSICS: any;
 
 /**
  * The camera updates with the `_process` callback.
  *
 */
-static CAMERA2D_PROCESS_IDLE: 1;
+static CAMERA2D_PROCESS_IDLE: any;
 
+}
 
+declare class Camera2DSignals extends Node2DSignals {
   
 }

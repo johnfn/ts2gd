@@ -26,7 +26,8 @@ texture_type: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTextureSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTextureSignals[T]>): number;
 
 
 
@@ -34,56 +35,58 @@ texture_type: int;
  * Use the texture given as an argument for this function.
  *
 */
-static SOURCE_TEXTURE: 0;
+static SOURCE_TEXTURE: any;
 
 /**
  * Use the current viewport's texture as the source.
  *
 */
-static SOURCE_SCREEN: 1;
+static SOURCE_SCREEN: any;
 
 /**
  * Use the texture from this shader's texture built-in (e.g. a texture of a [Sprite]).
  *
 */
-static SOURCE_2D_TEXTURE: 2;
+static SOURCE_2D_TEXTURE: any;
 
 /**
  * Use the texture from this shader's normal map built-in.
  *
 */
-static SOURCE_2D_NORMAL: 3;
+static SOURCE_2D_NORMAL: any;
 
 /**
  * Use the depth texture available for this shader.
  *
 */
-static SOURCE_DEPTH: 4;
+static SOURCE_DEPTH: any;
 
 /**
  * Use the texture provided in the input port for this function.
  *
 */
-static SOURCE_PORT: 5;
+static SOURCE_PORT: any;
 
 /**
  * No hints are added to the uniform declaration.
  *
 */
-static TYPE_DATA: 0;
+static TYPE_DATA: any;
 
 /**
  * Adds `hint_albedo` as hint to the uniform declaration for proper sRGB to linear conversion.
  *
 */
-static TYPE_COLOR: 1;
+static TYPE_COLOR: any;
 
 /**
  * Adds `hint_normal` as hint to the uniform declaration, which internally converts the texture for proper usage as normal map.
  *
 */
-static TYPE_NORMALMAP: 2;
+static TYPE_NORMALMAP: any;
 
+}
 
+declare class VisualShaderNodeTextureSignals extends VisualShaderNodeSignals {
   
 }

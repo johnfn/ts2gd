@@ -132,11 +132,14 @@ set_voice_pan(voice_idx: int, pan: float): void;
 /** No documentation provided. */
 set_voice_rate_hz(voice_idx: int, rate_hz: float): void;
 
-  connect<T extends SignalsOf<AudioEffectChorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectChorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectChorusSignals>>(signal: T, method: SignalFunction<AudioEffectChorusSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectChorusSignals extends AudioEffectSignals {
   
 }

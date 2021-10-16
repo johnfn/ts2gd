@@ -20,11 +20,14 @@ animation: string;
 
 
 
-  connect<T extends SignalsOf<AnimationNodeAnimation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeAnimation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeAnimationSignals>>(signal: T, method: SignalFunction<AnimationNodeAnimationSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeAnimationSignals extends AnimationRootNodeSignals {
   
 }

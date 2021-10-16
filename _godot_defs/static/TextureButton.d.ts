@@ -4,6 +4,8 @@
  *
  * The "normal" state must contain a texture ([member texture_normal]); other textures are optional.
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
 */
 declare class TextureButton extends BaseButton {
 
@@ -13,6 +15,8 @@ declare class TextureButton extends BaseButton {
  *
  * The "normal" state must contain a texture ([member texture_normal]); other textures are optional.
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
 */
   "new"(): TextureButton;
   static "new"(): TextureButton;
@@ -21,6 +25,12 @@ declare class TextureButton extends BaseButton {
 
 /** If [code]true[/code], the texture stretches to the edges of the node's bounding rectangle using the [member stretch_mode]. If [code]false[/code], the texture will not scale with the node. */
 expand: boolean;
+
+/** If [code]true[/code], texture is flipped horizontally. */
+flip_h: boolean;
+
+/** If [code]true[/code], texture is flipped vertically. */
+flip_v: boolean;
 
 /** Controls the texture's behavior when you resize the node's bounding rectangle, [b]only if[/b] [member expand] is [code]true[/code]. Set it to one of the [enum StretchMode] constants. See the constants to learn more. */
 stretch_mode: int;
@@ -45,7 +55,8 @@ texture_pressed: Texture;
 
 
 
-  connect<T extends SignalsOf<TextureButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TextureButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TextureButtonSignals>>(signal: T, method: SignalFunction<TextureButtonSignals[T]>): number;
 
 
 
@@ -53,44 +64,46 @@ texture_pressed: Texture;
  * Scale to fit the node's bounding rectangle.
  *
 */
-static STRETCH_SCALE: 0;
+static STRETCH_SCALE: any;
 
 /**
  * Tile inside the node's bounding rectangle.
  *
 */
-static STRETCH_TILE: 1;
+static STRETCH_TILE: any;
 
 /**
  * The texture keeps its original size and stays in the bounding rectangle's top-left corner.
  *
 */
-static STRETCH_KEEP: 2;
+static STRETCH_KEEP: any;
 
 /**
  * The texture keeps its original size and stays centered in the node's bounding rectangle.
  *
 */
-static STRETCH_KEEP_CENTERED: 3;
+static STRETCH_KEEP_CENTERED: any;
 
 /**
  * Scale the texture to fit the node's bounding rectangle, but maintain the texture's aspect ratio.
  *
 */
-static STRETCH_KEEP_ASPECT: 4;
+static STRETCH_KEEP_ASPECT: any;
 
 /**
  * Scale the texture to fit the node's bounding rectangle, center it, and maintain its aspect ratio.
  *
 */
-static STRETCH_KEEP_ASPECT_CENTERED: 5;
+static STRETCH_KEEP_ASPECT_CENTERED: any;
 
 /**
  * Scale the texture so that the shorter side fits the bounding rectangle. The other side clips to the node's limits.
  *
 */
-static STRETCH_KEEP_ASPECT_COVERED: 6;
+static STRETCH_KEEP_ASPECT_COVERED: any;
 
+}
 
+declare class TextureButtonSignals extends BaseButtonSignals {
   
 }

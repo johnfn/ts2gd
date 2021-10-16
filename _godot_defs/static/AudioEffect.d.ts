@@ -18,11 +18,14 @@ declare class AudioEffect extends Resource {
 
 
 
-  connect<T extends SignalsOf<AudioEffect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffect>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectSignals>>(signal: T, method: SignalFunction<AudioEffectSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectSignals extends ResourceSignals {
   
 }

@@ -26,6 +26,8 @@
  *
  * **Note:** Unlike references to a [Reference], references to an Object stored in a variable can become invalid without warning. Therefore, it's recommended to use [Reference] for data classes instead of [Object].
  *
+ * **Note:** Due to a bug, you can't create a "plain" Object using `Object.new()`. Instead, use `ClassDB.instance("Object")`. This bug only applies to Object itself, not any of its descendents like [Reference].
+ *
 */
 declare class Object {
 
@@ -56,6 +58,8 @@ declare class Object {
  * Objects also receive notifications. Notifications are a simple way to notify the object about different events, so they can all be handled together. See [method _notification].
  *
  * **Note:** Unlike references to a [Reference], references to an Object stored in a variable can become invalid without warning. Therefore, it's recommended to use [Reference] for data classes instead of [Object].
+ *
+ * **Note:** Due to a bug, you can't create a "plain" Object using `Object.new()`. Instead, use `ClassDB.instance("Object")`. This bug only applies to Object itself, not any of its descendents like [Reference].
  *
 */
   "new"(): Object;
@@ -160,9 +164,14 @@ can_translate_messages(): boolean;
 */
 disconnect(signal: string, target: Object, method: string): void;
 
-emit_signal<U extends any[], T extends Signal<U>>(signal: T, ...args: U): void;
+emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;
 
-/** Deletes the object from memory. Any pre-existing reference to the freed object will become invalid, e.g. [code]is_instance_valid(object)[/code] will return [code]false[/code]. */
+/**
+ * Deletes the object from memory immediately. For [Node]s, you may want to use [method Node.queue_free] to queue the node for safe deletion at the end of the current frame.
+ *
+ * **Important:** If you have a variable pointing to an object, it will **not** be assigned to `null` once the object is freed. Instead, it will point to a **previously freed instance** and you should validate it with [method @GDScript.is_instance_valid] before attempting to call its methods or access its properties.
+ *
+*/
 free(): void;
 
 /**
@@ -173,7 +182,12 @@ free(): void;
 */
 get(property: string): any;
 
-/** Returns the object's class as a [String]. */
+/**
+ * Returns the object's class as a [String]. See also [method is_class].
+ *
+ * **Note:** [method get_class] does not take `class_name` declarations into account. If the object has a `class_name` defined, the base class name will be returned instead.
+ *
+*/
 get_class(): string;
 
 /**
@@ -242,7 +256,12 @@ has_user_signal(signal: string): boolean;
 /** Returns [code]true[/code] if signal emission blocking is enabled. */
 is_blocking_signals(): boolean;
 
-/** Returns [code]true[/code] if the object inherits from the given [code]class[/code]. */
+/**
+ * Returns `true` if the object inherits from the given `class`. See also [method get_class].
+ *
+ * **Note:** [method is_class] does not take `class_name` declarations into account. If the object has a `class_name` defined, [method is_class] will return `false` for that name.
+ *
+*/
 is_class(_class: string): boolean;
 
 /** Returns [code]true[/code] if a connection exists for a given [code]signal[/code], [code]target[/code], and [code]method[/code]. */
@@ -333,7 +352,8 @@ to_string(): string;
 */
 tr(message: string): string;
 
-  connect<T extends SignalsOf<Object>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Object>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ObjectSignals>>(signal: T, method: SignalFunction<ObjectSignals[T]>): number;
 
 
 
@@ -341,39 +361,41 @@ tr(message: string): string;
  * Called right when the object is initialized. Not available in script.
  *
 */
-static NOTIFICATION_POSTINITIALIZE: 0;
+static NOTIFICATION_POSTINITIALIZE: any;
 
 /**
  * Called before the object is about to be deleted.
  *
 */
-static NOTIFICATION_PREDELETE: 1;
+static NOTIFICATION_PREDELETE: any;
 
 /**
  * Connects a signal in deferred mode. This way, signal emissions are stored in a queue, then set on idle time.
  *
 */
-static CONNECT_DEFERRED: 1;
+static CONNECT_DEFERRED: any;
 
 /**
  * Persisting connections are saved when the object is serialized to file.
  *
 */
-static CONNECT_PERSIST: 2;
+static CONNECT_PERSIST: any;
 
 /**
  * One-shot connections disconnect themselves after emission.
  *
 */
-static CONNECT_ONESHOT: 4;
+static CONNECT_ONESHOT: any;
 
 /**
  * Connect a signal as reference-counted. This means that a given signal can be connected several times to the same target, and will only be fully disconnected once no references are left.
  *
 */
-static CONNECT_REFERENCE_COUNTED: 8;
+static CONNECT_REFERENCE_COUNTED: any;
 
+}
 
+declare class ObjectSignals {
   /**
  * Emitted whenever the object's script is changed.
  *

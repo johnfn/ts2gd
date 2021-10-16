@@ -1,13 +1,13 @@
 
 /**
- * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP or UNIX sockets). It provides an API for sending and receiving data through streams as raw data or strings.
+ * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP). It provides an API for sending and receiving data through streams as raw data or strings.
  *
 */
 declare class StreamPeer extends Reference {
 
   
 /**
- * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP or UNIX sockets). It provides an API for sending and receiving data through streams as raw data or strings.
+ * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP). It provides an API for sending and receiving data through streams as raw data or strings.
  *
 */
   "new"(): StreamPeer;
@@ -98,7 +98,7 @@ put_partial_data(data: PoolByteArray): any[];
 /**
  * Puts a zero-terminated ASCII string into the stream prepended by a 32-bit unsigned integer representing its size.
  *
- * Note: To put an ASCII string without prepending its size, you can use [method put_data]:
+ * **Note:** To put an ASCII string without prepending its size, you can use [method put_data]:
  *
  * @example 
  * 
@@ -124,7 +124,7 @@ put_u8(value: int): void;
 /**
  * Puts a zero-terminated UTF-8 string into the stream prepended by a 32 bits unsigned integer representing its size.
  *
- * Note: To put an UTF-8 string without prepending its size, you can use [method put_data]:
+ * **Note:** To put an UTF-8 string without prepending its size, you can use [method put_data]:
  *
  * @example 
  * 
@@ -138,11 +138,14 @@ put_utf8_string(value: string): void;
 /** Puts a Variant into the stream. If [code]full_objects[/code] is [code]true[/code] encoding objects is allowed (and can potentially include code). */
 put_var(value: any, full_objects?: boolean): void;
 
-  connect<T extends SignalsOf<StreamPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StreamPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StreamPeerSignals>>(signal: T, method: SignalFunction<StreamPeerSignals[T]>): number;
 
 
 
 
+}
 
+declare class StreamPeerSignals extends ReferenceSignals {
   
 }

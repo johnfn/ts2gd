@@ -2,12 +2,16 @@
 /**
  * Plays an audio stream non-positionally.
  *
+ * To play audio positionally, use [AudioStreamPlayer2D] or [AudioStreamPlayer3D] instead of [AudioStreamPlayer].
+ *
 */
 declare class AudioStreamPlayer extends Node {
 
   
 /**
  * Plays an audio stream non-positionally.
+ *
+ * To play audio positionally, use [AudioStreamPlayer2D] or [AudioStreamPlayer3D] instead of [AudioStreamPlayer].
  *
 */
   "new"(): AudioStreamPlayer;
@@ -54,7 +58,8 @@ seek(to_position: float): void;
 /** Stops the audio. */
 stop(): void;
 
-  connect<T extends SignalsOf<AudioStreamPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioStreamPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioStreamPlayerSignals>>(signal: T, method: SignalFunction<AudioStreamPlayerSignals[T]>): number;
 
 
 
@@ -62,21 +67,23 @@ stop(): void;
  * The audio will be played only on the first channel.
  *
 */
-static MIX_TARGET_STEREO: 0;
+static MIX_TARGET_STEREO: any;
 
 /**
  * The audio will be played on all surround channels.
  *
 */
-static MIX_TARGET_SURROUND: 1;
+static MIX_TARGET_SURROUND: any;
 
 /**
  * The audio will be played on the second channel, which is usually the center.
  *
 */
-static MIX_TARGET_CENTER: 2;
+static MIX_TARGET_CENTER: any;
 
+}
 
+declare class AudioStreamPlayerSignals extends NodeSignals {
   /**
  * Emitted when the audio stops playing.
  *

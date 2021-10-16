@@ -1,6 +1,6 @@
 
 /**
- * This [StyleBox] can be used to achieve all kinds of looks without the need of a texture. Those properties are customizable:
+ * This [StyleBox] can be used to achieve all kinds of looks without the need of a texture. The following properties are customizable:
  *
  * - Color
  *
@@ -10,7 +10,7 @@
  *
  * - Shadow (with blur and offset)
  *
- * Setting corner radius to high values is allowed. As soon as corners would overlap, the stylebox will switch to a relative system. Example:
+ * Setting corner radius to high values is allowed. As soon as corners overlap, the stylebox will switch to a relative system. Example:
  *
  * @example 
  * 
@@ -34,7 +34,7 @@ declare class StyleBoxFlat extends StyleBox {
 
   
 /**
- * This [StyleBox] can be used to achieve all kinds of looks without the need of a texture. Those properties are customizable:
+ * This [StyleBox] can be used to achieve all kinds of looks without the need of a texture. The following properties are customizable:
  *
  * - Color
  *
@@ -44,7 +44,7 @@ declare class StyleBoxFlat extends StyleBox {
  *
  * - Shadow (with blur and offset)
  *
- * Setting corner radius to high values is allowed. As soon as corners would overlap, the stylebox will switch to a relative system. Example:
+ * Setting corner radius to high values is allowed. As soon as corners overlap, the stylebox will switch to a relative system. Example:
  *
  * @example 
  * 
@@ -69,11 +69,16 @@ declare class StyleBoxFlat extends StyleBox {
 
 
 
-/** Antialiasing draws a small ring around the edges, which fades to transparency. As a result, edges look much smoother. This is only noticeable when using rounded corners. */
+/**
+ * Antialiasing draws a small ring around the edges, which fades to transparency. As a result, edges look much smoother. This is only noticeable when using rounded corners.
+ *
+ * **Note:** When using beveled corners with 45-degree angles ([member corner_detail] = 1), it is recommended to set [member anti_aliasing] to `false` to ensure crisp visuals and avoid possible visual glitches.
+ *
+*/
 anti_aliasing: boolean;
 
 /** This changes the size of the faded ring. Higher values can be used to achieve a "blurry" effect. */
-anti_aliasing_size: int;
+anti_aliasing_size: float;
 
 /** The background color of the stylebox. */
 bg_color: Color;
@@ -97,9 +102,9 @@ border_width_right: int;
 border_width_top: int;
 
 /**
- * This sets the amount of vertices used for each corner. Higher values result in rounder corners but take more processing power to compute. When choosing a value, you should take the corner radius ([method set_corner_radius_all]) into account.
+ * This sets the number of vertices used for each corner. Higher values result in rounder corners but take more processing power to compute. When choosing a value, you should take the corner radius ([method set_corner_radius_all]) into account.
  *
- * For corner radii smaller than 10, `4` or `5` should be enough. For corner radii smaller than 30, values between `8` and `12` should be enough.
+ * For corner radii less than 10, `4` or `5` should be enough. For corner radii less than 30, values between `8` and `12` should be enough.
  *
  * A corner detail of `1` will result in chamfered corners instead of rounded corners, which is useful for some artistic effects.
  *
@@ -178,11 +183,14 @@ set_expand_margin_all(size: float): void;
 /** Sets the expand margin for each margin to [code]size_left[/code], [code]size_top[/code], [code]size_right[/code], and [code]size_bottom[/code] pixels. */
 set_expand_margin_individual(size_left: float, size_top: float, size_right: float, size_bottom: float): void;
 
-  connect<T extends SignalsOf<StyleBoxFlat>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StyleBoxFlat>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StyleBoxFlatSignals>>(signal: T, method: SignalFunction<StyleBoxFlatSignals[T]>): number;
 
 
 
 
+}
 
+declare class StyleBoxFlatSignals extends StyleBoxSignals {
   
 }

@@ -31,7 +31,7 @@ clip_polygon(points: PoolVector3Array, plane: Plane): PoolVector3Array;
 /**
  * Clips `polygon_a` against `polygon_b` and returns an array of clipped polygons. This performs [constant OPERATION_DIFFERENCE] between polygons. Returns an empty array if `polygon_b` completely overlaps `polygon_a`.
  *
- * If `polygon_b` is enclosed by `polygon_a`, returns an outer polygon (boundary) and inner polygon (hole) which could be distiguished by calling [method is_polygon_clockwise].
+ * If `polygon_b` is enclosed by `polygon_a`, returns an outer polygon (boundary) and inner polygon (hole) which could be distinguished by calling [method is_polygon_clockwise].
  *
 */
 clip_polygons_2d(polygon_a: PoolVector2Array, polygon_b: PoolVector2Array): any[];
@@ -45,7 +45,7 @@ convex_hull_2d(points: PoolVector2Array): PoolVector2Array;
 /**
  * Mutually excludes common area defined by intersection of `polygon_a` and `polygon_b` (see [method intersect_polygons_2d]) and returns an array of excluded polygons. This performs [constant OPERATION_XOR] between polygons. In other words, returns all but common area between polygons.
  *
- * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distiguished by calling [method is_polygon_clockwise].
+ * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling [method is_polygon_clockwise].
  *
 */
 exclude_polygons_2d(polygon_a: PoolVector2Array, polygon_b: PoolVector2Array): any[];
@@ -65,7 +65,7 @@ get_closest_point_to_segment_uncapped_2d(point: Vector2, s1: Vector2, s2: Vector
 /** Given the two 3D segments ([code]p1[/code], [code]p2[/code]) and ([code]q1[/code], [code]q2[/code]), finds those two points on the two segments that are closest to each other. Returns a [PoolVector3Array] that contains this point on ([code]p1[/code], [code]p2[/code]) as well the accompanying point on ([code]q1[/code], [code]q2[/code]). */
 get_closest_points_between_segments(p1: Vector3, p2: Vector3, q1: Vector3, q2: Vector3): PoolVector3Array;
 
-/** Given the two 2D segments ([code]p1[/code], [code]p2[/code]) and ([code]q1[/code], [code]q2[/code]), finds those two points on the two segments that are closest to each other. Returns a [PoolVector2Array] that contains this point on ([code]p1[/code], [code]p2[/code]) as well the accompanying point on ([code]q1[/code], [code]q2[/code]). */
+/** Given the two 2D segments ([code]p1[/code], [code]q1[/code]) and ([code]p2[/code], [code]q2[/code]), finds those two points on the two segments that are closest to each other. Returns a [PoolVector2Array] that contains this point on ([code]p1[/code], [code]q1[/code]) as well the accompanying point on ([code]p2[/code], [code]q2[/code]). */
 get_closest_points_between_segments_2d(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2): PoolVector2Array;
 
 /** Used internally by the engine. */
@@ -100,12 +100,12 @@ is_polygon_clockwise(polygon: PoolVector2Array): boolean;
 line_intersects_line_2d(from_a: Vector2, dir_a: Vector2, from_b: Vector2, dir_b: Vector2): any;
 
 /** Given an array of [Vector2]s representing tiles, builds an atlas. The returned dictionary has two keys: [code]points[/code] is a vector of [Vector2] that specifies the positions of each tile, [code]size[/code] contains the overall size of the whole atlas as [Vector2]. */
-make_atlas(sizes: PoolVector2Array): Dictionary;
+make_atlas(sizes: PoolVector2Array): Dictionary<any, any>;
 
 /**
  * Merges (combines) `polygon_a` and `polygon_b` and returns an array of merged polygons. This performs [constant OPERATION_UNION] between polygons.
  *
- * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling [method is_polygon_clockwise].
+ * The operation may result in an outer polygon (boundary) and multiple inner polygons (holes) produced which could be distinguished by calling [method is_polygon_clockwise].
  *
 */
 merge_polygons_2d(polygon_a: PoolVector2Array, polygon_b: PoolVector2Array): any[];
@@ -173,7 +173,8 @@ triangulate_delaunay_2d(points: PoolVector2Array): PoolIntArray;
 /** Triangulates the polygon specified by the points in [code]polygon[/code]. Returns a [PoolIntArray] where each triangle consists of three consecutive point indices into [code]polygon[/code] (i.e. the returned array will have [code]n * 3[/code] elements, with [code]n[/code] being the number of found triangles). If the triangulation did not succeed, an empty [PoolIntArray] is returned. */
 triangulate_polygon(polygon: PoolVector2Array): PoolIntArray;
 
-  connect<T extends SignalsOf<GeometryClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<GeometryClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GeometryClassSignals>>(signal: T, method: SignalFunction<GeometryClassSignals[T]>): number;
 
 
 
@@ -181,74 +182,76 @@ triangulate_polygon(polygon: PoolVector2Array): PoolIntArray;
  * Create regions where either subject or clip polygons (or both) are filled.
  *
 */
-static OPERATION_UNION: 0;
+static OPERATION_UNION: any;
 
 /**
  * Create regions where subject polygons are filled except where clip polygons are filled.
  *
 */
-static OPERATION_DIFFERENCE: 1;
+static OPERATION_DIFFERENCE: any;
 
 /**
  * Create regions where both subject and clip polygons are filled.
  *
 */
-static OPERATION_INTERSECTION: 2;
+static OPERATION_INTERSECTION: any;
 
 /**
  * Create regions where either subject or clip polygons are filled but not where both are filled.
  *
 */
-static OPERATION_XOR: 3;
+static OPERATION_XOR: any;
 
 /**
  * Squaring is applied uniformally at all convex edge joins at `1 * delta`.
  *
 */
-static JOIN_SQUARE: 0;
+static JOIN_SQUARE: any;
 
 /**
  * While flattened paths can never perfectly trace an arc, they are approximated by a series of arc chords.
  *
 */
-static JOIN_ROUND: 1;
+static JOIN_ROUND: any;
 
 /**
  * There's a necessary limit to mitered joins since offsetting edges that join at very acute angles will produce excessively long and narrow "spikes". For any given edge join, when miter offsetting would exceed that maximum distance, "square" joining is applied.
  *
 */
-static JOIN_MITER: 2;
+static JOIN_MITER: any;
 
 /**
  * Endpoints are joined using the [enum PolyJoinType] value and the path filled as a polygon.
  *
 */
-static END_POLYGON: 0;
+static END_POLYGON: any;
 
 /**
  * Endpoints are joined using the [enum PolyJoinType] value and the path filled as a polyline.
  *
 */
-static END_JOINED: 1;
+static END_JOINED: any;
 
 /**
  * Endpoints are squared off with no extension.
  *
 */
-static END_BUTT: 2;
+static END_BUTT: any;
 
 /**
  * Endpoints are squared off and extended by `delta` units.
  *
 */
-static END_SQUARE: 3;
+static END_SQUARE: any;
 
 /**
  * Endpoints are rounded off and extended by `delta` units.
  *
 */
-static END_ROUND: 4;
+static END_ROUND: any;
 
+}
 
+declare class GeometryClassSignals extends ObjectSignals {
   
 }

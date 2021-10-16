@@ -37,11 +37,14 @@ rings: int;
 
 
 
-  connect<T extends SignalsOf<SphereMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SphereMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SphereMeshSignals>>(signal: T, method: SignalFunction<SphereMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class SphereMeshSignals extends PrimitiveMeshSignals {
   
 }

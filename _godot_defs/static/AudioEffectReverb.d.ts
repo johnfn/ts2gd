@@ -41,11 +41,14 @@ wet: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectReverb>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectReverb>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectReverbSignals>>(signal: T, method: SignalFunction<AudioEffectReverbSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectReverbSignals extends AudioEffectSignals {
   
 }

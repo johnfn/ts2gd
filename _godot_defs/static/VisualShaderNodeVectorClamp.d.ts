@@ -18,11 +18,14 @@ declare class VisualShaderNodeVectorClamp extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorClamp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorClamp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorClampSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorClampSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorClampSignals extends VisualShaderNodeSignals {
   
 }

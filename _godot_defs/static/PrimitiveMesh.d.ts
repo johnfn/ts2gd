@@ -15,7 +15,7 @@ declare class PrimitiveMesh extends Mesh {
 
 
 
-/** Overrides the [AABB] with one defined by user for use with frustum culling. Especially useful to avoid unnexpected culling when  using a shader to offset vertices. */
+/** Overrides the [AABB] with one defined by user for use with frustum culling. Especially useful to avoid unexpected culling when using a shader to offset vertices. */
 custom_aabb: AABB;
 
 /**
@@ -43,11 +43,14 @@ material: Material;
 */
 get_mesh_arrays(): any[];
 
-  connect<T extends SignalsOf<PrimitiveMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PrimitiveMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PrimitiveMeshSignals>>(signal: T, method: SignalFunction<PrimitiveMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class PrimitiveMeshSignals extends MeshSignals {
   
 }

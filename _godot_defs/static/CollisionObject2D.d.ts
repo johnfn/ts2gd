@@ -15,6 +15,22 @@ declare class CollisionObject2D extends Node2D {
 
 
 
+/**
+ * The physics layers this CollisionObject2D is in. Collision objects can exist in one or more of 32 different layers. See also [member collision_mask].
+ *
+ * **Note:** A contact is detected if object A is in any of the layers that object B scans, or object B is in any layers that object A scans. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information.
+ *
+*/
+collision_layer: int;
+
+/**
+ * The physics layers this CollisionObject2D scans. Collision objects can scan one or more of 32 different layers. See also [member collision_layer].
+ *
+ * **Note:** A contact is detected if object A is in any of the layers that object B scans, or object B is in any layers that object A scans. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information.
+ *
+*/
+collision_mask: int;
+
 /** If [code]true[/code], this object is pickable. A pickable object can detect the mouse pointer entering/leaving, and if the mouse is inside it, report input events. Requires at least one [code]collision_layer[/code] bit to be set. */
 input_pickable: boolean;
 
@@ -23,6 +39,12 @@ protected _input_event(viewport: Object, event: InputEvent, shape_idx: int): voi
 
 /** Creates a new shape owner for the given object. Returns [code]owner_id[/code] of the new owner for future reference. */
 create_shape_owner(owner: Object): int;
+
+/** Returns whether or not the specified [code]bit[/code] of the [member collision_layer] is set. */
+get_collision_layer_bit(bit: int): boolean;
+
+/** Returns whether or not the specified [code]bit[/code] of the [member collision_mask] is set. */
+get_collision_mask_bit(bit: int): boolean;
 
 /** Returns the object's [RID]. */
 get_rid(): RID;
@@ -41,6 +63,22 @@ is_shape_owner_one_way_collision_enabled(owner_id: int): boolean;
 
 /** Removes the given shape owner. */
 remove_shape_owner(owner_id: int): void;
+
+/**
+ * If `value` is `true`, sets the specified `bit` in the the [member collision_layer].
+ *
+ * If `value` is `false`, clears the specified `bit` in the the [member collision_layer].
+ *
+*/
+set_collision_layer_bit(bit: int, value: boolean): void;
+
+/**
+ * If `value` is `true`, sets the specified `bit` in the the [member collision_mask].
+ *
+ * If `value` is `false`, clears the specified `bit` in the the [member collision_mask].
+ *
+*/
+set_collision_mask_bit(bit: int, value: boolean): void;
 
 /** Returns the [code]owner_id[/code] of the given shape. */
 shape_find_owner(shape_index: int): int;
@@ -81,12 +119,15 @@ shape_owner_set_one_way_collision_margin(owner_id: int, margin: float): void;
 /** Sets the [Transform2D] of the given shape owner. */
 shape_owner_set_transform(owner_id: int, transform: Transform2D): void;
 
-  connect<T extends SignalsOf<CollisionObject2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CollisionObject2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CollisionObject2DSignals>>(signal: T, method: SignalFunction<CollisionObject2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class CollisionObject2DSignals extends Node2DSignals {
   /**
  * Emitted when an input event occurs. Requires [member input_pickable] to be `true` and at least one `collision_layer` bit to be set. See [method _input_event] for details.
  *

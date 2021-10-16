@@ -53,11 +53,14 @@ set(idx: int, color: Color): any;
 /** Returns the size of the array. */
 size(): int;
 
-  connect<T extends SignalsOf<PoolColorArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PoolColorArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PoolColorArraySignals>>(signal: T, method: SignalFunction<PoolColorArraySignals[T]>): number;
 
 
 
 
+}
 
+declare class PoolColorArraySignals {
   
 }

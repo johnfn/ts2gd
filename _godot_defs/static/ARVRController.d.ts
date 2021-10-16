@@ -64,12 +64,15 @@ get_mesh(): Mesh;
 /** Returns [code]true[/code] if the button at index [code]button[/code] is pressed. See [enum JoystickList], in particular the [code]JOY_VR_*[/code] constants. */
 is_button_pressed(button: int): int;
 
-  connect<T extends SignalsOf<ARVRController>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVRController>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRControllerSignals>>(signal: T, method: SignalFunction<ARVRControllerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ARVRControllerSignals extends SpatialSignals {
   /**
  * Emitted when a button on this controller is pressed.
  *

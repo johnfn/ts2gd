@@ -35,7 +35,7 @@ get_instance_base_type(): string;
 get_property_default_value(property: string): any;
 
 /** Returns a dictionary containing constant names and their values. */
-get_script_constant_map(): Dictionary;
+get_script_constant_map(): Dictionary<any, any>;
 
 /** Returns the list of methods in this [Script]. */
 get_script_method_list(): any[];
@@ -61,11 +61,14 @@ is_tool(): boolean;
 /** Reloads the script's class implementation. Returns an error code. */
 reload(keep_state?: boolean): int;
 
-  connect<T extends SignalsOf<Script>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Script>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ScriptSignals>>(signal: T, method: SignalFunction<ScriptSignals[T]>): number;
 
 
 
 
+}
 
+declare class ScriptSignals extends ResourceSignals {
   
 }

@@ -12,7 +12,7 @@
  *
  * In 3D, all visual objects must be associated with a scenario. The scenario is a visual representation of the world. If accessing the visual server from a running game, the scenario can be accessed from the scene tree from any [Spatial] node with [method Spatial.get_world]. Otherwise, a scenario can be created with [method scenario_create].
  *
- * Similarly in 2D, a canvas is needed to draw all canvas items.
+ * Similarly, in 2D, a canvas is needed to draw all canvas items.
  *
  * In 3D, all visible objects are comprised of a resource and an instance. A resource can be a mesh, a particle system, a light, or any other 3D object. In order to be visible resources must be attached to an instance using [method instance_set_base]. The instance must also be attached to the scenario using [method instance_set_scenario] in order to be visible.
  *
@@ -35,7 +35,7 @@ declare class VisualServerClass extends Object {
  *
  * In 3D, all visual objects must be associated with a scenario. The scenario is a visual representation of the world. If accessing the visual server from a running game, the scenario can be accessed from the scene tree from any [Spatial] node with [method Spatial.get_world]. Otherwise, a scenario can be created with [method scenario_create].
  *
- * Similarly in 2D, a canvas is needed to draw all canvas items.
+ * Similarly, in 2D, a canvas is needed to draw all canvas items.
  *
  * In 3D, all visible objects are comprised of a resource and an instance. A resource can be a mesh, a particle system, a light, or any other 3D object. In order to be visible resources must be attached to an instance using [method instance_set_base]. The instance must also be attached to the scenario using [method instance_set_scenario] in order to be visible.
  *
@@ -103,7 +103,7 @@ canvas_item_add_clip_ignore(item: RID, ignore: boolean): void;
 canvas_item_add_line(item: RID, from: Vector2, to: Vector2, color: Color, width?: float, antialiased?: boolean): void;
 
 /** Adds a mesh command to the [CanvasItem]'s draw commands. */
-canvas_item_add_mesh(item: RID, mesh: RID, transform?: Transform2D, modulate?: Color, texture: RID, normal_map: RID): void;
+canvas_item_add_mesh(item: RID, mesh: RID, transform: Transform2D, modulate: Color, texture: RID, normal_map: RID): void;
 
 /** Adds a [MultiMesh] to the [CanvasItem]'s draw commands. Only affects its aabb at the moment. */
 canvas_item_add_multimesh(item: RID, mesh: RID, texture: RID, normal_map: RID): void;
@@ -114,19 +114,19 @@ canvas_item_add_multimesh(item: RID, mesh: RID, texture: RID, normal_map: RID): 
  * See [NinePatchRect] for more explanation.
  *
 */
-canvas_item_add_nine_patch(item: RID, rect: Rect2, source: Rect2, texture: RID, topleft: Vector2, bottomright: Vector2, x_axis_mode?: int, y_axis_mode?: int, draw_center?: boolean, modulate?: Color, normal_map: RID): void;
+canvas_item_add_nine_patch(item: RID, rect: Rect2, source: Rect2, texture: RID, topleft: Vector2, bottomright: Vector2, x_axis_mode: int, y_axis_mode: int, draw_center: boolean, modulate: Color, normal_map: RID): void;
 
 /** Adds a particle system to the [CanvasItem]'s draw commands. */
 canvas_item_add_particles(item: RID, particles: RID, texture: RID, normal_map: RID): void;
 
 /** Adds a polygon to the [CanvasItem]'s draw commands. */
-canvas_item_add_polygon(item: RID, points: PoolVector2Array, colors: PoolColorArray, uvs?: PoolVector2Array, texture: RID, normal_map: RID, antialiased?: boolean): void;
+canvas_item_add_polygon(item: RID, points: PoolVector2Array, colors: PoolColorArray, uvs: PoolVector2Array, texture: RID, normal_map: RID, antialiased?: boolean): void;
 
 /** Adds a polyline, which is a line from multiple points with a width, to the [CanvasItem]'s draw commands. */
 canvas_item_add_polyline(item: RID, points: PoolVector2Array, colors: PoolColorArray, width?: float, antialiased?: boolean): void;
 
 /** Adds a primitive to the [CanvasItem]'s draw commands. */
-canvas_item_add_primitive(item: RID, points: PoolVector2Array, colors: PoolColorArray, uvs: PoolVector2Array, texture: RID, width?: float, normal_map: RID): void;
+canvas_item_add_primitive(item: RID, points: PoolVector2Array, colors: PoolColorArray, uvs: PoolVector2Array, texture: RID, width: float, normal_map: RID): void;
 
 /** Adds a rectangle to the [CanvasItem]'s draw commands. */
 canvas_item_add_rect(item: RID, rect: Rect2, color: Color): void;
@@ -140,13 +140,13 @@ canvas_item_add_rect(item: RID, rect: Rect2, color: Color): void;
 canvas_item_add_set_transform(item: RID, transform: Transform2D): void;
 
 /** Adds a textured rect to the [CanvasItem]'s draw commands. */
-canvas_item_add_texture_rect(item: RID, rect: Rect2, texture: RID, tile?: boolean, modulate?: Color, transpose?: boolean, normal_map: RID): void;
+canvas_item_add_texture_rect(item: RID, rect: Rect2, texture: RID, tile: boolean, modulate: Color, transpose: boolean, normal_map: RID): void;
 
 /** Adds a texture rect with region setting to the [CanvasItem]'s draw commands. */
-canvas_item_add_texture_rect_region(item: RID, rect: Rect2, texture: RID, src_rect: Rect2, modulate?: Color, transpose?: boolean, normal_map: RID, clip_uv?: boolean): void;
+canvas_item_add_texture_rect_region(item: RID, rect: Rect2, texture: RID, src_rect: Rect2, modulate: Color, transpose: boolean, normal_map: RID, clip_uv?: boolean): void;
 
 /** Adds a triangle array to the [CanvasItem]'s draw commands. */
-canvas_item_add_triangle_array(item: RID, indices: PoolIntArray, points: PoolVector2Array, colors: PoolColorArray, uvs?: PoolVector2Array, bones?: PoolIntArray, weights?: PoolRealArray, texture: RID, count?: int, normal_map: RID, antialiased?: boolean, antialiasing_use_indices?: boolean): void;
+canvas_item_add_triangle_array(item: RID, indices: PoolIntArray, points: PoolVector2Array, colors: PoolColorArray, uvs: PoolVector2Array, bones: PoolIntArray, weights: PoolRealArray, texture: RID, count: int, normal_map: RID, antialiased?: boolean, antialiasing_use_indices?: boolean): void;
 
 /** Clears the [CanvasItem] and removes all commands in it. */
 canvas_item_clear(item: RID): void;
@@ -379,7 +379,7 @@ environment_set_fog_depth(env: RID, enable: boolean, depth_begin: float, depth_e
 environment_set_fog_height(env: RID, enable: boolean, min_height: float, max_height: float, height_curve: float): void;
 
 /** Sets the variables to be used with the "glow" post-process effect. See [Environment] for more details. */
-environment_set_glow(env: RID, enable: boolean, level_flags: int, intensity: float, strength: float, bloom_threshold: float, blend_mode: int, hdr_bleed_threshold: float, hdr_bleed_scale: float, hdr_luminance_cap: float, bicubic_upscale: boolean): void;
+environment_set_glow(env: RID, enable: boolean, level_flags: int, intensity: float, strength: float, bloom_threshold: float, blend_mode: int, hdr_bleed_threshold: float, hdr_bleed_scale: float, hdr_luminance_cap: float, bicubic_upscale: boolean, high_quality: boolean): void;
 
 /** Sets the [Sky] to be used as the environment's background when using [i]BGMode[/i] sky. Equivalent to [member Environment.background_sky]. */
 environment_set_sky(env: RID, sky: RID): void;
@@ -521,7 +521,12 @@ has_changed(): boolean;
 /** Not yet implemented. Always returns [code]false[/code]. */
 has_feature(feature: int): boolean;
 
-/** Returns [code]true[/code] if the OS supports a certain feature. Features might be [code]s3tc[/code], [code]etc[/code], [code]etc2[/code] and [code]pvrtc[/code]. */
+/**
+ * Returns `true` if the OS supports a certain feature. Features might be `s3tc`, `etc`, `etc2`, `pvrtc` and `skinning_fallback`.
+ *
+ * When rendering with GLES2, returns `true` with `skinning_fallback` in case the hardware doesn't support the default GPU skinning process.
+ *
+*/
 has_os_feature(feature: string): boolean;
 
 /** Sets up [ImmediateGeometry] internals to prepare for drawing. Equivalent to [method ImmediateGeometry.begin]. */
@@ -624,7 +629,7 @@ instance_set_custom_aabb(instance: RID, aabb: AABB): void;
 /** Function not implemented in Godot 3.x. */
 instance_set_exterior(instance: RID, enabled: boolean): void;
 
-/** Sets a margin to increase the size of the AABB when culling objects from the view frustum. This allows you avoid culling objects that fall outside the view frustum. Equivalent to [member GeometryInstance.extra_cull_margin]. */
+/** Sets a margin to increase the size of the AABB when culling objects from the view frustum. This allows you to avoid culling objects that fall outside the view frustum. Equivalent to [member GeometryInstance.extra_cull_margin]. */
 instance_set_extra_visibility_margin(instance: RID, margin: float): void;
 
 /** Sets the render layers that this instance will be drawn to. Equivalent to [member VisualInstance.layers]. */
@@ -640,7 +645,7 @@ instance_set_surface_material(instance: RID, surface: int, material: RID): void;
 instance_set_transform(instance: RID, transform: Transform): void;
 
 /** Sets the lightmap to use with this instance. */
-instance_set_use_lightmap(instance: RID, lightmap_instance: RID, lightmap: RID): void;
+instance_set_use_lightmap(instance: RID, lightmap_instance: RID, lightmap: RID, lightmap_slice?: int, lightmap_uv_rect?: Rect2): void;
 
 /** Sets whether an instance is drawn or not. Equivalent to [member Spatial.visible]. */
 instance_set_visible(instance: RID, visible: boolean): void;
@@ -684,6 +689,9 @@ light_omni_set_shadow_detail(light: RID, detail: int): void;
 /** Sets whether to use a dual paraboloid or a cubemap for the shadow map. Dual paraboloid is faster but may suffer from artifacts. Equivalent to [member OmniLight.omni_shadow_mode]. */
 light_omni_set_shadow_mode(light: RID, mode: int): void;
 
+/** Sets the bake mode for this light, see [enum LightBakeMode] for options. The bake mode affects how the light will be baked in [BakedLightmap]s and [GIProbe]s. */
+light_set_bake_mode(light: RID, bake_mode: int): void;
+
 /** Sets the color of the light. Equivalent to [member Light.light_color]. */
 light_set_color(light: RID, color: Color): void;
 
@@ -708,7 +716,7 @@ light_set_shadow(light: RID, enabled: boolean): void;
 /** Sets the color of the shadow cast by the light. Equivalent to [member Light.shadow_color]. */
 light_set_shadow_color(light: RID, color: Color): void;
 
-/** Sets whether GI probes capture light information from this light. */
+/** Sets whether GI probes capture light information from this light. [i]Deprecated method.[/i] Use [method light_set_bake_mode] instead. This method is only kept for compatibility reasons and calls [method light_set_bake_mode] internally, setting the bake mode to [constant LIGHT_BAKE_DISABLED] or [constant LIGHT_BAKE_INDIRECT] depending on the given parameter. */
 light_set_use_gi(light: RID, enabled: boolean): void;
 
 /**
@@ -736,11 +744,17 @@ lightmap_capture_get_octree_cell_subdiv(capture: RID): int;
 /** Returns the cell transform for this lightmap capture's octree. */
 lightmap_capture_get_octree_cell_transform(capture: RID): Transform;
 
+/** Returns [code]true[/code] if capture is in "interior" mode. */
+lightmap_capture_is_interior(capture: RID): boolean;
+
 /** Sets the size of the area covered by the lightmap capture. Equivalent to [member BakedLightmapData.bounds]. */
 lightmap_capture_set_bounds(capture: RID, bounds: AABB): void;
 
 /** Sets the energy multiplier for this lightmap capture. Equivalent to [member BakedLightmapData.energy]. */
 lightmap_capture_set_energy(capture: RID, energy: float): void;
+
+/** Sets the "interior" mode for this lightmap capture. Equivalent to [member BakedLightmapData.interior]. */
+lightmap_capture_set_interior(capture: RID, interior: boolean): void;
 
 /** Sets the octree to be used by this lightmap capture. This function is normally used by the [BakedLightmap] node. Equivalent to [member BakedLightmapData.octree]. */
 lightmap_capture_set_octree(capture: RID, octree: PoolByteArray): void;
@@ -850,8 +864,8 @@ mesh_surface_get_format(mesh: RID, surface: int): int;
 /** Function is unused in Godot 3.x. */
 mesh_surface_get_format_offset(format: int, vertex_len: int, index_len: int, array_index: int): int;
 
-/** Function is unused in Godot 3.x. */
-mesh_surface_get_format_stride(format: int, vertex_len: int, index_len: int): int;
+/** No documentation provided. */
+mesh_surface_get_format_stride(format: int, vertex_len: int, index_len: int, array_index: int): int;
 
 /** Returns a mesh's surface's index buffer. */
 mesh_surface_get_index_array(mesh: RID, surface: int): PoolByteArray;
@@ -1007,10 +1021,15 @@ particles_set_lifetime(particles: RID, lifetime: float): void;
 /** If [code]true[/code], particles will emit once and then stop. Equivalent to [member Particles.one_shot]. */
 particles_set_one_shot(particles: RID, one_shot: boolean): void;
 
-/** Sets the preprocess time for the particles animation. This lets you delay starting an animation until after the particles have begun emitting. Equivalent to [member Particles.preprocess]. */
+/** Sets the preprocess time for the particles' animation. This lets you delay starting an animation until after the particles have begun emitting. Equivalent to [member Particles.preprocess]. */
 particles_set_pre_process_time(particles: RID, time: float): void;
 
-/** Sets the material for processing the particles. Note: this is not the material used to draw the materials. Equivalent to [member Particles.process_material]. */
+/**
+ * Sets the material for processing the particles.
+ *
+ * **Note:** This is not the material used to draw the materials. Equivalent to [member Particles.process_material].
+ *
+*/
 particles_set_process_material(particles: RID, material: RID): void;
 
 /** Sets the emission randomness ratio. This randomizes the emission of particles within their phase. Equivalent to [member Particles.randomness]. */
@@ -1114,6 +1133,9 @@ set_default_clear_color(color: Color): void;
  *
 */
 set_shader_time_scale(scale: float): void;
+
+/** Enables or disables occlusion culling. */
+set_use_occlusion_culling(enable: boolean): void;
 
 /**
  * Creates an empty shader and adds it to the VisualServer. It can be accessed with the RID that is returned. This RID will be used in all `shader_*` VisualServer functions.
@@ -1361,6 +1383,9 @@ viewport_set_shadow_atlas_quadrant_subdivision(viewport: RID, quadrant: int, sub
 /** Sets the size of the shadow atlas's images (used for omni and spot lights). The value will be rounded up to the nearest power of 2. */
 viewport_set_shadow_atlas_size(viewport: RID, size: int): void;
 
+/** Sets the sharpening [code]intensity[/code] for the [code]viewport[/code]. If set to a value greater than [code]0.0[/code], contrast-adaptive sharpening will be applied to the 3D viewport. This has a low performance cost and can be used to recover some of the sharpness lost from using FXAA. Values around [code]0.5[/code] generally give the best results. See also [method viewport_set_use_fxaa]. */
+viewport_set_sharpen_intensity(viewport: RID, intensity: float): void;
+
 /** Sets the viewport's width and height. */
 viewport_set_size(viewport: RID, width: int, height: int): void;
 
@@ -1376,10 +1401,22 @@ viewport_set_usage(viewport: RID, usage: int): void;
 /** If [code]true[/code], the viewport uses augmented or virtual reality technologies. See [ARVRInterface]. */
 viewport_set_use_arvr(viewport: RID, use_arvr: boolean): void;
 
+/**
+ * If `true`, uses a fast post-processing filter to make banding significantly less visible. In some cases, debanding may introduce a slightly noticeable dithering pattern. It's recommended to enable debanding only when actually needed since the dithering pattern will make lossless-compressed screenshots larger.
+ *
+ * **Note:** Only available on the GLES3 backend. [member Viewport.hdr] must also be `true` for debanding to be effective.
+ *
+*/
+viewport_set_use_debanding(viewport: RID, debanding: boolean): void;
+
+/** Enables fast approximate antialiasing for this viewport. FXAA is a popular screen-space antialiasing method, which is fast but will make the image look blurry, especially at lower resolutions. It can still work relatively well at large resolutions such as 1440p and 4K. Some of the lost sharpness can be recovered by enabling contrast-adaptive sharpening (see [method viewport_set_sharpen_intensity]). */
+viewport_set_use_fxaa(viewport: RID, fxaa: boolean): void;
+
 /** If [code]true[/code], the viewport's rendering is flipped vertically. */
 viewport_set_vflip(viewport: RID, enabled: boolean): void;
 
-  connect<T extends SignalsOf<VisualServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualServerClassSignals>>(signal: T, method: SignalFunction<VisualServerClassSignals[T]>): number;
 
 
 
@@ -1387,127 +1424,127 @@ viewport_set_vflip(viewport: RID, enabled: boolean): void;
  * Marks an error that shows that the index array is empty.
  *
 */
- static NO_INDEX_ARRAY: null;
+static NO_INDEX_ARRAY: any;
 
 /**
  * Number of weights/bones per vertex.
  *
 */
-static ARRAY_WEIGHTS_SIZE: 4;
+static ARRAY_WEIGHTS_SIZE: any;
 
 /**
  * The minimum Z-layer for canvas items.
  *
 */
- static CANVAS_ITEM_Z_MIN: null;
+static CANVAS_ITEM_Z_MIN: any;
 
 /**
  * The maximum Z-layer for canvas items.
  *
 */
-static CANVAS_ITEM_Z_MAX: 4096;
+static CANVAS_ITEM_Z_MAX: any;
 
 /**
  * Max number of glow levels that can be used with glow post-process effect.
  *
 */
-static MAX_GLOW_LEVELS: 7;
+static MAX_GLOW_LEVELS: any;
 
 /**
  * Unused enum in Godot 3.x.
  *
 */
-static MAX_CURSORS: 8;
+static MAX_CURSORS: any;
 
 /**
  * The minimum renderpriority of all materials.
  *
 */
- static MATERIAL_RENDER_PRIORITY_MIN: null;
+static MATERIAL_RENDER_PRIORITY_MIN: any;
 
 /**
  * The maximum renderpriority of all materials.
  *
 */
-static MATERIAL_RENDER_PRIORITY_MAX: 127;
+static MATERIAL_RENDER_PRIORITY_MAX: any;
 
 /**
  * Marks the left side of a cubemap.
  *
 */
-static CUBEMAP_LEFT: 0;
+static CUBEMAP_LEFT: any;
 
 /**
  * Marks the right side of a cubemap.
  *
 */
-static CUBEMAP_RIGHT: 1;
+static CUBEMAP_RIGHT: any;
 
 /**
  * Marks the bottom side of a cubemap.
  *
 */
-static CUBEMAP_BOTTOM: 2;
+static CUBEMAP_BOTTOM: any;
 
 /**
  * Marks the top side of a cubemap.
  *
 */
-static CUBEMAP_TOP: 3;
+static CUBEMAP_TOP: any;
 
 /**
  * Marks the front side of a cubemap.
  *
 */
-static CUBEMAP_FRONT: 4;
+static CUBEMAP_FRONT: any;
 
 /**
  * Marks the back side of a cubemap.
  *
 */
-static CUBEMAP_BACK: 5;
+static CUBEMAP_BACK: any;
 
 /**
  * Normal texture with 2 dimensions, width and height.
  *
 */
-static TEXTURE_TYPE_2D: 0;
+static TEXTURE_TYPE_2D: any;
 
 /**
  * Texture made up of six faces, can be looked up with a `vec3` in shader.
  *
 */
-static TEXTURE_TYPE_CUBEMAP: 2;
+static TEXTURE_TYPE_CUBEMAP: any;
 
 /**
  * An array of 2-dimensional textures.
  *
 */
-static TEXTURE_TYPE_2D_ARRAY: 3;
+static TEXTURE_TYPE_2D_ARRAY: any;
 
 /**
  * A 3-dimensional texture with width, height, and depth.
  *
 */
-static TEXTURE_TYPE_3D: 4;
+static TEXTURE_TYPE_3D: any;
 
 /**
  * Generates mipmaps, which are smaller versions of the same texture to use when zoomed out, keeping the aspect ratio.
  *
 */
-static TEXTURE_FLAG_MIPMAPS: 1;
+static TEXTURE_FLAG_MIPMAPS: any;
 
 /**
  * Repeats the texture (instead of clamp to edge).
  *
 */
-static TEXTURE_FLAG_REPEAT: 2;
+static TEXTURE_FLAG_REPEAT: any;
 
 /**
  * Uses a magnifying filter, to enable smooth zooming in of the texture.
  *
 */
-static TEXTURE_FLAG_FILTER: 4;
+static TEXTURE_FLAG_FILTER: any;
 
 /**
  * Uses anisotropic mipmap filtering. Generates smaller versions of the same texture with different aspect ratios.
@@ -1515,1191 +1552,1226 @@ static TEXTURE_FLAG_FILTER: 4;
  * This results in better-looking textures when viewed from oblique angles.
  *
 */
-static TEXTURE_FLAG_ANISOTROPIC_FILTER: 8;
+static TEXTURE_FLAG_ANISOTROPIC_FILTER: any;
 
 /**
  * Converts the texture to the sRGB color space.
  *
 */
-static TEXTURE_FLAG_CONVERT_TO_LINEAR: 16;
+static TEXTURE_FLAG_CONVERT_TO_LINEAR: any;
 
 /**
  * Repeats the texture with alternate sections mirrored.
  *
 */
-static TEXTURE_FLAG_MIRRORED_REPEAT: 32;
+static TEXTURE_FLAG_MIRRORED_REPEAT: any;
 
 /**
  * Texture is a video surface.
  *
 */
-static TEXTURE_FLAG_USED_FOR_STREAMING: 2048;
+static TEXTURE_FLAG_USED_FOR_STREAMING: any;
 
 /**
  * Default flags. [constant TEXTURE_FLAG_MIPMAPS], [constant TEXTURE_FLAG_REPEAT] and [constant TEXTURE_FLAG_FILTER] are enabled.
  *
 */
-static TEXTURE_FLAGS_DEFAULT: 7;
+static TEXTURE_FLAGS_DEFAULT: any;
 
 /**
  * Shader is a 3D shader.
  *
 */
-static SHADER_SPATIAL: 0;
+static SHADER_SPATIAL: any;
 
 /**
  * Shader is a 2D shader.
  *
 */
-static SHADER_CANVAS_ITEM: 1;
+static SHADER_CANVAS_ITEM: any;
 
 /**
  * Shader is a particle shader.
  *
 */
-static SHADER_PARTICLES: 2;
+static SHADER_PARTICLES: any;
 
 /**
  * Represents the size of the [enum ShaderMode] enum.
  *
 */
-static SHADER_MAX: 3;
+static SHADER_MAX: any;
 
 /**
  * Array is a vertex array.
  *
 */
-static ARRAY_VERTEX: 0;
+static ARRAY_VERTEX: any;
 
 /**
  * Array is a normal array.
  *
 */
-static ARRAY_NORMAL: 1;
+static ARRAY_NORMAL: any;
 
 /**
  * Array is a tangent array.
  *
 */
-static ARRAY_TANGENT: 2;
+static ARRAY_TANGENT: any;
 
 /**
  * Array is a color array.
  *
 */
-static ARRAY_COLOR: 3;
+static ARRAY_COLOR: any;
 
 /**
  * Array is an UV coordinates array.
  *
 */
-static ARRAY_TEX_UV: 4;
+static ARRAY_TEX_UV: any;
 
 /**
  * Array is an UV coordinates array for the second UV coordinates.
  *
 */
-static ARRAY_TEX_UV2: 5;
+static ARRAY_TEX_UV2: any;
 
 /**
  * Array contains bone information.
  *
 */
-static ARRAY_BONES: 6;
+static ARRAY_BONES: any;
 
 /**
  * Array is weight information.
  *
 */
-static ARRAY_WEIGHTS: 7;
+static ARRAY_WEIGHTS: any;
 
 /**
  * Array is index array.
  *
 */
-static ARRAY_INDEX: 8;
+static ARRAY_INDEX: any;
 
 /**
  * Represents the size of the [enum ArrayType] enum.
  *
 */
-static ARRAY_MAX: 9;
+static ARRAY_MAX: any;
 
 /**
  * Flag used to mark a vertex array.
  *
 */
-static ARRAY_FORMAT_VERTEX: 1;
+static ARRAY_FORMAT_VERTEX: any;
 
 /**
  * Flag used to mark a normal array.
  *
 */
-static ARRAY_FORMAT_NORMAL: 2;
+static ARRAY_FORMAT_NORMAL: any;
 
 /**
  * Flag used to mark a tangent array.
  *
 */
-static ARRAY_FORMAT_TANGENT: 4;
+static ARRAY_FORMAT_TANGENT: any;
 
 /**
  * Flag used to mark a color array.
  *
 */
-static ARRAY_FORMAT_COLOR: 8;
+static ARRAY_FORMAT_COLOR: any;
 
 /**
  * Flag used to mark an UV coordinates array.
  *
 */
-static ARRAY_FORMAT_TEX_UV: 16;
+static ARRAY_FORMAT_TEX_UV: any;
 
 /**
  * Flag used to mark an UV coordinates array for the second UV coordinates.
  *
 */
-static ARRAY_FORMAT_TEX_UV2: 32;
+static ARRAY_FORMAT_TEX_UV2: any;
 
 /**
  * Flag used to mark a bone information array.
  *
 */
-static ARRAY_FORMAT_BONES: 64;
+static ARRAY_FORMAT_BONES: any;
 
 /**
  * Flag used to mark a weights array.
  *
 */
-static ARRAY_FORMAT_WEIGHTS: 128;
+static ARRAY_FORMAT_WEIGHTS: any;
 
 /**
  * Flag used to mark an index array.
  *
 */
-static ARRAY_FORMAT_INDEX: 256;
+static ARRAY_FORMAT_INDEX: any;
 
 /**
  * Flag used to mark a compressed (half float) vertex array.
  *
 */
-static ARRAY_COMPRESS_VERTEX: 512;
+static ARRAY_COMPRESS_VERTEX: any;
 
 /**
  * Flag used to mark a compressed (half float) normal array.
  *
 */
-static ARRAY_COMPRESS_NORMAL: 1024;
+static ARRAY_COMPRESS_NORMAL: any;
 
 /**
  * Flag used to mark a compressed (half float) tangent array.
  *
 */
-static ARRAY_COMPRESS_TANGENT: 2048;
+static ARRAY_COMPRESS_TANGENT: any;
 
 /**
  * Flag used to mark a compressed (half float) color array.
  *
 */
-static ARRAY_COMPRESS_COLOR: 4096;
+static ARRAY_COMPRESS_COLOR: any;
 
 /**
  * Flag used to mark a compressed (half float) UV coordinates array.
  *
 */
-static ARRAY_COMPRESS_TEX_UV: 8192;
+static ARRAY_COMPRESS_TEX_UV: any;
 
 /**
  * Flag used to mark a compressed (half float) UV coordinates array for the second UV coordinates.
  *
 */
-static ARRAY_COMPRESS_TEX_UV2: 16384;
+static ARRAY_COMPRESS_TEX_UV2: any;
 
 /**
  * Flag used to mark a compressed bone array.
  *
 */
-static ARRAY_COMPRESS_BONES: 32768;
+static ARRAY_COMPRESS_BONES: any;
 
 /**
  * Flag used to mark a compressed (half float) weight array.
  *
 */
-static ARRAY_COMPRESS_WEIGHTS: 65536;
+static ARRAY_COMPRESS_WEIGHTS: any;
 
 /**
  * Flag used to mark a compressed index array.
  *
 */
-static ARRAY_COMPRESS_INDEX: 131072;
+static ARRAY_COMPRESS_INDEX: any;
 
 /**
  * Flag used to mark that the array contains 2D vertices.
  *
 */
-static ARRAY_FLAG_USE_2D_VERTICES: 262144;
+static ARRAY_FLAG_USE_2D_VERTICES: any;
 
 /**
  * Flag used to mark that the array uses 16-bit bones instead of 8-bit.
  *
 */
-static ARRAY_FLAG_USE_16_BIT_BONES: 524288;
+static ARRAY_FLAG_USE_16_BIT_BONES: any;
 
 /**
- * Used to set flags [constant ARRAY_COMPRESS_NORMAL], [constant ARRAY_COMPRESS_TANGENT], [constant ARRAY_COMPRESS_COLOR], [constant ARRAY_COMPRESS_TEX_UV], [constant ARRAY_COMPRESS_TEX_UV2] and [constant ARRAY_COMPRESS_WEIGHTS] quickly.
+ * Flag used to mark that the array uses an octahedral representation of normal and tangent vectors rather than cartesian.
  *
 */
-static ARRAY_COMPRESS_DEFAULT: 97280;
+static ARRAY_FLAG_USE_OCTAHEDRAL_COMPRESSION: any;
+
+/**
+ * Used to set flags [constant ARRAY_COMPRESS_NORMAL], [constant ARRAY_COMPRESS_TANGENT], [constant ARRAY_COMPRESS_COLOR], [constant ARRAY_COMPRESS_TEX_UV], [constant ARRAY_COMPRESS_TEX_UV2], [constant ARRAY_COMPRESS_WEIGHTS], and [constant ARRAY_FLAG_USE_OCTAHEDRAL_COMPRESSION] quickly.
+ *
+*/
+static ARRAY_COMPRESS_DEFAULT: any;
 
 /**
  * Primitive to draw consists of points.
  *
 */
-static PRIMITIVE_POINTS: 0;
+static PRIMITIVE_POINTS: any;
 
 /**
  * Primitive to draw consists of lines.
  *
 */
-static PRIMITIVE_LINES: 1;
+static PRIMITIVE_LINES: any;
 
 /**
  * Primitive to draw consists of a line strip from start to end.
  *
 */
-static PRIMITIVE_LINE_STRIP: 2;
+static PRIMITIVE_LINE_STRIP: any;
 
 /**
  * Primitive to draw consists of a line loop (a line strip with a line between the last and the first vertex).
  *
 */
-static PRIMITIVE_LINE_LOOP: 3;
+static PRIMITIVE_LINE_LOOP: any;
 
 /**
  * Primitive to draw consists of triangles.
  *
 */
-static PRIMITIVE_TRIANGLES: 4;
+static PRIMITIVE_TRIANGLES: any;
 
 /**
  * Primitive to draw consists of a triangle strip (the last 3 vertices are always combined to make a triangle).
  *
 */
-static PRIMITIVE_TRIANGLE_STRIP: 5;
+static PRIMITIVE_TRIANGLE_STRIP: any;
 
 /**
  * Primitive to draw consists of a triangle strip (the last 2 vertices are always combined with the first to make a triangle).
  *
 */
-static PRIMITIVE_TRIANGLE_FAN: 6;
+static PRIMITIVE_TRIANGLE_FAN: any;
 
 /**
  * Represents the size of the [enum PrimitiveType] enum.
  *
 */
-static PRIMITIVE_MAX: 7;
+static PRIMITIVE_MAX: any;
 
 /**
  * Blend shapes are normalized.
  *
 */
-static BLEND_SHAPE_MODE_NORMALIZED: 0;
+static BLEND_SHAPE_MODE_NORMALIZED: any;
 
 /**
  * Blend shapes are relative to base weight.
  *
 */
-static BLEND_SHAPE_MODE_RELATIVE: 1;
+static BLEND_SHAPE_MODE_RELATIVE: any;
 
 /**
  * Is a directional (sun) light.
  *
 */
-static LIGHT_DIRECTIONAL: 0;
+static LIGHT_DIRECTIONAL: any;
 
 /**
  * Is an omni light.
  *
 */
-static LIGHT_OMNI: 1;
+static LIGHT_OMNI: any;
 
 /**
  * Is a spot light.
  *
 */
-static LIGHT_SPOT: 2;
+static LIGHT_SPOT: any;
 
 /**
  * The light's energy.
  *
 */
-static LIGHT_PARAM_ENERGY: 0;
+static LIGHT_PARAM_ENERGY: any;
+
+/**
+ * Secondary multiplier used with indirect light (light bounces).
+ *
+*/
+static LIGHT_PARAM_INDIRECT_ENERGY: any;
+
+/**
+ * The light's size, currently only used for soft shadows in baked lightmaps.
+ *
+*/
+static LIGHT_PARAM_SIZE: any;
 
 /**
  * The light's influence on specularity.
  *
 */
-static LIGHT_PARAM_SPECULAR: 2;
+static LIGHT_PARAM_SPECULAR: any;
 
 /**
  * The light's range.
  *
 */
-static LIGHT_PARAM_RANGE: 3;
+static LIGHT_PARAM_RANGE: any;
 
 /**
  * The light's attenuation.
  *
 */
-static LIGHT_PARAM_ATTENUATION: 4;
+static LIGHT_PARAM_ATTENUATION: any;
 
 /**
  * The spotlight's angle.
  *
 */
-static LIGHT_PARAM_SPOT_ANGLE: 5;
+static LIGHT_PARAM_SPOT_ANGLE: any;
 
 /**
  * The spotlight's attenuation.
  *
 */
-static LIGHT_PARAM_SPOT_ATTENUATION: 6;
+static LIGHT_PARAM_SPOT_ATTENUATION: any;
 
 /**
  * Scales the shadow color.
  *
 */
-static LIGHT_PARAM_CONTACT_SHADOW_SIZE: 7;
+static LIGHT_PARAM_CONTACT_SHADOW_SIZE: any;
 
 /**
  * Max distance that shadows will be rendered.
  *
 */
-static LIGHT_PARAM_SHADOW_MAX_DISTANCE: 8;
+static LIGHT_PARAM_SHADOW_MAX_DISTANCE: any;
 
 /**
  * Proportion of shadow atlas occupied by the first split.
  *
 */
-static LIGHT_PARAM_SHADOW_SPLIT_1_OFFSET: 9;
+static LIGHT_PARAM_SHADOW_SPLIT_1_OFFSET: any;
 
 /**
  * Proportion of shadow atlas occupied by the second split.
  *
 */
-static LIGHT_PARAM_SHADOW_SPLIT_2_OFFSET: 10;
+static LIGHT_PARAM_SHADOW_SPLIT_2_OFFSET: any;
 
 /**
  * Proportion of shadow atlas occupied by the third split. The fourth split occupies the rest.
  *
 */
-static LIGHT_PARAM_SHADOW_SPLIT_3_OFFSET: 11;
+static LIGHT_PARAM_SHADOW_SPLIT_3_OFFSET: any;
 
 /**
  * Normal bias used to offset shadow lookup by object normal. Can be used to fix self-shadowing artifacts.
  *
 */
-static LIGHT_PARAM_SHADOW_NORMAL_BIAS: 12;
+static LIGHT_PARAM_SHADOW_NORMAL_BIAS: any;
 
 /**
  * Bias the shadow lookup to fix self-shadowing artifacts.
  *
 */
-static LIGHT_PARAM_SHADOW_BIAS: 13;
+static LIGHT_PARAM_SHADOW_BIAS: any;
 
 /**
  * Increases bias on further splits to fix self-shadowing that only occurs far away from the camera.
  *
 */
-static LIGHT_PARAM_SHADOW_BIAS_SPLIT_SCALE: 14;
+static LIGHT_PARAM_SHADOW_BIAS_SPLIT_SCALE: any;
 
 /**
  * Represents the size of the [enum LightParam] enum.
  *
 */
-static LIGHT_PARAM_MAX: 15;
+static LIGHT_PARAM_MAX: any;
+
+/** No documentation provided. */
+static LIGHT_BAKE_DISABLED: any;
+
+/** No documentation provided. */
+static LIGHT_BAKE_INDIRECT: any;
+
+/** No documentation provided. */
+static LIGHT_BAKE_ALL: any;
 
 /**
  * Use a dual paraboloid shadow map for omni lights.
  *
 */
-static LIGHT_OMNI_SHADOW_DUAL_PARABOLOID: 0;
+static LIGHT_OMNI_SHADOW_DUAL_PARABOLOID: any;
 
 /**
  * Use a cubemap shadow map for omni lights. Slower but better quality than dual paraboloid.
  *
 */
-static LIGHT_OMNI_SHADOW_CUBE: 1;
+static LIGHT_OMNI_SHADOW_CUBE: any;
 
 /**
  * Use more detail vertically when computing shadow map.
  *
 */
-static LIGHT_OMNI_SHADOW_DETAIL_VERTICAL: 0;
+static LIGHT_OMNI_SHADOW_DETAIL_VERTICAL: any;
 
 /**
  * Use more detail horizontally when computing shadow map.
  *
 */
-static LIGHT_OMNI_SHADOW_DETAIL_HORIZONTAL: 1;
+static LIGHT_OMNI_SHADOW_DETAIL_HORIZONTAL: any;
 
 /**
  * Use orthogonal shadow projection for directional light.
  *
 */
-static LIGHT_DIRECTIONAL_SHADOW_ORTHOGONAL: 0;
+static LIGHT_DIRECTIONAL_SHADOW_ORTHOGONAL: any;
 
 /**
  * Use 2 splits for shadow projection when using directional light.
  *
 */
-static LIGHT_DIRECTIONAL_SHADOW_PARALLEL_2_SPLITS: 1;
+static LIGHT_DIRECTIONAL_SHADOW_PARALLEL_2_SPLITS: any;
 
 /**
  * Use 4 splits for shadow projection when using directional light.
  *
 */
-static LIGHT_DIRECTIONAL_SHADOW_PARALLEL_4_SPLITS: 2;
+static LIGHT_DIRECTIONAL_SHADOW_PARALLEL_4_SPLITS: any;
 
 /**
  * Keeps shadows stable as camera moves but has lower effective resolution.
  *
 */
-static LIGHT_DIRECTIONAL_SHADOW_DEPTH_RANGE_STABLE: 0;
+static LIGHT_DIRECTIONAL_SHADOW_DEPTH_RANGE_STABLE: any;
 
 /**
  * Optimize use of shadow maps, increasing the effective resolution. But may result in shadows moving or flickering slightly.
  *
 */
-static LIGHT_DIRECTIONAL_SHADOW_DEPTH_RANGE_OPTIMIZED: 1;
+static LIGHT_DIRECTIONAL_SHADOW_DEPTH_RANGE_OPTIMIZED: any;
 
 /**
  * Do not update the viewport.
  *
 */
-static VIEWPORT_UPDATE_DISABLED: 0;
+static VIEWPORT_UPDATE_DISABLED: any;
 
 /**
  * Update the viewport once then set to disabled.
  *
 */
-static VIEWPORT_UPDATE_ONCE: 1;
+static VIEWPORT_UPDATE_ONCE: any;
 
 /**
  * Update the viewport whenever it is visible.
  *
 */
-static VIEWPORT_UPDATE_WHEN_VISIBLE: 2;
+static VIEWPORT_UPDATE_WHEN_VISIBLE: any;
 
 /**
  * Always update the viewport.
  *
 */
-static VIEWPORT_UPDATE_ALWAYS: 3;
+static VIEWPORT_UPDATE_ALWAYS: any;
 
 /**
  * The viewport is always cleared before drawing.
  *
 */
-static VIEWPORT_CLEAR_ALWAYS: 0;
+static VIEWPORT_CLEAR_ALWAYS: any;
 
 /**
  * The viewport is never cleared before drawing.
  *
 */
-static VIEWPORT_CLEAR_NEVER: 1;
+static VIEWPORT_CLEAR_NEVER: any;
 
 /**
  * The viewport is cleared once, then the clear mode is set to [constant VIEWPORT_CLEAR_NEVER].
  *
 */
-static VIEWPORT_CLEAR_ONLY_NEXT_FRAME: 2;
+static VIEWPORT_CLEAR_ONLY_NEXT_FRAME: any;
 
 /**
  * Multisample antialiasing is disabled.
  *
 */
-static VIEWPORT_MSAA_DISABLED: 0;
+static VIEWPORT_MSAA_DISABLED: any;
 
 /**
  * Multisample antialiasing is set to 2×.
  *
 */
-static VIEWPORT_MSAA_2X: 1;
+static VIEWPORT_MSAA_2X: any;
 
 /**
  * Multisample antialiasing is set to 4×.
  *
 */
-static VIEWPORT_MSAA_4X: 2;
+static VIEWPORT_MSAA_4X: any;
 
 /**
  * Multisample antialiasing is set to 8×.
  *
 */
-static VIEWPORT_MSAA_8X: 3;
+static VIEWPORT_MSAA_8X: any;
 
 /**
  * Multisample antialiasing is set to 16×.
  *
 */
-static VIEWPORT_MSAA_16X: 4;
+static VIEWPORT_MSAA_16X: any;
 
 /**
  * Multisample antialiasing is set to 2× on external texture. Special mode for GLES2 Android VR (Oculus Quest and Go).
  *
 */
-static VIEWPORT_MSAA_EXT_2X: 5;
+static VIEWPORT_MSAA_EXT_2X: any;
 
 /**
  * Multisample antialiasing is set to 4× on external texture. Special mode for GLES2 Android VR (Oculus Quest and Go).
  *
 */
-static VIEWPORT_MSAA_EXT_4X: 6;
+static VIEWPORT_MSAA_EXT_4X: any;
 
 /**
  * The Viewport does not render 3D but samples.
  *
 */
-static VIEWPORT_USAGE_2D: 0;
+static VIEWPORT_USAGE_2D: any;
 
 /**
  * The Viewport does not render 3D and does not sample.
  *
 */
-static VIEWPORT_USAGE_2D_NO_SAMPLING: 1;
+static VIEWPORT_USAGE_2D_NO_SAMPLING: any;
 
 /**
  * The Viewport renders 3D with effects.
  *
 */
-static VIEWPORT_USAGE_3D: 2;
+static VIEWPORT_USAGE_3D: any;
 
 /**
  * The Viewport renders 3D but without effects.
  *
 */
-static VIEWPORT_USAGE_3D_NO_EFFECTS: 3;
+static VIEWPORT_USAGE_3D_NO_EFFECTS: any;
 
 /**
  * Number of objects drawn in a single frame.
  *
 */
-static VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME: 0;
+static VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME: any;
 
 /**
  * Number of vertices drawn in a single frame.
  *
 */
-static VIEWPORT_RENDER_INFO_VERTICES_IN_FRAME: 1;
+static VIEWPORT_RENDER_INFO_VERTICES_IN_FRAME: any;
 
 /**
  * Number of material changes during this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_MATERIAL_CHANGES_IN_FRAME: 2;
+static VIEWPORT_RENDER_INFO_MATERIAL_CHANGES_IN_FRAME: any;
 
 /**
  * Number of shader changes during this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_SHADER_CHANGES_IN_FRAME: 3;
+static VIEWPORT_RENDER_INFO_SHADER_CHANGES_IN_FRAME: any;
 
 /**
  * Number of surface changes during this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_SURFACE_CHANGES_IN_FRAME: 4;
+static VIEWPORT_RENDER_INFO_SURFACE_CHANGES_IN_FRAME: any;
 
 /**
  * Number of draw calls during this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME: 5;
+static VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Number of 2d items drawn this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_2D_ITEMS_IN_FRAME: 6;
+static VIEWPORT_RENDER_INFO_2D_ITEMS_IN_FRAME: any;
 
 /**
  * Number of 2d draw calls during this frame.
  *
 */
-static VIEWPORT_RENDER_INFO_2D_DRAW_CALLS_IN_FRAME: 7;
+static VIEWPORT_RENDER_INFO_2D_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Represents the size of the [enum ViewportRenderInfo] enum.
  *
 */
-static VIEWPORT_RENDER_INFO_MAX: 8;
+static VIEWPORT_RENDER_INFO_MAX: any;
 
 /**
  * Debug draw is disabled. Default setting.
  *
 */
-static VIEWPORT_DEBUG_DRAW_DISABLED: 0;
+static VIEWPORT_DEBUG_DRAW_DISABLED: any;
 
 /**
  * Debug draw sets objects to unshaded.
  *
 */
-static VIEWPORT_DEBUG_DRAW_UNSHADED: 1;
+static VIEWPORT_DEBUG_DRAW_UNSHADED: any;
 
 /**
  * Overwrites clear color to `(0,0,0,0)`.
  *
 */
-static VIEWPORT_DEBUG_DRAW_OVERDRAW: 2;
+static VIEWPORT_DEBUG_DRAW_OVERDRAW: any;
 
 /**
  * Debug draw draws objects in wireframe.
  *
 */
-static VIEWPORT_DEBUG_DRAW_WIREFRAME: 3;
+static VIEWPORT_DEBUG_DRAW_WIREFRAME: any;
 
 /**
  * Do not use a debug mode.
  *
 */
-static SCENARIO_DEBUG_DISABLED: 0;
+static SCENARIO_DEBUG_DISABLED: any;
 
 /**
  * Draw all objects as wireframe models.
  *
 */
-static SCENARIO_DEBUG_WIREFRAME: 1;
+static SCENARIO_DEBUG_WIREFRAME: any;
 
 /**
  * Draw all objects in a way that displays how much overdraw is occurring. Overdraw occurs when a section of pixels is drawn and shaded and then another object covers it up. To optimize a scene, you should reduce overdraw.
  *
 */
-static SCENARIO_DEBUG_OVERDRAW: 2;
+static SCENARIO_DEBUG_OVERDRAW: any;
 
 /**
  * Draw all objects without shading. Equivalent to setting all objects shaders to `unshaded`.
  *
 */
-static SCENARIO_DEBUG_SHADELESS: 3;
+static SCENARIO_DEBUG_SHADELESS: any;
 
 /**
  * The instance does not have a type.
  *
 */
-static INSTANCE_NONE: 0;
+static INSTANCE_NONE: any;
 
 /**
  * The instance is a mesh.
  *
 */
-static INSTANCE_MESH: 1;
+static INSTANCE_MESH: any;
 
 /**
  * The instance is a multimesh.
  *
 */
-static INSTANCE_MULTIMESH: 2;
+static INSTANCE_MULTIMESH: any;
 
 /**
  * The instance is an immediate geometry.
  *
 */
-static INSTANCE_IMMEDIATE: 3;
+static INSTANCE_IMMEDIATE: any;
 
 /**
  * The instance is a particle emitter.
  *
 */
-static INSTANCE_PARTICLES: 4;
+static INSTANCE_PARTICLES: any;
 
 /**
  * The instance is a light.
  *
 */
-static INSTANCE_LIGHT: 5;
+static INSTANCE_LIGHT: any;
 
 /**
  * The instance is a reflection probe.
  *
 */
-static INSTANCE_REFLECTION_PROBE: 6;
+static INSTANCE_REFLECTION_PROBE: any;
 
 /**
  * The instance is a GI probe.
  *
 */
-static INSTANCE_GI_PROBE: 7;
+static INSTANCE_GI_PROBE: any;
 
 /**
  * The instance is a lightmap capture.
  *
 */
-static INSTANCE_LIGHTMAP_CAPTURE: 8;
+static INSTANCE_LIGHTMAP_CAPTURE: any;
 
 /**
  * Represents the size of the [enum InstanceType] enum.
  *
 */
-static INSTANCE_MAX: 9;
+static INSTANCE_MAX: any;
 
 /**
  * A combination of the flags of geometry instances (mesh, multimesh, immediate and particles).
  *
 */
-static INSTANCE_GEOMETRY_MASK: 30;
+static INSTANCE_GEOMETRY_MASK: any;
 
 /**
  * Allows the instance to be used in baked lighting.
  *
 */
-static INSTANCE_FLAG_USE_BAKED_LIGHT: 0;
+static INSTANCE_FLAG_USE_BAKED_LIGHT: any;
 
 /**
  * When set, manually requests to draw geometry on next frame.
  *
 */
-static INSTANCE_FLAG_DRAW_NEXT_FRAME_IF_VISIBLE: 1;
+static INSTANCE_FLAG_DRAW_NEXT_FRAME_IF_VISIBLE: any;
 
 /**
  * Represents the size of the [enum InstanceFlags] enum.
  *
 */
-static INSTANCE_FLAG_MAX: 2;
+static INSTANCE_FLAG_MAX: any;
 
 /**
  * Disable shadows from this instance.
  *
 */
-static SHADOW_CASTING_SETTING_OFF: 0;
+static SHADOW_CASTING_SETTING_OFF: any;
 
 /**
  * Cast shadows from this instance.
  *
 */
-static SHADOW_CASTING_SETTING_ON: 1;
+static SHADOW_CASTING_SETTING_ON: any;
 
 /**
  * Disable backface culling when rendering the shadow of the object. This is slightly slower but may result in more correct shadows.
  *
 */
-static SHADOW_CASTING_SETTING_DOUBLE_SIDED: 2;
+static SHADOW_CASTING_SETTING_DOUBLE_SIDED: any;
 
 /**
  * Only render the shadows from the object. The object itself will not be drawn.
  *
 */
-static SHADOW_CASTING_SETTING_SHADOWS_ONLY: 3;
+static SHADOW_CASTING_SETTING_SHADOWS_ONLY: any;
 
 /**
  * The nine patch gets stretched where needed.
  *
 */
-static NINE_PATCH_STRETCH: 0;
+static NINE_PATCH_STRETCH: any;
 
 /**
  * The nine patch gets filled with tiles where needed.
  *
 */
-static NINE_PATCH_TILE: 1;
+static NINE_PATCH_TILE: any;
 
 /**
  * The nine patch gets filled with tiles where needed and stretches them a bit if needed.
  *
 */
-static NINE_PATCH_TILE_FIT: 2;
+static NINE_PATCH_TILE_FIT: any;
 
 /**
  * Adds light color additive to the canvas.
  *
 */
-static CANVAS_LIGHT_MODE_ADD: 0;
+static CANVAS_LIGHT_MODE_ADD: any;
 
 /**
  * Adds light color subtractive to the canvas.
  *
 */
-static CANVAS_LIGHT_MODE_SUB: 1;
+static CANVAS_LIGHT_MODE_SUB: any;
 
 /**
  * The light adds color depending on transparency.
  *
 */
-static CANVAS_LIGHT_MODE_MIX: 2;
+static CANVAS_LIGHT_MODE_MIX: any;
 
 /**
  * The light adds color depending on mask.
  *
 */
-static CANVAS_LIGHT_MODE_MASK: 3;
+static CANVAS_LIGHT_MODE_MASK: any;
 
 /**
  * Do not apply a filter to canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_NONE: 0;
+static CANVAS_LIGHT_FILTER_NONE: any;
 
 /**
  * Use PCF3 filtering to filter canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_PCF3: 1;
+static CANVAS_LIGHT_FILTER_PCF3: any;
 
 /**
  * Use PCF5 filtering to filter canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_PCF5: 2;
+static CANVAS_LIGHT_FILTER_PCF5: any;
 
 /**
  * Use PCF7 filtering to filter canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_PCF7: 3;
+static CANVAS_LIGHT_FILTER_PCF7: any;
 
 /**
  * Use PCF9 filtering to filter canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_PCF9: 4;
+static CANVAS_LIGHT_FILTER_PCF9: any;
 
 /**
  * Use PCF13 filtering to filter canvas light shadows.
  *
 */
-static CANVAS_LIGHT_FILTER_PCF13: 5;
+static CANVAS_LIGHT_FILTER_PCF13: any;
 
 /**
  * Culling of the canvas occluder is disabled.
  *
 */
-static CANVAS_OCCLUDER_POLYGON_CULL_DISABLED: 0;
+static CANVAS_OCCLUDER_POLYGON_CULL_DISABLED: any;
 
 /**
  * Culling of the canvas occluder is clockwise.
  *
 */
-static CANVAS_OCCLUDER_POLYGON_CULL_CLOCKWISE: 1;
+static CANVAS_OCCLUDER_POLYGON_CULL_CLOCKWISE: any;
 
 /**
  * Culling of the canvas occluder is counterclockwise.
  *
 */
-static CANVAS_OCCLUDER_POLYGON_CULL_COUNTER_CLOCKWISE: 2;
+static CANVAS_OCCLUDER_POLYGON_CULL_COUNTER_CLOCKWISE: any;
 
 /**
  * The amount of objects in the frame.
  *
 */
-static INFO_OBJECTS_IN_FRAME: 0;
+static INFO_OBJECTS_IN_FRAME: any;
 
 /**
  * The amount of vertices in the frame.
  *
 */
-static INFO_VERTICES_IN_FRAME: 1;
+static INFO_VERTICES_IN_FRAME: any;
 
 /**
  * The amount of modified materials in the frame.
  *
 */
-static INFO_MATERIAL_CHANGES_IN_FRAME: 2;
+static INFO_MATERIAL_CHANGES_IN_FRAME: any;
 
 /**
  * The amount of shader rebinds in the frame.
  *
 */
-static INFO_SHADER_CHANGES_IN_FRAME: 3;
+static INFO_SHADER_CHANGES_IN_FRAME: any;
 
 /**
  * The amount of surface changes in the frame.
  *
 */
-static INFO_SURFACE_CHANGES_IN_FRAME: 4;
+static INFO_SURFACE_CHANGES_IN_FRAME: any;
 
 /**
  * The amount of draw calls in frame.
  *
 */
-static INFO_DRAW_CALLS_IN_FRAME: 5;
+static INFO_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * The amount of 2d items in the frame.
  *
 */
-static INFO_2D_ITEMS_IN_FRAME: 6;
+static INFO_2D_ITEMS_IN_FRAME: any;
 
 /**
  * The amount of 2d draw calls in frame.
  *
 */
-static INFO_2D_DRAW_CALLS_IN_FRAME: 7;
+static INFO_2D_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Unimplemented in the GLES2 and GLES3 rendering backends, always returns 0.
  *
 */
-static INFO_USAGE_VIDEO_MEM_TOTAL: 8;
+static INFO_USAGE_VIDEO_MEM_TOTAL: any;
 
 /**
  * The amount of video memory used, i.e. texture and vertex memory combined.
  *
 */
-static INFO_VIDEO_MEM_USED: 9;
+static INFO_VIDEO_MEM_USED: any;
 
 /**
  * The amount of texture memory used.
  *
 */
-static INFO_TEXTURE_MEM_USED: 10;
+static INFO_TEXTURE_MEM_USED: any;
 
 /**
  * The amount of vertex memory used.
  *
 */
-static INFO_VERTEX_MEM_USED: 11;
+static INFO_VERTEX_MEM_USED: any;
 
 /**
  * Hardware supports shaders. This enum is currently unused in Godot 3.x.
  *
 */
-static FEATURE_SHADERS: 0;
+static FEATURE_SHADERS: any;
 
 /**
  * Hardware supports multithreading. This enum is currently unused in Godot 3.x.
  *
 */
-static FEATURE_MULTITHREADED: 1;
+static FEATURE_MULTITHREADED: any;
 
 /**
  * Use [Transform2D] to store MultiMesh transform.
  *
 */
-static MULTIMESH_TRANSFORM_2D: 0;
+static MULTIMESH_TRANSFORM_2D: any;
 
 /**
  * Use [Transform] to store MultiMesh transform.
  *
 */
-static MULTIMESH_TRANSFORM_3D: 1;
+static MULTIMESH_TRANSFORM_3D: any;
 
 /**
  * MultiMesh does not use per-instance color.
  *
 */
-static MULTIMESH_COLOR_NONE: 0;
+static MULTIMESH_COLOR_NONE: any;
 
 /**
  * MultiMesh color uses 8 bits per component. This packs the color into a single float.
  *
 */
-static MULTIMESH_COLOR_8BIT: 1;
+static MULTIMESH_COLOR_8BIT: any;
 
 /**
  * MultiMesh color uses a float per channel.
  *
 */
-static MULTIMESH_COLOR_FLOAT: 2;
+static MULTIMESH_COLOR_FLOAT: any;
 
 /**
  * MultiMesh does not use custom data.
  *
 */
-static MULTIMESH_CUSTOM_DATA_NONE: 0;
+static MULTIMESH_CUSTOM_DATA_NONE: any;
 
 /**
  * MultiMesh custom data uses 8 bits per component. This packs the 4-component custom data into a single float.
  *
 */
-static MULTIMESH_CUSTOM_DATA_8BIT: 1;
+static MULTIMESH_CUSTOM_DATA_8BIT: any;
 
 /**
  * MultiMesh custom data uses a float per component.
  *
 */
-static MULTIMESH_CUSTOM_DATA_FLOAT: 2;
+static MULTIMESH_CUSTOM_DATA_FLOAT: any;
 
 /**
  * Reflection probe will update reflections once and then stop.
  *
 */
-static REFLECTION_PROBE_UPDATE_ONCE: 0;
+static REFLECTION_PROBE_UPDATE_ONCE: any;
 
 /**
  * Reflection probe will update each frame. This mode is necessary to capture moving objects.
  *
 */
-static REFLECTION_PROBE_UPDATE_ALWAYS: 1;
+static REFLECTION_PROBE_UPDATE_ALWAYS: any;
 
 /**
  * Draw particles in the order that they appear in the particles array.
  *
 */
-static PARTICLES_DRAW_ORDER_INDEX: 0;
+static PARTICLES_DRAW_ORDER_INDEX: any;
 
 /**
  * Sort particles based on their lifetime.
  *
 */
-static PARTICLES_DRAW_ORDER_LIFETIME: 1;
+static PARTICLES_DRAW_ORDER_LIFETIME: any;
 
 /**
  * Sort particles based on their distance to the camera.
  *
 */
-static PARTICLES_DRAW_ORDER_VIEW_DEPTH: 2;
+static PARTICLES_DRAW_ORDER_VIEW_DEPTH: any;
 
 /**
  * Use the clear color as background.
  *
 */
-static ENV_BG_CLEAR_COLOR: 0;
+static ENV_BG_CLEAR_COLOR: any;
 
 /**
  * Use a specified color as the background.
  *
 */
-static ENV_BG_COLOR: 1;
+static ENV_BG_COLOR: any;
 
 /**
  * Use a sky resource for the background.
  *
 */
-static ENV_BG_SKY: 2;
+static ENV_BG_SKY: any;
 
 /**
  * Use a custom color for background, but use a sky for shading and reflections.
  *
 */
-static ENV_BG_COLOR_SKY: 3;
+static ENV_BG_COLOR_SKY: any;
 
 /**
  * Use a specified canvas layer as the background. This can be useful for instantiating a 2D scene in a 3D world.
  *
 */
-static ENV_BG_CANVAS: 4;
+static ENV_BG_CANVAS: any;
 
 /**
  * Do not clear the background, use whatever was rendered last frame as the background.
  *
 */
-static ENV_BG_KEEP: 5;
+static ENV_BG_KEEP: any;
 
 /**
  * Represents the size of the [enum EnvironmentBG] enum.
  *
 */
-static ENV_BG_MAX: 7;
+static ENV_BG_MAX: any;
 
 /**
  * Use lowest blur quality. Fastest, but may look bad.
  *
 */
-static ENV_DOF_BLUR_QUALITY_LOW: 0;
+static ENV_DOF_BLUR_QUALITY_LOW: any;
 
 /**
  * Use medium blur quality.
  *
 */
-static ENV_DOF_BLUR_QUALITY_MEDIUM: 1;
+static ENV_DOF_BLUR_QUALITY_MEDIUM: any;
 
 /**
  * Used highest blur quality. Looks the best, but is the slowest.
  *
 */
-static ENV_DOF_BLUR_QUALITY_HIGH: 2;
+static ENV_DOF_BLUR_QUALITY_HIGH: any;
 
 /**
  * Add the effect of the glow on top of the scene.
  *
 */
-static GLOW_BLEND_MODE_ADDITIVE: 0;
+static GLOW_BLEND_MODE_ADDITIVE: any;
 
 /**
  * Blends the glow effect with the screen. Does not get as bright as additive.
  *
 */
-static GLOW_BLEND_MODE_SCREEN: 1;
+static GLOW_BLEND_MODE_SCREEN: any;
 
 /**
  * Produces a subtle color disturbance around objects.
  *
 */
-static GLOW_BLEND_MODE_SOFTLIGHT: 2;
+static GLOW_BLEND_MODE_SOFTLIGHT: any;
 
 /**
  * Shows the glow effect by itself without the underlying scene.
  *
 */
-static GLOW_BLEND_MODE_REPLACE: 3;
+static GLOW_BLEND_MODE_REPLACE: any;
 
 /**
  * Output color as they came in.
  *
 */
-static ENV_TONE_MAPPER_LINEAR: 0;
+static ENV_TONE_MAPPER_LINEAR: any;
 
 /**
  * Use the Reinhard tonemapper.
  *
 */
-static ENV_TONE_MAPPER_REINHARD: 1;
+static ENV_TONE_MAPPER_REINHARD: any;
 
 /**
  * Use the filmic tonemapper.
  *
 */
-static ENV_TONE_MAPPER_FILMIC: 2;
+static ENV_TONE_MAPPER_FILMIC: any;
 
 /**
  * Use the ACES tonemapper.
  *
 */
-static ENV_TONE_MAPPER_ACES: 3;
+static ENV_TONE_MAPPER_ACES: any;
+
+/**
+ * Use the ACES Fitted tonemapper.
+ *
+*/
+static ENV_TONE_MAPPER_ACES_FITTED: any;
 
 /**
  * Lowest quality of screen space ambient occlusion.
  *
 */
-static ENV_SSAO_QUALITY_LOW: 0;
+static ENV_SSAO_QUALITY_LOW: any;
 
 /**
  * Medium quality screen space ambient occlusion.
  *
 */
-static ENV_SSAO_QUALITY_MEDIUM: 1;
+static ENV_SSAO_QUALITY_MEDIUM: any;
 
 /**
  * Highest quality screen space ambient occlusion.
  *
 */
-static ENV_SSAO_QUALITY_HIGH: 2;
+static ENV_SSAO_QUALITY_HIGH: any;
 
 /**
  * Disables the blur set for SSAO. Will make SSAO look noisier.
  *
 */
-static ENV_SSAO_BLUR_DISABLED: 0;
+static ENV_SSAO_BLUR_DISABLED: any;
 
 /**
  * Perform a 1x1 blur on the SSAO output.
  *
 */
-static ENV_SSAO_BLUR_1x1: 1;
+static ENV_SSAO_BLUR_1x1: any;
 
 /**
  * Performs a 2x2 blur on the SSAO output.
  *
 */
-static ENV_SSAO_BLUR_2x2: 2;
+static ENV_SSAO_BLUR_2x2: any;
 
 /**
  * Performs a 3x3 blur on the SSAO output. Use this for smoothest SSAO.
  *
 */
-static ENV_SSAO_BLUR_3x3: 3;
+static ENV_SSAO_BLUR_3x3: any;
 
+}
 
+declare class VisualServerClassSignals extends ObjectSignals {
   /**
  * Emitted at the end of the frame, after the VisualServer has finished updating all the Viewports.
  *

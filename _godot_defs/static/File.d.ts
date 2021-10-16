@@ -20,7 +20,11 @@
  * @summary 
  * 
  *
- * In the example above, the file will be saved in the user data folder as specified in the [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]Data paths[/url] documentation.
+ * In the example above, the file will be saved in the user data folder as specified in the [url=https://docs.godotengine.org/en/3.4/tutorials/io/data_paths.html]Data paths[/url] documentation.
+ *
+ * **Note:** To access project resources once exported, it is recommended to use [ResourceLoader] instead of the [File] API, as some files are converted to engine-specific formats and their original source files might not be present in the exported PCK package.
+ *
+ * **Note:** Files are automatically closed only if the process exits "normally" (such as by clicking the window manager's close button or pressing **Alt + F4**). If you stop the project execution by pressing **F8** while the project is running, the file won't be closed as the game process will be killed. You can work around this by calling [method flush] at regular intervals.
  *
 */
 declare class File extends Reference {
@@ -47,7 +51,11 @@ declare class File extends Reference {
  * @summary 
  * 
  *
- * In the example above, the file will be saved in the user data folder as specified in the [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]Data paths[/url] documentation.
+ * In the example above, the file will be saved in the user data folder as specified in the [url=https://docs.godotengine.org/en/3.4/tutorials/io/data_paths.html]Data paths[/url] documentation.
+ *
+ * **Note:** To access project resources once exported, it is recommended to use [ResourceLoader] instead of the [File] API, as some files are converted to engine-specific formats and their original source files might not be present in the exported PCK package.
+ *
+ * **Note:** Files are automatically closed only if the process exits "normally" (such as by clicking the window manager's close button or pressing **Alt + F4**). If you stop the project execution by pressing **F8** while the project is running, the file won't be closed as the game process will be killed. You can work around this by calling [method flush] at regular intervals.
  *
 */
   "new"(): File;
@@ -56,20 +64,29 @@ declare class File extends Reference {
 
 
 /**
- * If `true`, the file's endianness is swapped. Use this if you're dealing with files written on big-endian machines.
+ * If `true`, the file is read with big-endian [url=https://en.wikipedia.org/wiki/Endianness]endianness[/url]. If `false`, the file is read with little-endian endianness. If in doubt, leave this to `false` as most files are written with little-endian endianness.
  *
- * **Note:** This is about the file format, not CPU type. This is always reset to `false` whenever you open the file.
+ * **Note:** [member endian_swap] is only about the file format, not the CPU type. The CPU endianness doesn't affect the default endianness for files written.
+ *
+ * **Note:** This is always reset to `false` whenever you open the file. Therefore, you must set [member endian_swap] **after** opening the file, not before.
  *
 */
 endian_swap: boolean;
 
-/** Closes the currently opened file. */
+/** Closes the currently opened file and prevents subsequent read/write operations. Use [method flush] to persist the data to disk without closing the file. */
 close(): void;
 
 /**
- * Returns `true` if the file cursor has read past the end of the file.
+ * Returns `true` if the file cursor has already read past the end of the file.
  *
- * **Note:** This function will still return `false` while at the end of the file and only activates when reading past it. This can be confusing but it conforms to how low-level file access works in all operating systems. There is always [method get_len] and [method get_position] to implement a custom logic.
+ * **Note:** `eof_reached() == false` cannot be used to check whether there is more data available. To loop while there is more data available, use:
+ *
+ * @example 
+ * 
+ * while file.get_position() < file.get_len():
+ *     # Read data
+ * @summary 
+ * 
  *
 */
 eof_reached(): boolean;
@@ -77,10 +94,18 @@ eof_reached(): boolean;
 /**
  * Returns `true` if the file exists in the given path.
  *
- * **Note:** Many resources types are imported (e.g. textures or sound files), and that their source asset will not be included in the exported game, as only the imported version is used (in the `res://.import` folder). To check for the existence of such resources while taking into account the remapping to their imported location, use [method ResourceLoader.exists]. Typically, using `File.file_exists` on an imported resource would work while you are developing in the editor (the source asset is present in `res://`, but fail when exported).
+ * **Note:** Many resources types are imported (e.g. textures or sound files), and their source asset will not be included in the exported game, as only the imported version is used. See [method ResourceLoader.exists] for an alternative approach that takes resource remapping into account.
  *
 */
 file_exists(path: string): boolean;
+
+/**
+ * Writes the file's buffer to disk. Flushing is automatically performed when the file is closed. This means you don't need to call [method flush] manually before closing a file using [method close]. Still, calling [method flush] can be used to ensure the data is safe even if the project crashes instead of being closed gracefully.
+ *
+ * **Note:** Only call [method flush] when you actually need it. Otherwise, it will decrease performance due to constant disk writes.
+ *
+*/
+flush(): void;
 
 /** Returns the next 16 bits from the file as an integer. See [method store_16] for details on what values can be stored and retrieved this way. */
 get_16(): int;
@@ -106,9 +131,21 @@ get_as_text(): string;
 get_buffer(len: int): PoolByteArray;
 
 /**
- * Returns the next value of the file in CSV (Comma-Separated Values) format. You can pass a different delimiter `delim` to use other than the default `","` (comma). This delimiter must be one-character long.
+ * Returns the next value of the file in CSV (Comma-Separated Values) format. You can pass a different delimiter `delim` to use other than the default `","` (comma). This delimiter must be one-character long, and cannot be a double quotation mark.
  *
- * Text is interpreted as being UTF-8 encoded.
+ * Text is interpreted as being UTF-8 encoded. Text values must be enclosed in double quotes if they include the delimiter character. Double quotes within a text value can be escaped by doubling their occurrence.
+ *
+ * For example, the following CSV lines are valid and will be properly parsed as two strings each:
+ *
+ * @example 
+ * 
+ * Alice,"Hello, Bob!"
+ * Bob,Alice! What a surprise!
+ * Alice,"I thought you'd reply with ""Hello, world""."
+ * @summary 
+ * 
+ *
+ * Note how the second line can omit the enclosing quotes as it does not include the delimiter. However it **could** very well use quotes, it was only written without for demonstration purposes. The third line must use `""` for each quotation mark that needs to be interpreted as such instead of the end of a text value.
  *
 */
 get_csv_line(delim?: string): PoolStringArray;
@@ -176,7 +213,12 @@ is_open(): boolean;
 /** Opens the file for writing or reading, depending on the flags. */
 open(path: string, flags: int): int;
 
-/** Opens a compressed file for reading or writing. */
+/**
+ * Opens a compressed file for reading or writing.
+ *
+ * **Note:** [method open_compressed] can only read files that were saved by Godot, not third-party compression formats. See [url=https://github.com/godotengine/godot/issues/28999]GitHub issue #28999[/url] for a workaround.
+ *
+*/
 open_compressed(path: string, mode_flags: int, compression_mode?: int): int;
 
 /**
@@ -275,12 +317,7 @@ store_double(value: float): void;
 /** Stores a floating-point number as 32 bits in the file. */
 store_float(value: float): void;
 
-/**
- * Stores the given [String] as a line in the file.
- *
- * Text will be encoded as UTF-8.
- *
-*/
+/** Appends [code]line[/code] to the file followed by a line return character ([code]\n[/code]), encoding the text as UTF-8. */
 store_line(line: string): void;
 
 /**
@@ -294,18 +331,19 @@ store_pascal_string(string: string): void;
 /** Stores a floating-point number in the file. */
 store_real(value: float): void;
 
-/**
- * Stores the given [String] in the file.
- *
- * Text will be encoded as UTF-8.
- *
-*/
+/** Appends [code]string[/code] to the file without a line return, encoding the text as UTF-8. */
 store_string(string: string): void;
 
-/** Stores any Variant value in the file. If [code]full_objects[/code] is [code]true[/code], encoding objects is allowed (and can potentially include code). */
+/**
+ * Stores any Variant value in the file. If `full_objects` is `true`, encoding objects is allowed (and can potentially include code).
+ *
+ * **Note:** Not all properties are included. Only properties that are configured with the [constant PROPERTY_USAGE_STORAGE] flag set will be serialized. You can add a new usage flag to a property by overriding the [method Object._get_property_list] method in your class. You can also check how property usage is configured by calling [method Object._get_property_list]. See [enum PropertyUsageFlags] for the possible usage flags.
+ *
+*/
 store_var(value: any, full_objects?: boolean): void;
 
-  connect<T extends SignalsOf<File>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<File>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<FileSignals>>(signal: T, method: SignalFunction<FileSignals[T]>): number;
 
 
 
@@ -313,50 +351,52 @@ store_var(value: any, full_objects?: boolean): void;
  * Opens the file for read operations. The cursor is positioned at the beginning of the file.
  *
 */
-static READ: 1;
+static READ: any;
 
 /**
  * Opens the file for write operations. The file is created if it does not exist, and truncated if it does.
  *
 */
-static WRITE: 2;
+static WRITE: any;
 
 /**
  * Opens the file for read and write operations. Does not truncate the file. The cursor is positioned at the beginning of the file.
  *
 */
-static READ_WRITE: 3;
+static READ_WRITE: any;
 
 /**
  * Opens the file for read and write operations. The file is created if it does not exist, and truncated if it does. The cursor is positioned at the beginning of the file.
  *
 */
-static WRITE_READ: 7;
+static WRITE_READ: any;
 
 /**
  * Uses the [url=http://fastlz.org/]FastLZ[/url] compression method.
  *
 */
-static COMPRESSION_FASTLZ: 0;
+static COMPRESSION_FASTLZ: any;
 
 /**
  * Uses the [url=https://en.wikipedia.org/wiki/DEFLATE]DEFLATE[/url] compression method.
  *
 */
-static COMPRESSION_DEFLATE: 1;
+static COMPRESSION_DEFLATE: any;
 
 /**
  * Uses the [url=https://facebook.github.io/zstd/]Zstandard[/url] compression method.
  *
 */
-static COMPRESSION_ZSTD: 2;
+static COMPRESSION_ZSTD: any;
 
 /**
  * Uses the [url=https://www.gzip.org/]gzip[/url] compression method.
  *
 */
-static COMPRESSION_GZIP: 3;
+static COMPRESSION_GZIP: any;
 
+}
 
+declare class FileSignals extends ReferenceSignals {
   
 }

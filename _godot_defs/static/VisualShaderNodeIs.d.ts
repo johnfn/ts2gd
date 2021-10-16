@@ -20,7 +20,8 @@ function: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeIs>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeIs>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeIsSignals>>(signal: T, method: SignalFunction<VisualShaderNodeIsSignals[T]>): number;
 
 
 
@@ -28,14 +29,16 @@ function: int;
  * Comparison with `INF` (Infinity).
  *
 */
-static FUNC_IS_INF: 0;
+static FUNC_IS_INF: any;
 
 /**
  * Comparison with `NaN` (Not a Number; denotes invalid numeric results, e.g. division by zero).
  *
 */
-static FUNC_IS_NAN: 1;
+static FUNC_IS_NAN: any;
 
+}
 
+declare class VisualShaderNodeIsSignals extends VisualShaderNodeSignals {
   
 }

@@ -48,13 +48,18 @@ transform: Transform2D;
 /** If [code]true[/code], the node's Z index is relative to its parent's Z index. If this node's Z index is 2 and its parent's effective Z index is 3, then this node's effective Z index will be 2 + 3 = 5. */
 z_as_relative: boolean;
 
-/** Z index. Controls the order in which the nodes render. A node with a higher Z index will display in front of others. */
+/** Z index. Controls the order in which the nodes render. A node with a higher Z index will display in front of others. Must be between [constant VisualServer.CANVAS_ITEM_Z_MIN] and [constant VisualServer.CANVAS_ITEM_Z_MAX] (inclusive). */
 z_index: int;
 
 /** Multiplies the current scale by the [code]ratio[/code] vector. */
 apply_scale(ratio: Vector2): void;
 
-/** Returns the angle between the node and the [code]point[/code] in radians. */
+/**
+ * Returns the angle between the node and the `point` in radians.
+ *
+ * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/node2d_get_angle_to.png]Illustration of the returned angle.[/url]
+ *
+*/
 get_angle_to(point: Vector2): float;
 
 /** Returns the [Transform2D] relative to this node's parent. */
@@ -84,11 +89,14 @@ to_local(global_point: Vector2): Vector2;
 /** Translates the node by the given [code]offset[/code] in local coordinates. */
 translate(offset: Vector2): void;
 
-  connect<T extends SignalsOf<Node2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Node2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Node2DSignals>>(signal: T, method: SignalFunction<Node2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Node2DSignals extends CanvasItemSignals {
   
 }

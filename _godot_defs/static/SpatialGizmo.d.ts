@@ -14,11 +14,14 @@ declare class SpatialGizmo extends Reference {
 
 
 
-  connect<T extends SignalsOf<SpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpatialGizmoSignals>>(signal: T, method: SignalFunction<SpatialGizmoSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpatialGizmoSignals extends ReferenceSignals {
   
 }

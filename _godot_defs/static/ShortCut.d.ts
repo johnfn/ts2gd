@@ -36,11 +36,14 @@ is_shortcut(event: InputEvent): boolean;
 /** If [code]true[/code], this shortcut is valid. */
 is_valid(): boolean;
 
-  connect<T extends SignalsOf<ShortCut>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ShortCut>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ShortCutSignals>>(signal: T, method: SignalFunction<ShortCutSignals[T]>): number;
 
 
 
 
+}
 
+declare class ShortCutSignals extends ResourceSignals {
   
 }

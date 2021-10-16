@@ -36,7 +36,8 @@ pre_gain: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectDistortion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectDistortion>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectDistortionSignals>>(signal: T, method: SignalFunction<AudioEffectDistortionSignals[T]>): number;
 
 
 
@@ -44,29 +45,31 @@ pre_gain: float;
  * Digital distortion effect which cuts off peaks at the top and bottom of the waveform.
  *
 */
-static MODE_CLIP: 0;
+static MODE_CLIP: any;
 
 /** No documentation provided. */
-static MODE_ATAN: 1;
+static MODE_ATAN: any;
 
 /**
  * Low-resolution digital distortion effect. You can use it to emulate the sound of early digital audio devices.
  *
 */
-static MODE_LOFI: 2;
+static MODE_LOFI: any;
 
 /**
  * Emulates the warm distortion produced by a field effect transistor, which is commonly used in solid-state musical instrument amplifiers.
  *
 */
-static MODE_OVERDRIVE: 3;
+static MODE_OVERDRIVE: any;
 
 /**
  * Waveshaper distortions are used mainly by electronic musicians to achieve an extra-abrasive sound.
  *
 */
-static MODE_WAVESHAPE: 4;
+static MODE_WAVESHAPE: any;
 
+}
 
+declare class AudioEffectDistortionSignals extends AudioEffectSignals {
   
 }

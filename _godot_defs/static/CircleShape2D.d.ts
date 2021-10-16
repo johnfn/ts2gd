@@ -20,11 +20,14 @@ radius: float;
 
 
 
-  connect<T extends SignalsOf<CircleShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CircleShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CircleShape2DSignals>>(signal: T, method: SignalFunction<CircleShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class CircleShape2DSignals extends Shape2DSignals {
   
 }

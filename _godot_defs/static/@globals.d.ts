@@ -1,5 +1,6 @@
 
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
+declare const preload: <T extends AssetPath>(path: T) => AssetType[T];
 
 /** The [ARVRServer] singleton. */
 declare const ARVRServer: ARVRServerClass;
@@ -18,9 +19,6 @@ declare const Engine: EngineClass;
 
 /** The [Geometry] singleton. */
 declare const Geometry: GeometryClass;
-
-/** The [GodotSharp] singleton. */
-//declare const GodotSharp: GodotSharpClass;
 
 /** The [IP] singleton. */
 declare const IP: IPClass;
@@ -54,7 +52,7 @@ declare const JavaScript: JavaScriptClass;
 declare const Marshalls: MarshallsClass;
 
 /** The [EditorNavigationMeshGenerator] singleton. */
-declare const NavigationMeshGenerator: EditorNavigationMeshGeneratorClass;
+//declare const NavigationMeshGenerator: EditorNavigationMeshGeneratorClass;
 
 /** The [OS] singleton. */
 declare const OS: OSClass;
@@ -1611,10 +1609,45 @@ JOY_BUTTON_14 = 14,
 */
 JOY_BUTTON_15 = 15,
 /**
+ * Gamepad button 16.
+ *
+*/
+JOY_BUTTON_16 = 16,
+/**
+ * Gamepad button 17.
+ *
+*/
+JOY_BUTTON_17 = 17,
+/**
+ * Gamepad button 18.
+ *
+*/
+JOY_BUTTON_18 = 18,
+/**
+ * Gamepad button 19.
+ *
+*/
+JOY_BUTTON_19 = 19,
+/**
+ * Gamepad button 20.
+ *
+*/
+JOY_BUTTON_20 = 20,
+/**
+ * Gamepad button 21.
+ *
+*/
+JOY_BUTTON_21 = 21,
+/**
+ * Gamepad button 22.
+ *
+*/
+JOY_BUTTON_22 = 22,
+/**
  * Represents the maximum number of joystick buttons supported.
  *
 */
-JOY_BUTTON_MAX = 16,
+JOY_BUTTON_MAX = 23,
 /**
  * DualShock circle button.
  *
@@ -1740,6 +1773,41 @@ JOY_DPAD_LEFT = 14,
  *
 */
 JOY_DPAD_RIGHT = 15,
+/**
+ * Gamepad SDL guide button.
+ *
+*/
+JOY_GUIDE = 16,
+/**
+ * Gamepad SDL miscellaneous button.
+ *
+*/
+JOY_MISC1 = 17,
+/**
+ * Gamepad SDL paddle 1 button.
+ *
+*/
+JOY_PADDLE1 = 18,
+/**
+ * Gamepad SDL paddle 2 button.
+ *
+*/
+JOY_PADDLE2 = 19,
+/**
+ * Gamepad SDL paddle 3 button.
+ *
+*/
+JOY_PADDLE3 = 20,
+/**
+ * Gamepad SDL paddle 4 button.
+ *
+*/
+JOY_PADDLE4 = 21,
+/**
+ * Gamepad SDL touchpad button.
+ *
+*/
+JOY_TOUCHPAD = 22,
 /**
  * Gamepad left Shoulder button.
  *
@@ -1927,10 +1995,10 @@ MIDI_MESSAGE_PITCH_BEND = 14
  * 
  * var err = method_that_returns_error()
  * if err != OK:
- *     print("Failure!)
+ *     print("Failure!")
  * # Or, equivalent:
  * if err:
- *     print("Still failing!)
+ *     print("Still failing!")
  * @summary 
  * 
  *
@@ -2191,7 +2259,7 @@ PROPERTY_HINT_NONE = 0,
 */
 PROPERTY_HINT_RANGE = 1,
 /**
- * Hints that an integer or float property should be within an exponential range specified via the hint string `"min,max"` or `"min,max,step"`. The hint string can optionally include `"or_greater"` and/or `"or_lesser"` to allow manual input going respectively above the max or below the min values. Example: `"0.01,100,0.01,or_greater"`.
+ * Hints that a float property should be within an exponential range specified via the hint string `"min,max"` or `"min,max,step"`. The hint string can optionally include `"or_greater"` and/or `"or_lesser"` to allow manual input going respectively above the max or below the min values. Example: `"0.01,100,0.01,or_greater"`.
  *
 */
 PROPERTY_HINT_EXP_RANGE = 2,

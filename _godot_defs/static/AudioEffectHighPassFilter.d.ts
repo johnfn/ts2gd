@@ -18,11 +18,14 @@ declare class AudioEffectHighPassFilter extends AudioEffectFilter {
 
 
 
-  connect<T extends SignalsOf<AudioEffectHighPassFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectHighPassFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectHighPassFilterSignals>>(signal: T, method: SignalFunction<AudioEffectHighPassFilterSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectHighPassFilterSignals extends AudioEffectFilterSignals {
   
 }

@@ -15,11 +15,14 @@ declare class PackedDataContainerRef extends Reference {
 /** No documentation provided. */
 size(): int;
 
-  connect<T extends SignalsOf<PackedDataContainerRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PackedDataContainerRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PackedDataContainerRefSignals>>(signal: T, method: SignalFunction<PackedDataContainerRefSignals[T]>): number;
 
 
 
 
+}
 
+declare class PackedDataContainerRefSignals extends ReferenceSignals {
   
 }

@@ -1,21 +1,25 @@
 
 /**
- * This class implements most of the logic behind the high-level multiplayer API.
+ * This class implements most of the logic behind the high-level multiplayer API. See also [NetworkedMultiplayerPeer].
  *
  * By default, [SceneTree] has a reference to this class that is used to provide multiplayer capabilities (i.e. RPC/RSET) across the whole scene.
  *
  * It is possible to override the MultiplayerAPI instance used by specific Nodes by setting the [member Node.custom_multiplayer] property, effectively allowing to run both client and server in the same scene.
+ *
+ * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
 declare class MultiplayerAPI extends Reference {
 
   
 /**
- * This class implements most of the logic behind the high-level multiplayer API.
+ * This class implements most of the logic behind the high-level multiplayer API. See also [NetworkedMultiplayerPeer].
  *
  * By default, [SceneTree] has a reference to this class that is used to provide multiplayer capabilities (i.e. RPC/RSET) across the whole scene.
  *
  * It is possible to override the MultiplayerAPI instance used by specific Nodes by setting the [member Node.custom_multiplayer] property, effectively allowing to run both client and server in the same scene.
+ *
+ * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
   "new"(): MultiplayerAPI;
@@ -36,6 +40,14 @@ network_peer: NetworkedMultiplayerPeer;
 
 /** If [code]true[/code], the MultiplayerAPI's [member network_peer] refuses new incoming connections. */
 refuse_new_network_connections: boolean;
+
+/**
+ * The root node to use for RPCs. Instead of an absolute path, a relative path will be used to find the node upon which the RPC should be executed.
+ *
+ * This effectively allows to have different branches of the scene tree to be managed by different MultiplayerAPI, allowing for example to run both client and server in the same scene.
+ *
+*/
+root_node: Node;
 
 /** Clears the current MultiplayerAPI network state (you shouldn't call this unless you know what you are doing). */
 clear(): void;
@@ -71,15 +83,8 @@ poll(): void;
 /** Sends the given raw [code]bytes[/code] to a specific peer identified by [code]id[/code] (see [method NetworkedMultiplayerPeer.set_target_peer]). Default ID is [code]0[/code], i.e. broadcast to all peers. */
 send_bytes(bytes: PoolByteArray, id?: int, mode?: int): int;
 
-/**
- * Sets the base root node to use for RPCs. Instead of an absolute path, a relative path will be used to find the node upon which the RPC should be executed.
- *
- * This effectively allows to have different branches of the scene tree to be managed by different MultiplayerAPI, allowing for example to run both client and server in the same scene.
- *
-*/
-set_root_node(node: Node): void;
-
-  connect<T extends SignalsOf<MultiplayerAPI>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MultiplayerAPI>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MultiplayerAPISignals>>(signal: T, method: SignalFunction<MultiplayerAPISignals[T]>): number;
 
 
 
@@ -87,57 +92,59 @@ set_root_node(node: Node): void;
  * Used with [method Node.rpc_config] or [method Node.rset_config] to disable a method or property for all RPC calls, making it unavailable. Default for all methods.
  *
 */
-static RPC_MODE_DISABLED: 0;
+static RPC_MODE_DISABLED: any;
 
 /**
  * Used with [method Node.rpc_config] or [method Node.rset_config] to set a method to be called or a property to be changed only on the remote end, not locally. Analogous to the `remote` keyword. Calls and property changes are accepted from all remote peers, no matter if they are node's master or puppets.
  *
 */
-static RPC_MODE_REMOTE: 1;
+static RPC_MODE_REMOTE: any;
 
 /**
  * Used with [method Node.rpc_config] or [method Node.rset_config] to set a method to be called or a property to be changed only on the network master for this node. Analogous to the `master` keyword. Only accepts calls or property changes from the node's network puppets, see [method Node.set_network_master].
  *
 */
-static RPC_MODE_MASTER: 2;
+static RPC_MODE_MASTER: any;
 
 /**
  * Used with [method Node.rpc_config] or [method Node.rset_config] to set a method to be called or a property to be changed only on puppets for this node. Analogous to the `puppet` keyword. Only accepts calls or property changes from the node's network master, see [method Node.set_network_master].
  *
 */
-static RPC_MODE_PUPPET: 3;
+static RPC_MODE_PUPPET: any;
 
 /**
  * **Deprecated.** Use [constant RPC_MODE_PUPPET] instead. Analogous to the `slave` keyword.
  *
 */
-static RPC_MODE_SLAVE: 3;
+static RPC_MODE_SLAVE: any;
 
 /**
  * Behave like [constant RPC_MODE_REMOTE] but also make the call or property change locally. Analogous to the `remotesync` keyword.
  *
 */
-static RPC_MODE_REMOTESYNC: 4;
+static RPC_MODE_REMOTESYNC: any;
 
 /**
  * **Deprecated.** Use [constant RPC_MODE_REMOTESYNC] instead. Analogous to the `sync` keyword.
  *
 */
-static RPC_MODE_SYNC: 4;
+static RPC_MODE_SYNC: any;
 
 /**
  * Behave like [constant RPC_MODE_MASTER] but also make the call or property change locally. Analogous to the `mastersync` keyword.
  *
 */
-static RPC_MODE_MASTERSYNC: 5;
+static RPC_MODE_MASTERSYNC: any;
 
 /**
  * Behave like [constant RPC_MODE_PUPPET] but also make the call or property change locally. Analogous to the `puppetsync` keyword.
  *
 */
-static RPC_MODE_PUPPETSYNC: 6;
+static RPC_MODE_PUPPETSYNC: any;
 
+}
 
+declare class MultiplayerAPISignals extends ReferenceSignals {
   /**
  * Emitted when this MultiplayerAPI's [member network_peer] successfully connected to a server. Only emitted on clients.
  *

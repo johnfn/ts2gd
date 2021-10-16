@@ -2,12 +2,16 @@
 /**
  * A Spotlight is a type of [Light] node that emits lights in a specific direction, in the shape of a cone. The light is attenuated through the distance. This attenuation can be configured by changing the energy, radius and attenuation parameters of [Light].
  *
+ * **Note:** By default, only 32 SpotLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
+ *
 */
 declare class SpotLight extends Light {
 
   
 /**
  * A Spotlight is a type of [Light] node that emits lights in a specific direction, in the shape of a cone. The light is attenuated through the distance. This attenuation can be configured by changing the energy, radius and attenuation parameters of [Light].
+ *
+ * **Note:** By default, only 32 SpotLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
  *
 */
   "new"(): SpotLight;
@@ -29,11 +33,14 @@ spot_range: float;
 
 
 
-  connect<T extends SignalsOf<SpotLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpotLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpotLightSignals>>(signal: T, method: SignalFunction<SpotLightSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpotLightSignals extends LightSignals {
   
 }

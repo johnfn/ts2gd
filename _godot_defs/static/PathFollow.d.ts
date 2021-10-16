@@ -49,7 +49,8 @@ v_offset: float;
 
 
 
-  connect<T extends SignalsOf<PathFollow>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PathFollow>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PathFollowSignals>>(signal: T, method: SignalFunction<PathFollowSignals[T]>): number;
 
 
 
@@ -57,32 +58,34 @@ v_offset: float;
  * Forbids the PathFollow to rotate.
  *
 */
-static ROTATION_NONE: 0;
+static ROTATION_NONE: any;
 
 /**
  * Allows the PathFollow to rotate in the Y axis only.
  *
 */
-static ROTATION_Y: 1;
+static ROTATION_Y: any;
 
 /**
  * Allows the PathFollow to rotate in both the X, and Y axes.
  *
 */
-static ROTATION_XY: 2;
+static ROTATION_XY: any;
 
 /**
  * Allows the PathFollow to rotate in any axis.
  *
 */
-static ROTATION_XYZ: 3;
+static ROTATION_XYZ: any;
 
 /**
  * Uses the up vector information in a [Curve3D] to enforce orientation. This rotation mode requires the [Path]'s [member Curve3D.up_vector_enabled] property to be set to `true`.
  *
 */
-static ROTATION_ORIENTED: 4;
+static ROTATION_ORIENTED: any;
 
+}
 
+declare class PathFollowSignals extends SpatialSignals {
   
 }

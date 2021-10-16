@@ -106,11 +106,14 @@ declare class AudioEffectEQ21 extends AudioEffectEQ {
 
 
 
-  connect<T extends SignalsOf<AudioEffectEQ21>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectEQ21>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectEQ21Signals>>(signal: T, method: SignalFunction<AudioEffectEQ21Signals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectEQ21Signals extends AudioEffectEQSignals {
   
 }

@@ -33,7 +33,9 @@ protected _compute_cost(from_id: int, to_id: int): float;
 protected _estimate_cost(from_id: int, to_id: int): float;
 
 /**
- * Adds a new point at the given position with the given identifier. The algorithm prefers points with lower `weight_scale` to form a path. The `id` must be 0 or larger, and the `weight_scale` must be 1 or larger.
+ * Adds a new point at the given position with the given identifier. The `id` must be 0 or larger, and the `weight_scale` must be 1 or larger.
+ *
+ * The `weight_scale` is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. Thus, all else being equal, the algorithm prefers points with lower `weight_scale`s to form a path.
  *
  * @example 
  * 
@@ -148,7 +150,12 @@ get_point_connections(id: int): PoolIntArray;
 /** Returns the number of points currently in the points pool. */
 get_point_count(): int;
 
-/** Returns an array with the points that are in the path found by AStar2D between the given points. The array is ordered from the starting point to the ending point of the path. */
+/**
+ * Returns an array with the points that are in the path found by AStar2D between the given points. The array is ordered from the starting point to the ending point of the path.
+ *
+ * **Note:** This method is not thread-safe. If called from a [Thread], it will return an empty [PoolVector2Array] and will print an error message.
+ *
+*/
 get_point_path(from_id: int, to_id: int): PoolVector2Array;
 
 /** Returns the position of the point associated with the given [code]id[/code]. */
@@ -178,14 +185,17 @@ set_point_disabled(id: int, disabled?: boolean): void;
 /** Sets the [code]position[/code] for the point with the given [code]id[/code]. */
 set_point_position(id: int, position: Vector2): void;
 
-/** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. */
+/** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. The [code]weight_scale[/code] is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. */
 set_point_weight_scale(id: int, weight_scale: float): void;
 
-  connect<T extends SignalsOf<AStar2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AStar2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AStar2DSignals>>(signal: T, method: SignalFunction<AStar2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class AStar2DSignals extends ReferenceSignals {
   
 }

@@ -25,11 +25,14 @@ points: PoolVector2Array;
 /** Based on the set of points provided, this creates and assigns the [member points] property using the convex hull algorithm. Removing all unneeded points. See [method Geometry.convex_hull_2d] for details. */
 set_point_cloud(point_cloud: PoolVector2Array): void;
 
-  connect<T extends SignalsOf<ConvexPolygonShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConvexPolygonShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConvexPolygonShape2DSignals>>(signal: T, method: SignalFunction<ConvexPolygonShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class ConvexPolygonShape2DSignals extends Shape2DSignals {
   
 }

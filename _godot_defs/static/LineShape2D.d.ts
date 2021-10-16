@@ -23,11 +23,14 @@ normal: Vector2;
 
 
 
-  connect<T extends SignalsOf<LineShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<LineShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<LineShape2DSignals>>(signal: T, method: SignalFunction<LineShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class LineShape2DSignals extends Shape2DSignals {
   
 }

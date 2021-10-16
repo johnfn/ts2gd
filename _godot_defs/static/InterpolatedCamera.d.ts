@@ -31,11 +31,14 @@ target: NodePathType;
 /** Sets the node to move toward and orient with. */
 set_target(target: Object): void;
 
-  connect<T extends SignalsOf<InterpolatedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InterpolatedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InterpolatedCameraSignals>>(signal: T, method: SignalFunction<InterpolatedCameraSignals[T]>): number;
 
 
 
 
+}
 
+declare class InterpolatedCameraSignals extends CameraSignals {
   
 }

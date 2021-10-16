@@ -21,7 +21,7 @@ checkable: boolean;
 /** Used by the inspector, set to [code]true[/code] when the property is checked. */
 checked: boolean;
 
-/** Used by the inspector, set to [code]true[/code] when the property must draw with error color. This is used for editable children's properties. */
+/** Used by the inspector, set to [code]true[/code] when the property is drawn with the editor theme's warning color. This is used for editable children's properties. */
 draw_red: boolean;
 
 /** Used by the inspector, set to [code]true[/code] when the property can add keys for animation. */
@@ -45,21 +45,24 @@ get_edited_object(): Object;
 /** Gets the edited property. If your editor is for a single property (added via [method EditorInspectorPlugin.parse_property]), then this will return the property. */
 get_edited_property(): string;
 
-/** Override if you want to allow a custom tooltip over your property. */
+/** Must be implemented to provide a custom tooltip to the property editor. */
 get_tooltip_text(): string;
 
-/** Adds controls with this function if you want them on the bottom (below the label). */
+/** Puts the [code]editor[/code] control below the property label. The control must be previously added using [method Node.add_child]. */
 set_bottom_editor(editor: Control): void;
 
 /** When this virtual function is called, you must update your editor. */
 update_property(): void;
 
-  connect<T extends SignalsOf<EditorProperty>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorProperty>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorPropertySignals>>(signal: T, method: SignalFunction<EditorPropertySignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorPropertySignals extends ContainerSignals {
   /**
  * Emit it if you want multiple properties modified at the same time. Do not use if added via [method EditorInspectorPlugin.parse_property].
  *

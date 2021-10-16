@@ -51,11 +51,14 @@ get_texture(idx: int): Texture;
 /** Returns the number of textures in the BitmapFont atlas. */
 get_texture_count(): int;
 
-  connect<T extends SignalsOf<BitmapFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<BitmapFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BitmapFontSignals>>(signal: T, method: SignalFunction<BitmapFontSignals[T]>): number;
 
 
 
 
+}
 
+declare class BitmapFontSignals extends FontSignals {
   
 }

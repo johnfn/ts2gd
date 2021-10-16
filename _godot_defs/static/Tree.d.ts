@@ -93,6 +93,9 @@ clear(): void;
 */
 create_item(parent?: Object, idx?: int): TreeItem;
 
+/** Edits the selected tree item as if it was clicked. The item must be set editable with [method TreeItem.set_editable]. Returns [code]true[/code] if the item could be edited. Fails if no item is selected. */
+edit_selected(): boolean;
+
 /**
  * Makes the currently focused cell visible.
  *
@@ -125,10 +128,22 @@ get_custom_popup_rect(): Rect2;
 */
 get_drop_section_at_position(position: Vector2): int;
 
-/** Returns the currently edited item. This is only available for custom cell mode. */
+/**
+ * Returns the currently edited item. Can be used with [signal item_edited] to get the item that was modified.
+ *
+ * @example 
+ * 
+ * func _ready():
+ *     $Tree.item_edited.connect(on_Tree_item_edited)
+ * func on_Tree_item_edited():
+ *     print($Tree.get_edited()) # This item just got edited (e.g. checked).
+ * @summary 
+ * 
+ *
+*/
 get_edited(): TreeItem;
 
-/** Returns the column for the currently edited item. This is only available for custom cell mode. */
+/** Returns the column for the currently edited item. */
 get_edited_column(): int;
 
 /** Returns the rectangle area for the specified item. If [code]column[/code] is specified, only get the position and size of that column, otherwise get the rectangle containing all columns. */
@@ -174,6 +189,9 @@ get_selected(): TreeItem;
 */
 get_selected_column(): int;
 
+/** Causes the [Tree] to jump to the specified item. */
+scroll_to_item(item: Object): void;
+
 /** If [code]true[/code], the column will have the "Expand" flag of [Control]. Columns that have the "Expand" flag will use their "min_width" in a similar fashion to [member Control.size_flags_stretch_ratio]. */
 set_column_expand(column: int, expand: boolean): void;
 
@@ -186,7 +204,8 @@ set_column_title(column: int, title: string): void;
 /** If [code]true[/code], column titles are visible. */
 set_column_titles_visible(visible: boolean): void;
 
-  connect<T extends SignalsOf<Tree>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Tree>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TreeSignals>>(signal: T, method: SignalFunction<TreeSignals[T]>): number;
 
 
 
@@ -196,7 +215,7 @@ set_column_titles_visible(visible: boolean): void;
  * The focus cursor is always hidden in this mode, but it is positioned at the current selection, making the currently selected item the currently focused item.
  *
 */
-static SELECT_SINGLE: 0;
+static SELECT_SINGLE: any;
 
 /**
  * Allows selection of a single row at a time. From the perspective of items, only a single items is allowed to be selected. And all the columns are selected in the selected item.
@@ -204,7 +223,7 @@ static SELECT_SINGLE: 0;
  * The focus cursor is always hidden in this mode, but it is positioned at the first column of the current selection, making the currently selected item the currently focused item.
  *
 */
-static SELECT_ROW: 1;
+static SELECT_ROW: any;
 
 /**
  * Allows selection of multiple cells at the same time. From the perspective of items, multiple items are allowed to be selected. And there can be multiple columns selected in each selected item.
@@ -212,7 +231,7 @@ static SELECT_ROW: 1;
  * The focus cursor is visible in this mode, the item or column under the cursor is not necessarily selected.
  *
 */
-static SELECT_MULTI: 2;
+static SELECT_MULTI: any;
 
 /**
  * Disables all drop sections, but still allows to detect the "on item" drop section by [method get_drop_section_at_position].
@@ -220,7 +239,7 @@ static SELECT_MULTI: 2;
  * **Note:** This is the default flag, it has no effect when combined with other flags.
  *
 */
-static DROP_MODE_DISABLED: 0;
+static DROP_MODE_DISABLED: any;
 
 /**
  * Enables the "on item" drop section. This drop section covers the entire item.
@@ -228,7 +247,7 @@ static DROP_MODE_DISABLED: 0;
  * When combined with [constant DROP_MODE_INBETWEEN], this drop section halves the height and stays centered vertically.
  *
 */
-static DROP_MODE_ON_ITEM: 1;
+static DROP_MODE_ON_ITEM: any;
 
 /**
  * Enables "above item" and "below item" drop sections. The "above item" drop section covers the top half of the item, and the "below item" drop section covers the bottom half.
@@ -236,9 +255,11 @@ static DROP_MODE_ON_ITEM: 1;
  * When combined with [constant DROP_MODE_ON_ITEM], these drop sections halves the height and stays on top / bottom accordingly.
  *
 */
-static DROP_MODE_INBETWEEN: 2;
+static DROP_MODE_INBETWEEN: any;
 
+}
 
+declare class TreeSignals extends ControlSignals {
   /**
  * Emitted when a button on the tree was pressed (see [method TreeItem.add_button]).
  *

@@ -28,6 +28,9 @@ collider_id: int;
 /** The colliding body's metadata. See [Object]. */
 collider_metadata: any;
 
+/** The colliding body's [RID] used by the [Physics2DServer]. */
+collider_rid: RID;
+
 /** The colliding body's shape. */
 collider_shape: Object;
 
@@ -52,13 +55,17 @@ remainder: Vector2;
 /** The distance the moving object traveled before collision. */
 travel: Vector2;
 
+/** The collision angle according to [code]up_direction[/code], which is [code]Vector2.UP[/code] by default. This value is always positive. */
+get_angle(up_direction?: Vector2): float;
+
+  // connect<T extends SignalsOf<KinematicCollision2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<KinematicCollision2DSignals>>(signal: T, method: SignalFunction<KinematicCollision2DSignals[T]>): number;
 
 
-  connect<T extends SignalsOf<KinematicCollision2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
 
 
+}
 
-
-
+declare class KinematicCollision2DSignals extends ReferenceSignals {
   
 }

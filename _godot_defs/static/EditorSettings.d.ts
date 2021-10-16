@@ -73,7 +73,7 @@ declare class EditorSettings extends Resource {
  * 
  *
 */
-add_property_info(info: Dictionary): void;
+add_property_info(info: Dictionary<any, any>): void;
 
 /** Erases the setting whose name is specified by [code]property[/code]. */
 erase(property: string): void;
@@ -127,7 +127,8 @@ set_recent_dirs(dirs: PoolStringArray): void;
 /** Sets the [code]value[/code] of the setting specified by [code]name[/code]. This is equivalent to using [method Object.set] on the EditorSettings instance. */
 set_setting(name: string, value: any): void;
 
-  connect<T extends SignalsOf<EditorSettings>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorSettings>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorSettingsSignals>>(signal: T, method: SignalFunction<EditorSettingsSignals[T]>): number;
 
 
 
@@ -135,9 +136,11 @@ set_setting(name: string, value: any): void;
  * Emitted after any editor setting has changed. It's used by various editor plugins to update their visuals on theme changes or logic on configuration changes.
  *
 */
-static NOTIFICATION_EDITOR_SETTINGS_CHANGED: 10000;
+static NOTIFICATION_EDITOR_SETTINGS_CHANGED: any;
 
+}
 
+declare class EditorSettingsSignals extends ResourceSignals {
   /**
  * Emitted after any editor setting has changed.
  *

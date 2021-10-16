@@ -2,16 +2,12 @@
 /**
  * Once added to the scene tree and enabled using [method make_current], this node will override the location sounds are heard from. This can be used to listen from a location different from the [Camera].
  *
- * **Note:** There is no 2D equivalent for this node yet.
- *
 */
 declare class Listener extends Spatial {
 
   
 /**
  * Once added to the scene tree and enabled using [method make_current], this node will override the location sounds are heard from. This can be used to listen from a location different from the [Camera].
- *
- * **Note:** There is no 2D equivalent for this node yet.
  *
 */
   "new"(): Listener;
@@ -37,11 +33,14 @@ is_current(): boolean;
 /** Enables the listener. This will override the current camera's listener. */
 make_current(): void;
 
-  connect<T extends SignalsOf<Listener>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Listener>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ListenerSignals>>(signal: T, method: SignalFunction<ListenerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ListenerSignals extends SpatialSignals {
   
 }

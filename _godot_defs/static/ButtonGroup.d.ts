@@ -26,11 +26,19 @@ get_buttons(): any[];
 /** Returns the current pressed button. */
 get_pressed_button(): BaseButton;
 
-  connect<T extends SignalsOf<ButtonGroup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ButtonGroup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ButtonGroupSignals>>(signal: T, method: SignalFunction<ButtonGroupSignals[T]>): number;
 
 
 
 
+}
 
-  
+declare class ButtonGroupSignals extends ResourceSignals {
+  /**
+ * Emitted when one of the buttons of the group is pressed.
+ *
+*/
+pressed: Signal<(button: Object) => void>
+
 }

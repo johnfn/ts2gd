@@ -1,13 +1,13 @@
 
 /**
- * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interact with children.
+ * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interacting with children.
  *
 */
 declare class Tabs extends Control {
 
   
 /**
- * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interact with children.
+ * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interacting with children.
  *
 */
   "new"(): Tabs;
@@ -21,7 +21,7 @@ current_tab: int;
 /** If [code]true[/code], tabs can be rearranged with mouse drag. */
 drag_to_rearrange_enabled: boolean;
 
-/** if [code]true[/code], the mouse's scroll wheel cab be used to navigate the scroll view. */
+/** if [code]true[/code], the mouse's scroll wheel can be used to navigate the scroll view. */
 scrolling_enabled: boolean;
 
 /** The alignment of all tabs. See [enum TabAlign] for details. */
@@ -38,6 +38,9 @@ ensure_tab_visible(idx: int): void;
 
 /** Returns [code]true[/code] if the offset buttons (the ones that appear when there's not enough space for all tabs) are visible. */
 get_offset_buttons_visible(): boolean;
+
+/** Returns the previously active tab index. */
+get_previous_tab(): int;
 
 /** Returns [code]true[/code] if select with right mouse button is enabled. */
 get_select_with_rmb(): boolean;
@@ -57,7 +60,7 @@ get_tab_offset(): int;
 /** Returns tab [Rect2] with local position and size. */
 get_tab_rect(tab_idx: int): Rect2;
 
-/** Returns the title of the tab at index [code]tab_idx[/code]. Tab titles default to the name of the indexed child node, but this can be overridden with [method set_tab_title]. */
+/** Returns the title of the tab at index [code]tab_idx[/code]. */
 get_tab_title(tab_idx: int): string;
 
 /** Returns the [Tabs]' rearrange group ID. */
@@ -72,12 +75,7 @@ remove_tab(tab_idx: int): void;
 /** If [code]true[/code], enables selecting a tab with the right mouse button. */
 set_select_with_rmb(enabled: boolean): void;
 
-/**
- * If `disabled` is `false`, hides the tab at index `tab_idx`.
- *
- * **Note:** Its title text will remain unless it is also removed with [method set_tab_title].
- *
-*/
+/** If [code]disabled[/code] is [code]true[/code], disables the tab at index [code]tab_idx[/code], making it non-interactable. */
 set_tab_disabled(tab_idx: int, disabled: boolean): void;
 
 /** Sets an [code]icon[/code] for the tab at index [code]tab_idx[/code]. */
@@ -86,10 +84,11 @@ set_tab_icon(tab_idx: int, icon: Texture): void;
 /** Sets a [code]title[/code] for the tab at index [code]tab_idx[/code]. */
 set_tab_title(tab_idx: int, title: string): void;
 
-/** Defines the rearrange group ID. Choose for each [Tabs] the same value to dragging tabs between [Tabs]. Enable drag with [code]set_drag_to_rearrange_enabled(true)[/code]. */
+/** Defines the rearrange group ID. Choose for each [Tabs] the same value to dragging tabs between [Tabs]. Enable drag with [member drag_to_rearrange_enabled]. */
 set_tabs_rearrange_group(group_id: int): void;
 
-  connect<T extends SignalsOf<Tabs>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Tabs>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TabsSignals>>(signal: T, method: SignalFunction<TabsSignals[T]>): number;
 
 
 
@@ -97,51 +96,53 @@ set_tabs_rearrange_group(group_id: int): void;
  * Align the tabs to the left.
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Align the tabs to the center.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Align the tabs to the right.
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
 /**
  * Represents the size of the [enum TabAlign] enum.
  *
 */
-static ALIGN_MAX: 3;
+static ALIGN_MAX: any;
 
 /**
  * Never show the close buttons.
  *
 */
-static CLOSE_BUTTON_SHOW_NEVER: 0;
+static CLOSE_BUTTON_SHOW_NEVER: any;
 
 /**
  * Only show the close button on the currently active tab.
  *
 */
-static CLOSE_BUTTON_SHOW_ACTIVE_ONLY: 1;
+static CLOSE_BUTTON_SHOW_ACTIVE_ONLY: any;
 
 /**
  * Show the close button on all tabs.
  *
 */
-static CLOSE_BUTTON_SHOW_ALWAYS: 2;
+static CLOSE_BUTTON_SHOW_ALWAYS: any;
 
 /**
  * Represents the size of the [enum CloseButtonDisplayPolicy] enum.
  *
 */
-static CLOSE_BUTTON_MAX: 3;
+static CLOSE_BUTTON_MAX: any;
 
+}
 
+declare class TabsSignals extends ControlSignals {
   /**
  * Emitted when the active tab is rearranged via mouse drag. See [member drag_to_rearrange_enabled].
  *

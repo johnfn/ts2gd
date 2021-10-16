@@ -14,106 +14,109 @@ declare class VisualShaderNodeScalarFunc extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeScalarFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeScalarFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeScalarFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeScalarFuncSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static FUNC_SIN: 0;
+static FUNC_SIN: any;
 
 /** No documentation provided. */
-static FUNC_COS: 1;
+static FUNC_COS: any;
 
 /** No documentation provided. */
-static FUNC_TAN: 2;
+static FUNC_TAN: any;
 
 /** No documentation provided. */
-static FUNC_ASIN: 3;
+static FUNC_ASIN: any;
 
 /** No documentation provided. */
-static FUNC_ACOS: 4;
+static FUNC_ACOS: any;
 
 /** No documentation provided. */
-static FUNC_ATAN: 5;
+static FUNC_ATAN: any;
 
 /** No documentation provided. */
-static FUNC_SINH: 6;
+static FUNC_SINH: any;
 
 /** No documentation provided. */
-static FUNC_COSH: 7;
+static FUNC_COSH: any;
 
 /** No documentation provided. */
-static FUNC_TANH: 8;
+static FUNC_TANH: any;
 
 /** No documentation provided. */
-static FUNC_LOG: 9;
+static FUNC_LOG: any;
 
 /** No documentation provided. */
-static FUNC_EXP: 10;
+static FUNC_EXP: any;
 
 /** No documentation provided. */
-static FUNC_SQRT: 11;
+static FUNC_SQRT: any;
 
 /** No documentation provided. */
-static FUNC_ABS: 12;
+static FUNC_ABS: any;
 
 /** No documentation provided. */
-static FUNC_SIGN: 13;
+static FUNC_SIGN: any;
 
 /** No documentation provided. */
-static FUNC_FLOOR: 14;
+static FUNC_FLOOR: any;
 
 /** No documentation provided. */
-static FUNC_ROUND: 15;
+static FUNC_ROUND: any;
 
 /** No documentation provided. */
-static FUNC_CEIL: 16;
+static FUNC_CEIL: any;
 
 /** No documentation provided. */
-static FUNC_FRAC: 17;
+static FUNC_FRAC: any;
 
 /** No documentation provided. */
-static FUNC_SATURATE: 18;
+static FUNC_SATURATE: any;
 
 /** No documentation provided. */
-static FUNC_NEGATE: 19;
+static FUNC_NEGATE: any;
 
 /** No documentation provided. */
-static FUNC_ACOSH: 20;
+static FUNC_ACOSH: any;
 
 /** No documentation provided. */
-static FUNC_ASINH: 21;
+static FUNC_ASINH: any;
 
 /** No documentation provided. */
-static FUNC_ATANH: 22;
+static FUNC_ATANH: any;
 
 /** No documentation provided. */
-static FUNC_DEGREES: 23;
+static FUNC_DEGREES: any;
 
 /** No documentation provided. */
-static FUNC_EXP2: 24;
+static FUNC_EXP2: any;
 
 /** No documentation provided. */
-static FUNC_INVERSE_SQRT: 25;
+static FUNC_INVERSE_SQRT: any;
 
 /** No documentation provided. */
-static FUNC_LOG2: 26;
+static FUNC_LOG2: any;
 
 /** No documentation provided. */
-static FUNC_RADIANS: 27;
+static FUNC_RADIANS: any;
 
 /** No documentation provided. */
-static FUNC_RECIPROCAL: 28;
+static FUNC_RECIPROCAL: any;
 
 /** No documentation provided. */
-static FUNC_ROUNDEVEN: 29;
+static FUNC_ROUNDEVEN: any;
 
 /** No documentation provided. */
-static FUNC_TRUNC: 30;
+static FUNC_TRUNC: any;
 
 /** No documentation provided. */
-static FUNC_ONEMINUS: 31;
+static FUNC_ONEMINUS: any;
 
+}
 
+declare class VisualShaderNodeScalarFuncSignals extends VisualShaderNodeSignals {
   
 }

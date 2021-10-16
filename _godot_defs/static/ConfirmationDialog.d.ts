@@ -36,11 +36,14 @@ declare class ConfirmationDialog extends AcceptDialog {
 /** Returns the cancel button. */
 get_cancel(): Button;
 
-  connect<T extends SignalsOf<ConfirmationDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConfirmationDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConfirmationDialogSignals>>(signal: T, method: SignalFunction<ConfirmationDialogSignals[T]>): number;
 
 
 
 
+}
 
+declare class ConfirmationDialogSignals extends AcceptDialogSignals {
   
 }

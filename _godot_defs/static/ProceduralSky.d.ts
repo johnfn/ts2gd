@@ -69,7 +69,8 @@ texture_size: int;
 
 
 
-  connect<T extends SignalsOf<ProceduralSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ProceduralSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ProceduralSkySignals>>(signal: T, method: SignalFunction<ProceduralSkySignals[T]>): number;
 
 
 
@@ -77,38 +78,40 @@ texture_size: int;
  * Sky texture will be 256x128.
  *
 */
-static TEXTURE_SIZE_256: 0;
+static TEXTURE_SIZE_256: any;
 
 /**
  * Sky texture will be 512x256.
  *
 */
-static TEXTURE_SIZE_512: 1;
+static TEXTURE_SIZE_512: any;
 
 /**
  * Sky texture will be 1024x512. This is the default size.
  *
 */
-static TEXTURE_SIZE_1024: 2;
+static TEXTURE_SIZE_1024: any;
 
 /**
  * Sky texture will be 2048x1024.
  *
 */
-static TEXTURE_SIZE_2048: 3;
+static TEXTURE_SIZE_2048: any;
 
 /**
  * Sky texture will be 4096x2048.
  *
 */
-static TEXTURE_SIZE_4096: 4;
+static TEXTURE_SIZE_4096: any;
 
 /**
  * Represents the size of the [enum TextureSize] enum.
  *
 */
-static TEXTURE_SIZE_MAX: 5;
+static TEXTURE_SIZE_MAX: any;
 
+}
 
+declare class ProceduralSkySignals extends SkySignals {
   
 }

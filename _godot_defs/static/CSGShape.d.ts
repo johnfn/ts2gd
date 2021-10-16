@@ -23,12 +23,12 @@ calculate_tangents: boolean;
  *
  * Collidable objects can exist in any of 32 different layers. These layers work like a tagging system, and are not visual. A collidable can use these layers to select with which objects it can collide, using the collision_mask property.
  *
- * A contact is detected if object A is in any of the layers that object B scans, or object B is in any layer scanned by object A. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information.
+ * A contact is detected if object A is in any of the layers that object B scans, or object B is in any layer scanned by object A. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information.
  *
 */
 collision_layer: int;
 
-/** The physics layers this CSG shape scans for collisions. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The physics layers this CSG shape scans for collisions. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
 
 /** The operation that is performed on this shape. This is ignored for the first CSG child node as the operation is between this node and the previous child of this nodes parent. */
@@ -58,7 +58,8 @@ set_collision_layer_bit(bit: int, value: boolean): void;
 /** Sets individual bits on the collision mask. Use this if you only need to change one layer's value. */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  connect<T extends SignalsOf<CSGShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGShapeSignals>>(signal: T, method: SignalFunction<CSGShapeSignals[T]>): number;
 
 
 
@@ -66,20 +67,22 @@ set_collision_mask_bit(bit: int, value: boolean): void;
  * Geometry of both primitives is merged, intersecting geometry is removed.
  *
 */
-static OPERATION_UNION: 0;
+static OPERATION_UNION: any;
 
 /**
  * Only intersecting geometry remains, the rest is removed.
  *
 */
-static OPERATION_INTERSECTION: 1;
+static OPERATION_INTERSECTION: any;
 
 /**
  * The second shape is subtracted from the first, leaving a dent with its shape.
  *
 */
-static OPERATION_SUBTRACTION: 2;
+static OPERATION_SUBTRACTION: any;
 
+}
 
+declare class CSGShapeSignals extends GeometryInstanceSignals {
   
 }

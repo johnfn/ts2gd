@@ -18,11 +18,14 @@ declare class VisualShaderNodeVectorLen extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorLen>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorLen>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorLenSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorLenSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorLenSignals extends VisualShaderNodeSignals {
   
 }

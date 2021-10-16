@@ -25,11 +25,14 @@ curve: Curve2D;
 
 
 
-  connect<T extends SignalsOf<Path2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Path2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Path2DSignals>>(signal: T, method: SignalFunction<Path2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Path2DSignals extends Node2DSignals {
   
 }

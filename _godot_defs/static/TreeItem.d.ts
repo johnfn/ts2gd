@@ -82,7 +82,7 @@ get_icon_modulate(column: int): Color;
 /** Returns the icon [Texture] region as [Rect2]. */
 get_icon_region(column: int): Rect2;
 
-/** No documentation provided. */
+/** Returns the metadata value that was set for the given column using [method set_metadata]. */
 get_metadata(column: int): any;
 
 /** Returns the next TreeItem in the tree or a null object if there is none. */
@@ -110,13 +110,13 @@ get_prev(): TreeItem;
 */
 get_prev_visible(wrap?: boolean): TreeItem;
 
-/** No documentation provided. */
+/** Returns the value of a [constant CELL_MODE_RANGE] column. */
 get_range(column: int): float;
 
-/** No documentation provided. */
-get_range_config(column: int): Dictionary;
+/** Returns a dictionary containing the range parameters for a given column. The keys are "min", "max", "step", and "expr". */
+get_range_config(column: int): Dictionary<any, any>;
 
-/** No documentation provided. */
+/** Gets the suffix string shown after the column value. */
 get_suffix(column: int): string;
 
 /** Returns the given column's text. */
@@ -205,22 +205,27 @@ set_icon_modulate(column: int, modulate: Color): void;
 /** Sets the given column's icon's texture region. */
 set_icon_region(column: int, region: Rect2): void;
 
-/** No documentation provided. */
+/** Sets the metadata value for the given column, which can be retrieved later using [method get_metadata]. This can be used, for example, to store a reference to the original data. */
 set_metadata(column: int, meta: any): void;
 
-/** No documentation provided. */
+/** Sets the value of a [constant CELL_MODE_RANGE] column. */
 set_range(column: int, value: float): void;
 
-/** No documentation provided. */
+/**
+ * Sets the range of accepted values for a column. The column must be in the [constant CELL_MODE_RANGE] mode.
+ *
+ * If `expr` is `true`, the edit mode slider will use an exponential scale as with [member Range.exp_edit].
+ *
+*/
 set_range_config(column: int, min: float, max: float, step: float, expr?: boolean): void;
 
 /** If [code]true[/code], the given column is selectable. */
 set_selectable(column: int, selectable: boolean): void;
 
-/** No documentation provided. */
+/** Sets a string to be shown after a column's value (for example, a unit abbreviation). */
 set_suffix(column: int, text: string): void;
 
-/** No documentation provided. */
+/** Sets the given column's text value. */
 set_text(column: int, text: string): void;
 
 /** Sets the given column's text alignment. See [enum TextAlign] for possible values. */
@@ -229,7 +234,8 @@ set_text_align(column: int, text_align: int): void;
 /** Sets the given column's tooltip text. */
 set_tooltip(column: int, tooltip: string): void;
 
-  connect<T extends SignalsOf<TreeItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TreeItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TreeItemSignals>>(signal: T, method: SignalFunction<TreeItemSignals[T]>): number;
 
 
 
@@ -237,47 +243,49 @@ set_tooltip(column: int, tooltip: string): void;
  * Cell contains a string.
  *
 */
-static CELL_MODE_STRING: 0;
+static CELL_MODE_STRING: any;
 
 /**
- * Cell can be checked.
+ * Cell contains a checkbox.
  *
 */
-static CELL_MODE_CHECK: 1;
+static CELL_MODE_CHECK: any;
 
 /**
  * Cell contains a range.
  *
 */
-static CELL_MODE_RANGE: 2;
+static CELL_MODE_RANGE: any;
 
 /**
  * Cell contains an icon.
  *
 */
-static CELL_MODE_ICON: 3;
+static CELL_MODE_ICON: any;
 
 /** No documentation provided. */
-static CELL_MODE_CUSTOM: 4;
+static CELL_MODE_CUSTOM: any;
 
 /**
  * Align text to the left. See `set_text_align()`.
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Center text. See `set_text_align()`.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Align text to the right. See `set_text_align()`.
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
+}
 
+declare class TreeItemSignals extends ObjectSignals {
   
 }

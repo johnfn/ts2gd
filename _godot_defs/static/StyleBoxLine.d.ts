@@ -32,11 +32,14 @@ vertical: boolean;
 
 
 
-  connect<T extends SignalsOf<StyleBoxLine>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StyleBoxLine>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StyleBoxLineSignals>>(signal: T, method: SignalFunction<StyleBoxLineSignals[T]>): number;
 
 
 
 
+}
 
+declare class StyleBoxLineSignals extends StyleBoxSignals {
   
 }

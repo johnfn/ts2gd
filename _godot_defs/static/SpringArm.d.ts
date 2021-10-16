@@ -27,7 +27,7 @@ declare class SpringArm extends Spatial {
 
 
 
-/** The layers against which the collision check shall be done. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The layers against which the collision check shall be done. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
 
 /**
@@ -68,11 +68,14 @@ get_hit_length(): float;
 /** Removes the given [RID] from the list of [PhysicsBody] objects excluded from the collision check. */
 remove_excluded_object(RID: RID): boolean;
 
-  connect<T extends SignalsOf<SpringArm>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpringArm>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpringArmSignals>>(signal: T, method: SignalFunction<SpringArmSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpringArmSignals extends SpatialSignals {
   
 }

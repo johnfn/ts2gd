@@ -4,7 +4,9 @@
  *
  * When naming a Project Settings property, use the full path to the setting including the category. For example, `"application/config/name"` for the project name. Category and property names can be viewed in the Project Settings dialog.
  *
- * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary.
+ * **Feature tags:** Project settings can be overridden for specific platforms and configurations (debug, release, ...) using [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url].
+ *
+ * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary. Overriding will still take the base project settings' [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url] in account. Therefore, make sure to **also** override the setting with the desired feature tags if you want them to override base project settings on all platforms and configurations.
  *
 */
 declare class ProjectSettingsClass extends Object {
@@ -15,7 +17,9 @@ declare class ProjectSettingsClass extends Object {
  *
  * When naming a Project Settings property, use the full path to the setting including the category. For example, `"application/config/name"` for the project name. Category and property names can be viewed in the Project Settings dialog.
  *
- * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary.
+ * **Feature tags:** Project settings can be overridden for specific platforms and configurations (debug, release, ...) using [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url].
+ *
+ * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary. Overriding will still take the base project settings' [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url] in account. Therefore, make sure to **also** override the setting with the desired feature tags if you want them to override base project settings on all platforms and configurations.
  *
 */
   "new"(): ProjectSettingsClass;
@@ -63,15 +67,15 @@ declare class ProjectSettingsClass extends Object {
 /**
  * The project's name. It is used both by the Project Manager and by exporters. The project name can be translated by translating its value in localization files. The window title will be set to match the project name automatically on startup.
  *
- * **Note:** Changing this value will also change the user data folder's path if [member application/config/use_custom_user_dir] is `false`. After renaming the project, you will no longer be able to access existing data in `user://` unless you rename the old folder to match the new project name. See [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
+ * **Note:** Changing this value will also change the user data folder's path if [member application/config/use_custom_user_dir] is `false`. After renaming the project, you will no longer be able to access existing data in `user://` unless you rename the old folder to match the new project name. See [url=https://docs.godotengine.org/en/3.4/tutorials/io/data_paths.html]Data paths[/url] in the documentation for more information.
  *
 */
 "application/config/name": string;
 
 /**
- * Specifies a file to override project settings. For example: `user://custom_settings.cfg`.
+ * Specifies a file to override project settings. For example: `user://custom_settings.cfg`. See "Overriding" in the [ProjectSettings] class description at the top for more information.
  *
- * **Note:** Regardless of this setting's value, `res://override.cfg` will still be read to override the project settings (see this class' description at the top).
+ * **Note:** Regardless of this setting's value, `res://override.cfg` will still be read to override the project settings.
  *
 */
 "application/config/project_settings_override": string;
@@ -82,11 +86,54 @@ declare class ProjectSettingsClass extends Object {
 /** Icon set in [code].ico[/code] format used on Windows to set the game's icon. This is done automatically on start by calling [method OS.set_native_icon]. */
 "application/config/windows_native_icon": string;
 
-/** If [code]true[/code], disables printing to standard error in an exported build. */
+/**
+ * Time samples for frame deltas are subject to random variation introduced by the platform, even when frames are displayed at regular intervals thanks to V-Sync. This can lead to jitter. Delta smoothing can often give a better result by filtering the input deltas to correct for minor fluctuations from the refresh rate.
+ *
+ * **Note:** Delta smoothing is only attempted when [member display/window/vsync/use_vsync] is switched on, as it does not work well without V-Sync.
+ *
+ * It may take several seconds at a stable frame rate before the smoothing is initially activated. It will only be active on machines where performance is adequate to render frames at the refresh rate.
+ *
+*/
+"application/run/delta_smoothing": boolean;
+
+/** [b]Experimental.[/b] Shifts the measurement of delta time for each frame to just after the drawing has taken place. This may lead to more consistent deltas and a reduction in frame stutters. */
+"application/run/delta_sync_after_draw": boolean;
+
+/**
+ * If `true`, disables printing to standard error. If `true`, this also hides error and warning messages printed by [method @GDScript.push_error] and [method @GDScript.push_warning]. See also [member application/run/disable_stdout].
+ *
+ * Changes to this setting will only be applied upon restarting the application.
+ *
+*/
 "application/run/disable_stderr": boolean;
 
-/** If [code]true[/code], disables printing to standard output in an exported build. */
+/**
+ * If `true`, disables printing to standard output. This is equivalent to starting the editor or project with the `--quiet` command line argument. See also [member application/run/disable_stderr].
+ *
+ * Changes to this setting will only be applied upon restarting the application.
+ *
+*/
 "application/run/disable_stdout": boolean;
+
+/**
+ * If `true`, flushes the standard output stream every time a line is printed. This affects both terminal logging and file logging.
+ *
+ * When running a project, this setting must be enabled if you want logs to be collected by service managers such as systemd/journalctl. This setting is disabled by default on release builds, since flushing on every printed line will negatively affect performance if lots of lines are printed in a rapid succession. Also, if this setting is enabled, logged files will still be written successfully if the application crashes or is otherwise killed by the user (without being closed "normally").
+ *
+ * **Note:** Regardless of this setting, the standard error stream (`stderr`) is always flushed when a line is printed to it.
+ *
+ * Changes to this setting will only be applied upon restarting the application.
+ *
+*/
+"application/run/flush_stdout_on_print": boolean;
+
+/**
+ * Debug build override for [member application/run/flush_stdout_on_print], as performance is less important during debugging.
+ *
+ * Changes to this setting will only be applied upon restarting the application.
+ *
+*/
+"application/run/flush_stdout_on_print_debug": boolean;
 
 /** Forces a delay between frames in the main loop (in milliseconds). This may be useful if you plan to disable vertical synchronization. */
 "application/run/frame_delay_msec": int;
@@ -115,8 +162,11 @@ declare class ProjectSettingsClass extends Object {
 /** If [code]true[/code], microphone input will be allowed. This requires appropriate permissions to be set when exporting to Android or iOS. */
 "audio/enable_audio_input": boolean;
 
-/** Mixing rate used for audio. In general, it's better to not touch this and leave it to the host operating system. */
+/** The mixing rate used for audio (in Hz). In general, it's better to not touch this and leave it to the host operating system. */
 "audio/mix_rate": int;
+
+/** Safer override for [member audio/mix_rate] in the Web platform. Here [code]0[/code] means "let the browser choose" (since some browsers do not like forcing the mix rate). */
+"audio/mix_rate_web": int;
 
 /** Output latency in milliseconds for audio. Lower values will result in lower audio latency at the cost of increased CPU usage. Low values may result in audible cracking on slower hardware. */
 "audio/output_latency": int;
@@ -243,7 +293,7 @@ declare class ProjectSettingsClass extends Object {
  *
  * If [member display/window/vsync/use_vsync] is enabled, it takes precedence and the forced FPS number cannot exceed the monitor's refresh rate.
  *
- * This setting is therefore mostly relevant for lowering the maximum FPS below VSync, e.g. to perform non real-time rendering of static frames, or test the project under lag conditions.
+ * This setting is therefore mostly relevant for lowering the maximum FPS below VSync, e.g. to perform non-real-time rendering of static frames, or test the project under lag conditions.
  *
 */
 "debug/settings/fps/force_fps": int;
@@ -266,6 +316,9 @@ declare class ProjectSettingsClass extends Object {
 /** Color of the contact points between collision shapes, visible when "Visible Collision Shapes" is enabled in the Debug menu. */
 "debug/shapes/collision/contact_color": Color;
 
+/** Sets whether 2D physics will display collision outlines in game when "Visible Collision Shapes" is enabled in the Debug menu. */
+"debug/shapes/collision/draw_2d_outlines": boolean;
+
 /** Maximum number of contact points between collision shapes to display when "Visible Collision Shapes" is enabled in the Debug menu. */
 "debug/shapes/collision/max_contacts_displayed": int;
 
@@ -287,37 +340,78 @@ declare class ProjectSettingsClass extends Object {
 /** Position offset for tooltips, relative to the mouse cursor's hotspot. */
 "display/mouse_cursor/tooltip_position_offset": Vector2;
 
-/** If [code]true[/code], allows HiDPI display on Windows and macOS. This setting has no effect on desktop Linux, as DPI-awareness fallbacks are not supported there. */
+/** If [code]true[/code], allows HiDPI display on Windows, macOS, and the HTML5 platform. This setting has no effect on desktop Linux, as DPI-awareness fallbacks are not supported there. */
 "display/window/dpi/allow_hidpi": boolean;
 
 /** If [code]true[/code], keeps the screen on (even in case of inactivity), so the screensaver does not take over. Works on desktop and mobile platforms. */
 "display/window/energy_saving/keep_screen_on": boolean;
 
-/** Default orientation on mobile devices. */
+/**
+ * The default screen orientation to use on mobile devices.
+ *
+ * **Note:** When set to a portrait orientation, this project setting does not flip the project resolution's width and height automatically. Instead, you have to set [member display/window/size/width] and [member display/window/size/height] accordingly.
+ *
+*/
 "display/window/handheld/orientation": string;
 
 /** If [code]true[/code], the home indicator is hidden automatically. This only affects iOS devices without a physical home button. */
 "display/window/ios/hide_home_indicator": boolean;
 
-/** If [code]true[/code], allows per-pixel transparency in a desktop window. This affects performance, so leave it on [code]false[/code] unless you need it. */
+/**
+ * If `true`, allows per-pixel transparency for the window background. This affects performance, so leave it on `false` unless you need it.
+ *
+ * See [member OS.window_per_pixel_transparency_enabled] for more details.
+ *
+ * **Note:** This feature is implemented on HTML5, Linux, macOS, Windows, and Android.
+ *
+*/
 "display/window/per_pixel_transparency/allowed": boolean;
 
-/** Sets the window background to transparent when it starts. */
+/**
+ * Sets the window background to transparent when it starts.
+ *
+ * See [member OS.window_per_pixel_transparency_enabled] for more details.
+ *
+ * **Note:** This feature is implemented on HTML5, Linux, macOS, Windows, and Android.
+ *
+*/
 "display/window/per_pixel_transparency/enabled": boolean;
 
-/** Force the window to be always on top. */
+/**
+ * Forces the main window to be always on top.
+ *
+ * **Note:** This setting is ignored on iOS, Android, and HTML5.
+ *
+*/
 "display/window/size/always_on_top": boolean;
 
-/** Force the window to be borderless. */
+/**
+ * Forces the main window to be borderless.
+ *
+ * **Note:** This setting is ignored on iOS, Android, and HTML5.
+ *
+*/
 "display/window/size/borderless": boolean;
 
-/** Sets the window to full screen when it starts. */
+/**
+ * Sets the main window to full screen when the project starts. Note that this is not **exclusive** fullscreen. On Windows and Linux, a borderless window is used to emulate fullscreen. On macOS, a new desktop is used to display the running project.
+ *
+ * Regardless of the platform, enabling fullscreen will change the window size to match the monitor's size. Therefore, make sure your project supports [url=https://docs.godotengine.org/en/3.4/tutorials/rendering/multiple_resolutions.html]multiple resolutions[/url] when enabling fullscreen mode.
+ *
+ * **Note:** This setting is ignored on iOS, Android, and HTML5.
+ *
+*/
 "display/window/size/fullscreen": boolean;
 
 /** Sets the game's main viewport height. On desktop platforms, this is the default window size. Stretch mode settings also use this as a reference when enabled. */
 "display/window/size/height": int;
 
-/** Allows the window to be resizable by default. */
+/**
+ * Allows the window to be resizable by default.
+ *
+ * **Note:** This setting is ignored on iOS and Android.
+ *
+*/
 "display/window/size/resizable": boolean;
 
 /** If greater than zero, overrides the window height when running the game. Useful for testing stretch modes. */
@@ -343,7 +437,23 @@ declare class ProjectSettingsClass extends Object {
 */
 "display/window/vsync/vsync_via_compositor": boolean;
 
-/** Search path for project-specific script templates. Script templates will be search both in the editor-specific path and in this project-specific path. */
+/**
+ * The command-line arguments to append to Godot's own command line when running the project. This doesn't affect the editor itself.
+ *
+ * It is possible to make another executable run Godot by using the `%command%` placeholder. The placeholder will be replaced with Godot's own command line. Program-specific arguments should be placed **before** the placeholder, whereas Godot-specific arguments should be placed **after** the placeholder.
+ *
+ * For example, this can be used to force the project to run on the dedicated GPU in a NVIDIA Optimus system on Linux:
+ *
+ * @example 
+ * 
+ * prime-run %command%
+ * @summary 
+ * 
+ *
+*/
+"editor/main_run_args": string;
+
+/** Search path for project-specific script templates. Godot will search for script templates both in the editor-specific path and in this project-specific path. */
 "editor/script_templates_search_path": string;
 
 /** Text-based file extensions to include in the script editor's "Find in Files" feature. You can add e.g. [code]tscn[/code] if you wish to also parse your scene files, especially if you use built-in scripts which are serialized in the scene files. */
@@ -380,7 +490,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_accept": Dictionary;
+"input/ui_accept": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to discard a modal or pending input.
@@ -388,7 +498,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_cancel": Dictionary;
+"input/ui_cancel": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to move down in the UI.
@@ -396,7 +506,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_down": Dictionary;
+"input/ui_down": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to go to the end position of a [Control] (e.g. last item in an [ItemList] or a [Tree]), matching the behavior of [constant KEY_END] on typical desktop UI systems.
@@ -404,7 +514,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_end": Dictionary;
+"input/ui_end": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to focus the next [Control] in the scene. The focus behavior can be configured via [member Control.focus_next].
@@ -412,7 +522,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_focus_next": Dictionary;
+"input/ui_focus_next": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to focus the previous [Control] in the scene. The focus behavior can be configured via [member Control.focus_previous].
@@ -420,7 +530,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_focus_prev": Dictionary;
+"input/ui_focus_prev": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to go to the start position of a [Control] (e.g. first item in an [ItemList] or a [Tree]), matching the behavior of [constant KEY_HOME] on typical desktop UI systems.
@@ -428,7 +538,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_home": Dictionary;
+"input/ui_home": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to move left in the UI.
@@ -436,7 +546,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_left": Dictionary;
+"input/ui_left": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to go down a page in a [Control] (e.g. in an [ItemList] or a [Tree]), matching the behavior of [constant KEY_PAGEDOWN] on typical desktop UI systems.
@@ -444,7 +554,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_page_down": Dictionary;
+"input/ui_page_down": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to go up a page in a [Control] (e.g. in an [ItemList] or a [Tree]), matching the behavior of [constant KEY_PAGEUP] on typical desktop UI systems.
@@ -452,7 +562,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_page_up": Dictionary;
+"input/ui_page_up": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to move right in the UI.
@@ -460,7 +570,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_right": Dictionary;
+"input/ui_right": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to select an item in a [Control] (e.g. in an [ItemList] or a [Tree]).
@@ -468,7 +578,7 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_select": Dictionary;
+"input/ui_select": Dictionary<any, any>;
 
 /**
  * Default [InputEventAction] to move up in the UI.
@@ -476,13 +586,28 @@ declare class ProjectSettingsClass extends Object {
  * **Note:** Default `ui_*` actions cannot be removed as they are necessary for the internal logic of several [Control]s. The events assigned to the action can however be modified.
  *
 */
-"input/ui_up": Dictionary;
+"input/ui_up": Dictionary<any, any>;
+
+/**
+ * If `true`, key/touch/joystick events will be flushed just before every idle and physics frame.
+ *
+ * If `false`, such events will be flushed only once per idle frame, between iterations of the engine.
+ *
+ * Enabling this can greatly improve the responsiveness to input, specially in devices that need to run multiple physics frames per visible (idle) frame, because they can't run at the target frame rate.
+ *
+ * **Note:** Currently implemented only in Android.
+ *
+*/
+"input_devices/buffering/agile_event_flushing": boolean;
 
 /** If [code]true[/code], sends mouse input events when tapping or swiping on the touchscreen. */
 "input_devices/pointing/emulate_mouse_from_touch": boolean;
 
 /** If [code]true[/code], sends touch input events when clicking or dragging the mouse. */
 "input_devices/pointing/emulate_touch_from_mouse": boolean;
+
+/** Default delay for touch events. This only affects iOS devices. */
+"input_devices/pointing/ios/touch_delay": float;
 
 /** Optional name for the 2D physics layer 1. */
 "layer_names/2d_physics/layer_1": string;
@@ -523,8 +648,44 @@ declare class ProjectSettingsClass extends Object {
 /** Optional name for the 2D physics layer 20. */
 "layer_names/2d_physics/layer_20": string;
 
+/** Optional name for the 2D physics layer 21. */
+"layer_names/2d_physics/layer_21": string;
+
+/** Optional name for the 2D physics layer 22. */
+"layer_names/2d_physics/layer_22": string;
+
+/** Optional name for the 2D physics layer 23. */
+"layer_names/2d_physics/layer_23": string;
+
+/** Optional name for the 2D physics layer 24. */
+"layer_names/2d_physics/layer_24": string;
+
+/** Optional name for the 2D physics layer 25. */
+"layer_names/2d_physics/layer_25": string;
+
+/** Optional name for the 2D physics layer 26. */
+"layer_names/2d_physics/layer_26": string;
+
+/** Optional name for the 2D physics layer 27. */
+"layer_names/2d_physics/layer_27": string;
+
+/** Optional name for the 2D physics layer 28. */
+"layer_names/2d_physics/layer_28": string;
+
+/** Optional name for the 2D physics layer 29. */
+"layer_names/2d_physics/layer_29": string;
+
 /** Optional name for the 2D physics layer 3. */
 "layer_names/2d_physics/layer_3": string;
+
+/** Optional name for the 2D physics layer 30. */
+"layer_names/2d_physics/layer_30": string;
+
+/** Optional name for the 2D physics layer 31. */
+"layer_names/2d_physics/layer_31": string;
+
+/** Optional name for the 2D physics layer 32. */
+"layer_names/2d_physics/layer_32": string;
 
 /** Optional name for the 2D physics layer 4. */
 "layer_names/2d_physics/layer_4": string;
@@ -643,8 +804,44 @@ declare class ProjectSettingsClass extends Object {
 /** Optional name for the 3D physics layer 20. */
 "layer_names/3d_physics/layer_20": string;
 
+/** Optional name for the 3D physics layer 21. */
+"layer_names/3d_physics/layer_21": string;
+
+/** Optional name for the 3D physics layer 22. */
+"layer_names/3d_physics/layer_22": string;
+
+/** Optional name for the 3D physics layer 23. */
+"layer_names/3d_physics/layer_23": string;
+
+/** Optional name for the 3D physics layer 24. */
+"layer_names/3d_physics/layer_24": string;
+
+/** Optional name for the 3D physics layer 25. */
+"layer_names/3d_physics/layer_25": string;
+
+/** Optional name for the 3D physics layer 26. */
+"layer_names/3d_physics/layer_26": string;
+
+/** Optional name for the 3D physics layer 27. */
+"layer_names/3d_physics/layer_27": string;
+
+/** Optional name for the 3D physics layer 28. */
+"layer_names/3d_physics/layer_28": string;
+
+/** Optional name for the 3D physics layer 29. */
+"layer_names/3d_physics/layer_29": string;
+
 /** Optional name for the 3D physics layer 3. */
 "layer_names/3d_physics/layer_3": string;
+
+/** Optional name for the 3D physics layer 30. */
+"layer_names/3d_physics/layer_30": string;
+
+/** Optional name for the 3D physics layer 31. */
+"layer_names/3d_physics/layer_31": string;
+
+/** Optional name for the 3D physics layer 32. */
+"layer_names/3d_physics/layer_32": string;
 
 /** Optional name for the 3D physics layer 4. */
 "layer_names/3d_physics/layer_4": string;
@@ -733,12 +930,15 @@ declare class ProjectSettingsClass extends Object {
 /** If [code]true[/code], logs all output to files. */
 "logging/file_logging/enable_file_logging": boolean;
 
+/** Desktop override for [member logging/file_logging/enable_file_logging], as log files are not readily accessible on mobile/Web platforms. */
+"logging/file_logging/enable_file_logging_pc": boolean;
 
 /** Path to logs within the project. Using an [code]user://[/code] path is recommended. */
 "logging/file_logging/log_path": string;
 
 /** Specifies the maximum amount of log files allowed (used for rotation). */
 "logging/file_logging/max_log_files": int;
+
 
 /** Godot uses a message queue to defer some function calls. If you run out of space on it (you will see an error), you can increase the size here. */
 "memory/limits/message_queue/max_size_kb": int;
@@ -758,7 +958,7 @@ declare class ProjectSettingsClass extends Object {
 /** Maximum number of warnings allowed to be sent as output from the debugger. Over this value, content is dropped. This helps not to stall the debugger connection. */
 "network/limits/debugger_stdout/max_warnings_per_second": int;
 
-/** Default size of packet peer stream for deserializing Godot data. Over this size, data is dropped. */
+/** Default size of packet peer stream for deserializing Godot data (in bytes, specified as a power of two). The default value [code]16[/code] is equal to 65,536 bytes. Over this size, data is dropped. */
 "network/limits/packet_peer_stream/max_buffer_po2": int;
 
 /** Timeout (in seconds) for connection attempts using TCP. */
@@ -811,17 +1011,32 @@ declare class ProjectSettingsClass extends Object {
 /** What to use to separate node name from number. This is mostly an editor setting. */
 "node/name_num_separator": int;
 
-/** Size of the hash table used for the broad-phase 2D hash grid algorithm. */
+/**
+ * Size of the hash table used for the broad-phase 2D hash grid algorithm.
+ *
+ * **Note:** Not used if [member ProjectSettings.physics/2d/use_bvh] is enabled.
+ *
+*/
 "physics/2d/bp_hash_table_size": int;
 
-/** Cell size used for the broad-phase 2D hash grid algorithm (in pixels). */
+/**
+ * Cell size used for the broad-phase 2D hash grid algorithm (in pixels).
+ *
+ * **Note:** Not used if [member ProjectSettings.physics/2d/use_bvh] is enabled.
+ *
+*/
 "physics/2d/cell_size": int;
 
-/** The default angular damp in 2D. */
+/**
+ * The default angular damp in 2D.
+ *
+ * **Note:** Good values are in the range `0` to `1`. At value `0` objects will keep moving with the same velocity. Values greater than `1` will aim to reduce the velocity to `0` in less than a second e.g. a value of `2` will aim to reduce the velocity to `0` in half a second. A value equal to or greater than the physics frame rate ([member ProjectSettings.physics/common/physics_fps], `60` by default) will bring the object to a stop in one iteration.
+ *
+*/
 "physics/2d/default_angular_damp": float;
 
 /**
- * The default gravity strength in 2D.
+ * The default gravity strength in 2D (in pixels per second squared).
  *
  * **Note:** This property is only read when the project starts. To change the default gravity at runtime, use the following code sample:
  *
@@ -850,10 +1065,20 @@ declare class ProjectSettingsClass extends Object {
 */
 "physics/2d/default_gravity_vector": Vector2;
 
-/** The default linear damp in 2D. */
+/**
+ * The default linear damp in 2D.
+ *
+ * **Note:** Good values are in the range `0` to `1`. At value `0` objects will keep moving with the same velocity. Values greater than `1` will aim to reduce the velocity to `0` in less than a second e.g. a value of `2` will aim to reduce the velocity to `0` in half a second. A value equal to or greater than the physics frame rate ([member ProjectSettings.physics/common/physics_fps], `60` by default) will bring the object to a stop in one iteration.
+ *
+*/
 "physics/2d/default_linear_damp": float;
 
-/** Threshold defining the surface size that constitutes a large object with regard to cells in the broad-phase 2D hash grid algorithm. */
+/**
+ * Threshold defining the surface size that constitutes a large object with regard to cells in the broad-phase 2D hash grid algorithm.
+ *
+ * **Note:** Not used if [member ProjectSettings.physics/2d/use_bvh] is enabled.
+ *
+*/
 "physics/2d/large_object_surface_threshold_in_cells": int;
 
 /**
@@ -881,14 +1106,22 @@ declare class ProjectSettingsClass extends Object {
 /** Time (in seconds) of inactivity before which a 2D physics body will put to sleep. See [constant Physics2DServer.SPACE_PARAM_BODY_TIME_TO_SLEEP]. */
 "physics/2d/time_before_sleep": float;
 
+/** Enables the use of bounding volume hierarchy instead of hash grid for 2D physics spatial partitioning. This may give better performance. */
+"physics/2d/use_bvh": boolean;
+
 /** Sets whether the 3D physics world will be created with support for [SoftBody] physics. Only applies to the Bullet physics engine. */
 "physics/3d/active_soft_world": boolean;
 
-/** The default angular damp in 3D. */
+/**
+ * The default angular damp in 3D.
+ *
+ * **Note:** Good values are in the range `0` to `1`. At value `0` objects will keep moving with the same velocity. Values greater than `1` will aim to reduce the velocity to `0` in less than a second e.g. a value of `2` will aim to reduce the velocity to `0` in half a second. A value equal to or greater than the physics frame rate ([member ProjectSettings.physics/common/physics_fps], `60` by default) will bring the object to a stop in one iteration.
+ *
+*/
 "physics/3d/default_angular_damp": float;
 
 /**
- * The default gravity strength in 3D.
+ * The default gravity strength in 3D (in meters per second squared).
  *
  * **Note:** This property is only read when the project starts. To change the default gravity at runtime, use the following code sample:
  *
@@ -917,8 +1150,16 @@ declare class ProjectSettingsClass extends Object {
 */
 "physics/3d/default_gravity_vector": Vector3;
 
-/** The default linear damp in 3D. */
+/**
+ * The default linear damp in 3D.
+ *
+ * **Note:** Good values are in the range `0` to `1`. At value `0` objects will keep moving with the same velocity. Values greater than `1` will aim to reduce the velocity to `0` in less than a second e.g. a value of `2` will aim to reduce the velocity to `0` in half a second. A value equal to or greater than the physics frame rate ([member ProjectSettings.physics/common/physics_fps], `60` by default) will bring the object to a stop in one iteration.
+ *
+*/
 "physics/3d/default_linear_damp": float;
+
+/** Enables the use of bounding volume hierarchy instead of octree for 3D physics spatial partitioning. This may give better performance. */
+"physics/3d/godot_physics/use_bvh": boolean;
 
 /**
  * Sets which physics engine to use for 3D physics.
@@ -932,6 +1173,18 @@ declare class ProjectSettingsClass extends Object {
 "physics/common/enable_object_picking": boolean;
 
 /**
+ * If enabled, 2D and 3D physics picking behaves this way in relation to pause:
+ *
+ * - When pause is started, every collision object that is hovered or captured (3D only) is released from that condition, getting the relevant mouse-exit callback, unless its pause mode makes it immune to pause.
+ *
+ * - During pause, picking only considers collision objects immune to pause, sending input events and enter/exit callbacks to them as expected.
+ *
+ * If disabled, the legacy behavior is used, which consists in queuing the picking input events during pause (so nodes won't get them) and flushing that queue on resume, against the state of the 2D/3D world at that point.
+ *
+*/
+"physics/common/enable_pause_aware_picking": boolean;
+
+/**
  * The number of fixed iterations per second. This controls how often physics simulation and [method Node._physics_process] methods are run.
  *
  * **Note:** This property is only read when the project starts. To change the physics FPS at runtime, set [member Engine.iterations_per_second] instead.
@@ -940,17 +1193,89 @@ declare class ProjectSettingsClass extends Object {
 "physics/common/physics_fps": int;
 
 /**
- * Fix to improve physics jitter, specially on monitors where refresh rate is different than the physics FPS.
+ * Controls how much physics ticks are synchronized with real time. For 0 or less, the ticks are synchronized. Such values are recommended for network games, where clock synchronization matters. Higher values cause higher deviation of in-game clock and real clock, but allows smoothing out framerate jitters. The default value of 0.5 should be fine for most; values above 2 could cause the game to react to dropped frames with a noticeable delay and are not recommended.
+ *
+ * **Note:** For best results, when using a custom physics interpolation solution, the physics jitter fix should be disabled by setting [member physics/common/physics_jitter_fix] to `0`.
  *
  * **Note:** This property is only read when the project starts. To change the physics FPS at runtime, set [member Engine.physics_jitter_fix] instead.
  *
 */
 "physics/common/physics_jitter_fix": float;
 
+/**
+ * **Experimental.** Calls `glBufferData` with NULL data prior to uploading batching data. This may not be necessary but can be used for safety.
+ *
+ * **Note:** Use with care. You are advised to leave this as default for exports. A non-default setting that works better on your machine may adversely affect performance for end users.
+ *
+*/
+"rendering/2d/opengl/batching_send_null": int;
+
+/**
+ * **Experimental.** If set to on, uses the `GL_STREAM_DRAW` flag for batching buffer uploads. If off, uses the `GL_DYNAMIC_DRAW` flag.
+ *
+ * **Note:** Use with care. You are advised to leave this as default for exports. A non-default setting that works better on your machine may adversely affect performance for end users.
+ *
+*/
+"rendering/2d/opengl/batching_stream": int;
+
+/**
+ * **Experimental.** If set to on, this applies buffer orphaning - `glBufferData` is called with NULL data and the full buffer size prior to uploading new data. This can be important to avoid stalling on some hardware.
+ *
+ * **Note:** Use with care. You are advised to leave this as default for exports. A non-default setting that works better on your machine may adversely affect performance for end users.
+ *
+*/
+"rendering/2d/opengl/legacy_orphan_buffers": int;
+
+/**
+ * **Experimental.** If set to on, uses the `GL_STREAM_DRAW` flag for legacy buffer uploads. If off, uses the `GL_DYNAMIC_DRAW` flag.
+ *
+ * **Note:** Use with care. You are advised to leave this as default for exports. A non-default setting that works better on your machine may adversely affect performance for end users.
+ *
+*/
+"rendering/2d/opengl/legacy_stream": int;
+
+/**
+ * Choose between fixed mode where corner scalings are preserved matching the artwork, and scaling mode.
+ *
+ * Not available in GLES3 when [member rendering/batching/options/use_batching] is off.
+ *
+*/
+"rendering/2d/options/ninepatch_mode": int;
+
+/**
+ * Some NVIDIA GPU drivers have a bug which produces flickering issues for the `draw_rect` method, especially as used in [TileMap]. Refer to [url=https://github.com/godotengine/godot/issues/9913]GitHub issue 9913[/url] for details.
+ *
+ * If `true`, this option enables a "safe" code path for such NVIDIA GPUs at the cost of performance. This option affects GLES2 and GLES3 rendering, but only on desktop platforms.
+ *
+*/
+"rendering/2d/options/use_nvidia_rect_flicker_workaround": boolean;
+
+/**
+ * If `true`, performs 2D skinning on the CPU rather than the GPU. This provides greater compatibility with a wide range of hardware, and also may be faster in some circumstances.
+ *
+ * Currently only available when [member rendering/batching/options/use_batching] is active.
+ *
+ * **Note:** Antialiased software skinned polys are not supported, and will be rendered without antialiasing.
+ *
+ * **Note:** Custom shaders that use the `VERTEX` built-in operate with `VERTEX` position **after** skinning, whereas with hardware skinning, `VERTEX` is the position **before** skinning.
+ *
+*/
+"rendering/2d/options/use_software_skinning": boolean;
+
+/**
+ * If `true`, forces snapping of vertices to pixels in 2D rendering. May help in some pixel art styles.
+ *
+ * This snapping is performed on the GPU in the vertex shader.
+ *
+ * Consider using the project setting [member rendering/batching/precision/uv_contract] to prevent artifacts.
+ *
+*/
+"rendering/2d/snapping/use_gpu_pixel_snap": boolean;
+
 /** When batching is on, this regularly prints a frame diagnosis log. Note that this will degrade performance. */
 "rendering/batching/debug/diagnose_frame": boolean;
 
-/** [b]Experimental[/b] For regression testing against the old renderer. If this is switched on, and [code]use_batching[/code] is set, the renderer will swap alternately between using the old renderer, and the batched renderer, on each frame. This makes it easy to identify visual differences. Performance will be degraded. */
+/** [b]Experimental.[/b] For regression testing against the old renderer. If this is switched on, and [code]use_batching[/code] is set, the renderer will swap alternately between using the old renderer, and the batched renderer, on each frame. This makes it easy to identify visual differences. Performance will be degraded. */
 "rendering/batching/debug/flash_batching": boolean;
 
 /** Lights have the potential to prevent joining items, and break many of the performance benefits of batching. This setting enables some complex logic to allow joining items if their lighting is similar, and overlap tests pass. This can significantly improve performance in some games. Set to 0 to switch off. With large values the cost of overlap tests may lead to diminishing returns. */
@@ -962,20 +1287,10 @@ declare class ProjectSettingsClass extends Object {
 /** Enabling this setting uses the legacy method to draw batches containing only one rect. The legacy method is faster (approx twice as fast), but can cause flicker on some systems. In order to directly compare performance with the non-batching renderer you can set this to true, but it is recommended to turn this off unless you can guarantee your target hardware will work with this method. */
 "rendering/batching/options/single_rect_fallback": boolean;
 
-/**
- * Turns batching on and off. Batching increases performance by reducing the amount of graphics API drawcalls.
- *
- * **Note:** Currently only effective when using the GLES2 renderer.
- *
-*/
+/** Turns 2D batching on and off. Batching increases performance by reducing the amount of graphics API drawcalls. */
 "rendering/batching/options/use_batching": boolean;
 
-/**
- * Switches on batching within the editor.
- *
- * **Note:** Currently only effective when using the GLES2 renderer.
- *
-*/
+/** Switches on 2D batching within the editor. */
 "rendering/batching/options/use_batching_in_editor": boolean;
 
 /** Size of buffer reserved for batched vertices. Larger size enables larger batches, but there are diminishing returns for the memory used. This should only have a minor effect on performance. */
@@ -1006,6 +1321,18 @@ declare class ProjectSettingsClass extends Object {
 */
 "rendering/batching/precision/uv_contract_amount": int;
 
+/** Amount of light samples taken when using [constant BakedLightmap.BAKE_QUALITY_HIGH]. */
+"rendering/cpu_lightmapper/quality/high_quality_ray_count": int;
+
+/** Amount of light samples taken when using [constant BakedLightmap.BAKE_QUALITY_LOW]. */
+"rendering/cpu_lightmapper/quality/low_quality_ray_count": int;
+
+/** Amount of light samples taken when using [constant BakedLightmap.BAKE_QUALITY_MEDIUM]. */
+"rendering/cpu_lightmapper/quality/medium_quality_ray_count": int;
+
+/** Amount of light samples taken when using [constant BakedLightmap.BAKE_QUALITY_ULTRA]. */
+"rendering/cpu_lightmapper/quality/ultra_quality_ray_count": int;
+
 /** Default background clear color. Overridable per [Viewport] using its [Environment]. See [member Environment.background_mode] and [member Environment.background_color] in particular. To change this default color programmatically, use [method VisualServer.set_default_clear_color]. */
 "rendering/environment/default_clear_color": Color;
 
@@ -1035,33 +1362,82 @@ declare class ProjectSettingsClass extends Object {
 /** Max buffer size for drawing immediate objects (ImmediateGeometry nodes). Nodes using more than this size will not work. */
 "rendering/limits/buffers/immediate_buffer_size_kb": int;
 
-/** Max amount of elements renderable in a frame. If more than this are visible per frame, they will be dropped. Keep in mind elements refer to mesh surfaces and not meshes themselves. */
+/** Max number of lights renderable per object. This is further limited by hardware support. Most devices only support 409 lights, while many devices (especially mobile) only support 102. Setting this low will slightly reduce memory usage and may decrease shader compile times. */
+"rendering/limits/rendering/max_lights_per_object": int;
+
+/** Max amount of elements renderable in a frame. If more elements than this are visible per frame, they will not be drawn. Keep in mind elements refer to mesh surfaces and not meshes themselves. Setting this low will slightly reduce memory usage and may decrease shader compile times, particularly on web. For most uses, the default value is suitable, but consider lowering as much as possible on web export. */
 "rendering/limits/rendering/max_renderable_elements": int;
 
-/** Max number of lights renderable in a frame. If more than this number are used, they will be ignored. On some systems (particularly web) setting this number as low as possible can increase the speed of shader compilation. */
+/** Max number of lights renderable in a frame. If more lights than this number are used, they will be ignored. Setting this low will slightly reduce memory usage and may decrease shader compile times, particularly on web. For most uses, the default value is suitable, but consider lowering as much as possible on web export. */
 "rendering/limits/rendering/max_renderable_lights": int;
 
-/** Max number of reflection probes renderable in a frame. If more than this number are used, they will be ignored. On some systems (particularly web) setting this number as low as possible can increase the speed of shader compilation. */
+/** Max number of reflection probes renderable in a frame. If more reflection probes than this number are used, they will be ignored. Setting this low will slightly reduce memory usage and may decrease shader compile times, particularly on web. For most uses, the default value is suitable, but consider lowering as much as possible on web export. */
 "rendering/limits/rendering/max_renderable_reflections": int;
 
 /** Shaders have a time variable that constantly increases. At some point, it needs to be rolled back to zero to avoid precision errors on shader animations. This setting specifies when (in seconds). */
 "rendering/limits/time/time_rollover_secs": float;
 
-/**
- * Some NVIDIA GPU drivers have a bug which produces flickering issues for the `draw_rect` method, especially as used in [TileMap]. Refer to [url=https://github.com/godotengine/godot/issues/9913]GitHub issue 9913[/url] for details.
- *
- * If `true`, this option enables a "safe" code path for such NVIDIA GPUs at the cost of performance. This option affects GLES2 and GLES3 rendering, but only on desktop platforms.
- *
-*/
-"rendering/quality/2d/use_nvidia_rect_flicker_workaround": boolean;
+/** If [code]true[/code], the texture importer will import lossless textures using the PNG format. Otherwise, it will default to using WebP. */
+"rendering/misc/lossless_compression/force_png": boolean;
+
+/** The default compression level for lossless WebP. Higher levels result in smaller files at the cost of compression speed. Decompression speed is mostly unaffected by the compression level. Supported values are 0 to 9. Note that compression levels above 6 are very slow and offer very little savings. */
+"rendering/misc/lossless_compression/webp_compression_level": int;
+
+/** On import, mesh vertex data will be split into two streams within a single vertex buffer, one for position data and the other for interleaved attributes data. Recommended to be enabled if targeting mobile devices. Requires manual reimport of meshes after toggling. */
+"rendering/misc/mesh_storage/split_stream": boolean;
 
 /**
- * If `true`, forces snapping of polygons to pixels in 2D rendering. May help in some pixel art styles.
+ * Determines the maximum number of sphere occluders that will be used at any one time.
  *
- * Consider using the project setting [member rendering/batching/precision/uv_contract] to prevent artifacts.
+ * Although you can have many occluders in a scene, each frame the system will choose from these the most relevant based on a screen space metric, in order to give the best overall performance.
  *
 */
-"rendering/quality/2d/use_pixel_snap": boolean;
+"rendering/misc/occlusion_culling/max_active_spheres": int;
+
+/**
+ * The default convention is for portal normals to point outward (face outward) from the source room.
+ *
+ * If you accidentally build your level with portals facing the wrong way, this setting can fix the problem.
+ *
+ * It will flip named portal meshes (i.e. `-portal`) on the initial convertion to [Portal] nodes.
+ *
+*/
+"rendering/portals/advanced/flip_imported_portals": boolean;
+
+/**
+ * Show conversion logs.
+ *
+ * **Note:** This will automatically be disabled in exports.
+ *
+*/
+"rendering/portals/debug/logging": boolean;
+
+/** If [code]true[/code], gameplay callbacks will be sent as [code]signals[/code]. If [code]false[/code], they will be sent as [code]notifications[/code]. */
+"rendering/portals/gameplay/use_signals": boolean;
+
+/**
+ * If enabled, while merging meshes, the system will also attempt to remove [Spatial] nodes that no longer have any children.
+ *
+ * Reducing the number of [Node]s in the scene tree can make traversal more efficient, but can be switched off in case you wish to use empty [Spatial]s for markers or some other purpose.
+ *
+*/
+"rendering/portals/optimize/remove_danglers": boolean;
+
+/**
+ * Show logs during PVS generation.
+ *
+ * **Note:** This will automatically be disabled in exports.
+ *
+*/
+"rendering/portals/pvs/pvs_logging": boolean;
+
+/**
+ * Uses a simplified method of generating PVS (potentially visible set) data. The results may not be accurate where more than one portal join adjacent rooms.
+ *
+ * **Note:** Generally you should only use this option if you encounter bugs when it is set to `false`, i.e. there are problems with the default method.
+ *
+*/
+"rendering/portals/pvs/use_simple_pvs": boolean;
 
 /**
  * If `true`, allocates the main framebuffer with high dynamic range. High dynamic range allows the use of [Color] values greater than 1.
@@ -1113,6 +1489,22 @@ declare class ProjectSettingsClass extends Object {
 */
 "rendering/quality/filters/msaa": int;
 
+/** If set to a value greater than [code]0.0[/code], contrast-adaptive sharpening will be applied to the 3D viewport. This has a low performance cost and can be used to recover some of the sharpness lost from using FXAA. Values around [code]0.5[/code] generally give the best results. See also [member rendering/quality/filters/use_fxaa]. */
+"rendering/quality/filters/sharpen_intensity": float;
+
+/**
+ * If `true`, uses a fast post-processing filter to make banding significantly less visible. In some cases, debanding may introduce a slightly noticeable dithering pattern. It's recommended to enable debanding only when actually needed since the dithering pattern will make lossless-compressed screenshots larger.
+ *
+ * **Note:** Only available on the GLES3 backend. [member rendering/quality/depth/hdr] must also be `true` for debanding to be effective.
+ *
+ * **Note:** There are known issues with debanding breaking rendering on mobile platforms. Due to this, it is recommended to leave this option disabled when targeting mobile platforms.
+ *
+*/
+"rendering/quality/filters/use_debanding": boolean;
+
+/** Enables FXAA in the root Viewport. FXAA is a popular screen-space antialiasing method, which is fast but will make the image look blurry, especially at lower resolutions. It can still work relatively well at large resolutions such as 1440p and 4K. Some of the lost sharpness can be recovered by enabling contrast-adaptive sharpening (see [member rendering/quality/filters/sharpen_intensity]). */
+"rendering/quality/filters/use_fxaa": boolean;
+
 /** If [code]true[/code], uses nearest-neighbor mipmap filtering when using mipmaps (also called "bilinear filtering"), which will result in visible seams appearing between mipmap stages. This may increase performance in mobile as less memory bandwidth is used. If [code]false[/code], linear mipmap filtering (also called "trilinear filtering") is used. */
 "rendering/quality/filters/use_nearest_mipmap_filter": boolean;
 
@@ -1121,6 +1513,12 @@ declare class ProjectSettingsClass extends Object {
 
 /** Lower-end override for [member rendering/quality/intended_usage/framebuffer_allocation] on mobile devices, due to performance concerns or driver support. */
 "rendering/quality/intended_usage/framebuffer_allocation_mobile": int;
+
+/** Enable usage of bicubic sampling in baked lightmaps. This results in smoother looking lighting at the expense of more bandwidth usage. On GLES2, changes to this setting will only be applied upon restarting the application. */
+"rendering/quality/lightmapping/use_bicubic_sampling": boolean;
+
+/** Lower-end override for [member rendering/quality/lightmapping/use_bicubic_sampling] on mobile devices, in order to reduce bandwidth usage. */
+"rendering/quality/lightmapping/use_bicubic_sampling_mobile": boolean;
 
 /** Size of the atlas used by reflection probes. A larger size can result in higher visual quality, while a smaller size will be faster and take up less memory. */
 "rendering/quality/reflections/atlas_size": int;
@@ -1166,6 +1564,17 @@ declare class ProjectSettingsClass extends Object {
 /** Lower-end override for [member rendering/quality/shading/force_vertex_shading] on mobile devices, due to performance concerns or driver support. */
 "rendering/quality/shading/force_vertex_shading_mobile": boolean;
 
+/**
+ * If `true`, enables new physical light attenuation for [OmniLight]s and [SpotLight]s. This results in more realistic lighting appearance with a very small performance cost. When physical light attenuation is enabled, lights will appear to be darker as a result of the new attenuation formula. This can be compensated by adjusting the lights' energy or attenuation values.
+ *
+ * Changes to this setting will only be applied upon restarting the application.
+ *
+*/
+"rendering/quality/shading/use_physical_light_attenuation": boolean;
+
+/** Size for cubemap into which the shadow is rendered before being copied into the shadow atlas. A higher number can result in higher resolution shadows when used with a higher [member rendering/quality/shadow_atlas/size]. Setting higher than a quarter of the [member rendering/quality/shadow_atlas/size] will not result in a perceptible increase in visual quality. */
+"rendering/quality/shadow_atlas/cubemap_size": int;
+
 /** Subdivision quadrant size for shadow mapping. See shadow mapping documentation. */
 "rendering/quality/shadow_atlas/quadrant_0_subdiv": int;
 
@@ -1184,11 +1593,47 @@ declare class ProjectSettingsClass extends Object {
 /** Lower-end override for [member rendering/quality/shadow_atlas/size] on mobile devices, due to performance concerns or driver support. */
 "rendering/quality/shadow_atlas/size_mobile": int;
 
-/** Shadow filter mode. Higher-quality settings result in smoother shadows that flicker less when moving. "Disabled" is the fastest option, but also has the lowest quality. "PCF5" is smoother but is also slower. "PCF13" is the smoothest option, but is also the slowest. */
+/**
+ * Shadow filter mode. Higher-quality settings result in smoother shadows that flicker less when moving. "Disabled" is the fastest option, but also has the lowest quality. "PCF5" is smoother but is also slower. "PCF13" is the smoothest option, but is also the slowest.
+ *
+ * **Note:** When using the GLES2 backend, the "PCF13" option actually uses 16 samples to emulate linear filtering in the shader. This results in a shadow appearance similar to the one produced by the GLES3 backend.
+ *
+*/
 "rendering/quality/shadows/filter_mode": int;
 
 /** Lower-end override for [member rendering/quality/shadows/filter_mode] on mobile devices, due to performance concerns or driver support. */
 "rendering/quality/shadows/filter_mode_mobile": int;
+
+/**
+ * Forces [MeshInstance] to always perform skinning on the CPU (applies to both GLES2 and GLES3).
+ *
+ * See also [member rendering/quality/skinning/software_skinning_fallback].
+ *
+*/
+"rendering/quality/skinning/force_software_skinning": boolean;
+
+/**
+ * Allows [MeshInstance] to perform skinning on the CPU when the hardware doesn't support the default GPU skinning process with GLES2.
+ *
+ * If `false`, an alternative skinning process on the GPU is used in this case (slower in most cases).
+ *
+ * See also [member rendering/quality/skinning/force_software_skinning].
+ *
+ * **Note:** When the software skinning fallback is triggered, custom vertex shaders will behave in a different way, because the bone transform will be already applied to the modelview matrix.
+ *
+*/
+"rendering/quality/skinning/software_skinning_fallback": boolean;
+
+/**
+ * The rendering octree balance can be changed to favor smaller (`0`), or larger (`1`) branches.
+ *
+ * Larger branches can increase performance significantly in some projects.
+ *
+*/
+"rendering/quality/spatial_partitioning/render_tree_balance": float;
+
+/** Enables the use of bounding volume hierarchy instead of octree for rendering spatial partitioning. This may give better performance. */
+"rendering/quality/spatial_partitioning/use_bvh": boolean;
 
 /** Improves quality of subsurface scattering, but cost significantly increases. */
 "rendering/quality/subsurface_scattering/follow_surface": boolean;
@@ -1208,19 +1653,52 @@ declare class ProjectSettingsClass extends Object {
 /** Thread model for rendering. Rendering on a thread can vastly improve performance, but synchronizing to the main thread can cause a bit more jitter. */
 "rendering/threads/thread_model": int;
 
-/** If [code]true[/code], the texture importer will import VRAM-compressed textures using the BPTC algorithm. This texture compression algorithm is only supported on desktop platforms, and only when using the GLES3 renderer. */
+/**
+ * If `true`, a thread safe version of BVH (bounding volume hierarchy) will be used in rendering and Godot physics.
+ *
+ * Try enabling this option if you see any visual anomalies in 3D (such as incorrect object visibility).
+ *
+*/
+"rendering/threads/thread_safe_bvh": boolean;
+
+/**
+ * If `true`, the texture importer will import VRAM-compressed textures using the BPTC algorithm. This texture compression algorithm is only supported on desktop platforms, and only when using the GLES3 renderer.
+ *
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ *
+*/
 "rendering/vram_compression/import_bptc": boolean;
 
-/** If [code]true[/code], the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression algorithm. This algorithm doesn't support alpha channels in textures. */
+/**
+ * If `true`, the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression algorithm. This algorithm doesn't support alpha channels in textures.
+ *
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ *
+*/
 "rendering/vram_compression/import_etc": boolean;
 
-/** If [code]true[/code], the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression 2 algorithm. This texture compression algorithm is only supported when using the GLES3 renderer. */
+/**
+ * If `true`, the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression 2 algorithm. This texture compression algorithm is only supported when using the GLES3 renderer.
+ *
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ *
+*/
 "rendering/vram_compression/import_etc2": boolean;
 
-/** If [code]true[/code], the texture importer will import VRAM-compressed textures using the PowerVR Texture Compression algorithm. This texture compression algorithm is only supported on iOS. */
+/**
+ * If `true`, the texture importer will import VRAM-compressed textures using the PowerVR Texture Compression algorithm. This texture compression algorithm is only supported on iOS.
+ *
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ *
+*/
 "rendering/vram_compression/import_pvrtc": boolean;
 
-/** If [code]true[/code], the texture importer will import VRAM-compressed textures using the S3 Texture Compression algorithm. This algorithm is only supported on desktop platforms and consoles. */
+/**
+ * If `true`, the texture importer will import VRAM-compressed textures using the S3 Texture Compression algorithm. This algorithm is only supported on desktop platforms and consoles.
+ *
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ *
+*/
 "rendering/vram_compression/import_s3tc": boolean;
 
 /** Cell size used for the 2D hash grid that [VisibilityNotifier2D] uses (in pixels). */
@@ -1251,7 +1729,7 @@ declare class ProjectSettingsClass extends Object {
  * 
  *
 */
-add_property_info(hint: Dictionary): void;
+add_property_info(hint: Dictionary<any, any>): void;
 
 /** Clears the whole configuration (not recommended, may break things). */
 clear(name: string): void;
@@ -1273,7 +1751,28 @@ get_order(name: string): int;
 */
 get_setting(name: string): any;
 
-/** Converts a localized path ([code]res://[/code]) to a full native OS path. */
+/**
+ * Returns the absolute, native OS path corresponding to the localized `path` (starting with `res://` or `user://`). The returned path will vary depending on the operating system and user preferences. See [url=https://docs.godotengine.org/en/3.4/tutorials/io/data_paths.html]File paths in Godot projects[/url] to see what those paths convert to. See also [method localize_path].
+ *
+ * **Note:** [method globalize_path] with `res://` will not work in an exported project. Instead, prepend the executable's base directory to the path when running from an exported project:
+ *
+ * @example 
+ * 
+ * var path = ""
+ * if OS.has_feature("editor"):
+ *     # Running from an editor binary.
+ *     # `path` will contain the absolute path to `hello.txt` located in the project root.
+ *     path = ProjectSettings.globalize_path("res://hello.txt")
+ * else:
+ *     # Running from an exported project.
+ *     # `path` will contain the absolute path to `hello.txt` next to the executable.
+ *     # This is *not* identical to using `ProjectSettings.globalize_path()` with a `res://` path,
+ *     # but is close enough in spirit.
+ *     path = OS.get_executable_path().get_base_dir().plus_file("hello.txt")
+ * @summary 
+ * 
+ *
+*/
 globalize_path(path: string): string;
 
 /** Returns [code]true[/code] if a configuration value is present. */
@@ -1284,10 +1783,12 @@ has_setting(name: string): boolean;
  *
  * **Note:** If a file from `pack` shares the same path as a file already in the resource filesystem, any attempts to load that file will use the file from `pack` unless `replace_files` is set to `false`.
  *
+ * **Note:** The optional `offset` parameter can be used to specify the offset in bytes to the start of the resource pack. This is only supported for .pck files.
+ *
 */
-load_resource_pack(pack: string, replace_files?: boolean): boolean;
+load_resource_pack(pack: string, replace_files?: boolean, offset?: int): boolean;
 
-/** Convert a path to a localized path ([code]res://[/code] path). */
+/** Returns the localized path (starting with [code]res://[/code]) corresponding to the absolute, native OS [code]path[/code]. See also [method globalize_path]. */
 localize_path(path: string): string;
 
 /** Returns [code]true[/code] if the specified property exists and its initial value differs from the current value. */
@@ -1296,10 +1797,15 @@ property_can_revert(name: string): boolean;
 /** Returns the specified property's initial value. Returns [code]null[/code] if the property does not exist. */
 property_get_revert(name: string): any;
 
-/** Saves the configuration to the [code]project.godot[/code] file. */
+/**
+ * Saves the configuration to the `project.godot` file.
+ *
+ * **Note:** This method is intended to be used by editor plugins, as modified [ProjectSettings] can't be loaded back in the running app. If you want to change project settings in exported projects, use [method save_custom] to save `override.cfg` file.
+ *
+*/
 save(): int;
 
-/** Saves the configuration to a custom file. The file extension must be [code].godot[/code] (to save in text-based [ConfigFile] format) or [code].binary[/code] (to save in binary format). */
+/** Saves the configuration to a custom file. The file extension must be [code].godot[/code] (to save in text-based [ConfigFile] format) or [code].binary[/code] (to save in binary format). You can also save [code]override.cfg[/code] file, which is also text, but can be used in exported projects unlike other formats. */
 save_custom(file: string): int;
 
 /** Sets the specified property's initial value. This is the value the property reverts to. */
@@ -1322,11 +1828,14 @@ set_order(name: string, position: int): void;
 */
 set_setting(name: string, value: any): void;
 
-  connect<T extends SignalsOf<ProjectSettingsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ProjectSettingsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ProjectSettingsClassSignals>>(signal: T, method: SignalFunction<ProjectSettingsClassSignals[T]>): number;
 
 
 
 
+}
 
+declare class ProjectSettingsClassSignals extends ObjectSignals {
   
 }

@@ -15,7 +15,7 @@ declare class World extends Resource {
 
 
 
-/** Direct access to the world's physics 3D space state. Used for querying current and potential collisions. Must only be accessed from within [code]_physics_process(delta)[/code]. */
+/** Direct access to the world's physics 3D space state. Used for querying current and potential collisions. */
 direct_space_state: PhysicsDirectSpaceState;
 
 /** The World's [Environment]. */
@@ -32,11 +32,14 @@ space: RID;
 
 
 
-  connect<T extends SignalsOf<World>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<World>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<WorldSignals>>(signal: T, method: SignalFunction<WorldSignals[T]>): number;
 
 
 
 
+}
 
+declare class WorldSignals extends ResourceSignals {
   
 }

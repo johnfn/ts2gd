@@ -55,7 +55,8 @@ particles_animation: boolean;
 
 
 
-  connect<T extends SignalsOf<CanvasItemMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CanvasItemMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CanvasItemMaterialSignals>>(signal: T, method: SignalFunction<CanvasItemMaterialSignals[T]>): number;
 
 
 
@@ -63,50 +64,52 @@ particles_animation: boolean;
  * Mix blending mode. Colors are assumed to be independent of the alpha (opacity) value.
  *
 */
-static BLEND_MODE_MIX: 0;
+static BLEND_MODE_MIX: any;
 
 /**
  * Additive blending mode.
  *
 */
-static BLEND_MODE_ADD: 1;
+static BLEND_MODE_ADD: any;
 
 /**
  * Subtractive blending mode.
  *
 */
-static BLEND_MODE_SUB: 2;
+static BLEND_MODE_SUB: any;
 
 /**
  * Multiplicative blending mode.
  *
 */
-static BLEND_MODE_MUL: 3;
+static BLEND_MODE_MUL: any;
 
 /**
  * Mix blending mode. Colors are assumed to be premultiplied by the alpha (opacity) value.
  *
 */
-static BLEND_MODE_PREMULT_ALPHA: 4;
+static BLEND_MODE_PREMULT_ALPHA: any;
 
 /**
  * Render the material using both light and non-light sensitive material properties.
  *
 */
-static LIGHT_MODE_NORMAL: 0;
+static LIGHT_MODE_NORMAL: any;
 
 /**
  * Render the material as if there were no light.
  *
 */
-static LIGHT_MODE_UNSHADED: 1;
+static LIGHT_MODE_UNSHADED: any;
 
 /**
  * Render the material as if there were only light.
  *
 */
-static LIGHT_MODE_LIGHT_ONLY: 2;
+static LIGHT_MODE_LIGHT_ONLY: any;
 
+}
 
+declare class CanvasItemMaterialSignals extends MaterialSignals {
   
 }

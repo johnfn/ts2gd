@@ -48,7 +48,7 @@ get_baked_points(): PoolVector2Array;
 get_closest_offset(to_point: Vector2): float;
 
 /**
- * Returns the closest point (in curve's local space) to `to_point`.
+ * Returns the closest baked point (in curve's local space) to `to_point`.
  *
  * `to_point` must be in this curve's local space.
  *
@@ -58,10 +58,10 @@ get_closest_point(to_point: Vector2): Vector2;
 /** Returns the number of points describing the curve. */
 get_point_count(): int;
 
-/** Returns the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0)[/code]. */
+/** Returns the position of the control point leading to the vertex [code]idx[/code]. The returned position is relative to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0)[/code]. */
 get_point_in(idx: int): Vector2;
 
-/** Returns the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0)[/code]. */
+/** Returns the position of the control point leading out of the vertex [code]idx[/code]. The returned position is relative to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0)[/code]. */
 get_point_out(idx: int): Vector2;
 
 /** Returns the position of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0)[/code]. */
@@ -91,10 +91,10 @@ interpolatef(fofs: float): Vector2;
 /** Deletes the point [code]idx[/code] from the curve. Sends an error to the console if [code]idx[/code] is out of bounds. */
 remove_point(idx: int): void;
 
-/** Sets the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
+/** Sets the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex. */
 set_point_in(idx: int, position: Vector2): void;
 
-/** Sets the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
+/** Sets the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex. */
 set_point_out(idx: int, position: Vector2): void;
 
 /** Sets the position for the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
@@ -112,11 +112,14 @@ set_point_position(idx: int, position: Vector2): void;
 */
 tessellate(max_stages?: int, tolerance_degrees?: float): PoolVector2Array;
 
-  connect<T extends SignalsOf<Curve2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Curve2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Curve2DSignals>>(signal: T, method: SignalFunction<Curve2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Curve2DSignals extends ResourceSignals {
   
 }

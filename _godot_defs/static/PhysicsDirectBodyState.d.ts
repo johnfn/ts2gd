@@ -116,14 +116,20 @@ get_contact_local_shape(contact_idx: int): int;
 /** Returns the current state of the space, useful for queries. */
 get_space_state(): PhysicsDirectSpaceState;
 
+/** Returns the body's velocity at the given relative position, including both translation and rotation. */
+get_velocity_at_local_position(local_position: Vector3): Vector3;
+
 /** Calls the built-in force integration code. */
 integrate_forces(): void;
 
-  connect<T extends SignalsOf<PhysicsDirectBodyState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PhysicsDirectBodyState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PhysicsDirectBodyStateSignals>>(signal: T, method: SignalFunction<PhysicsDirectBodyStateSignals[T]>): number;
 
 
 
 
+}
 
+declare class PhysicsDirectBodyStateSignals extends ObjectSignals {
   
 }

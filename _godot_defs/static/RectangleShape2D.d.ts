@@ -20,11 +20,14 @@ extents: Vector2;
 
 
 
-  connect<T extends SignalsOf<RectangleShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RectangleShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RectangleShape2DSignals>>(signal: T, method: SignalFunction<RectangleShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class RectangleShape2DSignals extends Shape2DSignals {
   
 }

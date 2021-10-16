@@ -26,11 +26,14 @@ size: Vector2;
 /** Returns the external texture name. */
 get_external_texture_id(): int;
 
-  connect<T extends SignalsOf<ExternalTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ExternalTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ExternalTextureSignals>>(signal: T, method: SignalFunction<ExternalTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class ExternalTextureSignals extends TextureSignals {
   
 }

@@ -137,7 +137,7 @@ set_ignore_transform_notification(enabled: boolean): void;
 /** Sets whether the node notifies about its local transformation changes. [Spatial] will not propagate this by default. */
 set_notify_local_transform(enable: boolean): void;
 
-/** Sets whether the node notifies about its global and local transformation changes. [Spatial] will not propagate this by default. */
+/** Sets whether the node notifies about its global and local transformation changes. [Spatial] will not propagate this by default, unless it is in the editor context and it has a valid gizmo. */
 set_notify_transform(enable: boolean): void;
 
 /** Enables rendering of this node. Changes [member visible] to [code]true[/code]. */
@@ -163,38 +163,65 @@ translate_object_local(offset: Vector3): void;
 /** Updates the [SpatialGizmo] of this node. */
 update_gizmo(): void;
 
-  connect<T extends SignalsOf<Spatial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Spatial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpatialSignals>>(signal: T, method: SignalFunction<SpatialSignals[T]>): number;
 
 
 
 /**
  * Spatial nodes receives this notification when their global transform changes. This means that either the current or a parent node changed its transform.
  *
- * In order for [constant NOTIFICATION_TRANSFORM_CHANGED] to work, users first need to ask for it, with [method set_notify_transform].
+ * In order for [constant NOTIFICATION_TRANSFORM_CHANGED] to work, users first need to ask for it, with [method set_notify_transform]. The notification is also sent if the node is in the editor context and it has a valid gizmo.
  *
 */
-static NOTIFICATION_TRANSFORM_CHANGED: 2000;
+static NOTIFICATION_TRANSFORM_CHANGED: any;
 
 /**
  * Spatial nodes receives this notification when they are registered to new [World] resource.
  *
 */
-static NOTIFICATION_ENTER_WORLD: 41;
+static NOTIFICATION_ENTER_WORLD: any;
 
 /**
  * Spatial nodes receives this notification when they are unregistered from current [World] resource.
  *
 */
-static NOTIFICATION_EXIT_WORLD: 42;
+static NOTIFICATION_EXIT_WORLD: any;
 
 /**
  * Spatial nodes receives this notification when their visibility changes.
  *
 */
-static NOTIFICATION_VISIBILITY_CHANGED: 43;
+static NOTIFICATION_VISIBILITY_CHANGED: any;
 
+/**
+ * Spatial nodes receives this notification if the portal system gameplay monitor detects they have entered the gameplay area.
+ *
+*/
+static NOTIFICATION_ENTER_GAMEPLAY: any;
 
+/**
+ * Spatial nodes receives this notification if the portal system gameplay monitor detects they have exited the gameplay area.
+ *
+*/
+static NOTIFICATION_EXIT_GAMEPLAY: any;
+
+}
+
+declare class SpatialSignals extends NodeSignals {
   /**
+ * Emitted by portal system gameplay monitor when a node enters the gameplay area.
+ *
+*/
+gameplay_entered: Signal<() => void>
+
+/**
+ * Emitted by portal system gameplay monitor when a node exits the gameplay area.
+ *
+*/
+gameplay_exited: Signal<() => void>
+
+/**
  * Emitted when node visibility changes.
  *
 */

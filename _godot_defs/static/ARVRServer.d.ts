@@ -21,6 +21,12 @@ primary_interface: ARVRInterface;
 /** Allows you to adjust the scale to your game's units. Most AR/VR platforms assume a scale of 1 game world unit = 1 real world meter. */
 world_scale: float;
 
+/** Registers an [ARVRInterface] object. */
+add_interface(interface: ARVRInterface): void;
+
+/** Registers a new [ARVRPositionalTracker] that tracks a spatial location in real space. */
+add_tracker(tracker: ARVRPositionalTracker): void;
+
 /**
  * This is an important function to understand correctly. AR and VR platforms all handle positioning slightly differently.
  *
@@ -36,6 +42,9 @@ world_scale: float;
  *
 */
 center_on_hmd(rotation_mode: int, keep_height: boolean): void;
+
+/** Clears our current primary interface if it is set to the provided interface. */
+clear_primary_interface_if(interface: ARVRInterface): void;
 
 /** Finds an interface by its name. For instance, if your project uses capabilities of an AR/VR platform, you can find the interface for that platform by name and initialize it. */
 find_interface(name: string): ARVRInterface;
@@ -70,7 +79,14 @@ get_tracker(idx: int): ARVRPositionalTracker;
 /** Returns the number of trackers currently registered. */
 get_tracker_count(): int;
 
-  connect<T extends SignalsOf<ARVRServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/** Removes this interface. */
+remove_interface(interface: ARVRInterface): void;
+
+/** Removes this positional tracker. */
+remove_tracker(tracker: ARVRPositionalTracker): void;
+
+  // connect<T extends SignalsOf<ARVRServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVRServerClassSignals>>(signal: T, method: SignalFunction<ARVRServerClassSignals[T]>): number;
 
 
 
@@ -78,57 +94,59 @@ get_tracker_count(): int;
  * The tracker tracks the location of a controller.
  *
 */
-static TRACKER_CONTROLLER: 1;
+static TRACKER_CONTROLLER: any;
 
 /**
  * The tracker tracks the location of a base station.
  *
 */
-static TRACKER_BASESTATION: 2;
+static TRACKER_BASESTATION: any;
 
 /**
  * The tracker tracks the location and size of an AR anchor.
  *
 */
-static TRACKER_ANCHOR: 4;
+static TRACKER_ANCHOR: any;
 
 /**
  * Used internally to filter trackers of any known type.
  *
 */
-static TRACKER_ANY_KNOWN: 127;
+static TRACKER_ANY_KNOWN: any;
 
 /**
  * Used internally if we haven't set the tracker type yet.
  *
 */
-static TRACKER_UNKNOWN: 128;
+static TRACKER_UNKNOWN: any;
 
 /**
  * Used internally to select all trackers.
  *
 */
-static TRACKER_ANY: 255;
+static TRACKER_ANY: any;
 
 /**
  * Fully reset the orientation of the HMD. Regardless of what direction the user is looking to in the real world. The user will look dead ahead in the virtual world.
  *
 */
-static RESET_FULL_ROTATION: 0;
+static RESET_FULL_ROTATION: any;
 
 /**
  * Resets the orientation but keeps the tilt of the device. So if we're looking down, we keep looking down but heading will be reset.
  *
 */
-static RESET_BUT_KEEP_TILT: 1;
+static RESET_BUT_KEEP_TILT: any;
 
 /**
  * Does not reset the orientation of the HMD, only the position of the player gets centered.
  *
 */
-static DONT_RESET_ROTATION: 2;
+static DONT_RESET_ROTATION: any;
 
+}
 
+declare class ARVRServerClassSignals extends ObjectSignals {
   /**
  * Emitted when a new interface has been added.
  *

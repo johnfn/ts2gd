@@ -31,12 +31,15 @@ texture: Texture;
 
 
 
-  connect<T extends SignalsOf<MeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MeshInstance2DSignals>>(signal: T, method: SignalFunction<MeshInstance2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class MeshInstance2DSignals extends Node2DSignals {
   /**
  * Emitted when the [member texture] is changed.
  *

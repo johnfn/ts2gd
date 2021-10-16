@@ -18,6 +18,9 @@ declare class Translation extends Resource {
 /** The locale of the translation. */
 locale: string;
 
+/** Virtual method to override [method get_message]. */
+protected _get_message(src_message: string): string;
+
 /** Adds a message if nonexistent, followed by its translation. */
 add_message(src_message: string, xlated_message: string): void;
 
@@ -33,11 +36,14 @@ get_message_count(): int;
 /** Returns all the messages (keys). */
 get_message_list(): PoolStringArray;
 
-  connect<T extends SignalsOf<Translation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Translation>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TranslationSignals>>(signal: T, method: SignalFunction<TranslationSignals[T]>): number;
 
 
 
 
+}
 
+declare class TranslationSignals extends ResourceSignals {
   
 }

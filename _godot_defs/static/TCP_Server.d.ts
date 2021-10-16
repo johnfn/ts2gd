@@ -40,11 +40,14 @@ stop(): void;
 /** If a connection is available, returns a StreamPeerTCP with the connection. */
 take_connection(): StreamPeerTCP;
 
-  connect<T extends SignalsOf<TCP_Server>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TCP_Server>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TCP_ServerSignals>>(signal: T, method: SignalFunction<TCP_ServerSignals[T]>): number;
 
 
 
 
+}
 
+declare class TCP_ServerSignals extends ReferenceSignals {
   
 }

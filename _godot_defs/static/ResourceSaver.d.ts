@@ -33,7 +33,8 @@ get_recognized_extensions(type: Resource): PoolStringArray;
 */
 save(path: string, resource: Resource, flags?: int): int;
 
-  connect<T extends SignalsOf<ResourceSaverClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourceSaverClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourceSaverClassSignals>>(signal: T, method: SignalFunction<ResourceSaverClassSignals[T]>): number;
 
 
 
@@ -41,44 +42,46 @@ save(path: string, resource: Resource, flags?: int): int;
  * Save the resource with a path relative to the scene which uses it.
  *
 */
-static FLAG_RELATIVE_PATHS: 1;
+static FLAG_RELATIVE_PATHS: any;
 
 /**
  * Bundles external resources.
  *
 */
-static FLAG_BUNDLE_RESOURCES: 2;
+static FLAG_BUNDLE_RESOURCES: any;
 
 /**
  * Changes the [member Resource.resource_path] of the saved resource to match its new location.
  *
 */
-static FLAG_CHANGE_PATH: 4;
+static FLAG_CHANGE_PATH: any;
 
 /**
  * Do not save editor-specific metadata (identified by their `__editor` prefix).
  *
 */
-static FLAG_OMIT_EDITOR_PROPERTIES: 8;
+static FLAG_OMIT_EDITOR_PROPERTIES: any;
 
 /**
  * Save as big endian (see [member File.endian_swap]).
  *
 */
-static FLAG_SAVE_BIG_ENDIAN: 16;
+static FLAG_SAVE_BIG_ENDIAN: any;
 
 /**
  * Compress the resource on save using [constant File.COMPRESSION_ZSTD]. Only available for binary resource types.
  *
 */
-static FLAG_COMPRESS: 32;
+static FLAG_COMPRESS: any;
 
 /**
  * Take over the paths of the saved subresources (see [method Resource.take_over_path]).
  *
 */
-static FLAG_REPLACE_SUBRESOURCE_PATHS: 64;
+static FLAG_REPLACE_SUBRESOURCE_PATHS: any;
 
+}
 
+declare class ResourceSaverClassSignals extends ObjectSignals {
   
 }

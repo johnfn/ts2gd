@@ -17,9 +17,11 @@ declare class Physics2DDirectSpaceState extends Object {
 
 
 /**
- * Checks how far the shape can travel toward a point. If the shape can not move, the array will be empty.
+ * Checks how far a [Shape2D] can move without colliding. All the parameters for the query, including the shape and the motion, are supplied through a [Physics2DShapeQueryParameters] object.
  *
- * **Note:** Both the shape and the motion are supplied through a [Physics2DShapeQueryParameters] object. The method will return an array with two floats between 0 and 1, both representing a fraction of `motion`. The first is how far the shape can move without triggering a collision, and the second is the point at which a collision will occur. If no collision is detected, the returned array will be `[1, 1]`.
+ * Returns an array with the safe and unsafe proportions (between 0 and 1) of the motion. The safe proportion is the maximum fraction of the motion that can be made without a collision. The unsafe proportion is the minimum fraction of the distance that must be moved for a collision. If no collision is detected a result of `[1.0, 1.0]` will be returned.
+ *
+ * **Note:** Any [Shape2D]s that the shape is already colliding with e.g. inside of, will be ignored. Use [method collide_shape] to determine the [Shape2D]s that the shape is already colliding with.
  *
 */
 cast_motion(shape: Physics2DShapeQueryParameters): any[];
@@ -47,10 +49,10 @@ collide_shape(shape: Physics2DShapeQueryParameters, max_results?: int): any[];
  * `shape`: The shape index of the colliding shape.
  *
 */
-get_rest_info(shape: Physics2DShapeQueryParameters): Dictionary;
+get_rest_info(shape: Physics2DShapeQueryParameters): Dictionary<any, any>;
 
 /**
- * Checks whether a point is inside any shape. The shapes the point is inside of are returned in an array containing dictionaries with the following fields:
+ * Checks whether a point is inside any solid shape. The shapes the point is inside of are returned in an array containing dictionaries with the following fields:
  *
  * `collider`: The colliding object.
  *
@@ -63,6 +65,8 @@ get_rest_info(shape: Physics2DShapeQueryParameters): Dictionary;
  * `shape`: The shape index of the colliding shape.
  *
  * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
+ *
+ * **Note:** [ConcavePolygonShape2D]s and [CollisionPolygon2D]s in `Segments` build mode are not solid shapes. Therefore, they will not be detected.
  *
 */
 intersect_point(point: Vector2, max_results?: int, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): any[];
@@ -92,7 +96,7 @@ intersect_point_on_canvas(point: Vector2, canvas_instance_id: int, max_results?:
  * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
  *
 */
-intersect_ray(from: Vector2, to: Vector2, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): Dictionary;
+intersect_ray(from: Vector2, to: Vector2, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): Dictionary<any, any>;
 
 /**
  * Checks the intersections of a shape, given through a [Physics2DShapeQueryParameters] object, against the space.
@@ -114,11 +118,14 @@ intersect_ray(from: Vector2, to: Vector2, exclude?: any[], collision_layer?: int
 */
 intersect_shape(shape: Physics2DShapeQueryParameters, max_results?: int): any[];
 
-  connect<T extends SignalsOf<Physics2DDirectSpaceState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Physics2DDirectSpaceState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Physics2DDirectSpaceStateSignals>>(signal: T, method: SignalFunction<Physics2DDirectSpaceStateSignals[T]>): number;
 
 
 
 
+}
 
+declare class Physics2DDirectSpaceStateSignals extends ObjectSignals {
   
 }

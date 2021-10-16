@@ -55,11 +55,14 @@ generate_small_preview_automatically(): boolean;
 /** Returns [code]true[/code] if your generator supports the resource of type [code]type[/code]. */
 handles(type: string): boolean;
 
-  connect<T extends SignalsOf<EditorResourcePreviewGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorResourcePreviewGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorResourcePreviewGeneratorSignals>>(signal: T, method: SignalFunction<EditorResourcePreviewGeneratorSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorResourcePreviewGeneratorSignals extends ReferenceSignals {
   
 }

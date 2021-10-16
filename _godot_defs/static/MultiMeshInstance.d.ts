@@ -24,11 +24,14 @@ multimesh: MultiMesh;
 
 
 
-  connect<T extends SignalsOf<MultiMeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MultiMeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MultiMeshInstanceSignals>>(signal: T, method: SignalFunction<MultiMeshInstanceSignals[T]>): number;
 
 
 
 
+}
 
+declare class MultiMeshInstanceSignals extends GeometryInstanceSignals {
   
 }

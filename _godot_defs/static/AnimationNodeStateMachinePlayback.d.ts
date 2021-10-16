@@ -34,8 +34,14 @@ declare class AnimationNodeStateMachinePlayback extends Resource {
 
 
 
+/** No documentation provided. */
+get_current_length(): float;
+
 /** Returns the currently playing animation state. */
 get_current_node(): string;
+
+/** Returns the playback position within the current animation state. */
+get_current_play_position(): float;
 
 /** Returns the current travel path as computed internally by the A* algorithm. */
 get_travel_path(): PoolStringArray;
@@ -52,11 +58,14 @@ stop(): void;
 /** Transitions from the current state to another one, following the shortest path. */
 travel(to_node: string): void;
 
-  connect<T extends SignalsOf<AnimationNodeStateMachinePlayback>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeStateMachinePlayback>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachinePlaybackSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachinePlaybackSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeStateMachinePlaybackSignals extends ResourceSignals {
   
 }

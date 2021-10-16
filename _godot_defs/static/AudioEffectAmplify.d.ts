@@ -20,11 +20,14 @@ volume_db: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectAmplify>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectAmplify>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectAmplifySignals>>(signal: T, method: SignalFunction<AudioEffectAmplifySignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectAmplifySignals extends AudioEffectSignals {
   
 }

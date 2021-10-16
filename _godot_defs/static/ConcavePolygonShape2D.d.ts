@@ -24,11 +24,14 @@ segments: PoolVector2Array;
 
 
 
-  connect<T extends SignalsOf<ConcavePolygonShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConcavePolygonShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConcavePolygonShape2DSignals>>(signal: T, method: SignalFunction<ConcavePolygonShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class ConcavePolygonShape2DSignals extends Shape2DSignals {
   
 }

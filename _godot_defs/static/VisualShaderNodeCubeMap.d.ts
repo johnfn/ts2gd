@@ -26,7 +26,8 @@ texture_type: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeCubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeCubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeCubeMapSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCubeMapSignals[T]>): number;
 
 
 
@@ -34,32 +35,34 @@ texture_type: int;
  * Use the [CubeMap] set via [member cube_map]. If this is set to [member source], the `samplerCube` port is ignored.
  *
 */
-static SOURCE_TEXTURE: 0;
+static SOURCE_TEXTURE: any;
 
 /**
  * Use the [CubeMap] sampler reference passed via the `samplerCube` port. If this is set to [member source], the [member cube_map] texture is ignored.
  *
 */
-static SOURCE_PORT: 1;
+static SOURCE_PORT: any;
 
 /**
  * No hints are added to the uniform declaration.
  *
 */
-static TYPE_DATA: 0;
+static TYPE_DATA: any;
 
 /**
  * Adds `hint_albedo` as hint to the uniform declaration for proper sRGB to linear conversion.
  *
 */
-static TYPE_COLOR: 1;
+static TYPE_COLOR: any;
 
 /**
  * Adds `hint_normal` as hint to the uniform declaration, which internally converts the texture for proper usage as normal map.
  *
 */
-static TYPE_NORMALMAP: 2;
+static TYPE_NORMALMAP: any;
 
+}
 
+declare class VisualShaderNodeCubeMapSignals extends VisualShaderNodeSignals {
   
 }

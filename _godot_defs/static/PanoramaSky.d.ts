@@ -28,11 +28,14 @@ panorama: Texture;
 
 
 
-  connect<T extends SignalsOf<PanoramaSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PanoramaSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PanoramaSkySignals>>(signal: T, method: SignalFunction<PanoramaSkySignals[T]>): number;
 
 
 
 
+}
 
+declare class PanoramaSkySignals extends SkySignals {
   
 }

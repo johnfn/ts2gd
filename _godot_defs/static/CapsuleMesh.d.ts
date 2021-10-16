@@ -15,7 +15,12 @@ declare class CapsuleMesh extends PrimitiveMesh {
 
 
 
-/** Height of the capsule mesh from the center point. */
+/**
+ * Height of the middle cylindrical part of the capsule (without the hemispherical ends).
+ *
+ * **Note:** The capsule's total height is equal to [member mid_height] + 2 * [member radius].
+ *
+*/
 mid_height: float;
 
 /** Number of radial segments on the capsule mesh. */
@@ -29,11 +34,14 @@ rings: int;
 
 
 
-  connect<T extends SignalsOf<CapsuleMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CapsuleMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CapsuleMeshSignals>>(signal: T, method: SignalFunction<CapsuleMeshSignals[T]>): number;
 
 
 
 
+}
 
+declare class CapsuleMeshSignals extends PrimitiveMeshSignals {
   
 }

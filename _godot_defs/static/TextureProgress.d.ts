@@ -59,6 +59,9 @@ texture_over: Texture;
 */
 texture_progress: Texture;
 
+/** The offset of [member texture_progress]. Useful for [member texture_over] and [member texture_under] with fancy borders, to avoid transparent margins in your progress texture. */
+texture_progress_offset: Vector2;
+
 /** [Texture] that draws under the progress bar. The bar's background. */
 texture_under: Texture;
 
@@ -77,7 +80,8 @@ get_stretch_margin(margin: int): int;
 /** No documentation provided. */
 set_stretch_margin(margin: int, value: int): void;
 
-  connect<T extends SignalsOf<TextureProgress>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TextureProgress>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TextureProgressSignals>>(signal: T, method: SignalFunction<TextureProgressSignals[T]>): number;
 
 
 
@@ -85,56 +89,58 @@ set_stretch_margin(margin: int, value: int): void;
  * The [member texture_progress] fills from left to right.
  *
 */
-static FILL_LEFT_TO_RIGHT: 0;
+static FILL_LEFT_TO_RIGHT: any;
 
 /**
  * The [member texture_progress] fills from right to left.
  *
 */
-static FILL_RIGHT_TO_LEFT: 1;
+static FILL_RIGHT_TO_LEFT: any;
 
 /**
  * The [member texture_progress] fills from top to bottom.
  *
 */
-static FILL_TOP_TO_BOTTOM: 2;
+static FILL_TOP_TO_BOTTOM: any;
 
 /**
  * The [member texture_progress] fills from bottom to top.
  *
 */
-static FILL_BOTTOM_TO_TOP: 3;
+static FILL_BOTTOM_TO_TOP: any;
 
 /**
  * Turns the node into a radial bar. The [member texture_progress] fills clockwise. See [member radial_center_offset], [member radial_initial_angle] and [member radial_fill_degrees] to control the way the bar fills up.
  *
 */
-static FILL_CLOCKWISE: 4;
+static FILL_CLOCKWISE: any;
 
 /**
  * Turns the node into a radial bar. The [member texture_progress] fills counterclockwise. See [member radial_center_offset], [member radial_initial_angle] and [member radial_fill_degrees] to control the way the bar fills up.
  *
 */
-static FILL_COUNTER_CLOCKWISE: 5;
+static FILL_COUNTER_CLOCKWISE: any;
 
 /**
  * The [member texture_progress] fills from the center, expanding both towards the left and the right.
  *
 */
-static FILL_BILINEAR_LEFT_AND_RIGHT: 6;
+static FILL_BILINEAR_LEFT_AND_RIGHT: any;
 
 /**
  * The [member texture_progress] fills from the center, expanding both towards the top and the bottom.
  *
 */
-static FILL_BILINEAR_TOP_AND_BOTTOM: 7;
+static FILL_BILINEAR_TOP_AND_BOTTOM: any;
 
 /**
  * Turns the node into a radial bar. The [member texture_progress] fills radially from the center, expanding both clockwise and counterclockwise. See [member radial_center_offset], [member radial_initial_angle] and [member radial_fill_degrees] to control the way the bar fills up.
  *
 */
-static FILL_CLOCKWISE_AND_COUNTER_CLOCKWISE: 8;
+static FILL_CLOCKWISE_AND_COUNTER_CLOCKWISE: any;
 
+}
 
+declare class TextureProgressSignals extends RangeSignals {
   
 }

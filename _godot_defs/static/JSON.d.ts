@@ -21,11 +21,14 @@ parse(json: string): JSONParseResult;
 
 
 
-  connect<T extends SignalsOf<JSONClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<JSONClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<JSONClassSignals>>(signal: T, method: SignalFunction<JSONClassSignals[T]>): number;
 
 
 
 
+}
 
+declare class JSONClassSignals extends ObjectSignals {
   
 }

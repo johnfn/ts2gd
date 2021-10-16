@@ -35,6 +35,16 @@ compress(compression_mode?: int): PoolByteArray;
 /** Returns a new [PoolByteArray] with the data decompressed. Set [code]buffer_size[/code] to the size of the uncompressed data. Set the compression mode using one of [enum File.CompressionMode]'s constants. */
 decompress(buffer_size: int, compression_mode?: int): PoolByteArray;
 
+/**
+ * Returns a new [PoolByteArray] with the data decompressed. Set the compression mode using one of [enum File.CompressionMode]'s constants. **This method only accepts gzip and deflate compression modes.**
+ *
+ * This method is potentially slower than `decompress`, as it may have to re-allocate it's output buffer multiple times while decompressing, where as `decompress` knows it's output buffer size from the begining.
+ *
+ * GZIP has a maximal compression ratio of 1032:1, meaning it's very possible for a small compressed payload to decompress to a potentially very large output. To guard against this, you may provide a maximum size this function is allowed to allocate in bytes via `max_output_size`. Passing -1 will allow for unbounded output. If any positive value is passed, and the decompression exceeds that ammount in bytes, then an error will be returned.
+ *
+*/
+decompress_dynamic(max_output_size: int, compression_mode?: int): PoolByteArray;
+
 /** Returns [code]true[/code] if the array is empty. */
 empty(): boolean;
 
@@ -81,11 +91,14 @@ size(): int;
 /** Returns the slice of the [PoolByteArray] between indices (inclusive) as a new [PoolByteArray]. Any negative index is considered to be from the end of the array. */
 subarray(from: int, to: int): PoolByteArray;
 
-  connect<T extends SignalsOf<PoolByteArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PoolByteArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PoolByteArraySignals>>(signal: T, method: SignalFunction<PoolByteArraySignals[T]>): number;
 
 
 
 
+}
 
+declare class PoolByteArraySignals {
   
 }

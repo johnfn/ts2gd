@@ -20,23 +20,26 @@ declare class InstancePlaceholder extends Node {
 
 
 
-/** No documentation provided. */
-create_instance(replace?: boolean, custom_scene?: PackedScene): Node;
+/** Not thread-safe. Use [method Object.call_deferred] if calling from a thread. */
+create_instance(replace?: boolean, custom_scene?: PackedScene<any>): Node;
 
-/** Gets the path to the [PackedScene] resource file that is loaded by default when calling [method replace_by_instance]. */
+/** Gets the path to the [PackedScene] resource file that is loaded by default when calling [method replace_by_instance]. Not thread-safe. Use [method Object.call_deferred] if calling from a thread. */
 get_instance_path(): string;
 
 /** No documentation provided. */
-get_stored_values(with_order?: boolean): Dictionary;
+get_stored_values(with_order?: boolean): Dictionary<any, any>;
 
 /** Replaces this placeholder by the scene handed as an argument, or the original scene if no argument is given. As for all resources, the scene is loaded only if it's not loaded already. By manually loading the scene beforehand, delays caused by this function can be avoided. */
-replace_by_instance(custom_scene?: PackedScene): void;
+replace_by_instance(custom_scene?: PackedScene<any>): void;
 
-  connect<T extends SignalsOf<InstancePlaceholder>, U extends Node>(signal: T, node: U, method: keyof U): number;
-
-
-
+  // connect<T extends SignalsOf<InstancePlaceholder>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InstancePlaceholderSignals>>(signal: T, method: SignalFunction<InstancePlaceholderSignals[T]>): number;
 
 
+
+
+}
+
+declare class InstancePlaceholderSignals extends NodeSignals {
   
 }

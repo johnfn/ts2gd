@@ -24,11 +24,14 @@ sort_enabled: boolean;
 
 
 
-  connect<T extends SignalsOf<YSort>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<YSort>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<YSortSignals>>(signal: T, method: SignalFunction<YSortSignals[T]>): number;
 
 
 
 
+}
 
+declare class YSortSignals extends Node2DSignals {
   
 }

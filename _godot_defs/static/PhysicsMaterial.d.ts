@@ -29,11 +29,14 @@ rough: boolean;
 
 
 
-  connect<T extends SignalsOf<PhysicsMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PhysicsMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PhysicsMaterialSignals>>(signal: T, method: SignalFunction<PhysicsMaterialSignals[T]>): number;
 
 
 
 
+}
 
+declare class PhysicsMaterialSignals extends ResourceSignals {
   
 }

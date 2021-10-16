@@ -4,6 +4,8 @@
  *
  * When creating a new [Directory], its default opened directory will be `res://`. This may change in the future, so it is advised to always use [method open] to initialize your [Directory] where you want to operate, with explicit error checking.
  *
+ * **Note:** Many resources types are imported (e.g. textures or sound files), and their source asset will not be included in the exported game, as only the imported version is used. Use [ResourceLoader] to access imported resources.
+ *
  * Here is an example on how to iterate through the files of a directory:
  *
  * @example 
@@ -32,6 +34,8 @@ declare class Directory extends Reference {
  * Directory type. It is used to manage directories and their content (not restricted to the project folder).
  *
  * When creating a new [Directory], its default opened directory will be `res://`. This may change in the future, so it is advised to always use [method open] to initialize your [Directory] where you want to operate, with explicit error checking.
+ *
+ * **Note:** Many resources types are imported (e.g. textures or sound files), and their source asset will not be included in the exported game, as only the imported version is used. Use [ResourceLoader] to access imported resources.
  *
  * Here is an example on how to iterate through the files of a directory:
  *
@@ -91,7 +95,7 @@ get_current_dir(): string;
 /** Returns the currently opened directory's drive index. See [method get_drive] to convert returned index to the name of the drive. */
 get_current_drive(): int;
 
-/** On Windows, returns the name of the drive (partition) passed as an argument (e.g. [code]C:[/code]). On other platforms, or if the requested drive does not existed, the method returns an empty String. */
+/** On Windows, returns the name of the drive (partition) passed as an argument (e.g. [code]C:[/code]). On other platforms, or if the requested drive does not exist, the method returns an empty String. */
 get_drive(idx: int): string;
 
 /** On Windows, returns the number of drives (partitions) mounted on the current filesystem. On other platforms, the method returns 0. */
@@ -109,7 +113,7 @@ get_next(): string;
 get_space_left(): int;
 
 /**
- * Initializes the stream used to list all files and directories using the [method get_next] function, closing the current opened stream if needed. Once the stream has been processed, it should typically be closed with [method list_dir_end].
+ * Initializes the stream used to list all files and directories using the [method get_next] function, closing the currently opened stream if needed. Once the stream has been processed, it should typically be closed with [method list_dir_end].
  *
  * If `skip_navigational` is `true`, `.` and `..` are filtered out.
  *
@@ -118,7 +122,7 @@ get_space_left(): int;
 */
 list_dir_begin(skip_navigational?: boolean, skip_hidden?: boolean): int;
 
-/** Closes the current stream opened with [method list_dir_begin] (whether it has been fully processed with [method get_next] or not does not matter). */
+/** Closes the current stream opened with [method list_dir_begin] (whether it has been fully processed with [method get_next] does not matter). */
 list_dir_end(): void;
 
 /**
@@ -154,18 +158,21 @@ open(path: string): int;
 remove(path: string): int;
 
 /**
- * Renames (move) the `from` file to the `to` destination. Both arguments should be paths to files, either relative or absolute. If the destination file exists and is not access-protected, it will be overwritten.
+ * Renames (move) the `from` file or directory to the `to` destination. Both arguments should be paths to files or directories, either relative or absolute. If the destination file or directory exists and is not access-protected, it will be overwritten.
  *
  * Returns one of the [enum Error] code constants (`OK` on success).
  *
 */
 rename(from: string, to: string): int;
 
-  connect<T extends SignalsOf<Directory>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Directory>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DirectorySignals>>(signal: T, method: SignalFunction<DirectorySignals[T]>): number;
 
 
 
 
+}
 
+declare class DirectorySignals extends ReferenceSignals {
   
 }

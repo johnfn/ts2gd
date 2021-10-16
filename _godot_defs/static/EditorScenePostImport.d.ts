@@ -65,11 +65,14 @@ get_source_folder(): string;
 /** Called after the scene was imported. This method must return the modified version of the scene. */
 post_import(scene: Object): Object;
 
-  connect<T extends SignalsOf<EditorScenePostImport>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorScenePostImport>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorScenePostImportSignals>>(signal: T, method: SignalFunction<EditorScenePostImportSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorScenePostImportSignals extends ReferenceSignals {
   
 }

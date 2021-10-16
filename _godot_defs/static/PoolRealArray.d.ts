@@ -1,17 +1,21 @@
 
 /**
- * An [Array] specifically designed to hold floating-point values ([float]). Optimized for memory usage, does not fragment the memory.
+ * An [Array] specifically designed to hold floating-point values. Optimized for memory usage, does not fragment the memory.
  *
  * **Note:** This type is passed by value and not by reference.
+ *
+ * **Note:** Unlike primitive [float]s which are 64-bit, numbers stored in [PoolRealArray] are 32-bit floats. This means values stored in [PoolRealArray] have lower precision compared to primitive [float]s. If you need to store 64-bit floats in an array, use a generic [Array] with [float] elements as these will still be 64-bit. However, using a generic [Array] to store [float]s will use roughly 6 times more memory compared to a [PoolRealArray].
  *
 */
 declare class PoolRealArray {
 
   
 /**
- * An [Array] specifically designed to hold floating-point values ([float]). Optimized for memory usage, does not fragment the memory.
+ * An [Array] specifically designed to hold floating-point values. Optimized for memory usage, does not fragment the memory.
  *
  * **Note:** This type is passed by value and not by reference.
+ *
+ * **Note:** Unlike primitive [float]s which are 64-bit, numbers stored in [PoolRealArray] are 32-bit floats. This means values stored in [PoolRealArray] have lower precision compared to primitive [float]s. If you need to store 64-bit floats in an array, use a generic [Array] with [float] elements as these will still be 64-bit. However, using a generic [Array] to store [float]s will use roughly 6 times more memory compared to a [PoolRealArray].
  *
 */
 
@@ -53,11 +57,14 @@ set(idx: int, value: float): any;
 /** Returns the size of the array. */
 size(): int;
 
-  connect<T extends SignalsOf<PoolRealArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PoolRealArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PoolRealArraySignals>>(signal: T, method: SignalFunction<PoolRealArraySignals[T]>): number;
 
 
 
 
+}
 
+declare class PoolRealArraySignals {
   
 }

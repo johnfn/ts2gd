@@ -20,11 +20,14 @@ color: Color;
 
 
 
-  connect<T extends SignalsOf<CanvasModulate>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CanvasModulate>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CanvasModulateSignals>>(signal: T, method: SignalFunction<CanvasModulateSignals[T]>): number;
 
 
 
 
+}
 
+declare class CanvasModulateSignals extends Node2DSignals {
   
 }

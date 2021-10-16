@@ -36,13 +36,22 @@ play(anim?: string): void;
 /** Stops the current animation (does not reset the frame counter). */
 stop(): void;
 
-  connect<T extends SignalsOf<AnimatedSprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimatedSprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimatedSprite3DSignals>>(signal: T, method: SignalFunction<AnimatedSprite3DSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimatedSprite3DSignals extends SpriteBase3DSignals {
   /**
+ * Emitted when the animation is finished (when it plays the last frame). If the animation is looping, this signal is emitted every time the last frame is drawn.
+ *
+*/
+animation_finished: Signal<() => void>
+
+/**
  * Emitted when [member frame] changed.
  *
 */

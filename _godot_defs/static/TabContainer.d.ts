@@ -4,10 +4,6 @@
  *
  * Ignores non-[Control] children.
  *
- * Individual tabs are always visible unless you use [method set_tab_disabled] and [method set_tab_title] to hide it.
- *
- * To hide only a tab's content, nest the content inside a child [Control], so it receives the [TabContainer]'s visibility setting instead.
- *
 */
 declare class TabContainer extends Container {
 
@@ -17,15 +13,14 @@ declare class TabContainer extends Container {
  *
  * Ignores non-[Control] children.
  *
- * Individual tabs are always visible unless you use [method set_tab_disabled] and [method set_tab_title] to hide it.
- *
- * To hide only a tab's content, nest the content inside a child [Control], so it receives the [TabContainer]'s visibility setting instead.
- *
 */
   "new"(): TabContainer;
   static "new"(): TabContainer;
 
 
+
+/** If [code]true[/code], all tabs are drawn in front of the panel. If [code]false[/code], inactive tabs are drawn behind the panel. */
+all_tabs_in_front: boolean;
 
 /** The current tab index. When set, this index's [Control] node's [code]visible[/code] property is set to [code]true[/code] and all others are set to [code]false[/code]. */
 current_tab: int;
@@ -60,8 +55,14 @@ get_tab_count(): int;
 /** Returns [code]true[/code] if the tab at index [code]tab_idx[/code] is disabled. */
 get_tab_disabled(tab_idx: int): boolean;
 
+/** Returns [code]true[/code] if the tab at index [code]tab_idx[/code] is hidden. */
+get_tab_hidden(tab_idx: int): boolean;
+
 /** Returns the [Texture] for the tab at index [code]tab_idx[/code] or [code]null[/code] if the tab has no [Texture]. */
 get_tab_icon(tab_idx: int): Texture;
+
+/** Returns the index of the tab at local coordinates [code]point[/code]. Returns [code]-1[/code] if the point is outside the control boundaries or if there's no tab at the queried position. */
+get_tab_idx_at_point(point: Vector2): int;
 
 /** Returns the title of the tab at index [code]tab_idx[/code]. Tab titles default to the name of the indexed child node, but this can be overridden with [method set_tab_title]. */
 get_tab_title(tab_idx: int): string;
@@ -72,24 +73,23 @@ get_tabs_rearrange_group(): int;
 /** If set on a [Popup] node instance, a popup menu icon appears in the top-right corner of the [TabContainer]. Clicking it will expand the [Popup] node. */
 set_popup(popup: Node): void;
 
-/**
- * If `disabled` is `false`, hides the tab at index `tab_idx`.
- *
- * **Note:** Its title text will remain, unless also removed with [method set_tab_title].
- *
-*/
+/** If [code]disabled[/code] is [code]true[/code], disables the tab at index [code]tab_idx[/code], making it non-interactable. */
 set_tab_disabled(tab_idx: int, disabled: boolean): void;
+
+/** If [code]hidden[/code] is [code]true[/code], hides the tab at index [code]tab_idx[/code], making it disappear from the tab area. */
+set_tab_hidden(tab_idx: int, hidden: boolean): void;
 
 /** Sets an icon for the tab at index [code]tab_idx[/code]. */
 set_tab_icon(tab_idx: int, icon: Texture): void;
 
-/** Sets a title for the tab at index [code]tab_idx[/code]. Tab titles default to the name of the indexed child node, but this can be overridden with [method set_tab_title]. */
+/** Sets a title for the tab at index [code]tab_idx[/code]. Tab titles default to the name of the indexed child node. */
 set_tab_title(tab_idx: int, title: string): void;
 
-/** Defines rearrange group id, choose for each [TabContainer] the same value to enable tab drag between [TabContainer]. Enable drag with [code]set_drag_to_rearrange_enabled(true)[/code]. */
+/** Defines rearrange group id, choose for each [TabContainer] the same value to enable tab drag between [TabContainer]. Enable drag with [member drag_to_rearrange_enabled]. */
 set_tabs_rearrange_group(group_id: int): void;
 
-  connect<T extends SignalsOf<TabContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TabContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TabContainerSignals>>(signal: T, method: SignalFunction<TabContainerSignals[T]>): number;
 
 
 
@@ -97,21 +97,23 @@ set_tabs_rearrange_group(group_id: int): void;
  * Align the tabs to the left.
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Align the tabs to the center.
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Align the tabs to the right.
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
+}
 
+declare class TabContainerSignals extends ContainerSignals {
   /**
  * Emitted when the [TabContainer]'s [Popup] button is clicked. See [method set_popup] for details.
  *

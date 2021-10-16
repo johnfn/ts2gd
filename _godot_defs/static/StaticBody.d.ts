@@ -51,11 +51,14 @@ physics_material_override: PhysicsMaterial;
 
 
 
-  connect<T extends SignalsOf<StaticBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StaticBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StaticBodySignals>>(signal: T, method: SignalFunction<StaticBodySignals[T]>): number;
 
 
 
 
+}
 
+declare class StaticBodySignals extends PhysicsBodySignals {
   
 }

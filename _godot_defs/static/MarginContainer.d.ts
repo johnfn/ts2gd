@@ -6,11 +6,12 @@
  *
  * @example 
  * 
+ * # This code sample assumes the current script is extending MarginContainer.
  * var margin_value = 100
- * set("custom_constants/margin_top", margin_value)
- * set("custom_constants/margin_left", margin_value)
- * set("custom_constants/margin_bottom", margin_value)
- * set("custom_constants/margin_right", margin_value)
+ * add_constant_override("margin_top", margin_value)
+ * add_constant_override("margin_left", margin_value)
+ * add_constant_override("margin_bottom", margin_value)
+ * add_constant_override("margin_right", margin_value)
  * @summary 
  * 
  *
@@ -25,11 +26,12 @@ declare class MarginContainer extends Container {
  *
  * @example 
  * 
+ * # This code sample assumes the current script is extending MarginContainer.
  * var margin_value = 100
- * set("custom_constants/margin_top", margin_value)
- * set("custom_constants/margin_left", margin_value)
- * set("custom_constants/margin_bottom", margin_value)
- * set("custom_constants/margin_right", margin_value)
+ * add_constant_override("margin_top", margin_value)
+ * add_constant_override("margin_left", margin_value)
+ * add_constant_override("margin_bottom", margin_value)
+ * add_constant_override("margin_right", margin_value)
  * @summary 
  * 
  *
@@ -42,11 +44,14 @@ declare class MarginContainer extends Container {
 
 
 
-  connect<T extends SignalsOf<MarginContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MarginContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MarginContainerSignals>>(signal: T, method: SignalFunction<MarginContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class MarginContainerSignals extends ContainerSignals {
   
 }

@@ -202,6 +202,9 @@ glow_hdr_scale: float;
 /** The lower threshold of the HDR glow. When using the GLES2 renderer (which doesn't support HDR), this needs to be below [code]1.0[/code] for glow to be visible. A value of [code]0.9[/code] works well in this case. */
 glow_hdr_threshold: float;
 
+/** Takes more samples during downsample pass of glow. This ensures that single pixels are captured by glow which makes the glow look smoother and more stable during movement. However, it is very expensive and makes the glow post process take twice as long. */
+glow_high_quality: boolean;
+
 /** The glow intensity. When using the GLES2 renderer, this should be increased to 1.5 to compensate for the lack of HDR rendering. */
 glow_intensity: float;
 
@@ -298,7 +301,8 @@ is_glow_level_enabled(idx: int): boolean;
 /** Enables or disables the glow level at index [code]idx[/code]. Each level relies on the previous level. This means that enabling higher glow levels will slow down the glow effect rendering, even if previous levels aren't enabled. */
 set_glow_level(idx: int, enabled: boolean): void;
 
-  connect<T extends SignalsOf<Environment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Environment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EnvironmentSignals>>(signal: T, method: SignalFunction<EnvironmentSignals[T]>): number;
 
 
 
@@ -306,158 +310,166 @@ set_glow_level(idx: int, enabled: boolean): void;
  * Keeps on screen every pixel drawn in the background. This is the fastest background mode, but it can only be safely used in fully-interior scenes (no visible sky or sky reflections). If enabled in a scene where the background is visible, "ghost trail" artifacts will be visible when moving the camera.
  *
 */
-static BG_KEEP: 5;
+static BG_KEEP: any;
 
 /**
  * Clears the background using the clear color defined in [member ProjectSettings.rendering/environment/default_clear_color].
  *
 */
-static BG_CLEAR_COLOR: 0;
+static BG_CLEAR_COLOR: any;
 
 /**
  * Clears the background using a custom clear color.
  *
 */
-static BG_COLOR: 1;
+static BG_COLOR: any;
 
 /**
  * Displays a user-defined sky in the background.
  *
 */
-static BG_SKY: 2;
+static BG_SKY: any;
 
 /**
  * Clears the background using a custom clear color and allows defining a sky for shading and reflection. This mode is slightly faster than [constant BG_SKY] and should be preferred in scenes where reflections can be visible, but the sky itself never is (e.g. top-down camera).
  *
 */
-static BG_COLOR_SKY: 3;
+static BG_COLOR_SKY: any;
 
 /**
  * Displays a [CanvasLayer] in the background.
  *
 */
-static BG_CANVAS: 4;
+static BG_CANVAS: any;
 
 /**
  * Displays a camera feed in the background.
  *
 */
-static BG_CAMERA_FEED: 6;
+static BG_CAMERA_FEED: any;
 
 /**
  * Represents the size of the [enum BGMode] enum.
  *
 */
-static BG_MAX: 7;
+static BG_MAX: any;
 
 /**
  * Additive glow blending mode. Mostly used for particles, glows (bloom), lens flare, bright sources.
  *
 */
-static GLOW_BLEND_MODE_ADDITIVE: 0;
+static GLOW_BLEND_MODE_ADDITIVE: any;
 
 /**
  * Screen glow blending mode. Increases brightness, used frequently with bloom.
  *
 */
-static GLOW_BLEND_MODE_SCREEN: 1;
+static GLOW_BLEND_MODE_SCREEN: any;
 
 /**
  * Soft light glow blending mode. Modifies contrast, exposes shadows and highlights (vivid bloom).
  *
 */
-static GLOW_BLEND_MODE_SOFTLIGHT: 2;
+static GLOW_BLEND_MODE_SOFTLIGHT: any;
 
 /**
  * Replace glow blending mode. Replaces all pixels' color by the glow value. This can be used to simulate a full-screen blur effect by tweaking the glow parameters to match the original image's brightness.
  *
 */
-static GLOW_BLEND_MODE_REPLACE: 3;
+static GLOW_BLEND_MODE_REPLACE: any;
 
 /**
  * Linear tonemapper operator. Reads the linear data and passes it on unmodified.
  *
 */
-static TONE_MAPPER_LINEAR: 0;
+static TONE_MAPPER_LINEAR: any;
 
 /**
  * Reinhardt tonemapper operator. Performs a variation on rendered pixels' colors by this formula: `color = color / (1 + color)`.
  *
 */
-static TONE_MAPPER_REINHARDT: 1;
+static TONE_MAPPER_REINHARDT: any;
 
 /**
  * Filmic tonemapper operator.
  *
 */
-static TONE_MAPPER_FILMIC: 2;
+static TONE_MAPPER_FILMIC: any;
 
 /**
- * Academy Color Encoding System tonemapper operator.
+ * Academy Color Encoding System tonemapper operator. Performs an aproximation of the ACES tonemapping curve.
  *
 */
-static TONE_MAPPER_ACES: 3;
+static TONE_MAPPER_ACES: any;
+
+/**
+ * High quality Academy Color Encoding System tonemapper operator that matches the industry standard. Performs a more physically accurate curve fit which better simulates how light works in the real world. The color of lights and emissive materials will become lighter as the emissive energy increases, and will eventually become white if the light is bright enough to saturate the camera sensor.
+ *
+*/
+static TONE_MAPPER_ACES_FITTED: any;
 
 /**
  * Low depth-of-field blur quality (fastest).
  *
 */
-static DOF_BLUR_QUALITY_LOW: 0;
+static DOF_BLUR_QUALITY_LOW: any;
 
 /**
  * Medium depth-of-field blur quality.
  *
 */
-static DOF_BLUR_QUALITY_MEDIUM: 1;
+static DOF_BLUR_QUALITY_MEDIUM: any;
 
 /**
  * High depth-of-field blur quality (slowest).
  *
 */
-static DOF_BLUR_QUALITY_HIGH: 2;
+static DOF_BLUR_QUALITY_HIGH: any;
 
 /**
  * No blur for the screen-space ambient occlusion effect (fastest).
  *
 */
-static SSAO_BLUR_DISABLED: 0;
+static SSAO_BLUR_DISABLED: any;
 
 /**
  * 1×1 blur for the screen-space ambient occlusion effect.
  *
 */
-static SSAO_BLUR_1x1: 1;
+static SSAO_BLUR_1x1: any;
 
 /**
  * 2×2 blur for the screen-space ambient occlusion effect.
  *
 */
-static SSAO_BLUR_2x2: 2;
+static SSAO_BLUR_2x2: any;
 
 /**
  * 3×3 blur for the screen-space ambient occlusion effect (slowest).
  *
 */
-static SSAO_BLUR_3x3: 3;
+static SSAO_BLUR_3x3: any;
 
 /**
  * Low quality for the screen-space ambient occlusion effect (fastest).
  *
 */
-static SSAO_QUALITY_LOW: 0;
+static SSAO_QUALITY_LOW: any;
 
 /**
  * Low quality for the screen-space ambient occlusion effect.
  *
 */
-static SSAO_QUALITY_MEDIUM: 1;
+static SSAO_QUALITY_MEDIUM: any;
 
 /**
  * Low quality for the screen-space ambient occlusion effect (slowest).
  *
 */
-static SSAO_QUALITY_HIGH: 2;
+static SSAO_QUALITY_HIGH: any;
 
+}
 
+declare class EnvironmentSignals extends ResourceSignals {
   
 }

@@ -53,7 +53,8 @@ has_param(name: string): boolean;
 */
 set_default_texture_param(param: string, texture: Texture): void;
 
-  connect<T extends SignalsOf<Shader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Shader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ShaderSignals>>(signal: T, method: SignalFunction<ShaderSignals[T]>): number;
 
 
 
@@ -61,20 +62,22 @@ set_default_texture_param(param: string, texture: Texture): void;
  * Mode used to draw all 3D objects.
  *
 */
-static MODE_SPATIAL: 0;
+static MODE_SPATIAL: any;
 
 /**
  * Mode used to draw all 2D objects.
  *
 */
-static MODE_CANVAS_ITEM: 1;
+static MODE_CANVAS_ITEM: any;
 
 /**
  * Mode used to calculate particle information on a per-particle basis. Not used for drawing.
  *
 */
-static MODE_PARTICLES: 2;
+static MODE_PARTICLES: any;
 
+}
 
+declare class ShaderSignals extends ResourceSignals {
   
 }

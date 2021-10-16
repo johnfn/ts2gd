@@ -15,7 +15,7 @@ declare class PopupMenu extends Popup {
 
 
 
-/** If [code]true[/code], allows to navigate [PopupMenu] with letter keys. */
+/** If [code]true[/code], allows navigating [PopupMenu] with letter keys. */
 allow_search: boolean;
 
 
@@ -131,8 +131,13 @@ add_radio_check_item(label: string, id?: int, accel?: int): void;
 */
 add_radio_check_shortcut(shortcut: ShortCut, id?: int, global?: boolean): void;
 
-/** Adds a separator between items. Separators also occupy an index. */
-add_separator(label?: string): void;
+/**
+ * Adds a separator between items. Separators also occupy an index, which you can set by using the `id` parameter.
+ *
+ * A `label` can optionally be provided, which will appear at the center of the separator.
+ *
+*/
+add_separator(label?: string, id?: int): void;
 
 /**
  * Adds a [ShortCut].
@@ -153,7 +158,7 @@ add_submenu_item(label: string, submenu: string, id?: int): void;
 /** Removes all items from the [PopupMenu]. */
 clear(): void;
 
-/** No documentation provided. */
+/** Returns the index of the currently focused item. Returns [code]-1[/code] if no item is focused. */
 get_current_index(): int;
 
 /** Returns the accelerator of the item at index [code]idx[/code]. Accelerators are special combinations of keys that activate the item, no matter which control is focused. */
@@ -265,7 +270,7 @@ set_item_id(idx: int, id: int): void;
 /** Sets the metadata of an item, which may be of any type. You can later get it with [method get_item_metadata], which provides a simple way of assigning context data to items. */
 set_item_metadata(idx: int, metadata: any): void;
 
-/** Sets the state of an multistate item. See [method add_multistate_item] for details. */
+/** Sets the state of a multistate item. See [method add_multistate_item] for details. */
 set_item_multistate(idx: int, state: int): void;
 
 /** Sets a [ShortCut] for the specified item [code]idx[/code]. */
@@ -286,15 +291,18 @@ set_item_tooltip(idx: int, tooltip: string): void;
 /** Toggles the check state of the item of the specified index [code]idx[/code]. */
 toggle_item_checked(idx: int): void;
 
-/** Cycle to the next state of an multistate item. See [method add_multistate_item] for details. */
+/** Cycle to the next state of a multistate item. See [method add_multistate_item] for details. */
 toggle_item_multistate(idx: int): void;
 
-  connect<T extends SignalsOf<PopupMenu>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PopupMenu>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PopupMenuSignals>>(signal: T, method: SignalFunction<PopupMenuSignals[T]>): number;
 
 
 
 
+}
 
+declare class PopupMenuSignals extends PopupSignals {
   /**
  * Emitted when user navigated to an item of some `id` using `ui_up` or `ui_down` action.
  *

@@ -29,11 +29,14 @@ stiffness: float;
 
 
 
-  connect<T extends SignalsOf<DampedSpringJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<DampedSpringJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DampedSpringJoint2DSignals>>(signal: T, method: SignalFunction<DampedSpringJoint2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class DampedSpringJoint2DSignals extends Joint2DSignals {
   
 }

@@ -111,7 +111,7 @@ protected _input_event(event: InputEvent): void;
 protected _input_text(text: string): void;
 
 /**
- * Called each physics frame with the time since the last physics frame as argument (in seconds). Equivalent to [method Node._physics_process].
+ * Called each physics frame with the time since the last physics frame as argument (`delta`, in seconds). Equivalent to [method Node._physics_process].
  *
  * If implemented, the method must return a boolean value. `true` ends the main loop, while `false` lets it proceed to the next frame.
  *
@@ -136,7 +136,8 @@ input_text(text: string): void;
 /** Should not be called manually, override [method _iteration] instead. Will be removed in Godot 4.0. */
 iteration(delta: float): boolean;
 
-  connect<T extends SignalsOf<MainLoop>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MainLoop>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MainLoopSignals>>(signal: T, method: SignalFunction<MainLoopSignals[T]>): number;
 
 
 
@@ -146,7 +147,7 @@ iteration(delta: float): boolean;
  * Implemented on desktop and web platforms.
  *
 */
-static NOTIFICATION_WM_MOUSE_ENTER: 1002;
+static NOTIFICATION_WM_MOUSE_ENTER: any;
 
 /**
  * Notification received from the OS when the mouse leaves the game window.
@@ -154,7 +155,7 @@ static NOTIFICATION_WM_MOUSE_ENTER: 1002;
  * Implemented on desktop and web platforms.
  *
 */
-static NOTIFICATION_WM_MOUSE_EXIT: 1003;
+static NOTIFICATION_WM_MOUSE_EXIT: any;
 
 /**
  * Notification received from the OS when the game window is focused.
@@ -162,7 +163,7 @@ static NOTIFICATION_WM_MOUSE_EXIT: 1003;
  * Implemented on all platforms.
  *
 */
-static NOTIFICATION_WM_FOCUS_IN: 1004;
+static NOTIFICATION_WM_FOCUS_IN: any;
 
 /**
  * Notification received from the OS when the game window is unfocused.
@@ -170,7 +171,7 @@ static NOTIFICATION_WM_FOCUS_IN: 1004;
  * Implemented on all platforms.
  *
 */
-static NOTIFICATION_WM_FOCUS_OUT: 1005;
+static NOTIFICATION_WM_FOCUS_OUT: any;
 
 /**
  * Notification received from the OS when a quit request is sent (e.g. closing the window with a "Close" button or Alt+F4).
@@ -178,7 +179,7 @@ static NOTIFICATION_WM_FOCUS_OUT: 1005;
  * Implemented on desktop platforms.
  *
 */
-static NOTIFICATION_WM_QUIT_REQUEST: 1006;
+static NOTIFICATION_WM_QUIT_REQUEST: any;
 
 /**
  * Notification received from the OS when a go back request is sent (e.g. pressing the "Back" button on Android).
@@ -186,7 +187,7 @@ static NOTIFICATION_WM_QUIT_REQUEST: 1006;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_WM_GO_BACK_REQUEST: 1007;
+static NOTIFICATION_WM_GO_BACK_REQUEST: any;
 
 /**
  * Notification received from the OS when an unfocus request is sent (e.g. another OS window wants to take the focus).
@@ -194,7 +195,7 @@ static NOTIFICATION_WM_GO_BACK_REQUEST: 1007;
  * No supported platforms currently send this notification.
  *
 */
-static NOTIFICATION_WM_UNFOCUS_REQUEST: 1008;
+static NOTIFICATION_WM_UNFOCUS_REQUEST: any;
 
 /**
  * Notification received from the OS when the application is exceeding its allocated memory.
@@ -202,13 +203,13 @@ static NOTIFICATION_WM_UNFOCUS_REQUEST: 1008;
  * Specific to the iOS platform.
  *
 */
-static NOTIFICATION_OS_MEMORY_WARNING: 1009;
+static NOTIFICATION_OS_MEMORY_WARNING: any;
 
 /**
  * Notification received when translations may have changed. Can be triggered by the user changing the locale. Can be used to respond to language changes, for example to change the UI strings on the fly. Useful when working with the built-in translation support, like [method Object.tr].
  *
 */
-static NOTIFICATION_TRANSLATION_CHANGED: 1010;
+static NOTIFICATION_TRANSLATION_CHANGED: any;
 
 /**
  * Notification received from the OS when a request for "About" information is sent.
@@ -216,7 +217,7 @@ static NOTIFICATION_TRANSLATION_CHANGED: 1010;
  * Specific to the macOS platform.
  *
 */
-static NOTIFICATION_WM_ABOUT: 1011;
+static NOTIFICATION_WM_ABOUT: any;
 
 /**
  * Notification received from Godot's crash handler when the engine is about to crash.
@@ -224,7 +225,7 @@ static NOTIFICATION_WM_ABOUT: 1011;
  * Implemented on desktop platforms if the crash handler is enabled.
  *
 */
-static NOTIFICATION_CRASH: 1012;
+static NOTIFICATION_CRASH: any;
 
 /**
  * Notification received from the OS when an update of the Input Method Engine occurs (e.g. change of IME cursor position or composition string).
@@ -232,7 +233,7 @@ static NOTIFICATION_CRASH: 1012;
  * Specific to the macOS platform.
  *
 */
-static NOTIFICATION_OS_IME_UPDATE: 1013;
+static NOTIFICATION_OS_IME_UPDATE: any;
 
 /**
  * Notification received from the OS when the app is resumed.
@@ -240,7 +241,7 @@ static NOTIFICATION_OS_IME_UPDATE: 1013;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_APP_RESUMED: 1014;
+static NOTIFICATION_APP_RESUMED: any;
 
 /**
  * Notification received from the OS when the app is paused.
@@ -248,9 +249,11 @@ static NOTIFICATION_APP_RESUMED: 1014;
  * Specific to the Android platform.
  *
 */
-static NOTIFICATION_APP_PAUSED: 1015;
+static NOTIFICATION_APP_PAUSED: any;
 
+}
 
+declare class MainLoopSignals extends ObjectSignals {
   /**
  * Emitted when a user responds to a permission request.
  *

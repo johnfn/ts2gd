@@ -25,11 +25,14 @@ get_band_gain_db(band_idx: int): float;
 /** Sets band's gain at the specified index, in dB. */
 set_band_gain_db(band_idx: int, volume_db: float): void;
 
-  connect<T extends SignalsOf<AudioEffectEQ>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectEQ>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectEQSignals>>(signal: T, method: SignalFunction<AudioEffectEQSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectEQSignals extends AudioEffectSignals {
   
 }

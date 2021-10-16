@@ -58,11 +58,14 @@ threshold: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectCompressor>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectCompressor>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectCompressorSignals>>(signal: T, method: SignalFunction<AudioEffectCompressorSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectCompressorSignals extends AudioEffectSignals {
   
 }

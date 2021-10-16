@@ -28,8 +28,13 @@ commit_handle(gizmo: EditorSpatialGizmo, index: int, restore: any, cancel?: bool
 /** Override this method to return a custom [EditorSpatialGizmo] for the spatial nodes of your choice, return [code]null[/code] for the rest of nodes. See also [method has_gizmo]. */
 create_gizmo(spatial: Spatial): EditorSpatialGizmo;
 
-/** Creates a handle material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with [method get_material] and used in [method EditorSpatialGizmo.add_handles]. Should not be overridden. */
-create_handle_material(name: string, billboard?: boolean): void;
+/**
+ * Creates a handle material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with [method get_material] and used in [method EditorSpatialGizmo.add_handles]. Should not be overridden.
+ *
+ * You can optionally provide a texture to use instead of the default icon.
+ *
+*/
+create_handle_material(name: string, billboard?: boolean, texture?: Texture): void;
 
 /** Creates an icon material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with [method get_material] and used in [method EditorSpatialGizmo.add_unscaled_billboard]. Should not be overridden. */
 create_icon_material(name: string, texture: Texture, on_top?: boolean, color?: Color): void;
@@ -44,7 +49,7 @@ get_handle_name(gizmo: EditorSpatialGizmo, index: int): string;
 get_handle_value(gizmo: EditorSpatialGizmo, index: int): any;
 
 /** Gets material from the internal list of materials. If an [EditorSpatialGizmo] is provided, it will try to get the corresponding variant (selected and/or editable). */
-get_material(name: string, gizmo: EditorSpatialGizmo): SpatialMaterial;
+get_material(name: string, gizmo?: EditorSpatialGizmo): SpatialMaterial;
 
 /** Override this method to provide the name that will appear in the gizmo visibility menu. */
 get_name(): string;
@@ -55,7 +60,7 @@ get_name(): string;
  * All built-in editor gizmos return a priority of `-1`. If not overridden, this method will return `0`, which means custom gizmos will automatically override built-in gizmos.
  *
 */
-get_priority(): string;
+get_priority(): int;
 
 /** Override this method to define which Spatial nodes have a gizmo from this plugin. Whenever a [Spatial] node is added to a scene this method is called, if it returns [code]true[/code] the node gets a generic [EditorSpatialGizmo] assigned and is added to this plugin's list of active gizmos. */
 has_gizmo(spatial: Spatial): boolean;
@@ -63,7 +68,7 @@ has_gizmo(spatial: Spatial): boolean;
 /** Gets whether a handle is highlighted or not. Called for this plugin's active gizmos. */
 is_handle_highlighted(gizmo: EditorSpatialGizmo, index: int): boolean;
 
-/** Override this method to define whether Spatial with this gizmo should be selecteble even when the gizmo is hidden. */
+/** Override this method to define whether a Spatial with this gizmo should be selectable even when the gizmo is hidden. */
 is_selectable_when_hidden(): boolean;
 
 /** Callback to redraw the provided gizmo. Called for this plugin's active gizmos. */
@@ -72,11 +77,14 @@ redraw(gizmo: EditorSpatialGizmo): void;
 /** Update the value of a handle after it has been updated. Called for this plugin's active gizmos. */
 set_handle(gizmo: EditorSpatialGizmo, index: int, camera: Camera, point: Vector2): void;
 
-  connect<T extends SignalsOf<EditorSpatialGizmoPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorSpatialGizmoPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorSpatialGizmoPluginSignals>>(signal: T, method: SignalFunction<EditorSpatialGizmoPluginSignals[T]>): number;
 
 
 
 
+}
 
+declare class EditorSpatialGizmoPluginSignals extends ResourceSignals {
   
 }

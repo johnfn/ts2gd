@@ -175,30 +175,10 @@ remove_item(idx: int): void;
 */
 select(idx: int, single?: boolean): void;
 
-/**
- * Sets the background color of the item specified by `idx` index to the specified [Color].
- *
- * @example 
- * 
- * var some_string = "Some text"
- * some_string.set_item_custom_bg_color(0,Color(1, 0, 0, 1) # This will set the background color of the first item of the control to red.
- * @summary 
- * 
- *
-*/
+/** Sets the background color of the item specified by [code]idx[/code] index to the specified [Color]. */
 set_item_custom_bg_color(idx: int, custom_bg_color: Color): void;
 
-/**
- * Sets the foreground color of the item specified by `idx` index to the specified [Color].
- *
- * @example 
- * 
- * var some_string = "Some text"
- * some_string.set_item_custom_fg_color(0,Color(1, 0, 0, 1) # This will set the foreground color of the first item of the control to red.
- * @summary 
- * 
- *
-*/
+/** Sets the foreground color of the item specified by [code]idx[/code] index to the specified [Color]. */
 set_item_custom_fg_color(idx: int, custom_fg_color: Color): void;
 
 /**
@@ -245,7 +225,8 @@ unselect(idx: int): void;
 /** Ensures there are no items selected. */
 unselect_all(): void;
 
-  connect<T extends SignalsOf<ItemList>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ItemList>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ItemListSignals>>(signal: T, method: SignalFunction<ItemListSignals[T]>): number;
 
 
 
@@ -253,27 +234,29 @@ unselect_all(): void;
  * Icon is drawn above the text.
  *
 */
-static ICON_MODE_TOP: 0;
+static ICON_MODE_TOP: any;
 
 /**
  * Icon is drawn to the left of the text.
  *
 */
-static ICON_MODE_LEFT: 1;
+static ICON_MODE_LEFT: any;
 
 /**
  * Only allow selecting a single item.
  *
 */
-static SELECT_SINGLE: 0;
+static SELECT_SINGLE: any;
 
 /**
  * Allows selecting multiple items by holding Ctrl or Shift.
  *
 */
-static SELECT_MULTI: 1;
+static SELECT_MULTI: any;
 
+}
 
+declare class ItemListSignals extends ControlSignals {
   /**
  * Triggered when specified list item is activated via double-clicking or by pressing Enter.
  *

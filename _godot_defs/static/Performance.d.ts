@@ -36,7 +36,8 @@ declare class PerformanceClass extends Object {
 */
 get_monitor(monitor: int): float;
 
-  connect<T extends SignalsOf<PerformanceClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PerformanceClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PerformanceClassSignals>>(signal: T, method: SignalFunction<PerformanceClassSignals[T]>): number;
 
 
 
@@ -44,194 +45,196 @@ get_monitor(monitor: int): float;
  * Number of frames per second.
  *
 */
-static TIME_FPS: 0;
+static TIME_FPS: any;
 
 /**
  * Time it took to complete one frame, in seconds.
  *
 */
-static TIME_PROCESS: 1;
+static TIME_PROCESS: any;
 
 /**
  * Time it took to complete one physics frame, in seconds.
  *
 */
-static TIME_PHYSICS_PROCESS: 2;
+static TIME_PHYSICS_PROCESS: any;
 
 /**
  * Static memory currently used, in bytes. Not available in release builds.
  *
 */
-static MEMORY_STATIC: 3;
+static MEMORY_STATIC: any;
 
 /**
  * Dynamic memory currently used, in bytes. Not available in release builds.
  *
 */
-static MEMORY_DYNAMIC: 4;
+static MEMORY_DYNAMIC: any;
 
 /**
  * Available static memory. Not available in release builds.
  *
 */
-static MEMORY_STATIC_MAX: 5;
+static MEMORY_STATIC_MAX: any;
 
 /**
  * Available dynamic memory. Not available in release builds.
  *
 */
-static MEMORY_DYNAMIC_MAX: 6;
+static MEMORY_DYNAMIC_MAX: any;
 
 /**
  * Largest amount of memory the message queue buffer has used, in bytes. The message queue is used for deferred functions calls and notifications.
  *
 */
-static MEMORY_MESSAGE_BUFFER_MAX: 7;
+static MEMORY_MESSAGE_BUFFER_MAX: any;
 
 /**
  * Number of objects currently instanced (including nodes).
  *
 */
-static OBJECT_COUNT: 8;
+static OBJECT_COUNT: any;
 
 /**
  * Number of resources currently used.
  *
 */
-static OBJECT_RESOURCE_COUNT: 9;
+static OBJECT_RESOURCE_COUNT: any;
 
 /**
  * Number of nodes currently instanced in the scene tree. This also includes the root node.
  *
 */
-static OBJECT_NODE_COUNT: 10;
+static OBJECT_NODE_COUNT: any;
 
 /**
  * Number of orphan nodes, i.e. nodes which are not parented to a node of the scene tree.
  *
 */
-static OBJECT_ORPHAN_NODE_COUNT: 11;
+static OBJECT_ORPHAN_NODE_COUNT: any;
 
 /**
  * 3D objects drawn per frame.
  *
 */
-static RENDER_OBJECTS_IN_FRAME: 12;
+static RENDER_OBJECTS_IN_FRAME: any;
 
 /**
  * Vertices drawn per frame. 3D only.
  *
 */
-static RENDER_VERTICES_IN_FRAME: 13;
+static RENDER_VERTICES_IN_FRAME: any;
 
 /**
  * Material changes per frame. 3D only.
  *
 */
-static RENDER_MATERIAL_CHANGES_IN_FRAME: 14;
+static RENDER_MATERIAL_CHANGES_IN_FRAME: any;
 
 /**
  * Shader changes per frame. 3D only.
  *
 */
-static RENDER_SHADER_CHANGES_IN_FRAME: 15;
+static RENDER_SHADER_CHANGES_IN_FRAME: any;
 
 /**
  * Render surface changes per frame. 3D only.
  *
 */
-static RENDER_SURFACE_CHANGES_IN_FRAME: 16;
+static RENDER_SURFACE_CHANGES_IN_FRAME: any;
 
 /**
  * Draw calls per frame. 3D only.
  *
 */
-static RENDER_DRAW_CALLS_IN_FRAME: 17;
+static RENDER_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Items or joined items drawn per frame.
  *
 */
-static RENDER_2D_ITEMS_IN_FRAME: 18;
+static RENDER_2D_ITEMS_IN_FRAME: any;
 
 /**
  * Draw calls per frame.
  *
 */
-static RENDER_2D_DRAW_CALLS_IN_FRAME: 19;
+static RENDER_2D_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * The amount of video memory used, i.e. texture and vertex memory combined.
  *
 */
-static RENDER_VIDEO_MEM_USED: 20;
+static RENDER_VIDEO_MEM_USED: any;
 
 /**
  * The amount of texture memory used.
  *
 */
-static RENDER_TEXTURE_MEM_USED: 21;
+static RENDER_TEXTURE_MEM_USED: any;
 
 /**
  * The amount of vertex memory used.
  *
 */
-static RENDER_VERTEX_MEM_USED: 22;
+static RENDER_VERTEX_MEM_USED: any;
 
 /**
  * Unimplemented in the GLES2 and GLES3 rendering backends, always returns 0.
  *
 */
-static RENDER_USAGE_VIDEO_MEM_TOTAL: 23;
+static RENDER_USAGE_VIDEO_MEM_TOTAL: any;
 
 /**
  * Number of active [RigidBody2D] nodes in the game.
  *
 */
-static PHYSICS_2D_ACTIVE_OBJECTS: 24;
+static PHYSICS_2D_ACTIVE_OBJECTS: any;
 
 /**
  * Number of collision pairs in the 2D physics engine.
  *
 */
-static PHYSICS_2D_COLLISION_PAIRS: 25;
+static PHYSICS_2D_COLLISION_PAIRS: any;
 
 /**
  * Number of islands in the 2D physics engine.
  *
 */
-static PHYSICS_2D_ISLAND_COUNT: 26;
+static PHYSICS_2D_ISLAND_COUNT: any;
 
 /**
  * Number of active [RigidBody] and [VehicleBody] nodes in the game.
  *
 */
-static PHYSICS_3D_ACTIVE_OBJECTS: 27;
+static PHYSICS_3D_ACTIVE_OBJECTS: any;
 
 /**
  * Number of collision pairs in the 3D physics engine.
  *
 */
-static PHYSICS_3D_COLLISION_PAIRS: 28;
+static PHYSICS_3D_COLLISION_PAIRS: any;
 
 /**
  * Number of islands in the 3D physics engine.
  *
 */
-static PHYSICS_3D_ISLAND_COUNT: 29;
+static PHYSICS_3D_ISLAND_COUNT: any;
 
 /**
  * Output latency of the [AudioServer].
  *
 */
-static AUDIO_OUTPUT_LATENCY: 30;
+static AUDIO_OUTPUT_LATENCY: any;
 
 /**
  * Represents the size of the [enum Monitor] enum.
  *
 */
-static MONITOR_MAX: 31;
+static MONITOR_MAX: any;
 
+}
 
+declare class PerformanceClassSignals extends ObjectSignals {
   
 }

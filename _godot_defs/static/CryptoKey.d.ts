@@ -24,17 +24,39 @@ declare class CryptoKey extends Resource {
 
 
 
-/** Loads a key from [code]path[/code] ("*.key" file). */
-load(path: string): int;
+/** Return [code]true[/code] if this CryptoKey only has the public part, and not the private one. */
+is_public_only(): boolean;
 
-/** Saves a key to the given [code]path[/code] (should be a "*.key" file). */
-save(path: string): int;
+/**
+ * Loads a key from `path`. If `public_only` is `true`, only the public key will be loaded.
+ *
+ * **Note:** `path` should be a "*.pub" file if `public_only` is `true`, a "*.key" file otherwise.
+ *
+*/
+load(path: string, public_only?: boolean): int;
 
-  connect<T extends SignalsOf<CryptoKey>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/** Loads a key from the given [code]string[/code]. If [code]public_only[/code] is [code]true[/code], only the public key will be loaded. */
+load_from_string(string_key: string, public_only?: boolean): int;
+
+/**
+ * Saves a key to the given `path`. If `public_only` is `true`, only the public key will be saved.
+ *
+ * **Note:** `path` should be a "*.pub" file if `public_only` is `true`, a "*.key" file otherwise.
+ *
+*/
+save(path: string, public_only?: boolean): int;
+
+/** Returns a string containing the key in PEM format. If [code]public_only[/code] is [code]true[/code], only the public key will be included. */
+save_to_string(public_only?: boolean): string;
+
+  // connect<T extends SignalsOf<CryptoKey>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CryptoKeySignals>>(signal: T, method: SignalFunction<CryptoKeySignals[T]>): number;
 
 
 
 
+}
 
+declare class CryptoKeySignals extends ResourceSignals {
   
 }

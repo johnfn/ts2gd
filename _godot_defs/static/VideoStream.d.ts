@@ -18,11 +18,14 @@ declare class VideoStream extends Resource {
 
 
 
-  connect<T extends SignalsOf<VideoStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VideoStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VideoStreamSignals>>(signal: T, method: SignalFunction<VideoStreamSignals[T]>): number;
 
 
 
 
+}
 
+declare class VideoStreamSignals extends ResourceSignals {
   
 }

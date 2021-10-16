@@ -1,13 +1,21 @@
 
 /**
- * AABB consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ * [AABB] consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ *
+ * It uses floating-point coordinates. The 2D counterpart to [AABB] is [Rect2].
+ *
+ * **Note:** Unlike [Rect2], [AABB] does not have a variant that uses integer coordinates.
  *
 */
 declare class AABB {
 
   
 /**
- * AABB consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ * [AABB] consists of a position, a size, and several utility functions. It is typically used for fast overlap tests.
+ *
+ * It uses floating-point coordinates. The 2D counterpart to [AABB] is [Rect2].
+ *
+ * **Note:** Unlike [Rect2], [AABB] does not have a variant that uses integer coordinates.
  *
 */
 
@@ -23,7 +31,7 @@ end: Vector3;
 position: Vector3;
 
 /**
- * Size from [member position] to [member end]. Typically all components are positive.
+ * Size from [member position] to [member end]. Typically, all components are positive.
  *
  * If the size is negative, you can use [method abs] to fix it.
  *
@@ -98,11 +106,14 @@ is_equal_approx(aabb: AABB): boolean;
 /** Returns a larger [AABB] that contains both this [AABB] and [code]with[/code]. */
 merge(_with: AABB): AABB;
 
-  connect<T extends SignalsOf<AABB>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AABB>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AABBSignals>>(signal: T, method: SignalFunction<AABBSignals[T]>): number;
 
 
 
 
+}
 
+declare class AABBSignals {
   
 }

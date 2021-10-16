@@ -22,11 +22,14 @@ declare class VisualShaderNodeVectorDistance extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorDistance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorDistance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorDistanceSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorDistanceSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorDistanceSignals extends VisualShaderNodeSignals {
   
 }

@@ -24,11 +24,14 @@ constant: boolean;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeBooleanConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeBooleanConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeBooleanConstantSignals>>(signal: T, method: SignalFunction<VisualShaderNodeBooleanConstantSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeBooleanConstantSignals extends VisualShaderNodeSignals {
   
 }

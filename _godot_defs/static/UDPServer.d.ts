@@ -128,11 +128,14 @@ stop(): void;
 /** Returns the first pending connection (connected to the appropriate address/port). Will return [code]null[/code] if no new connection is available. See also [method is_connection_available], [method PacketPeerUDP.connect_to_host]. */
 take_connection(): PacketPeerUDP;
 
-  connect<T extends SignalsOf<UDPServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<UDPServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<UDPServerSignals>>(signal: T, method: SignalFunction<UDPServerSignals[T]>): number;
 
 
 
 
+}
 
+declare class UDPServerSignals extends ReferenceSignals {
   
 }

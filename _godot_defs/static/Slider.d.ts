@@ -35,11 +35,14 @@ ticks_on_borders: boolean;
 
 
 
-  connect<T extends SignalsOf<Slider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Slider>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SliderSignals>>(signal: T, method: SignalFunction<SliderSignals[T]>): number;
 
 
 
 
+}
 
+declare class SliderSignals extends RangeSignals {
   
 }

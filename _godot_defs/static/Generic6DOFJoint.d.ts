@@ -224,7 +224,6 @@ declare class Generic6DOFJoint extends Joint {
 
 
 
-
 /** No documentation provided. */
 get_flag_x(flag: int): boolean;
 
@@ -261,7 +260,8 @@ set_param_y(param: int, value: float): void;
 /** No documentation provided. */
 set_param_z(param: int, value: float): void;
 
-  connect<T extends SignalsOf<Generic6DOFJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Generic6DOFJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Generic6DOFJointSignals>>(signal: T, method: SignalFunction<Generic6DOFJointSignals[T]>): number;
 
 
 
@@ -269,158 +269,160 @@ set_param_z(param: int, value: float): void;
  * The minimum difference between the pivot points' axes.
  *
 */
-static PARAM_LINEAR_LOWER_LIMIT: 0;
+static PARAM_LINEAR_LOWER_LIMIT: any;
 
 /**
  * The maximum difference between the pivot points' axes.
  *
 */
-static PARAM_LINEAR_UPPER_LIMIT: 1;
+static PARAM_LINEAR_UPPER_LIMIT: any;
 
 /**
  * A factor applied to the movement across the axes. The lower, the slower the movement.
  *
 */
-static PARAM_LINEAR_LIMIT_SOFTNESS: 2;
+static PARAM_LINEAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of restitution on the axes' movement. The lower, the more momentum gets lost.
  *
 */
-static PARAM_LINEAR_RESTITUTION: 3;
+static PARAM_LINEAR_RESTITUTION: any;
 
 /**
  * The amount of damping that happens at the linear motion across the axes.
  *
 */
-static PARAM_LINEAR_DAMPING: 4;
+static PARAM_LINEAR_DAMPING: any;
 
 /**
  * The velocity the linear motor will try to reach.
  *
 */
-static PARAM_LINEAR_MOTOR_TARGET_VELOCITY: 5;
+static PARAM_LINEAR_MOTOR_TARGET_VELOCITY: any;
 
 /**
  * The maximum force the linear motor will apply while trying to reach the velocity target.
  *
 */
-static PARAM_LINEAR_MOTOR_FORCE_LIMIT: 6;
+static PARAM_LINEAR_MOTOR_FORCE_LIMIT: any;
 
 /** No documentation provided. */
-static PARAM_LINEAR_SPRING_STIFFNESS: 7;
+static PARAM_LINEAR_SPRING_STIFFNESS: any;
 
 /** No documentation provided. */
-static PARAM_LINEAR_SPRING_DAMPING: 8;
+static PARAM_LINEAR_SPRING_DAMPING: any;
 
 /** No documentation provided. */
-static PARAM_LINEAR_SPRING_EQUILIBRIUM_POINT: 9;
+static PARAM_LINEAR_SPRING_EQUILIBRIUM_POINT: any;
 
 /**
  * The minimum rotation in negative direction to break loose and rotate around the axes.
  *
 */
-static PARAM_ANGULAR_LOWER_LIMIT: 10;
+static PARAM_ANGULAR_LOWER_LIMIT: any;
 
 /**
  * The minimum rotation in positive direction to break loose and rotate around the axes.
  *
 */
-static PARAM_ANGULAR_UPPER_LIMIT: 11;
+static PARAM_ANGULAR_UPPER_LIMIT: any;
 
 /**
  * The speed of all rotations across the axes.
  *
 */
-static PARAM_ANGULAR_LIMIT_SOFTNESS: 12;
+static PARAM_ANGULAR_LIMIT_SOFTNESS: any;
 
 /**
  * The amount of rotational damping across the axes. The lower, the more dampening occurs.
  *
 */
-static PARAM_ANGULAR_DAMPING: 13;
+static PARAM_ANGULAR_DAMPING: any;
 
 /**
  * The amount of rotational restitution across the axes. The lower, the more restitution occurs.
  *
 */
-static PARAM_ANGULAR_RESTITUTION: 14;
+static PARAM_ANGULAR_RESTITUTION: any;
 
 /**
  * The maximum amount of force that can occur, when rotating around the axes.
  *
 */
-static PARAM_ANGULAR_FORCE_LIMIT: 15;
+static PARAM_ANGULAR_FORCE_LIMIT: any;
 
 /**
  * When rotating across the axes, this error tolerance factor defines how much the correction gets slowed down. The lower, the slower.
  *
 */
-static PARAM_ANGULAR_ERP: 16;
+static PARAM_ANGULAR_ERP: any;
 
 /**
  * Target speed for the motor at the axes.
  *
 */
-static PARAM_ANGULAR_MOTOR_TARGET_VELOCITY: 17;
+static PARAM_ANGULAR_MOTOR_TARGET_VELOCITY: any;
 
 /**
  * Maximum acceleration for the motor at the axes.
  *
 */
-static PARAM_ANGULAR_MOTOR_FORCE_LIMIT: 18;
+static PARAM_ANGULAR_MOTOR_FORCE_LIMIT: any;
 
 /** No documentation provided. */
-static PARAM_ANGULAR_SPRING_STIFFNESS: 19;
+static PARAM_ANGULAR_SPRING_STIFFNESS: any;
 
 /** No documentation provided. */
-static PARAM_ANGULAR_SPRING_DAMPING: 20;
+static PARAM_ANGULAR_SPRING_DAMPING: any;
 
 /** No documentation provided. */
-static PARAM_ANGULAR_SPRING_EQUILIBRIUM_POINT: 21;
+static PARAM_ANGULAR_SPRING_EQUILIBRIUM_POINT: any;
 
 /**
  * Represents the size of the [enum Param] enum.
  *
 */
-static PARAM_MAX: 22;
+static PARAM_MAX: any;
 
 /**
  * If enabled, linear motion is possible within the given limits.
  *
 */
-static FLAG_ENABLE_LINEAR_LIMIT: 0;
+static FLAG_ENABLE_LINEAR_LIMIT: any;
 
 /**
  * If enabled, rotational motion is possible within the given limits.
  *
 */
-static FLAG_ENABLE_ANGULAR_LIMIT: 1;
+static FLAG_ENABLE_ANGULAR_LIMIT: any;
 
 /** No documentation provided. */
-static FLAG_ENABLE_LINEAR_SPRING: 3;
+static FLAG_ENABLE_LINEAR_SPRING: any;
 
 /** No documentation provided. */
-static FLAG_ENABLE_ANGULAR_SPRING: 2;
+static FLAG_ENABLE_ANGULAR_SPRING: any;
 
 /**
  * If enabled, there is a rotational motor across these axes.
  *
 */
-static FLAG_ENABLE_MOTOR: 4;
+static FLAG_ENABLE_MOTOR: any;
 
 /**
  * If enabled, there is a linear motor across these axes.
  *
 */
-static FLAG_ENABLE_LINEAR_MOTOR: 5;
+static FLAG_ENABLE_LINEAR_MOTOR: any;
 
 /**
  * Represents the size of the [enum Flag] enum.
  *
 */
-static FLAG_MAX: 6;
+static FLAG_MAX: any;
 
+}
 
+declare class Generic6DOFJointSignals extends JointSignals {
   
 }

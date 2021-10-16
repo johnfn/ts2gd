@@ -103,11 +103,14 @@ set_node_position(name: string, position: Vector2): void;
 /** Sets the given node as the graph start point. */
 set_start_node(name: string): void;
 
-  connect<T extends SignalsOf<AnimationNodeStateMachine>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeStateMachine>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachineSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachineSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeStateMachineSignals extends AnimationRootNodeSignals {
   
 }

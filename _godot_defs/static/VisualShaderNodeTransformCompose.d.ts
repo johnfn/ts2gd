@@ -18,11 +18,14 @@ declare class VisualShaderNodeTransformCompose extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTransformCompose>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTransformCompose>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTransformComposeSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTransformComposeSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeTransformComposeSignals extends VisualShaderNodeSignals {
   
 }

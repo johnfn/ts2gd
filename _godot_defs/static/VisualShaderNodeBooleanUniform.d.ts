@@ -18,11 +18,14 @@ declare class VisualShaderNodeBooleanUniform extends VisualShaderNodeUniform {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeBooleanUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeBooleanUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeBooleanUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeBooleanUniformSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeBooleanUniformSignals extends VisualShaderNodeUniformSignals {
   
 }

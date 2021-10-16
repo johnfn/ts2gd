@@ -18,11 +18,14 @@ declare class VisualShaderNodeCubeMapUniform extends VisualShaderNodeTextureUnif
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeCubeMapUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeCubeMapUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeCubeMapUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCubeMapUniformSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeCubeMapUniformSignals extends VisualShaderNodeTextureUniformSignals {
   
 }

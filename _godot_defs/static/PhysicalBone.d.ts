@@ -37,28 +37,31 @@ is_simulating_physics(): boolean;
 /** No documentation provided. */
 is_static_body(): boolean;
 
-  connect<T extends SignalsOf<PhysicalBone>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PhysicalBone>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PhysicalBoneSignals>>(signal: T, method: SignalFunction<PhysicalBoneSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static JOINT_TYPE_NONE: 0;
+static JOINT_TYPE_NONE: any;
 
 /** No documentation provided. */
-static JOINT_TYPE_PIN: 1;
+static JOINT_TYPE_PIN: any;
 
 /** No documentation provided. */
-static JOINT_TYPE_CONE: 2;
+static JOINT_TYPE_CONE: any;
 
 /** No documentation provided. */
-static JOINT_TYPE_HINGE: 3;
+static JOINT_TYPE_HINGE: any;
 
 /** No documentation provided. */
-static JOINT_TYPE_SLIDER: 4;
+static JOINT_TYPE_SLIDER: any;
 
 /** No documentation provided. */
-static JOINT_TYPE_6DOF: 5;
+static JOINT_TYPE_6DOF: any;
 
+}
 
+declare class PhysicalBoneSignals extends PhysicsBodySignals {
   
 }

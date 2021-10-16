@@ -85,7 +85,8 @@ xform(v: any): any;
 /** Inverse-transforms the given [Vector3], [Plane], [AABB], or [PoolVector3Array] by this transform. */
 xform_inv(v: any): any;
 
-  connect<T extends SignalsOf<Transform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Transform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TransformSignals>>(signal: T, method: SignalFunction<TransformSignals[T]>): number;
 
 
 
@@ -113,6 +114,8 @@ static FLIP_Y: Transform;
 */
 static FLIP_Z: Transform;
 
+}
 
+declare class TransformSignals {
   
 }

@@ -20,11 +20,14 @@ invert_faces: boolean;
 
 
 
-  connect<T extends SignalsOf<CSGPrimitive>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGPrimitive>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGPrimitiveSignals>>(signal: T, method: SignalFunction<CSGPrimitiveSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGPrimitiveSignals extends CSGShapeSignals {
   
 }

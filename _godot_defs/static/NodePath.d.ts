@@ -23,6 +23,8 @@
  * @summary 
  * 
  *
+ * **Note:** In the editor, [NodePath] properties are automatically updated when moving, renaming or deleting a node in the scene tree, but they are never updated at runtime.
+ *
 */
 declare class NodePath {
 
@@ -50,6 +52,8 @@ declare class NodePath {
  * @"/root/MyAutoload" # If you have an autoloaded node or scene.
  * @summary 
  * 
+ *
+ * **Note:** In the editor, [NodePath] properties are automatically updated when moving, renaming or deleting a node in the scene tree, but they are never updated at runtime.
  *
 */
 
@@ -141,11 +145,14 @@ is_absolute(): boolean;
 /** Returns [code]true[/code] if the node path is empty. */
 is_empty(): boolean;
 
-  connect<T extends SignalsOf<NodePath>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<NodePath>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<NodePathSignals>>(signal: T, method: SignalFunction<NodePathSignals[T]>): number;
 
 
 
 
+}
 
+declare class NodePathSignals {
   
 }

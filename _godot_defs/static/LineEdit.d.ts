@@ -116,7 +116,26 @@ editable: boolean;
 expand_to_text_length: boolean;
 
 
-/** Maximum amount of characters that can be entered inside the [LineEdit]. If [code]0[/code], there is no limit. */
+/**
+ * Maximum amount of characters that can be entered inside the [LineEdit]. If `0`, there is no limit.
+ *
+ * When a limit is defined, characters that would exceed [member max_length] are truncated. This happens both for existing [member text] contents when setting the max length, or for new text inserted in the [LineEdit], including pasting. If any input text is truncated, the [signal text_change_rejected] signal is emitted with the truncated substring as parameter.
+ *
+ * **Example:**
+ *
+ * @example 
+ * 
+ * text = "Hello world"
+ * max_length = 5
+ * # `text` becomes "Hello".
+ * max_length = 10
+ * text += " goodbye"
+ * # `text` becomes "Hello good".
+ * # `text_change_rejected` is emitted with "bye" as parameter.
+ * @summary 
+ * 
+ *
+*/
 max_length: int;
 
 
@@ -170,6 +189,9 @@ deselect(): void;
 /** Returns the [PopupMenu] of this [LineEdit]. By default, this menu is displayed when right-clicking on the [LineEdit]. */
 get_menu(): PopupMenu;
 
+/** Returns the scroll offset due to [member caret_position], as a number of characters. */
+get_scroll_offset(): int;
+
 /** Executes a given action as defined in the [enum MenuItems] enum. */
 menu_option(option: int): void;
 
@@ -191,7 +213,8 @@ select(from?: int, to?: int): void;
 /** Selects the whole [String]. */
 select_all(): void;
 
-  connect<T extends SignalsOf<LineEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<LineEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<LineEditSignals>>(signal: T, method: SignalFunction<LineEditSignals[T]>): number;
 
 
 
@@ -199,37 +222,37 @@ select_all(): void;
  * Aligns the text on the left-hand side of the [LineEdit].
  *
 */
-static ALIGN_LEFT: 0;
+static ALIGN_LEFT: any;
 
 /**
  * Centers the text in the middle of the [LineEdit].
  *
 */
-static ALIGN_CENTER: 1;
+static ALIGN_CENTER: any;
 
 /**
  * Aligns the text on the right-hand side of the [LineEdit].
  *
 */
-static ALIGN_RIGHT: 2;
+static ALIGN_RIGHT: any;
 
 /**
  * Stretches whitespaces to fit the [LineEdit]'s width.
  *
 */
-static ALIGN_FILL: 3;
+static ALIGN_FILL: any;
 
 /**
  * Cuts (copies and clears) the selected text.
  *
 */
-static MENU_CUT: 0;
+static MENU_CUT: any;
 
 /**
  * Copies the selected text.
  *
 */
-static MENU_COPY: 1;
+static MENU_COPY: any;
 
 /**
  * Pastes the clipboard text over the selected text (or at the cursor's position).
@@ -237,44 +260,46 @@ static MENU_COPY: 1;
  * Non-printable escape characters are automatically stripped from the OS clipboard via [method String.strip_escapes].
  *
 */
-static MENU_PASTE: 2;
+static MENU_PASTE: any;
 
 /**
  * Erases the whole [LineEdit] text.
  *
 */
-static MENU_CLEAR: 3;
+static MENU_CLEAR: any;
 
 /**
  * Selects the whole [LineEdit] text.
  *
 */
-static MENU_SELECT_ALL: 4;
+static MENU_SELECT_ALL: any;
 
 /**
  * Undoes the previous action.
  *
 */
-static MENU_UNDO: 5;
+static MENU_UNDO: any;
 
 /**
  * Reverse the last undo action.
  *
 */
-static MENU_REDO: 6;
+static MENU_REDO: any;
 
 /**
  * Represents the size of the [enum MenuItems] enum.
  *
 */
-static MENU_MAX: 7;
+static MENU_MAX: any;
 
+}
 
+declare class LineEditSignals extends ControlSignals {
   /**
- * Emitted when trying to append text that would overflow the [member max_length].
+ * Emitted when appending text that overflows the [member max_length]. The appended text is truncated to fit [member max_length], and the part that couldn't fit is passed as the `rejected_substring` argument.
  *
 */
-text_change_rejected: Signal<() => void>
+text_change_rejected: Signal<(rejected_substring: string) => void>
 
 /**
  * Emitted when the text changes.

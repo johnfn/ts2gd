@@ -149,7 +149,8 @@ swap_bus_effects(bus_idx: int, effect_idx: int, by_effect_idx: int): void;
 /** Unlocks the audio driver's main loop. (After locking it, you should always unlock it.) */
 unlock(): void;
 
-  connect<T extends SignalsOf<AudioServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioServerClassSignals>>(signal: T, method: SignalFunction<AudioServerClassSignals[T]>): number;
 
 
 
@@ -157,27 +158,29 @@ unlock(): void;
  * Two or fewer speakers were detected.
  *
 */
-static SPEAKER_MODE_STEREO: 0;
+static SPEAKER_MODE_STEREO: any;
 
 /**
  * A 3.1 channel surround setup was detected.
  *
 */
-static SPEAKER_SURROUND_31: 1;
+static SPEAKER_SURROUND_31: any;
 
 /**
  * A 5.1 channel surround setup was detected.
  *
 */
-static SPEAKER_SURROUND_51: 2;
+static SPEAKER_SURROUND_51: any;
 
 /**
  * A 7.1 channel surround setup was detected.
  *
 */
-static SPEAKER_SURROUND_71: 3;
+static SPEAKER_SURROUND_71: any;
 
+}
 
+declare class AudioServerClassSignals extends ObjectSignals {
   /**
  * Emitted when the [AudioBusLayout] changes.
  *

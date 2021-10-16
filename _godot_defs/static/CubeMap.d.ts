@@ -36,7 +36,8 @@ get_width(): int;
 /** Sets an [Image] for a side of the [CubeMap] using one of the [enum Side] constants. */
 set_side(side: int, image: Image): void;
 
-  connect<T extends SignalsOf<CubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CubeMapSignals>>(signal: T, method: SignalFunction<CubeMapSignals[T]>): number;
 
 
 
@@ -44,80 +45,82 @@ set_side(side: int, image: Image): void;
  * Store the [CubeMap] without any compression.
  *
 */
-static STORAGE_RAW: 0;
+static STORAGE_RAW: any;
 
 /**
  * Store the [CubeMap] with strong compression that reduces image quality.
  *
 */
-static STORAGE_COMPRESS_LOSSY: 1;
+static STORAGE_COMPRESS_LOSSY: any;
 
 /**
  * Store the [CubeMap] with moderate compression that doesn't reduce image quality.
  *
 */
-static STORAGE_COMPRESS_LOSSLESS: 2;
+static STORAGE_COMPRESS_LOSSLESS: any;
 
 /**
  * Identifier for the left face of the [CubeMap].
  *
 */
-static SIDE_LEFT: 0;
+static SIDE_LEFT: any;
 
 /**
  * Identifier for the right face of the [CubeMap].
  *
 */
-static SIDE_RIGHT: 1;
+static SIDE_RIGHT: any;
 
 /**
  * Identifier for the bottom face of the [CubeMap].
  *
 */
-static SIDE_BOTTOM: 2;
+static SIDE_BOTTOM: any;
 
 /**
  * Identifier for the top face of the [CubeMap].
  *
 */
-static SIDE_TOP: 3;
+static SIDE_TOP: any;
 
 /**
  * Identifier for the front face of the [CubeMap].
  *
 */
-static SIDE_FRONT: 4;
+static SIDE_FRONT: any;
 
 /**
  * Identifier for the back face of the [CubeMap].
  *
 */
-static SIDE_BACK: 5;
+static SIDE_BACK: any;
 
 /**
  * Generate mipmaps, to enable smooth zooming out of the texture.
  *
 */
-static FLAG_MIPMAPS: 1;
+static FLAG_MIPMAPS: any;
 
 /**
  * Repeat (instead of clamp to edge).
  *
 */
-static FLAG_REPEAT: 2;
+static FLAG_REPEAT: any;
 
 /**
  * Turn on magnifying filter, to enable smooth zooming in of the texture.
  *
 */
-static FLAG_FILTER: 4;
+static FLAG_FILTER: any;
 
 /**
  * Default flags. Generate mipmaps, repeat, and filter are enabled.
  *
 */
-static FLAGS_DEFAULT: 7;
+static FLAGS_DEFAULT: any;
 
+}
 
+declare class CubeMapSignals extends ResourceSignals {
   
 }

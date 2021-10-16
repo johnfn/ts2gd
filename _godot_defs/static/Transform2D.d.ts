@@ -1,6 +1,6 @@
 
 /**
- * 2×3 matrix (2 rows, 3 columns) used for 2D linear transformations. It can represent transformations such as translation, rotation, or scaling. It consists of a three [Vector2] values: [member x], [member y], and the [member origin].
+ * 2×3 matrix (2 rows, 3 columns) used for 2D linear transformations. It can represent transformations such as translation, rotation, or scaling. It consists of three [Vector2] values: [member x], [member y], and the [member origin].
  *
  * For more information, read the "Matrices and transforms" documentation article.
  *
@@ -9,7 +9,7 @@ declare class Transform2D {
 
   
 /**
- * 2×3 matrix (2 rows, 3 columns) used for 2D linear transformations. It can represent transformations such as translation, rotation, or scaling. It consists of a three [Vector2] values: [member x], [member y], and the [member origin].
+ * 2×3 matrix (2 rows, 3 columns) used for 2D linear transformations. It can represent transformations such as translation, rotation, or scaling. It consists of three [Vector2] values: [member x], [member y], and the [member origin].
  *
  * For more information, read the "Matrices and transforms" documentation article.
  *
@@ -65,7 +65,7 @@ get_rotation(): float;
 /** Returns the scale. */
 get_scale(): Vector2;
 
-/** Returns a transform interpolated between this transform and another by a given weight (on the range of 0.0 to 1.0). */
+/** Returns a transform interpolated between this transform and another by a given [code]weight[/code] (on the range of 0.0 to 1.0). */
 interpolate_with(transform: Transform2D, weight: float): Transform2D;
 
 /** Returns the inverse of the transform, under the assumption that the transformation is composed of rotation and translation (no scaling, use [method affine_inverse] for transforms with scaling). */
@@ -97,7 +97,8 @@ xform(v: any): any;
 /** Inverse-transforms the given [Vector2], [Rect2], or [PoolVector2Array] by this transform. */
 xform_inv(v: any): any;
 
-  connect<T extends SignalsOf<Transform2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Transform2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Transform2DSignals>>(signal: T, method: SignalFunction<Transform2DSignals[T]>): number;
 
 
 
@@ -105,20 +106,22 @@ xform_inv(v: any): any;
  * The identity [Transform2D] with no translation, rotation or scaling applied. When applied to other data structures, [constant IDENTITY] performs no transformation.
  *
 */
-static IDENTITY: D;
+static IDENTITY: Transform2D;
 
 /**
  * The [Transform2D] that will flip something along the X axis.
  *
 */
-static FLIP_X: D;
+static FLIP_X: Transform2D;
 
 /**
  * The [Transform2D] that will flip something along the Y axis.
  *
 */
-static FLIP_Y: D;
+static FLIP_Y: Transform2D;
 
+}
 
+declare class Transform2DSignals {
   
 }

@@ -2,12 +2,16 @@
 /**
  * OptionButton is a type button that provides a selectable list of items when pressed. The item selected becomes the "current" item and is displayed as the button text.
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
 */
 declare class OptionButton extends Button {
 
   
 /**
  * OptionButton is a type button that provides a selectable list of items when pressed. The item selected becomes the "current" item and is displayed as the button text.
+ *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
   "new"(): OptionButton;
@@ -89,12 +93,15 @@ set_item_metadata(idx: int, metadata: any): void;
 /** Sets the text of the item at index [code]idx[/code]. */
 set_item_text(idx: int, text: string): void;
 
-  connect<T extends SignalsOf<OptionButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<OptionButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<OptionButtonSignals>>(signal: T, method: SignalFunction<OptionButtonSignals[T]>): number;
 
 
 
 
+}
 
+declare class OptionButtonSignals extends ButtonSignals {
   /**
  * Emitted when the user navigates to an item using the `ui_up` or `ui_down` actions. The index of the item selected is passed as argument.
  *

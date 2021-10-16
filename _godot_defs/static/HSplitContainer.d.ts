@@ -18,11 +18,14 @@ declare class HSplitContainer extends SplitContainer {
 
 
 
-  connect<T extends SignalsOf<HSplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HSplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HSplitContainerSignals>>(signal: T, method: SignalFunction<HSplitContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class HSplitContainerSignals extends SplitContainerSignals {
   
 }

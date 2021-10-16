@@ -26,11 +26,14 @@ map_width: int;
 
 
 
-  connect<T extends SignalsOf<HeightMapShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<HeightMapShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<HeightMapShapeSignals>>(signal: T, method: SignalFunction<HeightMapShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class HeightMapShapeSignals extends ShapeSignals {
   
 }

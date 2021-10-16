@@ -72,7 +72,7 @@ anim_speed_random: float;
 /** Each particle's initial color. If the [Particles2D]'s [code]texture[/code] is defined, it will be multiplied by this color. To have particle display color in a [SpatialMaterial] make sure to set [member SpatialMaterial.vertex_color_use_as_albedo] to [code]true[/code]. */
 color: Color;
 
-/** Each particle's color will vary along this [GradientTexture]. */
+/** Each particle's color will vary along this [GradientTexture] over its lifetime (multiplied with [member color]). */
 color_ramp: Texture;
 
 /** The rate at which particles lose velocity. */
@@ -102,6 +102,18 @@ emission_point_count: int;
 /** Particles will be emitted at positions determined by sampling this texture at a random position. Used with [constant EMISSION_SHAPE_POINTS] and [constant EMISSION_SHAPE_DIRECTED_POINTS]. Can be created automatically from mesh or node by selecting "Create Emission Points from Mesh/Node" under the "Particles" tool in the toolbar. */
 emission_point_texture: Texture;
 
+/** The axis of the ring when using the emitter [constant EMISSION_SHAPE_RING]. */
+emission_ring_axis: Vector3;
+
+/** The height of the ring when using the emitter [constant EMISSION_SHAPE_RING]. */
+emission_ring_height: float;
+
+/** The inner radius of the ring when using the emitter [constant EMISSION_SHAPE_RING]. */
+emission_ring_inner_radius: float;
+
+/** The radius of the ring when using the emitter [constant EMISSION_SHAPE_RING]. */
+emission_ring_radius: float;
+
 /** Particles will be emitted inside this region. Use [enum EmissionShape] constants for values. */
 emission_shape: int;
 
@@ -117,7 +129,7 @@ flag_disable_z: boolean;
 /** If [code]true[/code], particles rotate around Y axis by [member angle]. */
 flag_rotate_y: boolean;
 
-/** Amount of [member spread] in Y/Z plane. A value of [code]1[/code] restricts particles to X/Z plane. */
+/** Amount of [member spread] along the Y axis. */
 flatness: float;
 
 /** Gravity applied to every particle. */
@@ -182,7 +194,7 @@ scale_curve: Texture;
 /** Scale randomness ratio. */
 scale_random: float;
 
-/** Each particle's initial direction range from [code]+spread[/code] to [code]-spread[/code] degrees. Applied to X/Z plane and Y/Z planes. */
+/** Each particle's initial direction range from [code]+spread[/code] to [code]-spread[/code] degrees. */
 spread: float;
 
 /** Tangential acceleration applied to each particle. Tangential acceleration is perpendicular to the particle's velocity giving the particles a swirling motion. */
@@ -227,7 +239,8 @@ set_param_randomness(param: int, randomness: float): void;
 /** Sets the [Texture] for the specified [enum Parameter]. */
 set_param_texture(param: int, texture: Texture): void;
 
-  connect<T extends SignalsOf<ParticlesMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ParticlesMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ParticlesMaterialSignals>>(signal: T, method: SignalFunction<ParticlesMaterialSignals[T]>): number;
 
 
 
@@ -235,140 +248,148 @@ set_param_texture(param: int, texture: Texture): void;
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set initial velocity properties.
  *
 */
-static PARAM_INITIAL_LINEAR_VELOCITY: 0;
+static PARAM_INITIAL_LINEAR_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set angular velocity properties.
  *
 */
-static PARAM_ANGULAR_VELOCITY: 1;
+static PARAM_ANGULAR_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set orbital velocity properties.
  *
 */
-static PARAM_ORBIT_VELOCITY: 2;
+static PARAM_ORBIT_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set linear acceleration properties.
  *
 */
-static PARAM_LINEAR_ACCEL: 3;
+static PARAM_LINEAR_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set radial acceleration properties.
  *
 */
-static PARAM_RADIAL_ACCEL: 4;
+static PARAM_RADIAL_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set tangential acceleration properties.
  *
 */
-static PARAM_TANGENTIAL_ACCEL: 5;
+static PARAM_TANGENTIAL_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set damping properties.
  *
 */
-static PARAM_DAMPING: 6;
+static PARAM_DAMPING: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set angle properties.
  *
 */
-static PARAM_ANGLE: 7;
+static PARAM_ANGLE: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set scale properties.
  *
 */
-static PARAM_SCALE: 8;
+static PARAM_SCALE: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set hue variation properties.
  *
 */
-static PARAM_HUE_VARIATION: 9;
+static PARAM_HUE_VARIATION: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set animation speed properties.
  *
 */
-static PARAM_ANIM_SPEED: 10;
+static PARAM_ANIM_SPEED: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_texture] to set animation offset properties.
  *
 */
-static PARAM_ANIM_OFFSET: 11;
+static PARAM_ANIM_OFFSET: any;
 
 /**
  * Represents the size of the [enum Parameter] enum.
  *
 */
-static PARAM_MAX: 12;
+static PARAM_MAX: any;
 
 /**
  * Use with [method set_flag] to set [member flag_align_y].
  *
 */
-static FLAG_ALIGN_Y_TO_VELOCITY: 0;
+static FLAG_ALIGN_Y_TO_VELOCITY: any;
 
 /**
  * Use with [method set_flag] to set [member flag_rotate_y].
  *
 */
-static FLAG_ROTATE_Y: 1;
+static FLAG_ROTATE_Y: any;
 
 /**
  * Use with [method set_flag] to set [member flag_disable_z].
  *
 */
-static FLAG_DISABLE_Z: 2;
+static FLAG_DISABLE_Z: any;
 
 /**
  * Represents the size of the [enum Flags] enum.
  *
 */
-static FLAG_MAX: 3;
+static FLAG_MAX: any;
 
 /**
  * All particles will be emitted from a single point.
  *
 */
-static EMISSION_SHAPE_POINT: 0;
+static EMISSION_SHAPE_POINT: any;
 
 /**
  * Particles will be emitted in the volume of a sphere.
  *
 */
-static EMISSION_SHAPE_SPHERE: 1;
+static EMISSION_SHAPE_SPHERE: any;
 
 /**
  * Particles will be emitted in the volume of a box.
  *
 */
-static EMISSION_SHAPE_BOX: 2;
+static EMISSION_SHAPE_BOX: any;
 
 /**
  * Particles will be emitted at a position determined by sampling a random point on the [member emission_point_texture]. Particle color will be modulated by [member emission_color_texture].
  *
 */
-static EMISSION_SHAPE_POINTS: 3;
+static EMISSION_SHAPE_POINTS: any;
 
 /**
  * Particles will be emitted at a position determined by sampling a random point on the [member emission_point_texture]. Particle velocity and rotation will be set based on [member emission_normal_texture]. Particle color will be modulated by [member emission_color_texture].
  *
 */
-static EMISSION_SHAPE_DIRECTED_POINTS: 4;
+static EMISSION_SHAPE_DIRECTED_POINTS: any;
+
+/**
+ * Particles will be emitted in a ring or cylinder.
+ *
+*/
+static EMISSION_SHAPE_RING: any;
 
 /**
  * Represents the size of the [enum EmissionShape] enum.
  *
 */
-static EMISSION_SHAPE_MAX: 5;
+static EMISSION_SHAPE_MAX: any;
 
+}
 
+declare class ParticlesMaterialSignals extends MaterialSignals {
   
 }

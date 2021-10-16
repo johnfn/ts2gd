@@ -18,11 +18,14 @@ declare class StyleBoxEmpty extends StyleBox {
 
 
 
-  connect<T extends SignalsOf<StyleBoxEmpty>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StyleBoxEmpty>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StyleBoxEmptySignals>>(signal: T, method: SignalFunction<StyleBoxEmptySignals[T]>): number;
 
 
 
 
+}
 
+declare class StyleBoxEmptySignals extends StyleBoxSignals {
   
 }

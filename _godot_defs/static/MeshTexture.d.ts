@@ -27,11 +27,14 @@ mesh: Mesh;
 
 
 
-  connect<T extends SignalsOf<MeshTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MeshTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MeshTextureSignals>>(signal: T, method: SignalFunction<MeshTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class MeshTextureSignals extends TextureSignals {
   
 }

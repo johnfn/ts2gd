@@ -4,7 +4,7 @@
  *
  * The twist axis is initiated as the X axis of the [Joint].
  *
- * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies.
+ * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies. See also [Generic6DOFJoint].
  *
 */
 declare class ConeTwistJoint extends Joint {
@@ -15,7 +15,7 @@ declare class ConeTwistJoint extends Joint {
  *
  * The twist axis is initiated as the X axis of the [Joint].
  *
- * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies.
+ * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies. See also [Generic6DOFJoint].
  *
 */
   "new"(): ConeTwistJoint;
@@ -63,7 +63,8 @@ get_param(param: int): float;
 /** No documentation provided. */
 set_param(param: int, value: float): void;
 
-  connect<T extends SignalsOf<ConeTwistJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ConeTwistJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ConeTwistJointSignals>>(signal: T, method: SignalFunction<ConeTwistJointSignals[T]>): number;
 
 
 
@@ -77,7 +78,7 @@ set_param(param: int, value: float): void;
  * If below 0.05, this behavior is locked.
  *
 */
-static PARAM_SWING_SPAN: 0;
+static PARAM_SWING_SPAN: any;
 
 /**
  * Twist is the rotation around the twist axis, this value defined how far the joint can twist.
@@ -85,7 +86,7 @@ static PARAM_SWING_SPAN: 0;
  * Twist is locked if below 0.05.
  *
 */
-static PARAM_TWIST_SPAN: 1;
+static PARAM_TWIST_SPAN: any;
 
 /**
  * The speed with which the swing or twist will take place.
@@ -93,26 +94,28 @@ static PARAM_TWIST_SPAN: 1;
  * The higher, the faster.
  *
 */
-static PARAM_BIAS: 2;
+static PARAM_BIAS: any;
 
 /**
  * The ease with which the joint starts to twist. If it's too low, it takes more force to start twisting the joint.
  *
 */
-static PARAM_SOFTNESS: 3;
+static PARAM_SOFTNESS: any;
 
 /**
  * Defines, how fast the swing- and twist-speed-difference on both sides gets synced.
  *
 */
-static PARAM_RELAXATION: 4;
+static PARAM_RELAXATION: any;
 
 /**
  * Represents the size of the [enum Param] enum.
  *
 */
-static PARAM_MAX: 5;
+static PARAM_MAX: any;
 
+}
 
+declare class ConeTwistJointSignals extends JointSignals {
   
 }

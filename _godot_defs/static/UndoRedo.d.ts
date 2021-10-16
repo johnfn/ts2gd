@@ -131,7 +131,8 @@ redo(): boolean;
 /** Undo the last action. */
 undo(): boolean;
 
-  connect<T extends SignalsOf<UndoRedo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<UndoRedo>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<UndoRedoSignals>>(signal: T, method: SignalFunction<UndoRedoSignals[T]>): number;
 
 
 
@@ -139,21 +140,23 @@ undo(): boolean;
  * Makes "do"/"undo" operations stay in separate actions.
  *
 */
-static MERGE_DISABLE: 0;
+static MERGE_DISABLE: any;
 
 /**
  * Makes so that the action's "do" operation is from the first action created and the "undo" operation is from the last subsequent action with the same name.
  *
 */
-static MERGE_ENDS: 1;
+static MERGE_ENDS: any;
 
 /**
  * Makes subsequent actions with the same name be merged into one.
  *
 */
-static MERGE_ALL: 2;
+static MERGE_ALL: any;
 
+}
 
+declare class UndoRedoSignals extends ObjectSignals {
   /**
  * Called when [method undo] or [method redo] was called.
  *

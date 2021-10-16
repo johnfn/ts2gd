@@ -20,7 +20,8 @@ operator: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeColorOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeColorOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorOpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorOpSignals[T]>): number;
 
 
 
@@ -34,7 +35,7 @@ operator: int;
  * 
  *
 */
-static OP_SCREEN: 0;
+static OP_SCREEN: any;
 
 /**
  * Produce a difference effect with the following formula:
@@ -46,7 +47,7 @@ static OP_SCREEN: 0;
  * 
  *
 */
-static OP_DIFFERENCE: 1;
+static OP_DIFFERENCE: any;
 
 /**
  * Produce a darken effect with the following formula:
@@ -58,7 +59,7 @@ static OP_DIFFERENCE: 1;
  * 
  *
 */
-static OP_DARKEN: 2;
+static OP_DARKEN: any;
 
 /**
  * Produce a lighten effect with the following formula:
@@ -70,7 +71,7 @@ static OP_DARKEN: 2;
  * 
  *
 */
-static OP_LIGHTEN: 3;
+static OP_LIGHTEN: any;
 
 /**
  * Produce an overlay effect with the following formula:
@@ -90,7 +91,7 @@ static OP_LIGHTEN: 3;
  * 
  *
 */
-static OP_OVERLAY: 4;
+static OP_OVERLAY: any;
 
 /**
  * Produce a dodge effect with the following formula:
@@ -102,7 +103,7 @@ static OP_OVERLAY: 4;
  * 
  *
 */
-static OP_DODGE: 5;
+static OP_DODGE: any;
 
 /**
  * Produce a burn effect with the following formula:
@@ -114,7 +115,7 @@ static OP_DODGE: 5;
  * 
  *
 */
-static OP_BURN: 6;
+static OP_BURN: any;
 
 /**
  * Produce a soft light effect with the following formula:
@@ -134,7 +135,7 @@ static OP_BURN: 6;
  * 
  *
 */
-static OP_SOFT_LIGHT: 7;
+static OP_SOFT_LIGHT: any;
 
 /**
  * Produce a hard light effect with the following formula:
@@ -154,8 +155,10 @@ static OP_SOFT_LIGHT: 7;
  * 
  *
 */
-static OP_HARD_LIGHT: 8;
+static OP_HARD_LIGHT: any;
 
+}
 
+declare class VisualShaderNodeColorOpSignals extends VisualShaderNodeSignals {
   
 }

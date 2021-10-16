@@ -20,11 +20,14 @@ plane: Plane;
 
 
 
-  connect<T extends SignalsOf<PlaneShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PlaneShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PlaneShapeSignals>>(signal: T, method: SignalFunction<PlaneShapeSignals[T]>): number;
 
 
 
 
+}
 
+declare class PlaneShapeSignals extends ShapeSignals {
   
 }

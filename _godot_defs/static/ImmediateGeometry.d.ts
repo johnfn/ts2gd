@@ -8,6 +8,8 @@
  *
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
+ * **Note:** In case of missing points when handling large amounts of mesh data, try increasing its buffer size limit under [member ProjectSettings.rendering/limits/buffers/immediate_buffer_size_kb].
+ *
 */
 declare class ImmediateGeometry extends GeometryInstance {
 
@@ -20,6 +22,8 @@ declare class ImmediateGeometry extends GeometryInstance {
  * **Note:** ImmediateGeometry3D is best suited to small amounts of mesh data that change every frame. It will be slow when handling large amounts of mesh data. If mesh data doesn't change often, use [ArrayMesh], [MeshDataTool] or [SurfaceTool] instead.
  *
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
+ *
+ * **Note:** In case of missing points when handling large amounts of mesh data, try increasing its buffer size limit under [member ProjectSettings.rendering/limits/buffers/immediate_buffer_size_kb].
  *
 */
   "new"(): ImmediateGeometry;
@@ -63,11 +67,14 @@ set_uv(uv: Vector2): void;
 /** The next vertex's second layer UV. */
 set_uv2(uv: Vector2): void;
 
-  connect<T extends SignalsOf<ImmediateGeometry>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ImmediateGeometry>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ImmediateGeometrySignals>>(signal: T, method: SignalFunction<ImmediateGeometrySignals[T]>): number;
 
 
 
 
+}
 
+declare class ImmediateGeometrySignals extends GeometryInstanceSignals {
   
 }

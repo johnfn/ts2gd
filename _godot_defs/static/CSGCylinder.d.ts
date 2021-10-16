@@ -35,11 +35,14 @@ smooth_faces: boolean;
 
 
 
-  connect<T extends SignalsOf<CSGCylinder>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGCylinder>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGCylinderSignals>>(signal: T, method: SignalFunction<CSGCylinderSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGCylinderSignals extends CSGPrimitiveSignals {
   
 }

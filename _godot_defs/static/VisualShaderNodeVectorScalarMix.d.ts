@@ -18,11 +18,14 @@ declare class VisualShaderNodeVectorScalarMix extends VisualShaderNode {
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeVectorScalarMix>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeVectorScalarMix>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorScalarMixSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarMixSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeVectorScalarMixSignals extends VisualShaderNodeSignals {
   
 }

@@ -131,7 +131,7 @@ draw_set_transform(position: Vector2, rotation: float, scale: Vector2): void;
 draw_set_transform_matrix(xform: Transform2D): void;
 
 /**
- * Draws `text` using the specified `font` at the `position` (top-left corner). The text will have its color multiplied by `modulate`. If `clip_w` is greater than or equal to 0, the text will be clipped if it exceeds the specified width.
+ * Draws `text` using the specified `font` at the `position` (bottom-left corner using the baseline of the font). The text will have its color multiplied by `modulate`. If `clip_w` is greater than or equal to 0, the text will be clipped if it exceeds the specified width.
  *
  * **Example using the default project font:**
  *
@@ -234,7 +234,8 @@ show(): void;
 /** Queue the [CanvasItem] for update. [constant NOTIFICATION_DRAW] will be called on idle time to request redraw. */
 update(): void;
 
-  connect<T extends SignalsOf<CanvasItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CanvasItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CanvasItemSignals>>(signal: T, method: SignalFunction<CanvasItemSignals[T]>): number;
 
 
 
@@ -242,69 +243,71 @@ update(): void;
  * Mix blending mode. Colors are assumed to be independent of the alpha (opacity) value.
  *
 */
-static BLEND_MODE_MIX: 0;
+static BLEND_MODE_MIX: any;
 
 /**
  * Additive blending mode.
  *
 */
-static BLEND_MODE_ADD: 1;
+static BLEND_MODE_ADD: any;
 
 /**
  * Subtractive blending mode.
  *
 */
-static BLEND_MODE_SUB: 2;
+static BLEND_MODE_SUB: any;
 
 /**
  * Multiplicative blending mode.
  *
 */
-static BLEND_MODE_MUL: 3;
+static BLEND_MODE_MUL: any;
 
 /**
  * Mix blending mode. Colors are assumed to be premultiplied by the alpha (opacity) value.
  *
 */
-static BLEND_MODE_PREMULT_ALPHA: 4;
+static BLEND_MODE_PREMULT_ALPHA: any;
 
 /**
  * Disables blending mode. Colors including alpha are written as-is. Only applicable for render targets with a transparent background. No lighting will be applied.
  *
 */
-static BLEND_MODE_DISABLED: 5;
+static BLEND_MODE_DISABLED: any;
 
 /**
  * The [CanvasItem]'s transform has changed. This notification is only received if enabled by [method set_notify_transform] or [method set_notify_local_transform].
  *
 */
-static NOTIFICATION_TRANSFORM_CHANGED: 2000;
+static NOTIFICATION_TRANSFORM_CHANGED: any;
 
 /**
  * The [CanvasItem] is requested to draw.
  *
 */
-static NOTIFICATION_DRAW: 30;
+static NOTIFICATION_DRAW: any;
 
 /**
  * The [CanvasItem]'s visibility has changed.
  *
 */
-static NOTIFICATION_VISIBILITY_CHANGED: 31;
+static NOTIFICATION_VISIBILITY_CHANGED: any;
 
 /**
  * The [CanvasItem] has entered the canvas.
  *
 */
-static NOTIFICATION_ENTER_CANVAS: 32;
+static NOTIFICATION_ENTER_CANVAS: any;
 
 /**
  * The [CanvasItem] has exited the canvas.
  *
 */
-static NOTIFICATION_EXIT_CANVAS: 33;
+static NOTIFICATION_EXIT_CANVAS: any;
 
+}
 
+declare class CanvasItemSignals extends NodeSignals {
   /**
  * Emitted when the [CanvasItem] must redraw. This can only be connected realtime, as deferred will not allow drawing.
  *
@@ -318,7 +321,7 @@ draw: Signal<() => void>
 hide: Signal<() => void>
 
 /**
- * Emitted when the item rect has changed.
+ * Emitted when the item's [Rect2] boundaries (position or size) have changed, or when an action is taking place that may have impacted these boundaries (e.g. changing [member Sprite.texture]).
  *
 */
 item_rect_changed: Signal<() => void>

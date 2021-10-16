@@ -45,7 +45,8 @@ directional_shadow_split_3: float;
 
 
 
-  connect<T extends SignalsOf<DirectionalLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<DirectionalLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<DirectionalLightSignals>>(signal: T, method: SignalFunction<DirectionalLightSignals[T]>): number;
 
 
 
@@ -53,32 +54,34 @@ directional_shadow_split_3: float;
  * Renders the entire scene's shadow map from an orthogonal point of view. This is the fastest directional shadow mode. May result in blurrier shadows on close objects.
  *
 */
-static SHADOW_ORTHOGONAL: 0;
+static SHADOW_ORTHOGONAL: any;
 
 /**
  * Splits the view frustum in 2 areas, each with its own shadow map. This shadow mode is a compromise between [constant SHADOW_ORTHOGONAL] and [constant SHADOW_PARALLEL_4_SPLITS] in terms of performance.
  *
 */
-static SHADOW_PARALLEL_2_SPLITS: 1;
+static SHADOW_PARALLEL_2_SPLITS: any;
 
 /**
  * Splits the view frustum in 4 areas, each with its own shadow map. This is the slowest directional shadow mode.
  *
 */
-static SHADOW_PARALLEL_4_SPLITS: 2;
+static SHADOW_PARALLEL_4_SPLITS: any;
 
 /**
  * Keeps the shadow stable when the camera moves, at the cost of lower effective shadow resolution.
  *
 */
-static SHADOW_DEPTH_RANGE_STABLE: 0;
+static SHADOW_DEPTH_RANGE_STABLE: any;
 
 /**
  * Tries to achieve maximum shadow resolution. May result in saw effect on shadow edges. This mode typically works best in games where the camera will often move at high speeds, such as most racing games.
  *
 */
-static SHADOW_DEPTH_RANGE_OPTIMIZED: 1;
+static SHADOW_DEPTH_RANGE_OPTIMIZED: any;
 
+}
 
+declare class DirectionalLightSignals extends LightSignals {
   
 }

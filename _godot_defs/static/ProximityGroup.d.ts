@@ -19,21 +19,24 @@ declare class ProximityGroup extends Spatial {
 
 
 /** No documentation provided. */
-broadcast(name: string, parameters: any): void;
+broadcast(method: string, parameters: any): void;
 
-  connect<T extends SignalsOf<ProximityGroup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ProximityGroup>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ProximityGroupSignals>>(signal: T, method: SignalFunction<ProximityGroupSignals[T]>): number;
 
 
-
-/** No documentation provided. */
-static MODE_PROXY: 0;
 
 /** No documentation provided. */
-static MODE_SIGNAL: 1;
+static MODE_PROXY: any;
 
+/** No documentation provided. */
+static MODE_SIGNAL: any;
 
+}
+
+declare class ProximityGroupSignals extends SpatialSignals {
   /**
 */
-broadcast: Signal<(group_name: string, parameters: any[]) => void>
+broadcast: Signal<(method: string, parameters: any[]) => void>
 
 }

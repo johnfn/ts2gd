@@ -28,11 +28,14 @@ environment: Environment;
 
 
 
-  connect<T extends SignalsOf<WorldEnvironment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<WorldEnvironment>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<WorldEnvironmentSignals>>(signal: T, method: SignalFunction<WorldEnvironmentSignals[T]>): number;
 
 
 
 
+}
 
+declare class WorldEnvironmentSignals extends NodeSignals {
   
 }

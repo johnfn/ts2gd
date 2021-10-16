@@ -19,7 +19,12 @@ declare class Line2D extends Node2D {
 
 
 
-/** If [code]true[/code], the line's border will be anti-aliased. */
+/**
+ * If `true`, the line's border will be anti-aliased.
+ *
+ * **Note:** Line2D is not accelerated by batching when being anti-aliased.
+ *
+*/
 antialiased: boolean;
 
 /** Controls the style of the line's first point. Use [enum LineCapMode] constants. */
@@ -81,7 +86,8 @@ remove_point(i: int): void;
 /** Overwrites the position in point [code]i[/code] with the supplied [code]position[/code]. */
 set_point_position(i: int, position: Vector2): void;
 
-  connect<T extends SignalsOf<Line2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Line2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Line2DSignals>>(signal: T, method: SignalFunction<Line2DSignals[T]>): number;
 
 
 
@@ -89,56 +95,58 @@ set_point_position(i: int, position: Vector2): void;
  * The line's joints will be pointy. If `sharp_limit` is greater than the rotation of a joint, it becomes a bevel joint instead.
  *
 */
-static LINE_JOINT_SHARP: 0;
+static LINE_JOINT_SHARP: any;
 
 /**
  * The line's joints will be bevelled/chamfered.
  *
 */
-static LINE_JOINT_BEVEL: 1;
+static LINE_JOINT_BEVEL: any;
 
 /**
  * The line's joints will be rounded.
  *
 */
-static LINE_JOINT_ROUND: 2;
+static LINE_JOINT_ROUND: any;
 
 /**
  * Don't draw a line cap.
  *
 */
-static LINE_CAP_NONE: 0;
+static LINE_CAP_NONE: any;
 
 /**
  * Draws the line cap as a box.
  *
 */
-static LINE_CAP_BOX: 1;
+static LINE_CAP_BOX: any;
 
 /**
  * Draws the line cap as a circle.
  *
 */
-static LINE_CAP_ROUND: 2;
+static LINE_CAP_ROUND: any;
 
 /**
  * Takes the left pixels of the texture and renders it over the whole line.
  *
 */
-static LINE_TEXTURE_NONE: 0;
+static LINE_TEXTURE_NONE: any;
 
 /**
  * Tiles the texture over the line. The texture must be imported with **Repeat** enabled for it to work properly.
  *
 */
-static LINE_TEXTURE_TILE: 1;
+static LINE_TEXTURE_TILE: any;
 
 /**
  * Stretches the texture across the line. Import the texture with **Repeat** disabled for best results.
  *
 */
-static LINE_TEXTURE_STRETCH: 2;
+static LINE_TEXTURE_STRETCH: any;
 
+}
 
+declare class Line2DSignals extends Node2DSignals {
   
 }

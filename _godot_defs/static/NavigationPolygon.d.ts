@@ -108,11 +108,14 @@ set_outline(idx: int, outline: PoolVector2Array): void;
 /** Sets the vertices that can be then indexed to create polygons with the [method add_polygon] method. */
 set_vertices(vertices: PoolVector2Array): void;
 
-  connect<T extends SignalsOf<NavigationPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<NavigationPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<NavigationPolygonSignals>>(signal: T, method: SignalFunction<NavigationPolygonSignals[T]>): number;
 
 
 
 
+}
 
+declare class NavigationPolygonSignals extends ResourceSignals {
   
 }

@@ -18,11 +18,14 @@ declare class Separator extends Control {
 
 
 
-  connect<T extends SignalsOf<Separator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Separator>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SeparatorSignals>>(signal: T, method: SignalFunction<SeparatorSignals[T]>): number;
 
 
 
 
+}
 
+declare class SeparatorSignals extends ControlSignals {
   
 }

@@ -6,6 +6,8 @@
  *
  * [Texture] is a base for other resources. It cannot be used directly.
  *
+ * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations. Larger textures may fail to import.
+ *
 */
 declare class Texture extends Resource {
 
@@ -16,6 +18,8 @@ declare class Texture extends Resource {
  * Textures are often created by loading them from a file. See [method @GDScript.load].
  *
  * [Texture] is a base for other resources. It cannot be used directly.
+ *
+ * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations. Larger textures may fail to import.
  *
 */
   "new"(): Texture;
@@ -50,7 +54,8 @@ get_width(): int;
 /** Returns [code]true[/code] if this [Texture] has an alpha channel. */
 has_alpha(): boolean;
 
-  connect<T extends SignalsOf<Texture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Texture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TextureSignals>>(signal: T, method: SignalFunction<TextureSignals[T]>): number;
 
 
 
@@ -58,25 +63,27 @@ has_alpha(): boolean;
  * Default flags. [constant FLAG_MIPMAPS], [constant FLAG_REPEAT] and [constant FLAG_FILTER] are enabled.
  *
 */
-static FLAGS_DEFAULT: 7;
+static FLAGS_DEFAULT: any;
 
 /**
  * Generates mipmaps, which are smaller versions of the same texture to use when zoomed out, keeping the aspect ratio.
  *
 */
-static FLAG_MIPMAPS: 1;
+static FLAG_MIPMAPS: any;
 
 /**
  * Repeats the texture (instead of clamp to edge).
  *
+ * **Note:** Ignored when using an [AtlasTexture] as these don't support repetition.
+ *
 */
-static FLAG_REPEAT: 2;
+static FLAG_REPEAT: any;
 
 /**
  * Uses a magnifying filter, to enable smooth zooming in of the texture.
  *
 */
-static FLAG_FILTER: 4;
+static FLAG_FILTER: any;
 
 /**
  * Uses anisotropic mipmap filtering. Generates smaller versions of the same texture with different aspect ratios.
@@ -84,26 +91,30 @@ static FLAG_FILTER: 4;
  * This results in better-looking textures when viewed from oblique angles.
  *
 */
-static FLAG_ANISOTROPIC_FILTER: 8;
+static FLAG_ANISOTROPIC_FILTER: any;
 
 /**
  * Converts the texture to the sRGB color space.
  *
 */
-static FLAG_CONVERT_TO_LINEAR: 16;
+static FLAG_CONVERT_TO_LINEAR: any;
 
 /**
  * Repeats the texture with alternate sections mirrored.
  *
+ * **Note:** Ignored when using an [AtlasTexture] as these don't support repetition.
+ *
 */
-static FLAG_MIRRORED_REPEAT: 32;
+static FLAG_MIRRORED_REPEAT: any;
 
 /**
  * Texture is a video surface.
  *
 */
-static FLAG_VIDEO_SURFACE: 2048;
+static FLAG_VIDEO_SURFACE: any;
 
+}
 
+declare class TextureSignals extends ResourceSignals {
   
 }

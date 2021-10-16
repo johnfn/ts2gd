@@ -41,7 +41,7 @@ get_caption(): string;
 get_child_by_name(name: string): Object;
 
 /** Gets all children nodes in order as a [code]name: node[/code] dictionary. Only useful when inheriting [AnimationRootNode]. */
-get_child_nodes(): Dictionary;
+get_child_nodes(): Dictionary<any, any>;
 
 /** Amount of inputs in this node, only useful for nodes that go into [AnimationNodeBlendTree]. */
 get_input_count(): int;
@@ -83,7 +83,8 @@ set_filter_path(path: NodePathType, enable: boolean): void;
 /** Sets a custom parameter. These are used as local storage, because resources can be reused across the tree or scenes. */
 set_parameter(name: string, value: any): void;
 
-  connect<T extends SignalsOf<AnimationNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeSignals>>(signal: T, method: SignalFunction<AnimationNodeSignals[T]>): number;
 
 
 
@@ -91,27 +92,29 @@ set_parameter(name: string, value: any): void;
  * Do not use filtering.
  *
 */
-static FILTER_IGNORE: 0;
+static FILTER_IGNORE: any;
 
 /**
  * Paths matching the filter will be allowed to pass.
  *
 */
-static FILTER_PASS: 1;
+static FILTER_PASS: any;
 
 /**
  * Paths matching the filter will be discarded.
  *
 */
-static FILTER_STOP: 2;
+static FILTER_STOP: any;
 
 /**
  * Paths matching the filter will be blended (by the blend value).
  *
 */
-static FILTER_BLEND: 3;
+static FILTER_BLEND: any;
 
+}
 
+declare class AnimationNodeSignals extends ResourceSignals {
   /**
  * Called when the node was removed from the graph.
  *

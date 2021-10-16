@@ -35,7 +35,8 @@ get_feed_count(): int;
 /** Removes a [CameraFeed]. */
 remove_feed(feed: CameraFeed): void;
 
-  connect<T extends SignalsOf<CameraServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CameraServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CameraServerClassSignals>>(signal: T, method: SignalFunction<CameraServerClassSignals[T]>): number;
 
 
 
@@ -43,27 +44,29 @@ remove_feed(feed: CameraFeed): void;
  * The RGBA camera image.
  *
 */
-static FEED_RGBA_IMAGE: 0;
+static FEED_RGBA_IMAGE: any;
 
 /**
  * The YCbCr camera image.
  *
 */
-static FEED_YCBCR_IMAGE: 0;
+static FEED_YCBCR_IMAGE: any;
 
 /**
  * The Y component camera image.
  *
 */
-static FEED_Y_IMAGE: 0;
+static FEED_Y_IMAGE: any;
 
 /**
  * The CbCr component camera image.
  *
 */
-static FEED_CBCR_IMAGE: 1;
+static FEED_CBCR_IMAGE: any;
 
+}
 
+declare class CameraServerClassSignals extends ObjectSignals {
   /**
  * Emitted when a [CameraFeed] is added (e.g. webcam is plugged in).
  *

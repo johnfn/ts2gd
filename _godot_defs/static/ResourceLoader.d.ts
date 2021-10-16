@@ -4,8 +4,6 @@
  *
  * It uses the many [ResourceFormatLoader] classes registered in the engine (either built-in or from a plugin) to load files into memory and convert them to a format that can be used by the engine.
  *
- * GDScript has a simplified [method @GDScript.load] built-in method which can be used in most situations, leaving the use of [ResourceLoader] for more advanced scenarios.
- *
 */
 declare class ResourceLoaderClass extends Object {
 
@@ -14,8 +12,6 @@ declare class ResourceLoaderClass extends Object {
  * Singleton used to load resource files from the filesystem.
  *
  * It uses the many [ResourceFormatLoader] classes registered in the engine (either built-in or from a plugin) to load files into memory and convert them to a format that can be used by the engine.
- *
- * GDScript has a simplified [method @GDScript.load] built-in method which can be used in most situations, leaving the use of [ResourceLoader] for more advanced scenarios.
  *
 */
   "new"(): ResourceLoaderClass;
@@ -54,11 +50,13 @@ has_cached(path: string): boolean;
  *
  * The registered [ResourceFormatLoader]s are queried sequentially to find the first one which can handle the file's extension, and then attempt loading. If loading fails, the remaining ResourceFormatLoaders are also attempted.
  *
- * An optional `type_hint` can be used to further specify the [Resource] type that should be handled by the [ResourceFormatLoader].
+ * An optional `type_hint` can be used to further specify the [Resource] type that should be handled by the [ResourceFormatLoader]. Anything that inherits from [Resource] can be used as a type hint, for example [Image].
  *
  * If `no_cache` is `true`, the resource cache will be bypassed and the resource will be loaded anew. Otherwise, the cached resource will be returned if it exists.
  *
- * Returns an empty resource if no ResourceFormatLoader could handle the file.
+ * Returns an empty resource if no [ResourceFormatLoader] could handle the file.
+ *
+ * GDScript has a simplified [method @GDScript.load] built-in method which can be used in most situations, leaving the use of [ResourceLoader] for more advanced scenarios.
  *
 */
 load(path: string, type_hint?: string, no_cache?: boolean): Resource;
@@ -66,7 +64,7 @@ load(path: string, type_hint?: string, no_cache?: boolean): Resource;
 /**
  * Starts loading a resource interactively. The returned [ResourceInteractiveLoader] object allows to load with high granularity, calling its [method ResourceInteractiveLoader.poll] method successively to load chunks.
  *
- * An optional `type_hint` can be used to further specify the [Resource] type that should be handled by the [ResourceFormatLoader].
+ * An optional `type_hint` can be used to further specify the [Resource] type that should be handled by the [ResourceFormatLoader]. Anything that inherits from [Resource] can be used as a type hint, for example [Image].
  *
 */
 load_interactive(path: string, type_hint?: string): ResourceInteractiveLoader;
@@ -74,11 +72,14 @@ load_interactive(path: string, type_hint?: string): ResourceInteractiveLoader;
 /** Changes the behavior on missing sub-resources. The default behavior is to abort loading. */
 set_abort_on_missing_resources(abort: boolean): void;
 
-  connect<T extends SignalsOf<ResourceLoaderClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourceLoaderClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourceLoaderClassSignals>>(signal: T, method: SignalFunction<ResourceLoaderClassSignals[T]>): number;
 
 
 
 
+}
 
+declare class ResourceLoaderClassSignals extends ObjectSignals {
   
 }

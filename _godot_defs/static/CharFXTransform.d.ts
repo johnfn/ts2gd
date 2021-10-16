@@ -55,7 +55,7 @@ elapsed_time: float;
  * 
  *
 */
-env: Dictionary;
+env: Dictionary<any, any>;
 
 /** The position offset the character will be drawn with (in pixels). */
 offset: Vector2;
@@ -68,11 +68,14 @@ visible: boolean;
 
 
 
-  connect<T extends SignalsOf<CharFXTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CharFXTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CharFXTransformSignals>>(signal: T, method: SignalFunction<CharFXTransformSignals[T]>): number;
 
 
 
 
+}
 
+declare class CharFXTransformSignals extends ReferenceSignals {
   
 }

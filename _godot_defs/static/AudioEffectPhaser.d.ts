@@ -32,11 +32,14 @@ rate_hz: float;
 
 
 
-  connect<T extends SignalsOf<AudioEffectPhaser>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectPhaser>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectPhaserSignals>>(signal: T, method: SignalFunction<AudioEffectPhaserSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectPhaserSignals extends AudioEffectSignals {
   
 }

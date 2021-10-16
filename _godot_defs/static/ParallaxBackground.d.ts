@@ -36,11 +36,14 @@ scroll_offset: Vector2;
 
 
 
-  connect<T extends SignalsOf<ParallaxBackground>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ParallaxBackground>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ParallaxBackgroundSignals>>(signal: T, method: SignalFunction<ParallaxBackgroundSignals[T]>): number;
 
 
 
 
+}
 
+declare class ParallaxBackgroundSignals extends CanvasLayerSignals {
   
 }

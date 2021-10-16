@@ -20,7 +20,8 @@ function: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeTransformFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeTransformFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeTransformFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTransformFuncSignals[T]>): number;
 
 
 
@@ -28,14 +29,16 @@ function: int;
  * Perform the inverse operation on the [Transform] matrix.
  *
 */
-static FUNC_INVERSE: 0;
+static FUNC_INVERSE: any;
 
 /**
  * Perform the transpose operation on the [Transform] matrix.
  *
 */
-static FUNC_TRANSPOSE: 1;
+static FUNC_TRANSPOSE: any;
 
+}
 
+declare class VisualShaderNodeTransformFuncSignals extends VisualShaderNodeSignals {
   
 }

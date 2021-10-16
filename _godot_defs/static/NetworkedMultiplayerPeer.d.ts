@@ -1,13 +1,17 @@
 
 /**
- * Manages the connection to network peers. Assigns unique IDs to each client connected to the server.
+ * Manages the connection to network peers. Assigns unique IDs to each client connected to the server. See also [MultiplayerAPI].
+ *
+ * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
 declare class NetworkedMultiplayerPeer extends PacketPeer {
 
   
 /**
- * Manages the connection to network peers. Assigns unique IDs to each client connected to the server.
+ * Manages the connection to network peers. Assigns unique IDs to each client connected to the server. See also [MultiplayerAPI].
+ *
+ * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
   "new"(): NetworkedMultiplayerPeer;
@@ -41,7 +45,8 @@ poll(): void;
 */
 set_target_peer(id: int): void;
 
-  connect<T extends SignalsOf<NetworkedMultiplayerPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<NetworkedMultiplayerPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<NetworkedMultiplayerPeerSignals>>(signal: T, method: SignalFunction<NetworkedMultiplayerPeerSignals[T]>): number;
 
 
 
@@ -49,51 +54,53 @@ set_target_peer(id: int): void;
  * Packets are not acknowledged, no resend attempts are made for lost packets. Packets may arrive in any order. Potentially faster than [constant TRANSFER_MODE_UNRELIABLE_ORDERED]. Use for non-critical data, and always consider whether the order matters.
  *
 */
-static TRANSFER_MODE_UNRELIABLE: 0;
+static TRANSFER_MODE_UNRELIABLE: any;
 
 /**
  * Packets are not acknowledged, no resend attempts are made for lost packets. Packets are received in the order they were sent in. Potentially faster than [constant TRANSFER_MODE_RELIABLE]. Use for non-critical data or data that would be outdated if received late due to resend attempt(s) anyway, for example movement and positional data.
  *
 */
-static TRANSFER_MODE_UNRELIABLE_ORDERED: 1;
+static TRANSFER_MODE_UNRELIABLE_ORDERED: any;
 
 /**
  * Packets must be received and resend attempts should be made until the packets are acknowledged. Packets must be received in the order they were sent in. Most reliable transfer mode, but potentially the slowest due to the overhead. Use for critical data that must be transmitted and arrive in order, for example an ability being triggered or a chat message. Consider carefully if the information really is critical, and use sparingly.
  *
 */
-static TRANSFER_MODE_RELIABLE: 2;
+static TRANSFER_MODE_RELIABLE: any;
 
 /**
  * The ongoing connection disconnected.
  *
 */
-static CONNECTION_DISCONNECTED: 0;
+static CONNECTION_DISCONNECTED: any;
 
 /**
  * A connection attempt is ongoing.
  *
 */
-static CONNECTION_CONNECTING: 1;
+static CONNECTION_CONNECTING: any;
 
 /**
  * The connection attempt succeeded.
  *
 */
-static CONNECTION_CONNECTED: 2;
+static CONNECTION_CONNECTED: any;
 
 /**
  * Packets are sent to the server and then redistributed to other peers.
  *
 */
-static TARGET_PEER_BROADCAST: 0;
+static TARGET_PEER_BROADCAST: any;
 
 /**
  * Packets are sent to the server alone.
  *
 */
-static TARGET_PEER_SERVER: 1;
+static TARGET_PEER_SERVER: any;
 
+}
 
+declare class NetworkedMultiplayerPeerSignals extends PacketPeerSignals {
   /**
  * Emitted when a connection attempt fails.
  *

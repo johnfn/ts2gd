@@ -24,14 +24,35 @@ skeleton: NodePathType;
 /** Sets the skin to be used by this instance. */
 skin: Skin;
 
-/** This helper creates a [StaticBody] child node with a [ConvexPolygonShape] collision shape calculated from the mesh geometry. It's mainly used for testing. */
-create_convex_collision(): void;
+/**
+ * If `true`, normals are transformed when software skinning is used. Set to `false` when normals are not needed for better performance.
+ *
+ * See [member ProjectSettings.rendering/quality/skinning/software_skinning_fallback] for details about how software skinning is enabled.
+ *
+*/
+software_skinning_transform_normals: boolean;
+
+/**
+ * This helper creates a [StaticBody] child node with a [ConvexPolygonShape] collision shape calculated from the mesh geometry. It's mainly used for testing.
+ *
+ * If `clean` is `true` (default), duplicate and interior vertices are removed automatically. You can set it to `false` to make the process faster if not needed.
+ *
+ * If `simplify` is `true`, the geometry can be further simplified to reduce the amount of vertices. Disabled by default.
+ *
+*/
+create_convex_collision(clean?: boolean, simplify?: boolean): void;
 
 /** This helper creates a [MeshInstance] child node with gizmos at every vertex calculated from the mesh geometry. It's mainly used for testing. */
 create_debug_tangents(): void;
 
+/** This helper creates a [StaticBody] child node with multiple [ConvexPolygonShape] collision shapes calculated from the mesh geometry via convex decomposition. It's mainly used for testing. */
+create_multiple_convex_collisions(): void;
+
 /** This helper creates a [StaticBody] child node with a [ConcavePolygonShape] collision shape calculated from the mesh geometry. It's mainly used for testing. */
 create_trimesh_collision(): void;
+
+/** Returns the [Material] that will be used by the [Mesh] when drawing. This can return the [member GeometryInstance.material_override], the surface override [Material] defined in this [MeshInstance], or the surface [Material] defined in the [Mesh]. For example, if [member GeometryInstance.material_override] is used, all surfaces will return the override material. */
+get_active_material(surface: int): Material;
 
 /** Returns the [Material] for a surface of the [Mesh] resource. */
 get_surface_material(surface: int): Material;
@@ -42,11 +63,14 @@ get_surface_material_count(): int;
 /** Sets the [Material] for a surface of the [Mesh] resource. */
 set_surface_material(surface: int, material: Material): void;
 
-  connect<T extends SignalsOf<MeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<MeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<MeshInstanceSignals>>(signal: T, method: SignalFunction<MeshInstanceSignals[T]>): number;
 
 
 
 
+}
 
+declare class MeshInstanceSignals extends GeometryInstanceSignals {
   
 }

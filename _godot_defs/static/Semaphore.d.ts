@@ -22,11 +22,14 @@ post(): int;
 /** Tries to wait for the [Semaphore], if its value is zero, blocks until non-zero. Returns [constant OK] on success, [constant ERR_BUSY] otherwise. */
 wait(): int;
 
-  connect<T extends SignalsOf<Semaphore>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Semaphore>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SemaphoreSignals>>(signal: T, method: SignalFunction<SemaphoreSignals[T]>): number;
 
 
 
 
+}
 
+declare class SemaphoreSignals extends ReferenceSignals {
   
 }

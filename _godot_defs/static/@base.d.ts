@@ -4,7 +4,7 @@ declare interface Boolean {
 
 }
 
-declare interface CallableFunction { };
+declare interface CallableFunction { }
 
 interface Function {
 
@@ -16,10 +16,16 @@ declare function autoload(target: typeof Node): void
 declare type int = number;
 declare type float = number;
 
+declare function int(x: number): number
+declare function float(x: number): number
+
+declare type NodePathType = string
+
 // Used for typing connect()
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
-type SignalArguments<T> = T extends Signal<infer R> ? R : any;
+type SignalFunction<T> = T extends Signal<infer R> ? R : never;
 
 interface FunctionConstructor {
   (...args: string[]): Function;
@@ -52,7 +58,7 @@ interface RegExp {
 // methods.
 // interface Object extends Dictionary { }
 
-declare function Dict<T>(obj: T): Dictionary & T
+declare function Dict<T>(obj: T): Dictionary<string, any> & T
 
 interface IteratorYieldResult<TYield> {
   done?: false;
@@ -77,6 +83,18 @@ interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
   completed: Signal<any>;
 }
 
+interface Symbol { }
+
+interface SymbolConstructor {
+  /**
+   * A method that returns the default iterator for an object. Called by the semantics of the
+   * for-of statement.
+   */
+  readonly iterator: symbol;
+}
+
+declare var Symbol: SymbolConstructor;
+
 interface Iterable<T> {
   [Symbol.iterator](): Iterator<T>;
 }
@@ -86,8 +104,8 @@ interface IterableIterator<T> extends Iterator<T> {
 
   // Generator functions found on GDScriptFunctionState
 
-  is_valid(extended_check: bool = false);
-  resume(arg?: any);
+  is_valid(extended_check: bool): boolean;
+  resume(arg?: any): void;
 }
 
 
@@ -299,15 +317,15 @@ interface Array<T> {
       [/codeblocks]
       [b]Note:[/b] Arrays are always passed by reference. To get a copy of an array which can be modified independently of the original array, use [method duplicate]. */
 
-  (from: PackedColorArray): this;
-  (from: PackedVector3Array): this;
-  (from: PackedVector2Array): this;
-  (from: PackedStringArray): this;
-  (from: PackedFloat64Array): this;
-  (from: PackedFloat32Array): this;
-  (from: PackedInt64Array): this;
-  (from: PackedInt32Array): this;
-  (from: PackedByteArray): this;
+//   (from: PackedColorArray): this;
+//   (from: PackedVector3Array): this;
+//   (from: PackedVector2Array): this;
+//   (from: PackedStringArray): this;
+//   (from: PackedFloat64Array): this;
+//   (from: PackedFloat32Array): this;
+//   (from: PackedInt64Array): this;
+//   (from: PackedInt32Array): this;
+//   (from: PackedByteArray): this;
   new(): this;
 
   [n: number]: T;
@@ -513,7 +531,6 @@ declare class Dictionary<K, V> {
  *
 */
   "new"(): Dictionary<K, V>;
-  static "new"(): Dictionary<K, V>;
 
 
 
@@ -624,8 +641,7 @@ declare class PackedScene<T> extends Resource {
           if error != OK:
               push_error("An error occurred while saving the scene to disk.")
       [/codeblock] */
-    "new"()
-    static "new"(): this
+    "new"(): PackedScene<T>
   
   
   
@@ -633,7 +649,7 @@ declare class PackedScene<T> extends Resource {
   
   /** A dictionary representation of the scene contents.
         Available keys include "rnames" and "variants" for resources, "node_count", "nodes", "node_paths" for nodes, "editable_instances" for base scene children overrides, "conn_count" and "conns" for signal connections, and "version" for the format style of the PackedScene. */
-  _bundled: Dictionary;
+  _bundled: Dictionary<any, any>;
   
   
   
@@ -665,7 +681,7 @@ declare class PackedScene<T> extends Resource {
   }
 
 
-declare class Signal<T extends any[]> {
+declare class Signal<T extends (...args: any[]) => any> {
   /** Don't use this - it's only to get typechecking working! */
   private __unused: T;
 }

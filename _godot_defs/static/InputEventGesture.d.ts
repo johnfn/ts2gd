@@ -16,11 +16,14 @@ position: Vector2;
 
 
 
-  connect<T extends SignalsOf<InputEventGesture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventGesture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventGestureSignals>>(signal: T, method: SignalFunction<InputEventGestureSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventGestureSignals extends InputEventWithModifiersSignals {
   
 }

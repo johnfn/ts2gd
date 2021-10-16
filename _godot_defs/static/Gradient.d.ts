@@ -36,8 +36,8 @@ get_point_count(): int;
 /** Returns the interpolated color specified by [code]offset[/code]. */
 interpolate(offset: float): Color;
 
-/** Removes the color at the index [code]offset[/code]. */
-remove_point(offset: int): void;
+/** Removes the color at the index [code]point[/code]. */
+remove_point(point: int): void;
 
 /** Sets the color of the ramp color at index [code]point[/code]. */
 set_color(point: int, color: Color): void;
@@ -45,11 +45,14 @@ set_color(point: int, color: Color): void;
 /** Sets the offset for the ramp color at index [code]point[/code]. */
 set_offset(point: int, offset: float): void;
 
-  connect<T extends SignalsOf<Gradient>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Gradient>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GradientSignals>>(signal: T, method: SignalFunction<GradientSignals[T]>): number;
 
 
 
 
+}
 
+declare class GradientSignals extends ResourceSignals {
   
 }

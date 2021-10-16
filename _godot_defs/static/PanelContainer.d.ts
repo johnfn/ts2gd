@@ -18,11 +18,14 @@ declare class PanelContainer extends Container {
 
 
 
-  connect<T extends SignalsOf<PanelContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PanelContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PanelContainerSignals>>(signal: T, method: SignalFunction<PanelContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class PanelContainerSignals extends ContainerSignals {
   
 }

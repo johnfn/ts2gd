@@ -53,11 +53,14 @@ set(idx: int, vector2: Vector2): any;
 /** Returns the size of the array. */
 size(): int;
 
-  connect<T extends SignalsOf<PoolVector2Array>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PoolVector2Array>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PoolVector2ArraySignals>>(signal: T, method: SignalFunction<PoolVector2ArraySignals[T]>): number;
 
 
 
 
+}
 
+declare class PoolVector2ArraySignals {
   
 }

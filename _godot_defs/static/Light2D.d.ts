@@ -84,7 +84,8 @@ texture_scale: float;
 
 
 
-  connect<T extends SignalsOf<Light2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Light2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Light2DSignals>>(signal: T, method: SignalFunction<Light2DSignals[T]>): number;
 
 
 
@@ -92,62 +93,64 @@ texture_scale: float;
  * Adds the value of pixels corresponding to the Light2D to the values of pixels under it. This is the common behavior of a light.
  *
 */
-static MODE_ADD: 0;
+static MODE_ADD: any;
 
 /**
  * Subtracts the value of pixels corresponding to the Light2D to the values of pixels under it, resulting in inversed light effect.
  *
 */
-static MODE_SUB: 1;
+static MODE_SUB: any;
 
 /**
  * Mix the value of pixels corresponding to the Light2D to the values of pixels under it by linear interpolation.
  *
 */
-static MODE_MIX: 2;
+static MODE_MIX: any;
 
 /**
  * The light texture of the Light2D is used as a mask, hiding or revealing parts of the screen underneath depending on the value of each pixel of the light (mask) texture.
  *
 */
-static MODE_MASK: 3;
+static MODE_MASK: any;
 
 /**
  * No filter applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_NONE: 0;
+static SHADOW_FILTER_NONE: any;
 
 /**
  * Percentage closer filtering (3 samples) applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_PCF3: 1;
+static SHADOW_FILTER_PCF3: any;
 
 /**
  * Percentage closer filtering (5 samples) applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_PCF5: 2;
+static SHADOW_FILTER_PCF5: any;
 
 /**
  * Percentage closer filtering (7 samples) applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_PCF7: 3;
+static SHADOW_FILTER_PCF7: any;
 
 /**
  * Percentage closer filtering (9 samples) applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_PCF9: 4;
+static SHADOW_FILTER_PCF9: any;
 
 /**
  * Percentage closer filtering (13 samples) applies to the shadow map. See [member shadow_filter].
  *
 */
-static SHADOW_FILTER_PCF13: 5;
+static SHADOW_FILTER_PCF13: any;
 
+}
 
+declare class Light2DSignals extends Node2DSignals {
   
 }

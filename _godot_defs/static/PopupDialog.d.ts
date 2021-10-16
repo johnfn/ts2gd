@@ -18,11 +18,14 @@ declare class PopupDialog extends Popup {
 
 
 
-  connect<T extends SignalsOf<PopupDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PopupDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PopupDialogSignals>>(signal: T, method: SignalFunction<PopupDialogSignals[T]>): number;
 
 
 
 
+}
 
+declare class PopupDialogSignals extends PopupSignals {
   
 }

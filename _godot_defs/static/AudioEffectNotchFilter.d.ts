@@ -18,11 +18,14 @@ declare class AudioEffectNotchFilter extends AudioEffectFilter {
 
 
 
-  connect<T extends SignalsOf<AudioEffectNotchFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectNotchFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectNotchFilterSignals>>(signal: T, method: SignalFunction<AudioEffectNotchFilterSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectNotchFilterSignals extends AudioEffectFilterSignals {
   
 }

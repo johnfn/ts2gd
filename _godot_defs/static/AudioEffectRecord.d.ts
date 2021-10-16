@@ -27,11 +27,14 @@ is_recording_active(): boolean;
 /** If [code]true[/code], the sound will be recorded. Note that restarting the recording will remove the previously recorded sample. */
 set_recording_active(record: boolean): void;
 
-  connect<T extends SignalsOf<AudioEffectRecord>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AudioEffectRecord>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AudioEffectRecordSignals>>(signal: T, method: SignalFunction<AudioEffectRecordSignals[T]>): number;
 
 
 
 
+}
 
+declare class AudioEffectRecordSignals extends AudioEffectSignals {
   
 }

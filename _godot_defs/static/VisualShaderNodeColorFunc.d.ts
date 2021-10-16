@@ -20,7 +20,8 @@ function: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeColorFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeColorFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorFuncSignals[T]>): number;
 
 
 
@@ -38,7 +39,7 @@ function: int;
  * 
  *
 */
-static FUNC_GRAYSCALE: 0;
+static FUNC_GRAYSCALE: any;
 
 /**
  * Applies sepia tone effect using the following formula:
@@ -54,8 +55,10 @@ static FUNC_GRAYSCALE: 0;
  * 
  *
 */
-static FUNC_SEPIA: 1;
+static FUNC_SEPIA: any;
 
+}
 
+declare class VisualShaderNodeColorFuncSignals extends VisualShaderNodeSignals {
   
 }

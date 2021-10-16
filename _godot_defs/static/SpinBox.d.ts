@@ -18,6 +18,8 @@
  *
  * See [Range] class for more options over the [SpinBox].
  *
+ * **Note:** [SpinBox] relies on an underlying [LineEdit] node. To theme a [SpinBox]'s background, add theme items for [LineEdit] and customize them.
+ *
 */
 declare class SpinBox extends Range {
 
@@ -40,6 +42,8 @@ declare class SpinBox extends Range {
  * The above code will create a [SpinBox], disable context menu on it and set the text alignment to right.
  *
  * See [Range] class for more options over the [SpinBox].
+ *
+ * **Note:** [SpinBox] relies on an underlying [LineEdit] node. To theme a [SpinBox]'s background, add theme items for [LineEdit] and customize them.
  *
 */
   "new"(): SpinBox;
@@ -65,11 +69,14 @@ apply(): void;
 /** Returns the [LineEdit] instance from this [SpinBox]. You can use it to access properties and methods of [LineEdit]. */
 get_line_edit(): LineEdit;
 
-  connect<T extends SignalsOf<SpinBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpinBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpinBoxSignals>>(signal: T, method: SignalFunction<SpinBoxSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpinBoxSignals extends RangeSignals {
   
 }

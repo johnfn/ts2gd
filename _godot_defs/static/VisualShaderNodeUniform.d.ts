@@ -20,11 +20,14 @@ uniform_name: string;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeUniformSignals[T]>): number;
 
 
 
 
+}
 
+declare class VisualShaderNodeUniformSignals extends VisualShaderNodeSignals {
   
 }

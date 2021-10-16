@@ -20,7 +20,8 @@ function: int;
 
 
 
-  connect<T extends SignalsOf<VisualShaderNodeScalarDerivativeFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisualShaderNodeScalarDerivativeFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisualShaderNodeScalarDerivativeFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeScalarDerivativeFuncSignals[T]>): number;
 
 
 
@@ -28,20 +29,22 @@ function: int;
  * Sum of absolute derivative in `x` and `y`.
  *
 */
-static FUNC_SUM: 0;
+static FUNC_SUM: any;
 
 /**
  * Derivative in `x` using local differencing.
  *
 */
-static FUNC_X: 1;
+static FUNC_X: any;
 
 /**
  * Derivative in `y` using local differencing.
  *
 */
-static FUNC_Y: 2;
+static FUNC_Y: any;
 
+}
 
+declare class VisualShaderNodeScalarDerivativeFuncSignals extends VisualShaderNodeSignals {
   
 }

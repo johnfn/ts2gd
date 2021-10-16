@@ -41,8 +41,6 @@ loop: boolean;
 /** The distance along the path in pixels. */
 offset: float;
 
-/** If [code]true[/code], this node rotates to follow the path, making its descendants rotate. */
-rotate: boolean;
 
 /** The distance along the path as a number in the range 0.0 (for the first vertex) to 1.0 (for the last). This is just another way of expressing the offset within the path, as the offset supplied is multiplied internally by the path's length. */
 unit_offset: float;
@@ -52,11 +50,14 @@ v_offset: float;
 
 
 
-  connect<T extends SignalsOf<PathFollow2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PathFollow2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PathFollow2DSignals>>(signal: T, method: SignalFunction<PathFollow2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class PathFollow2DSignals extends Node2DSignals {
   
 }

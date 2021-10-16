@@ -34,7 +34,7 @@ clear(anim: string): void;
 /** Removes all animations. A "default" animation will be created. */
 clear_all(): void;
 
-/** If [code]true[/code], the given animation will loop. */
+/** Returns [code]true[/code] if the given animation is configured to loop when it finishes playing. Otherwise, returns [code]false[/code]. */
 get_animation_loop(anim: string): boolean;
 
 /** Returns an array containing the names associated to each animation. Values are placed in alphabetical order. */
@@ -70,11 +70,14 @@ set_animation_speed(anim: string, speed: float): void;
 /** Sets the texture of the given frame. */
 set_frame(anim: string, idx: int, txt: Texture): void;
 
-  connect<T extends SignalsOf<SpriteFrames>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SpriteFrames>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SpriteFramesSignals>>(signal: T, method: SignalFunction<SpriteFramesSignals[T]>): number;
 
 
 
 
+}
 
+declare class SpriteFramesSignals extends ResourceSignals {
   
 }

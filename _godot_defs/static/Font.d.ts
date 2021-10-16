@@ -2,9 +2,11 @@
 /**
  * Font contains a Unicode-compatible character set, as well as the ability to draw it with variable width, ascent, descent and kerning. For creating fonts from TTF files (or other font formats), see the editor support for fonts.
  *
- * **Note:** If a DynamicFont doesn't contain a character used in a string, the character in question will be replaced with codepoint `0xfffd` if it's available in the DynamicFont. If this replacement character isn't available in the DynamicFont, the character will be hidden without displaying any replacement character in the string.
+ * **Note:** If a [DynamicFont] doesn't contain a character used in a string, the character in question will be replaced with codepoint `0xfffd` if it's available in the [DynamicFont]. If this replacement character isn't available in the DynamicFont, the character will be hidden without displaying any replacement character in the string.
  *
- * **Note:** If a BitmapFont doesn't contain a character used in a string, the character in question will be hidden without displaying any replacement character in the string.
+ * **Note:** If a [BitmapFont] doesn't contain a character used in a string, the character in question will be hidden without displaying any replacement character in the string.
+ *
+ * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
 declare class Font extends Resource {
@@ -13,9 +15,11 @@ declare class Font extends Resource {
 /**
  * Font contains a Unicode-compatible character set, as well as the ability to draw it with variable width, ascent, descent and kerning. For creating fonts from TTF files (or other font formats), see the editor support for fonts.
  *
- * **Note:** If a DynamicFont doesn't contain a character used in a string, the character in question will be replaced with codepoint `0xfffd` if it's available in the DynamicFont. If this replacement character isn't available in the DynamicFont, the character will be hidden without displaying any replacement character in the string.
+ * **Note:** If a [DynamicFont] doesn't contain a character used in a string, the character in question will be replaced with codepoint `0xfffd` if it's available in the [DynamicFont]. If this replacement character isn't available in the DynamicFont, the character will be hidden without displaying any replacement character in the string.
  *
- * **Note:** If a BitmapFont doesn't contain a character used in a string, the character in question will be hidden without displaying any replacement character in the string.
+ * **Note:** If a [BitmapFont] doesn't contain a character used in a string, the character in question will be hidden without displaying any replacement character in the string.
+ *
+ * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
   "new"(): Font;
@@ -38,7 +42,7 @@ draw_char(canvas_item: RID, position: Vector2, char: int, next?: int, modulate?:
 /** Returns the font ascent (number of pixels above the baseline). */
 get_ascent(): float;
 
-/** Returns the size of a character, optionally taking kerning into account if the next character is provided. */
+/** Returns the size of a character, optionally taking kerning into account if the next character is provided. Note that the height returned is the font height (see [method get_height]) and has no relation to the glyph height. */
 get_char_size(char: int, next?: int): Vector2;
 
 /** Returns the font descent (number of pixels below the baseline). */
@@ -47,7 +51,7 @@ get_descent(): float;
 /** Returns the total font height (ascent plus descent) in pixels. */
 get_height(): float;
 
-/** Returns the size of a string, taking kerning and advance into account. */
+/** Returns the size of a string, taking kerning and advance into account. Note that the height returned is the font height (see [method get_height]) and has no relation to the string. */
 get_string_size(string: string): Vector2;
 
 /** Returns the size that the string would have with word wrapping enabled with a fixed [code]width[/code]. */
@@ -62,11 +66,14 @@ is_distance_field_hint(): boolean;
 /** After editing a font (changing size, ascent, char rects, etc.). Call this function to propagate changes to controls that might use it. */
 update_changes(): void;
 
-  connect<T extends SignalsOf<Font>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Font>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<FontSignals>>(signal: T, method: SignalFunction<FontSignals[T]>): number;
 
 
 
 
+}
 
+declare class FontSignals extends ResourceSignals {
   
 }

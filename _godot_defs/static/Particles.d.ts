@@ -4,6 +4,10 @@
  *
  * Use the `process_material` property to add a [ParticlesMaterial] to configure particle appearance and behavior. Alternatively, you can add a [ShaderMaterial] which will be applied to all particles.
  *
+ * **Note:** [Particles] only work when using the GLES3 renderer. If using the GLES2 renderer, use [CPUParticles] instead. You can convert [Particles] to [CPUParticles] by selecting the node, clicking the **Particles** menu at the top of the 3D editor viewport then choosing **Convert to CPUParticles**.
+ *
+ * **Note:** After working on a Particles node, remember to update its [member visibility_aabb] by selecting it, clicking the **Particles** menu at the top of the 3D editor viewport then choose **Generate Visibility AABB**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
+ *
 */
 declare class Particles extends GeometryInstance {
 
@@ -13,13 +17,22 @@ declare class Particles extends GeometryInstance {
  *
  * Use the `process_material` property to add a [ParticlesMaterial] to configure particle appearance and behavior. Alternatively, you can add a [ShaderMaterial] which will be applied to all particles.
  *
+ * **Note:** [Particles] only work when using the GLES3 renderer. If using the GLES2 renderer, use [CPUParticles] instead. You can convert [Particles] to [CPUParticles] by selecting the node, clicking the **Particles** menu at the top of the 3D editor viewport then choosing **Convert to CPUParticles**.
+ *
+ * **Note:** After working on a Particles node, remember to update its [member visibility_aabb] by selecting it, clicking the **Particles** menu at the top of the 3D editor viewport then choose **Generate Visibility AABB**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
+ *
 */
   "new"(): Particles;
   static "new"(): Particles;
 
 
 
-/** Number of particles to emit. */
+/**
+ * The number of particles emitted in one emission cycle (corresponding to the [member lifetime]).
+ *
+ * **Note:** Changing [member amount] will reset the particle emission, therefore removing all particles that were already emitted before changing [member amount].
+ *
+*/
 amount: int;
 
 /** Particle draw order. Uses [enum DrawOrder] values. */
@@ -52,7 +65,7 @@ fixed_fps: int;
 /** If [code]true[/code], results in fractional delta calculation which has a smoother particles display effect. */
 fract_delta: boolean;
 
-/** Amount of time each particle will exist. */
+/** The amount of time each particle will exist (in seconds). */
 lifetime: float;
 
 /** If [code]true[/code], particles use the parent node's coordinate space. If [code]false[/code], they use global coordinates. */
@@ -74,7 +87,9 @@ randomness: float;
 speed_scale: float;
 
 /**
- * The [AABB] that determines the area of the world part of which needs to be visible on screen for the particle system to be active.
+ * The [AABB] that determines the node's region which needs to be visible on screen for the particle system to be active.
+ *
+ * Grow the box if particles suddenly appear/disappear when the node enters/exits the screen. The [AABB] can be grown via code or with the **Particles → Generate AABB** editor tool.
  *
  * **Note:** If the [ParticlesMaterial] in use is configured to cast shadows, you may want to enlarge this AABB to ensure the shadow is updated when particles are off-screen.
  *
@@ -93,7 +108,8 @@ restart(): void;
 /** Sets the [Mesh] that is drawn at index [code]pass[/code]. */
 set_draw_pass_mesh(pass: int, mesh: Mesh): void;
 
-  connect<T extends SignalsOf<Particles>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Particles>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ParticlesSignals>>(signal: T, method: SignalFunction<ParticlesSignals[T]>): number;
 
 
 
@@ -101,26 +117,28 @@ set_draw_pass_mesh(pass: int, mesh: Mesh): void;
  * Particles are drawn in the order emitted.
  *
 */
-static DRAW_ORDER_INDEX: 0;
+static DRAW_ORDER_INDEX: any;
 
 /**
  * Particles are drawn in order of remaining lifetime.
  *
 */
-static DRAW_ORDER_LIFETIME: 1;
+static DRAW_ORDER_LIFETIME: any;
 
 /**
  * Particles are drawn in order of depth.
  *
 */
-static DRAW_ORDER_VIEW_DEPTH: 2;
+static DRAW_ORDER_VIEW_DEPTH: any;
 
 /**
  * Maximum number of draw passes supported.
  *
 */
-static MAX_DRAW_PASSES: 4;
+static MAX_DRAW_PASSES: any;
 
+}
 
+declare class ParticlesSignals extends GeometryInstanceSignals {
   
 }

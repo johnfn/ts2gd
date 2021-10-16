@@ -61,7 +61,7 @@ get_node_groups(idx: int): PoolStringArray;
 get_node_index(idx: int): int;
 
 /** Returns a [PackedScene] for the node at [code]idx[/code] (i.e. the whole branch starting at this node, with its child nodes and resources), or [code]null[/code] if the node is not an instance. */
-get_node_instance(idx: int): PackedScene;
+get_node_instance(idx: int): PackedScene<any>;
 
 /** Returns the path to the represented scene file if the node at [code]idx[/code] is an [InstancePlaceholder]. */
 get_node_instance_placeholder(idx: int): string;
@@ -100,7 +100,8 @@ get_node_type(idx: int): string;
 /** Returns [code]true[/code] if the node at [code]idx[/code] is an [InstancePlaceholder]. */
 is_node_instance_placeholder(idx: int): boolean;
 
-  connect<T extends SignalsOf<SceneState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SceneState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SceneStateSignals>>(signal: T, method: SignalFunction<SceneStateSignals[T]>): number;
 
 
 
@@ -108,7 +109,7 @@ is_node_instance_placeholder(idx: int): boolean;
  * If passed to [method PackedScene.instance], blocks edits to the scene state.
  *
 */
-static GEN_EDIT_STATE_DISABLED: 0;
+static GEN_EDIT_STATE_DISABLED: any;
 
 /**
  * If passed to [method PackedScene.instance], provides inherited scene resources to the local scene.
@@ -116,7 +117,7 @@ static GEN_EDIT_STATE_DISABLED: 0;
  * **Note:** Only available in editor builds.
  *
 */
-static GEN_EDIT_STATE_INSTANCE: 1;
+static GEN_EDIT_STATE_INSTANCE: any;
 
 /**
  * If passed to [method PackedScene.instance], provides local scene resources to the local scene. Only the main scene should receive the main edit state.
@@ -124,8 +125,10 @@ static GEN_EDIT_STATE_INSTANCE: 1;
  * **Note:** Only available in editor builds.
  *
 */
-static GEN_EDIT_STATE_MAIN: 2;
+static GEN_EDIT_STATE_MAIN: any;
 
+}
 
+declare class SceneStateSignals extends ReferenceSignals {
   
 }

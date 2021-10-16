@@ -4,6 +4,8 @@
  *
  * See also [Particles], which provides the same functionality with hardware acceleration, but may not run on older devices.
  *
+ * **Note:** Unlike [Particles], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
+ *
 */
 declare class CPUParticles extends GeometryInstance {
 
@@ -13,13 +15,20 @@ declare class CPUParticles extends GeometryInstance {
  *
  * See also [Particles], which provides the same functionality with hardware acceleration, but may not run on older devices.
  *
+ * **Note:** Unlike [Particles], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
+ *
 */
   "new"(): CPUParticles;
   static "new"(): CPUParticles;
 
 
 
-/** Number of particles emitted in one emission cycle. */
+/**
+ * The number of particles emitted in one emission cycle (corresponding to the [member lifetime]).
+ *
+ * **Note:** Changing [member amount] will reset the particle emission, therefore removing all particles that were already emitted before changing [member amount].
+ *
+*/
 amount: int;
 
 /** Initial rotation applied to each particle, in degrees. */
@@ -58,10 +67,10 @@ anim_speed_curve: Curve;
 /** Animation speed randomness ratio. */
 anim_speed_random: float;
 
-/** Unused for 3D particles. */
+/** Each particle's initial color. To have particle display color in a [SpatialMaterial] make sure to set [member SpatialMaterial.vertex_color_use_as_albedo] to [code]true[/code]. */
 color: Color;
 
-/** Unused for 3D particles. */
+/** Each particle's color will vary along this [GradientTexture] over its lifetime (multiplied with [member color]). */
 color_ramp: Gradient;
 
 /** The rate at which particles lose velocity. */
@@ -90,6 +99,18 @@ emission_normals: PoolVector3Array;
 
 /** Sets the initial positions to spawn particles when using [constant EMISSION_SHAPE_POINTS] or [constant EMISSION_SHAPE_DIRECTED_POINTS]. */
 emission_points: PoolVector3Array;
+
+/** The axis for the ring shaped emitter when using [constant EMISSION_SHAPE_RING]. */
+emission_ring_axis: Vector3;
+
+/** The height for the ring shaped emitter when using [constant EMISSION_SHAPE_RING]. */
+emission_ring_height: float;
+
+/** The inner radius for the ring shaped emitter when using [constant EMISSION_SHAPE_RING]. */
+emission_ring_inner_radius: float;
+
+/** The radius for the ring shaped emitter when using [constant EMISSION_SHAPE_RING]. */
+emission_ring_radius: float;
 
 /** Particles will be emitted inside this region. See [enum EmissionShape] for possible values. */
 emission_shape: int;
@@ -139,7 +160,7 @@ initial_velocity: float;
 /** Initial velocity randomness ratio. */
 initial_velocity_random: float;
 
-/** Amount of time each particle will exist. */
+/** The amount of time each particle will exist (in seconds). */
 lifetime: float;
 
 /** Particle lifetime randomness ratio. */
@@ -246,7 +267,8 @@ set_param_randomness(param: int, randomness: float): void;
 /** Enables or disables the given flag (see [enum Flags] for options). */
 set_particle_flag(flag: int, enable: boolean): void;
 
-  connect<T extends SignalsOf<CPUParticles>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CPUParticles>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CPUParticlesSignals>>(signal: T, method: SignalFunction<CPUParticlesSignals[T]>): number;
 
 
 
@@ -254,158 +276,166 @@ set_particle_flag(flag: int, enable: boolean): void;
  * Particles are drawn in the order emitted.
  *
 */
-static DRAW_ORDER_INDEX: 0;
+static DRAW_ORDER_INDEX: any;
 
 /**
  * Particles are drawn in order of remaining lifetime.
  *
 */
-static DRAW_ORDER_LIFETIME: 1;
+static DRAW_ORDER_LIFETIME: any;
 
 /**
  * Particles are drawn in order of depth.
  *
 */
-static DRAW_ORDER_VIEW_DEPTH: 2;
+static DRAW_ORDER_VIEW_DEPTH: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set initial velocity properties.
  *
 */
-static PARAM_INITIAL_LINEAR_VELOCITY: 0;
+static PARAM_INITIAL_LINEAR_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set angular velocity properties.
  *
 */
-static PARAM_ANGULAR_VELOCITY: 1;
+static PARAM_ANGULAR_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set orbital velocity properties.
  *
 */
-static PARAM_ORBIT_VELOCITY: 2;
+static PARAM_ORBIT_VELOCITY: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set linear acceleration properties.
  *
 */
-static PARAM_LINEAR_ACCEL: 3;
+static PARAM_LINEAR_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set radial acceleration properties.
  *
 */
-static PARAM_RADIAL_ACCEL: 4;
+static PARAM_RADIAL_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set tangential acceleration properties.
  *
 */
-static PARAM_TANGENTIAL_ACCEL: 5;
+static PARAM_TANGENTIAL_ACCEL: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set damping properties.
  *
 */
-static PARAM_DAMPING: 6;
+static PARAM_DAMPING: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set angle properties.
  *
 */
-static PARAM_ANGLE: 7;
+static PARAM_ANGLE: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set scale properties.
  *
 */
-static PARAM_SCALE: 8;
+static PARAM_SCALE: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set hue variation properties.
  *
 */
-static PARAM_HUE_VARIATION: 9;
+static PARAM_HUE_VARIATION: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set animation speed properties.
  *
 */
-static PARAM_ANIM_SPEED: 10;
+static PARAM_ANIM_SPEED: any;
 
 /**
  * Use with [method set_param], [method set_param_randomness], and [method set_param_curve] to set animation offset properties.
  *
 */
-static PARAM_ANIM_OFFSET: 11;
+static PARAM_ANIM_OFFSET: any;
 
 /**
  * Represents the size of the [enum Parameter] enum.
  *
 */
-static PARAM_MAX: 12;
+static PARAM_MAX: any;
 
 /**
  * Use with [method set_particle_flag] to set [member flag_align_y].
  *
 */
-static FLAG_ALIGN_Y_TO_VELOCITY: 0;
+static FLAG_ALIGN_Y_TO_VELOCITY: any;
 
 /**
  * Use with [method set_particle_flag] to set [member flag_rotate_y].
  *
 */
-static FLAG_ROTATE_Y: 1;
+static FLAG_ROTATE_Y: any;
 
 /**
  * Use with [method set_particle_flag] to set [member flag_disable_z].
  *
 */
-static FLAG_DISABLE_Z: 2;
+static FLAG_DISABLE_Z: any;
 
 /**
  * Represents the size of the [enum Flags] enum.
  *
 */
-static FLAG_MAX: 3;
+static FLAG_MAX: any;
 
 /**
  * All particles will be emitted from a single point.
  *
 */
-static EMISSION_SHAPE_POINT: 0;
+static EMISSION_SHAPE_POINT: any;
 
 /**
  * Particles will be emitted in the volume of a sphere.
  *
 */
-static EMISSION_SHAPE_SPHERE: 1;
+static EMISSION_SHAPE_SPHERE: any;
 
 /**
  * Particles will be emitted in the volume of a box.
  *
 */
-static EMISSION_SHAPE_BOX: 2;
+static EMISSION_SHAPE_BOX: any;
 
 /**
  * Particles will be emitted at a position chosen randomly among [member emission_points]. Particle color will be modulated by [member emission_colors].
  *
 */
-static EMISSION_SHAPE_POINTS: 3;
+static EMISSION_SHAPE_POINTS: any;
 
 /**
  * Particles will be emitted at a position chosen randomly among [member emission_points]. Particle velocity and rotation will be set based on [member emission_normals]. Particle color will be modulated by [member emission_colors].
  *
 */
-static EMISSION_SHAPE_DIRECTED_POINTS: 4;
+static EMISSION_SHAPE_DIRECTED_POINTS: any;
+
+/**
+ * Particles will be emitted in a ring or cylinder.
+ *
+*/
+static EMISSION_SHAPE_RING: any;
 
 /**
  * Represents the size of the [enum EmissionShape] enum.
  *
 */
-static EMISSION_SHAPE_MAX: 5;
+static EMISSION_SHAPE_MAX: any;
 
+}
 
+declare class CPUParticlesSignals extends GeometryInstanceSignals {
   
 }

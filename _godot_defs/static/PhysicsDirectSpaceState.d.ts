@@ -17,9 +17,11 @@ declare class PhysicsDirectSpaceState extends Object {
 
 
 /**
- * Checks whether the shape can travel to a point. The method will return an array with two floats between 0 and 1, both representing a fraction of `motion`. The first is how far the shape can move without triggering a collision, and the second is the point at which a collision will occur. If no collision is detected, the returned array will be `[1, 1]`.
+ * Checks how far a [Shape] can move without colliding. All the parameters for the query, including the shape, are supplied through a [PhysicsShapeQueryParameters] object.
  *
- * If the shape can not move, the returned array will be `[0, 0]` under Bullet, and empty under GodotPhysics.
+ * Returns an array with the safe and unsafe proportions (between 0 and 1) of the motion. The safe proportion is the maximum fraction of the motion that can be made without a collision. The unsafe proportion is the minimum fraction of the distance that must be moved for a collision. If no collision is detected a result of `[1.0, 1.0]` will be returned.
+ *
+ * **Note:** Any [Shape]s that the shape is already colliding with e.g. inside of, will be ignored. Use [method collide_shape] to determine the [Shape]s that the shape is already colliding with.
  *
 */
 cast_motion(shape: PhysicsShapeQueryParameters, motion: Vector3): any[];
@@ -45,7 +47,7 @@ collide_shape(shape: PhysicsShapeQueryParameters, max_results?: int): any[];
  * If the shape did not intersect anything, then an empty dictionary is returned instead.
  *
 */
-get_rest_info(shape: PhysicsShapeQueryParameters): Dictionary;
+get_rest_info(shape: PhysicsShapeQueryParameters): Dictionary<any, any>;
 
 /**
  * Intersects a ray in a given space. The returned object is a dictionary with the following fields:
@@ -67,7 +69,7 @@ get_rest_info(shape: PhysicsShapeQueryParameters): Dictionary;
  * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
  *
 */
-intersect_ray(from: Vector3, to: Vector3, exclude?: any[], collision_mask?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): Dictionary;
+intersect_ray(from: Vector3, to: Vector3, exclude?: any[], collision_mask?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): Dictionary<any, any>;
 
 /**
  * Checks the intersections of a shape, given through a [PhysicsShapeQueryParameters] object, against the space. The intersected shapes are returned in an array containing dictionaries with the following fields:
@@ -85,11 +87,14 @@ intersect_ray(from: Vector3, to: Vector3, exclude?: any[], collision_mask?: int,
 */
 intersect_shape(shape: PhysicsShapeQueryParameters, max_results?: int): any[];
 
-  connect<T extends SignalsOf<PhysicsDirectSpaceState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<PhysicsDirectSpaceState>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<PhysicsDirectSpaceStateSignals>>(signal: T, method: SignalFunction<PhysicsDirectSpaceStateSignals[T]>): number;
 
 
 
 
+}
 
+declare class PhysicsDirectSpaceStateSignals extends ObjectSignals {
   
 }

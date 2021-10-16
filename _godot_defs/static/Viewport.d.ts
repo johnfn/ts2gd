@@ -47,16 +47,27 @@ audio_listener_enable_3d: boolean;
 /** The canvas transform of the viewport, useful for changing the on-screen positions of all child [CanvasItem]s. This is relative to the global canvas transform of the viewport. */
 canvas_transform: Transform2D;
 
+/**
+ * If `true`, uses a fast post-processing filter to make banding significantly less visible. In some cases, debanding may introduce a slightly noticeable dithering pattern. It's recommended to enable debanding only when actually needed since the dithering pattern will make lossless-compressed screenshots larger.
+ *
+ * **Note:** Only available on the GLES3 backend. [member hdr] must also be `true` for debanding to be effective.
+ *
+*/
+debanding: boolean;
+
 /** The overlay mode for test rendered geometry in debug purposes. */
 debug_draw: int;
 
 /** If [code]true[/code], the viewport will disable 3D rendering. For actual disabling use [code]usage[/code]. */
 disable_3d: boolean;
 
+/** Enables fast approximate antialiasing. FXAA is a popular screen-space antialiasing method, which is fast but will make the image look blurry, especially at lower resolutions. It can still work relatively well at large resolutions such as 1440p and 4K. Some of the lost sharpness can be recovered by enabling contrast-adaptive sharpening (see [member sharpen_intensity]). */
+fxaa: boolean;
+
 /** The global canvas transform of the viewport. The canvas transform is relative to this. */
 global_canvas_transform: Transform2D;
 
-/** If [code]true[/code], the viewport will not receive input event. */
+/** If [code]true[/code], the viewport will not receive input events. */
 gui_disable_input: boolean;
 
 /** If [code]true[/code], the GUI controls on the viewport will lay pixel perfectly. */
@@ -71,7 +82,7 @@ gui_snap_controls_to_pixels: boolean;
 */
 hdr: boolean;
 
-/** If [code]true[/code], the result after 3D rendering will not have a linear to sRGB color conversion applied. This is important when the viewport is used as a render target where the result is used as a texture on a 3D object rendered in another viewport. It is also important if the viewport is used to create data that is not color based (noise, heightmaps, pickmaps, etc.). Do not enable this when the viewport is used as a texture on a 2D object or if the viewport is your final output. */
+/** If [code]true[/code], the result after 3D rendering will not have a linear to sRGB color conversion applied. This is important when the viewport is used as a render target where the result is used as a texture on a 3D object rendered in another viewport. It is also important if the viewport is used to create data that is not color based (noise, heightmaps, pickmaps, etc.). Do not enable this when the viewport is used as a texture on a 2D object or if the viewport is your final output. For the GLES2 driver this will convert the sRGB output to linear, this should only be used for VR plugins that require input in linear color space! */
 keep_3d_linear: boolean;
 
 /** The multisample anti-aliasing mode. A higher number results in smoother edges at the cost of significantly worse performance. A value of 4 is best unless targeting very high-end systems. */
@@ -120,7 +131,10 @@ shadow_atlas_quad_3: int;
 */
 shadow_atlas_size: int;
 
-/** The width and height of viewport. */
+/** If set to a value greater than [code]0.0[/code], contrast-adaptive sharpening will be applied to the 3D viewport. This has a low performance cost and can be used to recover some of the sharpness lost from using FXAA. Values around [code]0.5[/code] generally give the best results. See also [member fxaa]. */
+sharpen_intensity: float;
+
+/** The width and height of viewport. Must be set to a value greater than or equal to 2 pixels on both dimensions. Otherwise, nothing will be displayed. */
 size: Vector2;
 
 /** If [code]true[/code], the size override affects stretch as well. */
@@ -225,7 +239,8 @@ update_worlds(): void;
 /** Warps the mouse to a position relative to the viewport. */
 warp_mouse(to_position: Vector2): void;
 
-  connect<T extends SignalsOf<Viewport>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Viewport>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ViewportSignals>>(signal: T, method: SignalFunction<ViewportSignals[T]>): number;
 
 
 
@@ -233,225 +248,227 @@ warp_mouse(to_position: Vector2): void;
  * Do not update the render target.
  *
 */
-static UPDATE_DISABLED: 0;
+static UPDATE_DISABLED: any;
 
 /**
  * Update the render target once, then switch to [constant UPDATE_DISABLED].
  *
 */
-static UPDATE_ONCE: 1;
+static UPDATE_ONCE: any;
 
 /**
  * Update the render target only when it is visible. This is the default value.
  *
 */
-static UPDATE_WHEN_VISIBLE: 2;
+static UPDATE_WHEN_VISIBLE: any;
 
 /**
  * Always update the render target.
  *
 */
-static UPDATE_ALWAYS: 3;
+static UPDATE_ALWAYS: any;
 
 /**
  * This quadrant will not be used.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_DISABLED: 0;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_DISABLED: any;
 
 /**
  * This quadrant will only be used by one shadow map.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_1: 1;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_1: any;
 
 /**
  * This quadrant will be split in 4 and used by up to 4 shadow maps.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_4: 2;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_4: any;
 
 /**
  * This quadrant will be split 16 ways and used by up to 16 shadow maps.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_16: 3;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_16: any;
 
 /**
  * This quadrant will be split 64 ways and used by up to 64 shadow maps.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_64: 4;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_64: any;
 
 /**
  * This quadrant will be split 256 ways and used by up to 256 shadow maps. Unless the [member shadow_atlas_size] is very high, the shadows in this quadrant will be very low resolution.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_256: 5;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_256: any;
 
 /**
  * This quadrant will be split 1024 ways and used by up to 1024 shadow maps. Unless the [member shadow_atlas_size] is very high, the shadows in this quadrant will be very low resolution.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_1024: 6;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_1024: any;
 
 /**
  * Represents the size of the [enum ShadowAtlasQuadrantSubdiv] enum.
  *
 */
-static SHADOW_ATLAS_QUADRANT_SUBDIV_MAX: 7;
+static SHADOW_ATLAS_QUADRANT_SUBDIV_MAX: any;
 
 /**
  * Amount of objects in frame.
  *
 */
-static RENDER_INFO_OBJECTS_IN_FRAME: 0;
+static RENDER_INFO_OBJECTS_IN_FRAME: any;
 
 /**
  * Amount of vertices in frame.
  *
 */
-static RENDER_INFO_VERTICES_IN_FRAME: 1;
+static RENDER_INFO_VERTICES_IN_FRAME: any;
 
 /**
  * Amount of material changes in frame.
  *
 */
-static RENDER_INFO_MATERIAL_CHANGES_IN_FRAME: 2;
+static RENDER_INFO_MATERIAL_CHANGES_IN_FRAME: any;
 
 /**
  * Amount of shader changes in frame.
  *
 */
-static RENDER_INFO_SHADER_CHANGES_IN_FRAME: 3;
+static RENDER_INFO_SHADER_CHANGES_IN_FRAME: any;
 
 /**
  * Amount of surface changes in frame.
  *
 */
-static RENDER_INFO_SURFACE_CHANGES_IN_FRAME: 4;
+static RENDER_INFO_SURFACE_CHANGES_IN_FRAME: any;
 
 /**
  * Amount of draw calls in frame.
  *
 */
-static RENDER_INFO_DRAW_CALLS_IN_FRAME: 5;
+static RENDER_INFO_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Amount of items or joined items in frame.
  *
 */
-static RENDER_INFO_2D_ITEMS_IN_FRAME: 6;
+static RENDER_INFO_2D_ITEMS_IN_FRAME: any;
 
 /**
  * Amount of draw calls in frame.
  *
 */
-static RENDER_INFO_2D_DRAW_CALLS_IN_FRAME: 7;
+static RENDER_INFO_2D_DRAW_CALLS_IN_FRAME: any;
 
 /**
  * Represents the size of the [enum RenderInfo] enum.
  *
 */
-static RENDER_INFO_MAX: 8;
+static RENDER_INFO_MAX: any;
 
 /**
  * Objects are displayed normally.
  *
 */
-static DEBUG_DRAW_DISABLED: 0;
+static DEBUG_DRAW_DISABLED: any;
 
 /**
  * Objects are displayed without light information.
  *
 */
-static DEBUG_DRAW_UNSHADED: 1;
+static DEBUG_DRAW_UNSHADED: any;
 
 /**
  * Objected are displayed semi-transparent with additive blending so you can see where they intersect.
  *
 */
-static DEBUG_DRAW_OVERDRAW: 2;
+static DEBUG_DRAW_OVERDRAW: any;
 
 /**
  * Objects are displayed in wireframe style.
  *
 */
-static DEBUG_DRAW_WIREFRAME: 3;
+static DEBUG_DRAW_WIREFRAME: any;
 
 /**
  * Multisample anti-aliasing mode disabled. This is the default value.
  *
 */
-static MSAA_DISABLED: 0;
+static MSAA_DISABLED: any;
 
 /**
  * Use 2x Multisample Antialiasing.
  *
 */
-static MSAA_2X: 1;
+static MSAA_2X: any;
 
 /**
  * Use 4x Multisample Antialiasing.
  *
 */
-static MSAA_4X: 2;
+static MSAA_4X: any;
 
 /**
  * Use 8x Multisample Antialiasing. Likely unsupported on low-end and older hardware.
  *
 */
-static MSAA_8X: 3;
+static MSAA_8X: any;
 
 /**
  * Use 16x Multisample Antialiasing. Likely unsupported on medium and low-end hardware.
  *
 */
-static MSAA_16X: 4;
+static MSAA_16X: any;
 
 /**
  * Allocates all buffers needed for drawing 2D scenes. This takes less VRAM than the 3D usage modes. Note that 3D rendering effects such as glow and HDR are not available when using this mode.
  *
 */
-static USAGE_2D: 0;
+static USAGE_2D: any;
 
 /**
  * Allocates buffers needed for 2D scenes without allocating a buffer for screen copy. Accordingly, you cannot read from the screen. Of the [enum Usage] types, this requires the least VRAM. Note that 3D rendering effects such as glow and HDR are not available when using this mode.
  *
 */
-static USAGE_2D_NO_SAMPLING: 1;
+static USAGE_2D_NO_SAMPLING: any;
 
 /**
  * Allocates full buffers for drawing 3D scenes and all 3D effects including buffers needed for 2D scenes and effects.
  *
 */
-static USAGE_3D: 2;
+static USAGE_3D: any;
 
 /**
  * Allocates buffers needed for drawing 3D scenes. But does not allocate buffers needed for reading from the screen and post-processing effects. Saves some VRAM.
  *
 */
-static USAGE_3D_NO_EFFECTS: 3;
+static USAGE_3D_NO_EFFECTS: any;
 
 /**
  * Always clear the render target before drawing.
  *
 */
-static CLEAR_MODE_ALWAYS: 0;
+static CLEAR_MODE_ALWAYS: any;
 
 /**
  * Never clear the render target.
  *
 */
-static CLEAR_MODE_NEVER: 1;
+static CLEAR_MODE_NEVER: any;
 
 /**
  * Clear the render target next frame, then switch to [constant CLEAR_MODE_NEVER].
  *
 */
-static CLEAR_MODE_ONLY_NEXT_FRAME: 2;
+static CLEAR_MODE_ONLY_NEXT_FRAME: any;
 
+}
 
+declare class ViewportSignals extends NodeSignals {
   /**
  * Emitted when a Control node grabs keyboard focus.
  *

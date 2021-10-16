@@ -54,19 +54,52 @@ add_control_to_dock(slot: int, control: Control): void;
 */
 add_custom_type(type: string, base: string, script: Script, icon: Texture): void;
 
-/** No documentation provided. */
+/**
+ * Registers a new [EditorExportPlugin]. Export plugins are used to perform tasks when the project is being exported.
+ *
+ * See [method add_inspector_plugin] for an example of how to register a plugin.
+ *
+*/
 add_export_plugin(plugin: EditorExportPlugin): void;
 
-/** No documentation provided. */
+/**
+ * Registers a new [EditorImportPlugin]. Import plugins are used to import custom and unsupported assets as a custom [Resource] type.
+ *
+ * **Note:** If you want to import custom 3D asset formats use [method add_scene_import_plugin] instead.
+ *
+ * See [method add_inspector_plugin] for an example of how to register a plugin.
+ *
+*/
 add_import_plugin(importer: EditorImportPlugin): void;
 
-/** No documentation provided. */
+/**
+ * Registers a new [EditorInspectorPlugin]. Inspector plugins are used to extend [EditorInspector] and provide custom configuration tools for your object's properties.
+ *
+ * **Note:** Always use [method remove_inspector_plugin] to remove the registered [EditorInspectorPlugin] when your [EditorPlugin] is disabled to prevent leaks and an unexpected behavior.
+ *
+ * @example 
+ * 
+ * const MyInspectorPlugin = preload("res://addons/your_addon/path/to/your/script.gd")
+ * var inspector_plugin = MyInspectorPlugin.new()
+ * func _enter_tree():
+ *     add_inspector_plugin(inspector_plugin)
+ * func _exit_tree():
+ *     remove_inspector_plugin(inspector_plugin)
+ * @summary 
+ * 
+ *
+*/
 add_inspector_plugin(plugin: EditorInspectorPlugin): void;
 
-/** No documentation provided. */
+/** Registers a new [EditorSceneImporter]. Scene importers are used to import custom 3D asset formats as scenes. */
 add_scene_import_plugin(scene_importer: EditorSceneImporter): void;
 
-/** No documentation provided. */
+/**
+ * Registers a new [EditorSpatialGizmoPlugin]. Gizmo plugins are used to add custom gizmos to the 3D preview viewport for a [Spatial].
+ *
+ * See [method add_inspector_plugin] for an example of how to register a plugin.
+ *
+*/
 add_spatial_gizmo_plugin(plugin: EditorSpatialGizmoPlugin): void;
 
 /** Adds a custom menu item to [b]Project > Tools[/b] as [code]name[/code] that calls [code]callback[/code] on an instance of [code]handler[/code] with a parameter [code]ud[/code] when user activates it. */
@@ -83,7 +116,12 @@ add_tool_submenu_item(name: string, submenu: Object): void;
 */
 apply_changes(): void;
 
-/** No documentation provided. */
+/**
+ * This method is called when the editor is about to run the project. The plugin can then perform required operations before the project runs.
+ *
+ * This method must return a boolean. If this method returns `false`, the project will not run. The run is aborted immediately, so this also prevents all other plugins' [method build] methods from running.
+ *
+*/
 build(): boolean;
 
 /** Clear all the state and reset the object being edited to zero. This ensures your plugin does not keep editing a currently existing node, or a node from the wrong scene. */
@@ -98,10 +136,32 @@ edit(object: Object): void;
 /** Called by the engine when the user enables the [EditorPlugin] in the Plugin tab of the project settings window. */
 enable_plugin(): void;
 
-/** No documentation provided. */
+/**
+ * Called by the engine when the 2D editor's viewport is updated. Use the `overlay` [Control] for drawing. You can update the viewport manually by calling [method update_overlays].
+ *
+ * @example 
+ * 
+ * func forward_canvas_draw_over_viewport(overlay):
+ *     # Draw a circle at cursor position.
+ *     overlay.draw_circle(overlay.get_local_mouse_position(), 64, Color.white)
+ * func forward_canvas_gui_input(event):
+ *     if event is InputEventMouseMotion:
+ *         # Redraw viewport when cursor is moved.
+ *         update_overlays()
+ *         return true
+ *     return false
+ * @summary 
+ * 
+ *
+*/
 forward_canvas_draw_over_viewport(overlay: Control): void;
 
-/** No documentation provided. */
+/**
+ * This method is the same as [method forward_canvas_draw_over_viewport], except it draws on top of everything. Useful when you need an extra layer that shows over anything else.
+ *
+ * You need to enable calling of this method by using [method set_force_draw_over_forwarding_enabled].
+ *
+*/
 forward_canvas_force_draw_over_viewport(overlay: Control): void;
 
 /**
@@ -131,6 +191,34 @@ forward_canvas_force_draw_over_viewport(overlay: Control): void;
  *
 */
 forward_canvas_gui_input(event: InputEvent): boolean;
+
+/**
+ * Called by the engine when the 3D editor's viewport is updated. Use the `overlay` [Control] for drawing. You can update the viewport manually by calling [method update_overlays].
+ *
+ * @example 
+ * 
+ * func forward_spatial_draw_over_viewport(overlay):
+ *     # Draw a circle at cursor position.
+ *     overlay.draw_circle(overlay.get_local_mouse_position(), 64)
+ * func forward_spatial_gui_input(camera, event):
+ *     if event is InputEventMouseMotion:
+ *         # Redraw viewport when cursor is moved.
+ *         update_overlays()
+ *         return true
+ *     return false
+ * @summary 
+ * 
+ *
+*/
+forward_spatial_draw_over_viewport(overlay: Control): void;
+
+/**
+ * This method is the same as [method forward_spatial_draw_over_viewport], except it draws on top of everything. Useful when you need an extra layer that shows over anything else.
+ *
+ * You need to enable calling of this method by using [method set_force_draw_over_forwarding_enabled].
+ *
+*/
+forward_spatial_force_draw_over_viewport(overlay: Control): void;
 
 /**
  * Called when there is a root node in the current edited scene, [method handles] is implemented and an [InputEvent] happens in the 3D viewport. Intercepts the [InputEvent], if `return true` [EditorPlugin] consumes the `event`, otherwise forwards `event` to other Editor classes. Example:
@@ -203,7 +291,7 @@ get_plugin_name(): string;
 get_script_create_dialog(): ScriptCreateDialog;
 
 /** Gets the state of your plugin editor. This is used when saving the scene (so state is kept when opening it again) and for switching tabs (so state can be restored when the tab returns). */
-get_state(): Dictionary;
+get_state(): Dictionary<any, any>;
 
 /** Gets the undo/redo object. Most actions in the editor can be undoable, so use this object to make sure this happens when it's worth it. */
 get_undo_redo(): UndoRedo;
@@ -217,10 +305,10 @@ handles(object: Object): boolean;
 /** Returns [code]true[/code] if this is a main screen editor plugin (it goes in the workspace selector together with [b]2D[/b], [b]3D[/b], [b]Script[/b] and [b]AssetLib[/b]). */
 has_main_screen(): boolean;
 
-/** No documentation provided. */
+/** Minimizes the bottom panel. */
 hide_bottom_panel(): void;
 
-/** No documentation provided. */
+/** Makes a specific item in the bottom panel visible. */
 make_bottom_panel_item_visible(item: Control): void;
 
 /**
@@ -249,19 +337,19 @@ remove_control_from_docks(control: Control): void;
 /** Removes a custom type added by [method add_custom_type]. */
 remove_custom_type(type: string): void;
 
-/** No documentation provided. */
+/** Removes an export plugin registered by [method add_export_plugin]. */
 remove_export_plugin(plugin: EditorExportPlugin): void;
 
-/** No documentation provided. */
+/** Removes an import plugin registered by [method add_import_plugin]. */
 remove_import_plugin(importer: EditorImportPlugin): void;
 
-/** No documentation provided. */
+/** Removes an inspector plugin registered by [method add_import_plugin] */
 remove_inspector_plugin(plugin: EditorInspectorPlugin): void;
 
-/** No documentation provided. */
+/** Removes a scene importer registered by [method add_scene_import_plugin]. */
 remove_scene_import_plugin(scene_importer: EditorSceneImporter): void;
 
-/** No documentation provided. */
+/** Removes a gizmo plugin registered by [method add_spatial_gizmo_plugin]. */
 remove_spatial_gizmo_plugin(plugin: EditorSpatialGizmoPlugin): void;
 
 /** Removes a menu [code]name[/code] from [b]Project > Tools[/b]. */
@@ -270,92 +358,95 @@ remove_tool_menu_item(name: string): void;
 /** This method is called after the editor saves the project or when it's closed. It asks the plugin to save edited external scenes/resources. */
 save_external_data(): void;
 
-/** No documentation provided. */
+/** Enables calling of [method forward_canvas_force_draw_over_viewport] for the 2D editor and [method forward_spatial_force_draw_over_viewport] for the 3D editor when their viewports are updated. You need to call this method only once and it will work permanently for this plugin. */
 set_force_draw_over_forwarding_enabled(): void;
 
 /** Use this method if you always want to receive inputs from 3D view screen inside [method forward_spatial_gui_input]. It might be especially usable if your plugin will want to use raycast in the scene. */
 set_input_event_forwarding_always_enabled(): void;
 
 /** Restore the state saved by [method get_state]. */
-set_state(state: Dictionary): void;
+set_state(state: Dictionary<any, any>): void;
 
 /** Restore the plugin GUI layout saved by [method get_window_layout]. */
 set_window_layout(layout: ConfigFile): void;
 
-/** Updates the overlays of the editor (2D/3D) viewport. */
+/** Updates the overlays of the 2D and 3D editor viewport. Causes methods [method forward_canvas_draw_over_viewport], [method forward_canvas_force_draw_over_viewport], [method forward_spatial_draw_over_viewport] and [method forward_spatial_force_draw_over_viewport] to be called. */
 update_overlays(): int;
 
-  connect<T extends SignalsOf<EditorPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorPluginSignals>>(signal: T, method: SignalFunction<EditorPluginSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static CONTAINER_TOOLBAR: 0;
+static CONTAINER_TOOLBAR: any;
 
 /** No documentation provided. */
-static CONTAINER_SPATIAL_EDITOR_MENU: 1;
+static CONTAINER_SPATIAL_EDITOR_MENU: any;
 
 /** No documentation provided. */
-static CONTAINER_SPATIAL_EDITOR_SIDE_LEFT: 2;
+static CONTAINER_SPATIAL_EDITOR_SIDE_LEFT: any;
 
 /** No documentation provided. */
-static CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT: 3;
+static CONTAINER_SPATIAL_EDITOR_SIDE_RIGHT: any;
 
 /** No documentation provided. */
-static CONTAINER_SPATIAL_EDITOR_BOTTOM: 4;
+static CONTAINER_SPATIAL_EDITOR_BOTTOM: any;
 
 /** No documentation provided. */
-static CONTAINER_CANVAS_EDITOR_MENU: 5;
+static CONTAINER_CANVAS_EDITOR_MENU: any;
 
 /** No documentation provided. */
-static CONTAINER_CANVAS_EDITOR_SIDE_LEFT: 6;
+static CONTAINER_CANVAS_EDITOR_SIDE_LEFT: any;
 
 /** No documentation provided. */
-static CONTAINER_CANVAS_EDITOR_SIDE_RIGHT: 7;
+static CONTAINER_CANVAS_EDITOR_SIDE_RIGHT: any;
 
 /** No documentation provided. */
-static CONTAINER_CANVAS_EDITOR_BOTTOM: 8;
+static CONTAINER_CANVAS_EDITOR_BOTTOM: any;
 
 /** No documentation provided. */
-static CONTAINER_PROPERTY_EDITOR_BOTTOM: 9;
+static CONTAINER_PROPERTY_EDITOR_BOTTOM: any;
 
 /** No documentation provided. */
-static CONTAINER_PROJECT_SETTING_TAB_LEFT: 10;
+static CONTAINER_PROJECT_SETTING_TAB_LEFT: any;
 
 /** No documentation provided. */
-static CONTAINER_PROJECT_SETTING_TAB_RIGHT: 11;
+static CONTAINER_PROJECT_SETTING_TAB_RIGHT: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_LEFT_UL: 0;
+static DOCK_SLOT_LEFT_UL: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_LEFT_BL: 1;
+static DOCK_SLOT_LEFT_BL: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_LEFT_UR: 2;
+static DOCK_SLOT_LEFT_UR: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_LEFT_BR: 3;
+static DOCK_SLOT_LEFT_BR: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_RIGHT_UL: 4;
+static DOCK_SLOT_RIGHT_UL: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_RIGHT_BL: 5;
+static DOCK_SLOT_RIGHT_BL: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_RIGHT_UR: 6;
+static DOCK_SLOT_RIGHT_UR: any;
 
 /** No documentation provided. */
-static DOCK_SLOT_RIGHT_BR: 7;
+static DOCK_SLOT_RIGHT_BR: any;
 
 /**
  * Represents the size of the [enum DockSlot] enum.
  *
 */
-static DOCK_SLOT_MAX: 8;
+static DOCK_SLOT_MAX: any;
 
+}
 
+declare class EditorPluginSignals extends NodeSignals {
   /**
  * Emitted when user changes the workspace (**2D**, **3D**, **Script**, **AssetLib**). Also works with custom screens defined by plugins.
  *

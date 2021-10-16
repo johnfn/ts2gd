@@ -39,7 +39,8 @@ is_enabler_enabled(enabler: int): boolean;
 /** Sets active state of the enabler identified by given [enum Enabler] constant. */
 set_enabler(enabler: int, enabled: boolean): void;
 
-  connect<T extends SignalsOf<VisibilityEnabler>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VisibilityEnabler>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VisibilityEnablerSignals>>(signal: T, method: SignalFunction<VisibilityEnablerSignals[T]>): number;
 
 
 
@@ -47,20 +48,22 @@ set_enabler(enabler: int, enabled: boolean): void;
  * This enabler will pause [AnimationPlayer] nodes.
  *
 */
-static ENABLER_PAUSE_ANIMATIONS: 0;
+static ENABLER_PAUSE_ANIMATIONS: any;
 
 /**
  * This enabler will freeze [RigidBody] nodes.
  *
 */
-static ENABLER_FREEZE_BODIES: 1;
+static ENABLER_FREEZE_BODIES: any;
 
 /**
  * Represents the size of the [enum Enabler] enum.
  *
 */
-static ENABLER_MAX: 2;
+static ENABLER_MAX: any;
 
+}
 
+declare class VisibilityEnablerSignals extends VisibilityNotifierSignals {
   
 }

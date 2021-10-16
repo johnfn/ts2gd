@@ -25,6 +25,9 @@ action_erase_event(action: string, event: InputEvent): void;
 /** Removes all events from an action. */
 action_erase_events(action: string): void;
 
+/** Returns a deadzone value for the action. */
+action_get_deadzone(action: string): float;
+
 /** Returns [code]true[/code] if the action has the given [InputEvent] associated with it. */
 action_has_event(action: string, event: InputEvent): boolean;
 
@@ -42,8 +45,13 @@ add_action(action: string, deadzone?: float): void;
 /** Removes an action from the [InputMap]. */
 erase_action(action: string): void;
 
-/** Returns [code]true[/code] if the given event is part of an existing action. This method ignores keyboard modifiers if the given [InputEvent] is not pressed (for proper release detection). See [method action_has_event] if you don't want this behavior. */
-event_is_action(event: InputEvent, action: string): boolean;
+/**
+ * Returns `true` if the given event is part of an existing action. This method ignores keyboard modifiers if the given [InputEvent] is not pressed (for proper release detection). See [method action_has_event] if you don't want this behavior.
+ *
+ * If `exact_match` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
+ *
+*/
+event_is_action(event: InputEvent, action: string, exact_match?: boolean): boolean;
 
 /** Returns an array of [InputEvent]s associated with a given action. */
 get_action_list(action: string): any[];
@@ -57,11 +65,14 @@ has_action(action: string): boolean;
 /** Clears all [InputEventAction] in the [InputMap] and load it anew from [ProjectSettings]. */
 load_from_globals(): void;
 
-  connect<T extends SignalsOf<InputMapClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputMapClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputMapClassSignals>>(signal: T, method: SignalFunction<InputMapClassSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputMapClassSignals extends ObjectSignals {
   
 }

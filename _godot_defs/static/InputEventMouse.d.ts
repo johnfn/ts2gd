@@ -26,11 +26,14 @@ position: Vector2;
 
 
 
-  connect<T extends SignalsOf<InputEventMouse>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<InputEventMouse>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<InputEventMouseSignals>>(signal: T, method: SignalFunction<InputEventMouseSignals[T]>): number;
 
 
 
 
+}
 
+declare class InputEventMouseSignals extends InputEventWithModifiersSignals {
   
 }

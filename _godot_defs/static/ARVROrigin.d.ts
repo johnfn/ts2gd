@@ -37,11 +37,14 @@ world_scale: float;
 
 
 
-  connect<T extends SignalsOf<ARVROrigin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ARVROrigin>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ARVROriginSignals>>(signal: T, method: SignalFunction<ARVROriginSignals[T]>): number;
 
 
 
 
+}
 
+declare class ARVROriginSignals extends SpatialSignals {
   
 }

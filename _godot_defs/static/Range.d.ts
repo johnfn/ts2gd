@@ -51,12 +51,15 @@ share(_with: Node): void;
 /** Stops range from sharing its member variables with any other. */
 unshare(): void;
 
-  connect<T extends SignalsOf<Range>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Range>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RangeSignals>>(signal: T, method: SignalFunction<RangeSignals[T]>): number;
 
 
 
 
+}
 
+declare class RangeSignals extends ControlSignals {
   /**
  * Emitted when [member min_value], [member max_value], [member page], or [member step] change.
  *

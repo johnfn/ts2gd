@@ -29,11 +29,14 @@ shape: Shape2D;
 
 
 
-  connect<T extends SignalsOf<CollisionShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CollisionShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CollisionShape2DSignals>>(signal: T, method: SignalFunction<CollisionShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class CollisionShape2DSignals extends Node2DSignals {
   
 }

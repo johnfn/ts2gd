@@ -1,13 +1,17 @@
 
 /**
- * [Control] node displaying a color picker widget. It's useful for selecting a color from an RGB/RGBA colorspace.
+ * Displays a color picker widget. Useful for selecting a color from an RGB/RGBA colorspace.
+ *
+ * **Note:** This control is the color picker widget itself. You can use a [ColorPickerButton] instead if you need a button that brings up a [ColorPicker] in a pop-up.
  *
 */
 declare class ColorPicker extends BoxContainer {
 
   
 /**
- * [Control] node displaying a color picker widget. It's useful for selecting a color from an RGB/RGBA colorspace.
+ * Displays a color picker widget. Useful for selecting a color from an RGB/RGBA colorspace.
+ *
+ * **Note:** This control is the color picker widget itself. You can use a [ColorPickerButton] instead if you need a button that brings up a [ColorPicker] in a pop-up.
  *
 */
   "new"(): ColorPicker;
@@ -49,7 +53,7 @@ raw_mode: boolean;
 /**
  * Adds the given color to a list of color presets. The presets are displayed in the color picker and the user will be able to select them.
  *
- * **Note:** the presets list is only for **this** color picker.
+ * **Note:** The presets list is only for **this** color picker.
  *
 */
 add_preset(color: Color): void;
@@ -60,12 +64,15 @@ erase_preset(color: Color): void;
 /** Returns the list of colors in the presets of the color picker. */
 get_presets(): PoolColorArray;
 
-  connect<T extends SignalsOf<ColorPicker>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ColorPicker>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ColorPickerSignals>>(signal: T, method: SignalFunction<ColorPickerSignals[T]>): number;
 
 
 
 
+}
 
+declare class ColorPickerSignals extends BoxContainerSignals {
   /**
  * Emitted when the color is changed.
  *

@@ -2,12 +2,20 @@
 /**
  * Encapsulates a [ColorPicker] making it accessible by pressing a button. Pressing the button will toggle the [ColorPicker] visibility.
  *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
+ * **Note:** By default, the button may not be wide enough for the color preview swatch to be visible. Make sure to set [member Control.rect_min_size] to a big enough value to give the button enough space.
+ *
 */
 declare class ColorPickerButton extends Button {
 
   
 /**
  * Encapsulates a [ColorPicker] making it accessible by pressing a button. Pressing the button will toggle the [ColorPicker] visibility.
+ *
+ * See also [BaseButton] which contains common properties and methods associated with this node.
+ *
+ * **Note:** By default, the button may not be wide enough for the color preview swatch to be visible. Make sure to set [member Control.rect_min_size] to a big enough value to give the button enough space.
  *
 */
   "new"(): ColorPickerButton;
@@ -28,12 +36,15 @@ get_picker(): ColorPicker;
 /** Returns the control's [PopupPanel] which allows you to connect to popup signals. This allows you to handle events when the ColorPicker is shown or hidden. */
 get_popup(): PopupPanel;
 
-  connect<T extends SignalsOf<ColorPickerButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ColorPickerButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ColorPickerButtonSignals>>(signal: T, method: SignalFunction<ColorPickerButtonSignals[T]>): number;
 
 
 
 
+}
 
+declare class ColorPickerButtonSignals extends ButtonSignals {
   /**
  * Emitted when the color changes.
  *

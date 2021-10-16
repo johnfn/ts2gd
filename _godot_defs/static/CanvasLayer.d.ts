@@ -45,11 +45,14 @@ transform: Transform2D;
 /** Returns the RID of the canvas used by this layer. */
 get_canvas(): RID;
 
-  connect<T extends SignalsOf<CanvasLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CanvasLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CanvasLayerSignals>>(signal: T, method: SignalFunction<CanvasLayerSignals[T]>): number;
 
 
 
 
+}
 
+declare class CanvasLayerSignals extends NodeSignals {
   
 }

@@ -4,7 +4,7 @@
  *
  * After adding at least one child to GraphNode new sections will be automatically created in the Inspector called 'Slot'. When 'Slot' is expanded you will see list with index number for each slot. You can click on each of them to expand further.
  *
- * In the Inspector you can enable (show) or disable (hide) slots. By default all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
+ * In the Inspector you can enable (show) or disable (hide) slots. By default, all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
  *
 */
 declare class GraphNode extends Container {
@@ -15,7 +15,7 @@ declare class GraphNode extends Container {
  *
  * After adding at least one child to GraphNode new sections will be automatically created in the Inspector called 'Slot'. When 'Slot' is expanded you will see list with index number for each slot. You can click on each of them to expand further.
  *
- * In the Inspector you can enable (show) or disable (hide) slots. By default all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
+ * In the Inspector you can enable (show) or disable (hide) slots. By default, all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
  *
 */
   "new"(): GraphNode;
@@ -65,7 +65,7 @@ clear_all_slots(): void;
 /** Disables input and output slot whose index is [code]idx[/code]. */
 clear_slot(idx: int): void;
 
-/** Returns the color of the input connection [code]idx[/code]. */
+/** Returns the [Color] of the input connection [code]idx[/code]. */
 get_connection_input_color(idx: int): Color;
 
 /** Returns the number of enabled input slots (connections) to the GraphNode. */
@@ -77,7 +77,7 @@ get_connection_input_position(idx: int): Vector2;
 /** Returns the type of the input connection [code]idx[/code]. */
 get_connection_input_type(idx: int): int;
 
-/** Returns the color of the output connection [code]idx[/code]. */
+/** Returns the [Color] of the output connection [code]idx[/code]. */
 get_connection_output_color(idx: int): Color;
 
 /** Returns the number of enabled output slots (connections) of the GraphNode. */
@@ -89,22 +89,22 @@ get_connection_output_position(idx: int): Vector2;
 /** Returns the type of the output connection [code]idx[/code]. */
 get_connection_output_type(idx: int): int;
 
-/** Returns the color set to [code]idx[/code] left (input) slot. */
+/** Returns the left (input) [Color] of the slot [code]idx[/code]. */
 get_slot_color_left(idx: int): Color;
 
-/** Returns the color set to [code]idx[/code] right (output) slot. */
+/** Returns the right (output) [Color] of the slot [code]idx[/code]. */
 get_slot_color_right(idx: int): Color;
 
-/** Returns the (integer) type of left (input) [code]idx[/code] slot. */
+/** Returns the left (input) type of the slot [code]idx[/code]. */
 get_slot_type_left(idx: int): int;
 
-/** Returns the (integer) type of right (output) [code]idx[/code] slot. */
+/** Returns the right (output) type of the slot [code]idx[/code]. */
 get_slot_type_right(idx: int): int;
 
-/** Returns [code]true[/code] if left (input) slot [code]idx[/code] is enabled, [code]false[/code] otherwise. */
+/** Returns [code]true[/code] if left (input) side of the slot [code]idx[/code] is enabled. */
 is_slot_enabled_left(idx: int): boolean;
 
-/** Returns [code]true[/code] if right (output) slot [code]idx[/code] is enabled, [code]false[/code] otherwise. */
+/** Returns [code]true[/code] if right (output) side of the slot [code]idx[/code] is enabled. */
 is_slot_enabled_right(idx: int): boolean;
 
 /**
@@ -120,10 +120,31 @@ is_slot_enabled_right(idx: int): boolean;
  *
  * **Note:** This method only sets properties of the slot. To create the slot, add a [Control]-derived child to the GraphNode.
  *
+ * Individual properties can be set using one of the `set_slot_*` methods. You must enable at least one side of the slot to do so.
+ *
 */
 set_slot(idx: int, enable_left: boolean, type_left: int, color_left: Color, enable_right: boolean, type_right: int, color_right: Color, custom_left?: Texture, custom_right?: Texture): void;
 
-  connect<T extends SignalsOf<GraphNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+/** Sets the [Color] of the left (input) side of the slot [code]idx[/code] to [code]color_left[/code]. */
+set_slot_color_left(idx: int, color_left: Color): void;
+
+/** Sets the [Color] of the right (output) side of the slot [code]idx[/code] to [code]color_right[/code]. */
+set_slot_color_right(idx: int, color_right: Color): void;
+
+/** Toggles the left (input) side of the slot [code]idx[/code]. If [code]enable_left[/code] is [code]true[/code], a port will appear on the left side and the slot will be able to be connected from this side. */
+set_slot_enabled_left(idx: int, enable_left: boolean): void;
+
+/** Toggles the right (output) side of the slot [code]idx[/code]. If [code]enable_right[/code] is [code]true[/code], a port will appear on the right side and the slot will be able to be connected from this side. */
+set_slot_enabled_right(idx: int, enable_right: boolean): void;
+
+/** Sets the left (input) type of the slot [code]idx[/code] to [code]type_left[/code]. */
+set_slot_type_left(idx: int, type_left: int): void;
+
+/** Sets the right (output) type of the slot [code]idx[/code] to [code]type_right[/code]. */
+set_slot_type_right(idx: int, type_right: int): void;
+
+  // connect<T extends SignalsOf<GraphNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GraphNodeSignals>>(signal: T, method: SignalFunction<GraphNodeSignals[T]>): number;
 
 
 
@@ -131,21 +152,23 @@ set_slot(idx: int, enable_left: boolean, type_left: int, color_left: Color, enab
  * No overlay is shown.
  *
 */
-static OVERLAY_DISABLED: 0;
+static OVERLAY_DISABLED: any;
 
 /**
  * Show overlay set in the `breakpoint` theme property.
  *
 */
-static OVERLAY_BREAKPOINT: 1;
+static OVERLAY_BREAKPOINT: any;
 
 /**
  * Show overlay set in the `position` theme property.
  *
 */
-static OVERLAY_POSITION: 2;
+static OVERLAY_POSITION: any;
 
+}
 
+declare class GraphNodeSignals extends ContainerSignals {
   /**
  * Emitted when the GraphNode is requested to be closed. Happens on clicking the close button (see [member show_close]).
  *
@@ -175,5 +198,11 @@ raise_request: Signal<() => void>
  *
 */
 resize_request: Signal<(new_minsize: Vector2) => void>
+
+/**
+ * Emitted when any GraphNode's slot is updated.
+ *
+*/
+slot_updated: Signal<(idx: int) => void>
 
 }

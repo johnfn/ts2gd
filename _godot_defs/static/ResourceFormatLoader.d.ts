@@ -4,7 +4,7 @@
  *
  * Extending this class allows you to define your own loader. Be sure to respect the documented return types and values. You should give it a global class name with `class_name` for it to be registered. Like built-in ResourceFormatLoaders, it will be called automatically when loading resources of its handled type(s). You may also implement a [ResourceFormatSaver].
  *
- * **Note:** You can also extend [EditorImportPlugin] if the resource type you need exists but Godot is unable to load its format. Choosing one way over another depends if the format is suitable or not for the final exported game. For example, it's better to import `.png` textures as `.stex` ([StreamTexture]) first, so they can be loaded with better efficiency on the graphics card.
+ * **Note:** You can also extend [EditorImportPlugin] if the resource type you need exists but Godot is unable to load its format. Choosing one way over another depends on if the format is suitable or not for the final exported game. For example, it's better to import `.png` textures as `.stex` ([StreamTexture]) first, so they can be loaded with better efficiency on the graphics card.
  *
 */
 declare class ResourceFormatLoader extends Reference {
@@ -15,7 +15,7 @@ declare class ResourceFormatLoader extends Reference {
  *
  * Extending this class allows you to define your own loader. Be sure to respect the documented return types and values. You should give it a global class name with `class_name` for it to be registered. Like built-in ResourceFormatLoaders, it will be called automatically when loading resources of its handled type(s). You may also implement a [ResourceFormatSaver].
  *
- * **Note:** You can also extend [EditorImportPlugin] if the resource type you need exists but Godot is unable to load its format. Choosing one way over another depends if the format is suitable or not for the final exported game. For example, it's better to import `.png` textures as `.stex` ([StreamTexture]) first, so they can be loaded with better efficiency on the graphics card.
+ * **Note:** You can also extend [EditorImportPlugin] if the resource type you need exists but Godot is unable to load its format. Choosing one way over another depends on if the format is suitable or not for the final exported game. For example, it's better to import `.png` textures as `.stex` ([StreamTexture]) first, so they can be loaded with better efficiency on the graphics card.
  *
 */
   "new"(): ResourceFormatLoader;
@@ -62,11 +62,14 @@ load(path: string, original_path: string): any;
 */
 rename_dependencies(path: string, renames: string): int;
 
-  connect<T extends SignalsOf<ResourceFormatLoader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<ResourceFormatLoader>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<ResourceFormatLoaderSignals>>(signal: T, method: SignalFunction<ResourceFormatLoaderSignals[T]>): number;
 
 
 
 
+}
 
+declare class ResourceFormatLoaderSignals extends ReferenceSignals {
   
 }

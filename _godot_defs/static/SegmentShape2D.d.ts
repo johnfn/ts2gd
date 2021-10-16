@@ -23,11 +23,14 @@ b: Vector2;
 
 
 
-  connect<T extends SignalsOf<SegmentShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<SegmentShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SegmentShape2DSignals>>(signal: T, method: SignalFunction<SegmentShape2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class SegmentShape2DSignals extends Shape2DSignals {
   
 }

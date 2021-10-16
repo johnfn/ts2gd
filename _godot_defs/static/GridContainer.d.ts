@@ -29,11 +29,14 @@ columns: int;
 
 
 
-  connect<T extends SignalsOf<GridContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<GridContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GridContainerSignals>>(signal: T, method: SignalFunction<GridContainerSignals[T]>): number;
 
 
 
 
+}
 
+declare class GridContainerSignals extends ContainerSignals {
   
 }

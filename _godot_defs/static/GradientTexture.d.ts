@@ -23,11 +23,14 @@ width: int;
 
 
 
-  connect<T extends SignalsOf<GradientTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<GradientTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<GradientTextureSignals>>(signal: T, method: SignalFunction<GradientTextureSignals[T]>): number;
 
 
 
 
+}
 
+declare class GradientTextureSignals extends TextureSignals {
   
 }

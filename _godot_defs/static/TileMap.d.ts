@@ -2,12 +2,16 @@
 /**
  * Node for 2D tile-based maps. Tilemaps use a [TileSet] which contain a list of tiles (textures plus optional collision, navigation, and/or occluder shapes) which are used to create grid-based maps.
  *
+ * When doing physics queries against the tilemap, the cell coordinates are encoded as `metadata` for each detected collision shape returned by methods such as [method Physics2DDirectSpaceState.intersect_shape], [method Physics2DDirectBodyState.get_contact_collider_shape_metadata], etc.
+ *
 */
 declare class TileMap extends Node2D {
 
   
 /**
  * Node for 2D tile-based maps. Tilemaps use a [TileSet] which contain a list of tiles (textures plus optional collision, navigation, and/or occluder shapes) which are used to create grid-based maps.
+ *
+ * When doing physics queries against the tilemap, the cell coordinates are encoded as `metadata` for each detected collision shape returned by methods such as [method Physics2DDirectSpaceState.intersect_shape], [method Physics2DDirectBodyState.get_contact_collider_shape_metadata], etc.
  *
 */
   "new"(): TileMap;
@@ -33,7 +37,7 @@ cell_size: Vector2;
 /** Position for tile origin. See [enum TileOrigin] for possible values. */
 cell_tile_origin: int;
 
-/** If [code]true[/code], the TileMap's children will be drawn in order of their Y coordinate. */
+/** If [code]true[/code], the TileMap's direct children will be drawn in order of their Y coordinate. */
 cell_y_sort: boolean;
 
 /**
@@ -50,10 +54,10 @@ collision_bounce: float;
 /** Friction value for static body collisions (see [code]collision_use_kinematic[/code]). */
 collision_friction: float;
 
-/** The collision layer(s) for all colliders in the TileMap. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The collision layer(s) for all colliders in the TileMap. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_layer: int;
 
-/** The collision mask(s) for all colliders in the TileMap. See [url=https://docs.godotengine.org/en/latest/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
+/** The collision mask(s) for all colliders in the TileMap. See [url=https://docs.godotengine.org/en/3.4/tutorials/physics/physics_introduction.html#collision-layers-and-masks]Collision layers and masks[/url] in the documentation for more information. */
 collision_mask: int;
 
 /** If [code]true[/code], TileMap collisions will be handled as a kinematic body. If [code]false[/code], collisions will be handled as static body. */
@@ -77,6 +81,9 @@ mode: int;
 
 /** The light mask assigned to all light occluders in the TileMap. The TileSet's light occluders will cast shadows only from Light2D(s) that have the same light mask(s). */
 occluder_light_mask: int;
+
+/** If [code]true[/code], collision shapes are visible in the editor. Doesn't affect collision shapes visibility at runtime. To show collision shapes at runtime, enable [b]Visible Collision Shapes[/b] in the [b]Debug[/b] menu instead. */
+show_collision: boolean;
 
 /** The assigned [TileSet]. */
 tile_set: TileSet;
@@ -121,7 +128,16 @@ is_cell_x_flipped(x: int, y: int): boolean;
 is_cell_y_flipped(x: int, y: int): boolean;
 
 /**
- * Returns the global position corresponding to the given tilemap (grid-based) coordinates.
+ * Returns the local position of the top left corner of the cell corresponding to the given tilemap (grid-based) coordinates.
+ *
+ * To get the global position, use [method Node2D.to_global]:
+ *
+ * @example 
+ * 
+ * var local_position = my_tilemap.map_to_world(map_position)
+ * var global_position = my_tilemap.to_global(local_position)
+ * @summary 
+ * 
  *
  * Optionally, the tilemap's half offset can be ignored.
  *
@@ -143,7 +159,7 @@ map_to_world(map_position: Vector2, ignore_half_ofs?: boolean): Vector2;
  *
  * @example 
  * 
- * func set_cell(x, y, tile, flip_x=false, flip_y=false, transpose=false, autotile_coord=Vector2())
+ * func set_cell(x, y, tile, flip_x=false, flip_y=false, transpose=false, autotile_coord=Vector2()):
  *     # Write your custom logic here.
  *     # To call the default method:
  *     .set_cell(x, y, tile, flip_x, flip_y, transpose, autotile_coord)
@@ -187,10 +203,23 @@ update_bitmask_region(start?: Vector2, end?: Vector2): void;
 /** Updates the tile map's quadrants, allowing things such as navigation and collision shapes to be immediately used if modified. */
 update_dirty_quadrants(): void;
 
-/** Returns the tilemap (grid-based) coordinates corresponding to the given local position. */
+/**
+ * Returns the tilemap (grid-based) coordinates corresponding to the given local position.
+ *
+ * To use this with a global position, first determine the local position with [method Node2D.to_local]:
+ *
+ * @example 
+ * 
+ * var local_position = my_tilemap.to_local(global_position)
+ * var map_position = my_tilemap.world_to_map(local_position)
+ * @summary 
+ * 
+ *
+*/
 world_to_map(world_position: Vector2): Vector2;
 
-  connect<T extends SignalsOf<TileMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<TileMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TileMapSignals>>(signal: T, method: SignalFunction<TileMapSignals[T]>): number;
 
 
 
@@ -198,75 +227,77 @@ world_to_map(world_position: Vector2): Vector2;
  * Returned when a cell doesn't exist.
  *
 */
- static INVALID_CELL: null;
+static INVALID_CELL: any;
 
 /**
  * Orthogonal orientation mode.
  *
 */
-static MODE_SQUARE: 0;
+static MODE_SQUARE: any;
 
 /**
  * Isometric orientation mode.
  *
 */
-static MODE_ISOMETRIC: 1;
+static MODE_ISOMETRIC: any;
 
 /**
  * Custom orientation mode.
  *
 */
-static MODE_CUSTOM: 2;
+static MODE_CUSTOM: any;
 
 /**
  * Half offset on the X coordinate.
  *
 */
-static HALF_OFFSET_X: 0;
+static HALF_OFFSET_X: any;
 
 /**
  * Half offset on the Y coordinate.
  *
 */
-static HALF_OFFSET_Y: 1;
+static HALF_OFFSET_Y: any;
 
 /**
  * Half offset disabled.
  *
 */
-static HALF_OFFSET_DISABLED: 2;
+static HALF_OFFSET_DISABLED: any;
 
 /**
  * Half offset on the X coordinate (negative).
  *
 */
-static HALF_OFFSET_NEGATIVE_X: 3;
+static HALF_OFFSET_NEGATIVE_X: any;
 
 /**
  * Half offset on the Y coordinate (negative).
  *
 */
-static HALF_OFFSET_NEGATIVE_Y: 4;
+static HALF_OFFSET_NEGATIVE_Y: any;
 
 /**
  * Tile origin at its top-left corner.
  *
 */
-static TILE_ORIGIN_TOP_LEFT: 0;
+static TILE_ORIGIN_TOP_LEFT: any;
 
 /**
  * Tile origin at its center.
  *
 */
-static TILE_ORIGIN_CENTER: 1;
+static TILE_ORIGIN_CENTER: any;
 
 /**
  * Tile origin at its bottom-left corner.
  *
 */
-static TILE_ORIGIN_BOTTOM_LEFT: 2;
+static TILE_ORIGIN_BOTTOM_LEFT: any;
 
+}
 
+declare class TileMapSignals extends Node2DSignals {
   /**
  * Emitted when a tilemap setting has changed.
  *

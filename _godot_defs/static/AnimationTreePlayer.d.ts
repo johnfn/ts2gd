@@ -254,7 +254,8 @@ transition_node_set_input_count(id: string, count: int): void;
 /** The transition node with name [code]id[/code] sets its cross fade time to [code]time_sec[/code]. */
 transition_node_set_xfade_time(id: string, time_sec: float): void;
 
-  connect<T extends SignalsOf<AnimationTreePlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationTreePlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationTreePlayerSignals>>(signal: T, method: SignalFunction<AnimationTreePlayerSignals[T]>): number;
 
 
 
@@ -262,74 +263,76 @@ transition_node_set_xfade_time(id: string, time_sec: float): void;
  * Output node.
  *
 */
-static NODE_OUTPUT: 0;
+static NODE_OUTPUT: any;
 
 /**
  * Animation node.
  *
 */
-static NODE_ANIMATION: 1;
+static NODE_ANIMATION: any;
 
 /**
  * OneShot node.
  *
 */
-static NODE_ONESHOT: 2;
+static NODE_ONESHOT: any;
 
 /**
  * Mix node.
  *
 */
-static NODE_MIX: 3;
+static NODE_MIX: any;
 
 /**
  * Blend2 node.
  *
 */
-static NODE_BLEND2: 4;
+static NODE_BLEND2: any;
 
 /**
  * Blend3 node.
  *
 */
-static NODE_BLEND3: 5;
+static NODE_BLEND3: any;
 
 /**
  * Blend4 node.
  *
 */
-static NODE_BLEND4: 6;
+static NODE_BLEND4: any;
 
 /**
  * TimeScale node.
  *
 */
-static NODE_TIMESCALE: 7;
+static NODE_TIMESCALE: any;
 
 /**
  * TimeSeek node.
  *
 */
-static NODE_TIMESEEK: 8;
+static NODE_TIMESEEK: any;
 
 /**
  * Transition node.
  *
 */
-static NODE_TRANSITION: 9;
+static NODE_TRANSITION: any;
 
 /**
  * Process animation during the physics process. This is especially useful when animating physics bodies.
  *
 */
-static ANIMATION_PROCESS_PHYSICS: 0;
+static ANIMATION_PROCESS_PHYSICS: any;
 
 /**
  * Process animation during the idle process.
  *
 */
-static ANIMATION_PROCESS_IDLE: 1;
+static ANIMATION_PROCESS_IDLE: any;
 
+}
 
+declare class AnimationTreePlayerSignals extends NodeSignals {
   
 }

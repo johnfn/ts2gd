@@ -76,7 +76,12 @@ get_scale(): Vector3;
 /** Returns the inverse of the matrix. */
 inverse(): Basis;
 
-/** Returns [code]true[/code] if this basis and [code]b[/code] are approximately equal, by calling [code]is_equal_approx[/code] on each component. */
+/**
+ * Returns `true` if this basis and `b` are approximately equal, by calling `is_equal_approx` on each component.
+ *
+ * **Note:** For complicated reasons, the epsilon argument is always discarded. Don't use the epsilon argument, it does nothing.
+ *
+*/
 is_equal_approx(b: Basis, epsilon?: float): boolean;
 
 /** Returns the orthonormalized version of the matrix (useful to call from time to time to avoid rounding error for orthogonal matrices). This performs a Gram-Schmidt orthonormalization on the basis of the matrix. */
@@ -89,7 +94,7 @@ rotated(axis: Vector3, phi: float): Basis;
 scaled(scale: Vector3): Basis;
 
 /** Assuming that the matrix is a proper rotation matrix, slerp performs a spherical-linear interpolation with another rotation matrix. */
-slerp(b: Basis, t: float): Basis;
+slerp(to: Basis, weight: float): Basis;
 
 /** Transposed dot product with the X axis of the matrix. */
 tdotx(_with: Vector3): float;
@@ -114,7 +119,8 @@ xform(v: Vector3): Vector3;
 */
 xform_inv(v: Vector3): Vector3;
 
-  connect<T extends SignalsOf<Basis>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Basis>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<BasisSignals>>(signal: T, method: SignalFunction<BasisSignals[T]>): number;
 
 
 
@@ -144,6 +150,8 @@ static FLIP_Y: Basis;
 */
 static FLIP_Z: Basis;
 
+}
 
+declare class BasisSignals {
   
 }

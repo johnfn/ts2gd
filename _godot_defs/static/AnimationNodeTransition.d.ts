@@ -33,11 +33,14 @@ set_input_as_auto_advance(input: int, enable: boolean): void;
 /** No documentation provided. */
 set_input_caption(input: int, caption: string): void;
 
-  connect<T extends SignalsOf<AnimationNodeTransition>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<AnimationNodeTransition>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<AnimationNodeTransitionSignals>>(signal: T, method: SignalFunction<AnimationNodeTransitionSignals[T]>): number;
 
 
 
 
+}
 
+declare class AnimationNodeTransitionSignals extends AnimationNodeSignals {
   
 }

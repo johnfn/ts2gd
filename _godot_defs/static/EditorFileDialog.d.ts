@@ -55,7 +55,8 @@ get_vbox(): VBoxContainer;
 /** Notify the [EditorFileDialog] that its view of the data is no longer accurate. Updates the view contents on next view update. */
 invalidate(): void;
 
-  connect<T extends SignalsOf<EditorFileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<EditorFileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<EditorFileDialogSignals>>(signal: T, method: SignalFunction<EditorFileDialogSignals[T]>): number;
 
 
 
@@ -63,63 +64,65 @@ invalidate(): void;
  * The [EditorFileDialog] can select only one file. Accepting the window will open the file.
  *
 */
-static MODE_OPEN_FILE: 0;
+static MODE_OPEN_FILE: any;
 
 /**
  * The [EditorFileDialog] can select multiple files. Accepting the window will open all files.
  *
 */
-static MODE_OPEN_FILES: 1;
+static MODE_OPEN_FILES: any;
 
 /**
  * The [EditorFileDialog] can select only one directory. Accepting the window will open the directory.
  *
 */
-static MODE_OPEN_DIR: 2;
+static MODE_OPEN_DIR: any;
 
 /**
  * The [EditorFileDialog] can select a file or directory. Accepting the window will open it.
  *
 */
-static MODE_OPEN_ANY: 3;
+static MODE_OPEN_ANY: any;
 
 /**
  * The [EditorFileDialog] can select only one file. Accepting the window will save the file.
  *
 */
-static MODE_SAVE_FILE: 4;
+static MODE_SAVE_FILE: any;
 
 /**
  * The [EditorFileDialog] can only view `res://` directory contents.
  *
 */
-static ACCESS_RESOURCES: 0;
+static ACCESS_RESOURCES: any;
 
 /**
  * The [EditorFileDialog] can only view `user://` directory contents.
  *
 */
-static ACCESS_USERDATA: 1;
+static ACCESS_USERDATA: any;
 
 /**
  * The [EditorFileDialog] can view the entire local file system.
  *
 */
-static ACCESS_FILESYSTEM: 2;
+static ACCESS_FILESYSTEM: any;
 
 /**
  * The [EditorFileDialog] displays resources as thumbnails.
  *
 */
-static DISPLAY_THUMBNAILS: 0;
+static DISPLAY_THUMBNAILS: any;
 
 /**
  * The [EditorFileDialog] displays resources as a list of filenames.
  *
 */
-static DISPLAY_LIST: 1;
+static DISPLAY_LIST: any;
 
+}
 
+declare class EditorFileDialogSignals extends ConfirmationDialogSignals {
   /**
  * Emitted when a directory is selected.
  *

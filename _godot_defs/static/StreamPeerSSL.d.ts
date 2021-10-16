@@ -36,7 +36,8 @@ get_status(): int;
 /** Poll the connection to check for incoming bytes. Call this right before [method StreamPeer.get_available_bytes] for it to work properly. */
 poll(): void;
 
-  connect<T extends SignalsOf<StreamPeerSSL>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<StreamPeerSSL>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<StreamPeerSSLSignals>>(signal: T, method: SignalFunction<StreamPeerSSLSignals[T]>): number;
 
 
 
@@ -44,32 +45,34 @@ poll(): void;
  * A status representing a [StreamPeerSSL] that is disconnected.
  *
 */
-static STATUS_DISCONNECTED: 0;
+static STATUS_DISCONNECTED: any;
 
 /**
  * A status representing a [StreamPeerSSL] during handshaking.
  *
 */
-static STATUS_HANDSHAKING: 1;
+static STATUS_HANDSHAKING: any;
 
 /**
  * A status representing a [StreamPeerSSL] that is connected to a host.
  *
 */
-static STATUS_CONNECTED: 2;
+static STATUS_CONNECTED: any;
 
 /**
  * A status representing a [StreamPeerSSL] in error state.
  *
 */
-static STATUS_ERROR: 3;
+static STATUS_ERROR: any;
 
 /**
  * An error status that shows a mismatch in the SSL certificate domain presented by the host and the domain requested for validation.
  *
 */
-static STATUS_ERROR_HOSTNAME_MISMATCH: 4;
+static STATUS_ERROR_HOSTNAME_MISMATCH: any;
 
+}
 
+declare class StreamPeerSSLSignals extends StreamPeerSignals {
   
 }

@@ -35,11 +35,14 @@ smooth_faces: boolean;
 
 
 
-  connect<T extends SignalsOf<CSGTorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<CSGTorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<CSGTorusSignals>>(signal: T, method: SignalFunction<CSGTorusSignals[T]>): number;
 
 
 
 
+}
 
+declare class CSGTorusSignals extends CSGPrimitiveSignals {
   
 }

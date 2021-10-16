@@ -62,7 +62,7 @@ get_baked_up_vectors(): PoolVector3Array;
 get_closest_offset(to_point: Vector3): float;
 
 /**
- * Returns the closest point (in curve's local space) to `to_point`.
+ * Returns the closest baked point (in curve's local space) to `to_point`.
  *
  * `to_point` must be in this curve's local space.
  *
@@ -72,10 +72,10 @@ get_closest_point(to_point: Vector3): Vector3;
 /** Returns the number of points describing the curve. */
 get_point_count(): int;
 
-/** Returns the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0, 0)[/code]. */
+/** Returns the position of the control point leading to the vertex [code]idx[/code]. The returned position is relative to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0, 0)[/code]. */
 get_point_in(idx: int): Vector3;
 
-/** Returns the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0, 0)[/code]. */
+/** Returns the position of the control point leading out of the vertex [code]idx[/code]. The returned position is relative to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0, 0)[/code]. */
 get_point_out(idx: int): Vector3;
 
 /** Returns the position of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console, and returns [code](0, 0, 0)[/code]. */
@@ -93,7 +93,7 @@ get_point_tilt(idx: int): float;
 interpolate(idx: int, t: float): Vector3;
 
 /**
- * Returns a point within the curve at position `offset`, where `offset` is measured as a pixel distance along the curve.
+ * Returns a point within the curve at position `offset`, where `offset` is measured as a distance in 3D units along the curve.
  *
  * To do that, it finds the two cached points where the `offset` lies between, then interpolates the values. This interpolation is cubic if `cubic` is set to `true`, or linear if set to `false`.
  *
@@ -118,10 +118,10 @@ interpolatef(fofs: float): Vector3;
 /** Deletes the point [code]idx[/code] from the curve. Sends an error to the console if [code]idx[/code] is out of bounds. */
 remove_point(idx: int): void;
 
-/** Sets the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
+/** Sets the position of the control point leading to the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex. */
 set_point_in(idx: int, position: Vector3): void;
 
-/** Sets the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
+/** Sets the position of the control point leading out of the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex. */
 set_point_out(idx: int, position: Vector3): void;
 
 /** Sets the position for the vertex [code]idx[/code]. If the index is out of bounds, the function sends an error to the console. */
@@ -147,11 +147,14 @@ set_point_tilt(idx: int, tilt: float): void;
 */
 tessellate(max_stages?: int, tolerance_degrees?: float): PoolVector3Array;
 
-  connect<T extends SignalsOf<Curve3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Curve3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Curve3DSignals>>(signal: T, method: SignalFunction<Curve3DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Curve3DSignals extends ResourceSignals {
   
 }

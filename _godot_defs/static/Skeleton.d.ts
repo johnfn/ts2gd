@@ -48,6 +48,9 @@ get_bone_custom_pose(bone_idx: int): Transform;
 /** Returns the overall transform of the specified bone, with respect to the skeleton. Being relative to the skeleton frame, this is not the actual "global" transform of the bone. */
 get_bone_global_pose(bone_idx: int): Transform;
 
+/** Returns the overall transform of the specified bone, with respect to the skeleton, but without any global pose overrides. Being relative to the skeleton frame, this is not the actual "global" transform of the bone. */
+get_bone_global_pose_no_override(bone_idx: int): Transform;
+
 /** Returns the name of the bone at index [code]index[/code]. */
 get_bone_name(bone_idx: int): string;
 
@@ -98,6 +101,9 @@ set_bone_disable_rest(bone_idx: int, disable: boolean): void;
 /** No documentation provided. */
 set_bone_global_pose_override(bone_idx: int, pose: Transform, amount: float, persistent?: boolean): void;
 
+/** No documentation provided. */
+set_bone_name(bone_idx: int, name: string): void;
+
 /**
  * Sets the bone index `parent_idx` as the parent of the bone at `bone_idx`. If -1, then bone has no parent.
  *
@@ -118,13 +124,19 @@ unbind_child_node_from_bone(bone_idx: int, node: Node): void;
 /** No documentation provided. */
 unparent_bone_and_rest(bone_idx: int): void;
 
-  connect<T extends SignalsOf<Skeleton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Skeleton>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<SkeletonSignals>>(signal: T, method: SignalFunction<SkeletonSignals[T]>): number;
 
 
 
 /** No documentation provided. */
-static NOTIFICATION_UPDATE_SKELETON: 50;
+static NOTIFICATION_UPDATE_SKELETON: any;
 
+}
 
-  
+declare class SkeletonSignals extends SpatialSignals {
+  /**
+*/
+skeleton_updated: Signal<() => void>
+
 }

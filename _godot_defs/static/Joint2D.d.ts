@@ -29,11 +29,14 @@ node_b: NodePathType;
 
 
 
-  connect<T extends SignalsOf<Joint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Joint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<Joint2DSignals>>(signal: T, method: SignalFunction<Joint2DSignals[T]>): number;
 
 
 
 
+}
 
+declare class Joint2DSignals extends Node2DSignals {
   
 }

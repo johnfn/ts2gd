@@ -16,7 +16,7 @@
  * @summary 
  * 
  *
- * Many methods require a property name, such as `"position"` above. You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using `"property:component"` (eg. `position:x`), where it would only apply to that particular component.
+ * Many methods require a property name, such as `"position"` above. You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using `"property:component"` (e.g. `position:x`), where it would only apply to that particular component.
  *
  * Many of the methods accept `trans_type` and `ease_type`. The first accepts an [enum TransitionType] constant, and refers to the way the timing of the animation is handled (see [url=https://easings.net/]easings.net[/url] for some examples). The second accepts an [enum EaseType] constant, and controls where the `trans_type` is applied to the interpolation (in the beginning, the end, or both). If you don't know which transition and easing to pick, you can try different [enum TransitionType] constants with [constant EASE_IN_OUT], and use the one that looks best.
  *
@@ -43,7 +43,7 @@ declare class Tween extends Node {
  * @summary 
  * 
  *
- * Many methods require a property name, such as `"position"` above. You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using `"property:component"` (eg. `position:x`), where it would only apply to that particular component.
+ * Many methods require a property name, such as `"position"` above. You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using `"property:component"` (e.g. `position:x`), where it would only apply to that particular component.
  *
  * Many of the methods accept `trans_type` and `ease_type`. The first accepts an [enum TransitionType] constant, and refers to the way the timing of the animation is handled (see [url=https://easings.net/]easings.net[/url] for some examples). The second accepts an [enum EaseType] constant, and controls where the `trans_type` is applied to the interpolation (in the beginning, the end, or both). If you don't know which transition and easing to pick, you can try different [enum TransitionType] constants with [constant EASE_IN_OUT], and use the one that looks best.
  *
@@ -165,7 +165,8 @@ targeting_property(object: Object, property: NodePathType, initial: Object, init
 /** Returns the current time of the tween. */
 tell(): float;
 
-  connect<T extends SignalsOf<Tween>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<Tween>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<TweenSignals>>(signal: T, method: SignalFunction<TweenSignals[T]>): number;
 
 
 
@@ -173,105 +174,107 @@ tell(): float;
  * The tween updates with the `_physics_process` callback.
  *
 */
-static TWEEN_PROCESS_PHYSICS: 0;
+static TWEEN_PROCESS_PHYSICS: any;
 
 /**
  * The tween updates with the `_process` callback.
  *
 */
-static TWEEN_PROCESS_IDLE: 1;
+static TWEEN_PROCESS_IDLE: any;
 
 /**
  * The animation is interpolated linearly.
  *
 */
-static TRANS_LINEAR: 0;
+static TRANS_LINEAR: any;
 
 /**
  * The animation is interpolated using a sine function.
  *
 */
-static TRANS_SINE: 1;
+static TRANS_SINE: any;
 
 /**
  * The animation is interpolated with a quintic (to the power of 5) function.
  *
 */
-static TRANS_QUINT: 2;
+static TRANS_QUINT: any;
 
 /**
  * The animation is interpolated with a quartic (to the power of 4) function.
  *
 */
-static TRANS_QUART: 3;
+static TRANS_QUART: any;
 
 /**
  * The animation is interpolated with a quadratic (to the power of 2) function.
  *
 */
-static TRANS_QUAD: 4;
+static TRANS_QUAD: any;
 
 /**
  * The animation is interpolated with an exponential (to the power of x) function.
  *
 */
-static TRANS_EXPO: 5;
+static TRANS_EXPO: any;
 
 /**
  * The animation is interpolated with elasticity, wiggling around the edges.
  *
 */
-static TRANS_ELASTIC: 6;
+static TRANS_ELASTIC: any;
 
 /**
  * The animation is interpolated with a cubic (to the power of 3) function.
  *
 */
-static TRANS_CUBIC: 7;
+static TRANS_CUBIC: any;
 
 /**
  * The animation is interpolated with a function using square roots.
  *
 */
-static TRANS_CIRC: 8;
+static TRANS_CIRC: any;
 
 /**
  * The animation is interpolated by bouncing at the end.
  *
 */
-static TRANS_BOUNCE: 9;
+static TRANS_BOUNCE: any;
 
 /**
  * The animation is interpolated backing out at ends.
  *
 */
-static TRANS_BACK: 10;
+static TRANS_BACK: any;
 
 /**
  * The interpolation starts slowly and speeds up towards the end.
  *
 */
-static EASE_IN: 0;
+static EASE_IN: any;
 
 /**
  * The interpolation starts quickly and slows down towards the end.
  *
 */
-static EASE_OUT: 1;
+static EASE_OUT: any;
 
 /**
  * A combination of [constant EASE_IN] and [constant EASE_OUT]. The interpolation is slowest at both ends.
  *
 */
-static EASE_IN_OUT: 2;
+static EASE_IN_OUT: any;
 
 /**
  * A combination of [constant EASE_IN] and [constant EASE_OUT]. The interpolation is fastest at both ends.
  *
 */
-static EASE_OUT_IN: 3;
+static EASE_OUT_IN: any;
 
+}
 
+declare class TweenSignals extends NodeSignals {
   /**
  * Emitted when all processes in a tween end.
  *

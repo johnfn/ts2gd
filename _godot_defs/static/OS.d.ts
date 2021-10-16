@@ -21,6 +21,9 @@ clipboard: string;
 /** The current screen index (starting from 0). */
 current_screen: int;
 
+/** If [code]true[/code], the engine filters the time delta measured between each frame, and attempts to compensate for random variation. This will only operate on systems where V-Sync is active. */
+delta_smoothing: boolean;
+
 /**
  * The exit code passed to the OS when the main loop exits. By convention, an exit code of `0` indicates success whereas a non-zero exit code indicates an error. For portability reasons, the exit code should be set between 0 and 125 (inclusive).
  *
@@ -41,13 +44,18 @@ low_processor_usage_mode_sleep_usec: int;
 /** The maximum size of the window (without counting window manager decorations). Does not affect fullscreen mode. Set to [code](0, 0)[/code] to reset to the system default value. */
 max_window_size: Vector2;
 
-/** The minimum size of the window (without counting window manager decorations). Does not affect fullscreen mode. Set to [code](0, 0)[/code] to reset to the system default value. */
+/**
+ * The minimum size of the window in pixels (without counting window manager decorations). Does not affect fullscreen mode. Set to `(0, 0)` to reset to the system's default value.
+ *
+ * **Note:** By default, the project window has a minimum size of `Vector2(64, 64)`. This prevents issues that can arise when the window is resized to a near-zero size.
+ *
+*/
 min_window_size: Vector2;
 
 /** The current screen orientation. */
 screen_orientation: int;
 
-/** The current tablet drvier in use. */
+/** The current tablet driver in use. */
 tablet_driver: string;
 
 /** If [code]true[/code], vertical synchronization (Vsync) is enabled. */
@@ -81,13 +89,13 @@ window_maximized: boolean;
 window_minimized: boolean;
 
 /**
- * If `true`, the window background is transparent and window frame is removed.
+ * If `true`, the window background is transparent and the window frame is removed.
  *
  * Use `get_tree().get_root().set_transparent_background(true)` to disable main viewport background rendering.
  *
- * **Note:** This property has no effect if **Project > Project Settings > Display > Window > Per-pixel transparency > Allowed** setting is disabled.
+ * **Note:** This property has no effect if [member ProjectSettings.display/window/per_pixel_transparency/allowed] setting is disabled.
  *
- * **Note:** This property is implemented on HTML5, Linux, macOS and Windows.
+ * **Note:** This property is implemented on HTML5, Linux, macOS, Windows, and Android. It can't be changed at runtime for Android. Use [member ProjectSettings.display/window/per_pixel_transparency/enabled] to set it at startup instead.
  *
 */
 window_per_pixel_transparency_enabled: boolean;
@@ -121,10 +129,24 @@ center_window(): void;
 */
 close_midi_inputs(): void;
 
-/** Delay execution of the current thread by [code]msec[/code] milliseconds. */
+/**
+ * Delays execution of the current thread by `msec` milliseconds. `msec` must be greater than or equal to `0`. Otherwise, [method delay_msec] will do nothing and will print an error message.
+ *
+ * **Note:** [method delay_msec] is a **blocking** way to delay code execution. To delay code execution in a non-blocking way, see [method SceneTree.create_timer]. Yielding with [method SceneTree.create_timer] will delay the execution of code placed below the `yield` without affecting the rest of the project (or editor, for [EditorPlugin]s and [EditorScript]s).
+ *
+ * **Note:** When [method delay_msec] is called on the main thread, it will freeze the project and will prevent it from redrawing and registering input until the delay has passed. When using [method delay_msec] as part of an [EditorPlugin] or [EditorScript], it will freeze the editor but won't freeze the project if it is currently running (since the project is an independent child process).
+ *
+*/
 delay_msec(msec: int): void;
 
-/** Delay execution of the current thread by [code]usec[/code] microseconds. */
+/**
+ * Delays execution of the current thread by `usec` microseconds. `usec` must be greater than or equal to `0`. Otherwise, [method delay_usec] will do nothing and will print an error message.
+ *
+ * **Note:** [method delay_usec] is a **blocking** way to delay code execution. To delay code execution in a non-blocking way, see [method SceneTree.create_timer]. Yielding with [method SceneTree.create_timer] will delay the execution of code placed below the `yield` without affecting the rest of the project (or editor, for [EditorPlugin]s and [EditorScript]s).
+ *
+ * **Note:** When [method delay_usec] is called on the main thread, it will freeze the project and will prevent it from redrawing and registering input until the delay has passed. When using [method delay_usec] as part of an [EditorPlugin] or [EditorScript], it will freeze the editor but won't freeze the project if it is currently running (since the project is an independent child process).
+ *
+*/
 delay_usec(usec: int): void;
 
 /**
@@ -198,13 +220,21 @@ get_audio_driver_count(): int;
 get_audio_driver_name(driver: int): string;
 
 /**
+ * Returns the **global** cache data directory according to the operating system's standards. On desktop platforms, this path can be overridden by setting the `XDG_CACHE_HOME` environment variable before starting the project. See [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]File paths in Godot projects[/url] in the documentation for more information. See also [method get_config_dir] and [method get_data_dir].
+ *
+ * Not to be confused with [method get_user_data_dir], which returns the **project-specific** user data path.
+ *
+*/
+get_cache_dir(): string;
+
+/**
  * Returns the command-line arguments passed to the engine.
  *
  * Command-line arguments can be written in any form, including both `--key value` and `--key=value` forms so they can be properly parsed, as long as custom command-line arguments do not conflict with engine arguments.
  *
  * You can also incorporate environment variables using the [method get_environment] method.
  *
- * You can set `editor/main_run_args` in the Project Settings to define command-line arguments to be passed by the editor when running the project.
+ * You can set [member ProjectSettings.editor/main_run_args] to define command-line arguments to be passed by the editor when running the project.
  *
  * Here's a minimal example on how to parse command-line arguments into a dictionary using the `--key=value` form for arguments:
  *
@@ -222,6 +252,14 @@ get_audio_driver_name(driver: int): string;
 get_cmdline_args(): PoolStringArray;
 
 /**
+ * Returns the **global** user configuration directory according to the operating system's standards. On desktop platforms, this path can be overridden by setting the `XDG_CONFIG_HOME` environment variable before starting the project. See [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]File paths in Godot projects[/url] in the documentation for more information. See also [method get_cache_dir] and [method get_data_dir].
+ *
+ * Not to be confused with [method get_user_data_dir], which returns the **project-specific** user data path.
+ *
+*/
+get_config_dir(): string;
+
+/**
  * Returns an array of MIDI device names.
  *
  * The returned array will be empty if the system MIDI driver has not previously been initialised with [method open_midi_inputs].
@@ -234,11 +272,19 @@ get_connected_midi_inputs(): PoolStringArray;
 /** Returns the currently used video driver, using one of the values from [enum VideoDriver]. */
 get_current_video_driver(): int;
 
+/**
+ * Returns the **global** user data directory according to the operating system's standards. On desktop platforms, this path can be overridden by setting the `XDG_DATA_HOME` environment variable before starting the project. See [url=https://docs.godotengine.org/en/latest/tutorials/io/data_paths.html]File paths in Godot projects[/url] in the documentation for more information. See also [method get_cache_dir] and [method get_config_dir].
+ *
+ * Not to be confused with [method get_user_data_dir], which returns the **project-specific** user data path.
+ *
+*/
+get_data_dir(): string;
+
 /** Returns current date as a dictionary of keys: [code]year[/code], [code]month[/code], [code]day[/code], [code]weekday[/code], [code]dst[/code] (Daylight Savings Time). */
-get_date(utc?: boolean): Dictionary;
+get_date(utc?: boolean): Dictionary<any, any>;
 
 /** Returns current datetime as a dictionary of keys: [code]year[/code], [code]month[/code], [code]day[/code], [code]weekday[/code], [code]dst[/code] (Daylight Savings Time), [code]hour[/code], [code]minute[/code], [code]second[/code]. */
-get_datetime(utc?: boolean): Dictionary;
+get_datetime(utc?: boolean): Dictionary<any, any>;
 
 /**
  * Gets a dictionary of time values corresponding to the given UNIX epoch time (in seconds).
@@ -246,19 +292,24 @@ get_datetime(utc?: boolean): Dictionary;
  * The returned Dictionary's values will be the same as [method get_datetime], with the exception of Daylight Savings Time as it cannot be determined from the epoch.
  *
 */
-get_datetime_from_unix_time(unix_time_val: int): Dictionary;
+get_datetime_from_unix_time(unix_time_val: int): Dictionary<any, any>;
 
 /** Returns the total amount of dynamic memory used (only works in debug). */
 get_dynamic_memory_usage(): int;
 
-/** Returns an environment variable. */
-get_environment(environment: string): string;
+/**
+ * Returns the value of an environment variable. Returns an empty string if the environment variable doesn't exist.
+ *
+ * **Note:** Double-check the casing of `variable`. Environment variable names are case-sensitive on all platforms except Windows.
+ *
+*/
+get_environment(variable: string): string;
 
 /** Returns the path to the current engine executable. */
 get_executable_path(): string;
 
 /**
- * With this function you can get the list of dangerous permissions that have been granted to the Android application.
+ * With this function, you can get the list of dangerous permissions that have been granted to the Android application.
  *
  * **Note:** This method is implemented on Android.
  *
@@ -295,8 +346,29 @@ get_ime_text(): string;
 */
 get_latin_keyboard_variant(): string;
 
-/** Returns the host OS locale. */
+/**
+ * Returns the host OS locale as a string of the form `language_Script_COUNTRY_VARIANT@extra`. If you want only the language code and not the fully specified locale from the OS, you can use [method get_locale_language].
+ *
+ * `language` - 2 or 3-letter [url=https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes]language code[/url], in lower case.
+ *
+ * `Script` - optional, 4-letter [url=https://en.wikipedia.org/wiki/ISO_15924]script code[/url], in title case.
+ *
+ * `COUNTRY` - optional, 2 or 3-letter [url=https://en.wikipedia.org/wiki/ISO_3166-1]country code[/url], in upper case.
+ *
+ * `VARIANT` - optional, language variant, region and sort order. Variant can have any number of underscored keywords.
+ *
+ * `extra` - optional, semicolon separated list of additional key words. Currency, calendar, sort order and numbering system information.
+ *
+*/
 get_locale(): string;
+
+/**
+ * Returns the host OS locale's 2 or 3-letter [url=https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes]language code[/url] as a string which should be consistent on all platforms. This is equivalent to extracting the `language` part of the [method get_locale] string.
+ *
+ * This can be used to narrow down fully specified locale strings to only the "common" language code, when you don't need the additional information about country code or variants. For example, for a French Canadian user with `fr_CA` locale, this would return `fr`.
+ *
+*/
+get_locale_language(): string;
 
 /**
  * Returns the model name of the current device.
@@ -308,6 +380,14 @@ get_model_name(): string;
 
 /** Returns the name of the host OS. Possible values are: [code]"Android"[/code], [code]"iOS"[/code], [code]"HTML5"[/code], [code]"OSX"[/code], [code]"Server"[/code], [code]"Windows"[/code], [code]"UWP"[/code], [code]"X11"[/code]. */
 get_name(): string;
+
+/**
+ * Returns internal structure pointers for use in GDNative plugins.
+ *
+ * **Note:** This method is implemented on Linux and Windows (other OSs will soon be supported).
+ *
+*/
+get_native_handle(handle_type: int): int;
 
 /**
  * Returns the amount of battery left in the device as a percentage. Returns `-1` if power state is unknown.
@@ -361,7 +441,9 @@ get_screen_count(): int;
 /**
  * Returns the dots per inch density of the specified screen. If `screen` is `-1` (the default value), the current screen will be used.
  *
- * On Android devices, the actual screen densities are grouped into six generalized densities:
+ * **Note:** On macOS, returned value is inaccurate if fractional display scaling mode is used.
+ *
+ * **Note:** On Android devices, the actual screen densities are grouped into six generalized densities:
  *
  * @example 
  * 
@@ -419,8 +501,10 @@ get_static_memory_usage(): int;
  *
  * **Note:** This method is implemented on Android, Linux, macOS and Windows.
  *
+ * **Note:** Shared storage is implemented on Android and allows to differentiate between app specific and shared directories. Shared directories have additional restrictions on Android.
+ *
 */
-get_system_dir(dir: int): string;
+get_system_dir(dir: int, shared_storage?: boolean): string;
 
 /** Returns the epoch time of the operating system in milliseconds. */
 get_system_time_msecs(): int;
@@ -444,6 +528,14 @@ get_tablet_driver_count(): int;
 */
 get_tablet_driver_name(idx: int): string;
 
+/**
+ * Returns the ID of the current thread. This can be used in logs to ease debugging of multi-threaded applications.
+ *
+ * **Note:** Thread IDs are not deterministic and may be reused across application restarts.
+ *
+*/
+get_thread_caller_id(): int;
+
 /** Returns the amount of time passed in milliseconds since the engine started. */
 get_ticks_msec(): int;
 
@@ -451,20 +543,27 @@ get_ticks_msec(): int;
 get_ticks_usec(): int;
 
 /** Returns current time as a dictionary of keys: hour, minute, second. */
-get_time(utc?: boolean): Dictionary;
+get_time(utc?: boolean): Dictionary<any, any>;
 
 /** Returns the current time zone as a dictionary with the keys: bias and name. */
-get_time_zone_info(): Dictionary;
+get_time_zone_info(): Dictionary<any, any>;
 
 /**
  * Returns a string that is unique to the device.
+ *
+ * **Note:** This string may change without notice if the user reinstalls/upgrades their operating system or changes their hardware. This means it should generally not be used to encrypt persistent data as the data saved before an unexpected ID change would become inaccessible. The returned string may also be falsified using external programs, so do not rely on the string returned by [method get_unique_id] for security purposes.
  *
  * **Note:** Returns an empty string on HTML5 and UWP, as this method isn't implemented on those platforms yet.
  *
 */
 get_unique_id(): string;
 
-/** Returns the current UNIX epoch timestamp. */
+/**
+ * Returns the current UNIX epoch timestamp in seconds.
+ *
+ * **Important:** This is the system clock that the user can manually set. **Never use** this method for precise time calculation since its results are also subject to automatic adjustments by the operating system. **Always use** [method get_ticks_usec] or [method get_ticks_msec] for precise time calculation instead, since they are guaranteed to be monotonic (i.e. never decrease).
+ *
+*/
 get_unix_time(): int;
 
 /**
@@ -472,10 +571,12 @@ get_unix_time(): int;
  *
  * `datetime` must be populated with the following keys: `year`, `month`, `day`, `hour`, `minute`, `second`.
  *
+ * If the dictionary is empty `0` is returned. If some keys are omitted, they default to the equivalent values for the UNIX epoch timestamp 0 (1970-01-01 at 00:00:00 UTC).
+ *
  * You can pass the output from [method get_datetime_from_unix_time] directly into this function. Daylight Savings Time (`dst`), if present, is ignored.
  *
 */
-get_unix_time_from_datetime(datetime: Dictionary): int;
+get_unix_time_from_datetime(datetime: Dictionary<any, any>): int;
 
 /**
  * Returns the absolute directory path where user data is written (`user://`).
@@ -487,6 +588,8 @@ get_unix_time_from_datetime(datetime: Dictionary): int;
  * On Windows, this is `%APPDATA%\Godot\app_userdata\[project_name]`, or `%APPDATA%\[custom_name]` if `use_custom_user_dir` is set. `%APPDATA%` expands to `%USERPROFILE%\AppData\Roaming`.
  *
  * If the project name is empty, `user://` falls back to `res://`.
+ *
+ * Not to be confused with [method get_data_dir], which returns the **global** (non-project-specific) user data directory.
  *
 */
 get_user_data_dir(): string;
@@ -535,11 +638,16 @@ global_menu_clear(menu: string): void;
 */
 global_menu_remove_item(menu: string, idx: int): void;
 
-/** Returns [code]true[/code] if an environment variable exists. */
-has_environment(environment: string): boolean;
+/**
+ * Returns `true` if the environment variable with the name `variable` exists.
+ *
+ * **Note:** Double-check the casing of `variable`. Environment variable names are case-sensitive on all platforms except Windows.
+ *
+*/
+has_environment(variable: string): boolean;
 
 /**
- * Returns `true` if the feature for the given feature tag is supported in the currently running instance, depending on platform, build etc. Can be used to check whether you're currently running a debug build, on a certain platform or arch, etc. Refer to the [url=https://docs.godotengine.org/en/latest/getting_started/workflow/export/feature_tags.html]Feature Tags[/url] documentation for more details.
+ * Returns `true` if the feature for the given feature tag is supported in the currently running instance, depending on the platform, build etc. Can be used to check whether you're currently running a debug build, on a certain platform or arch, etc. Refer to the [url=https://docs.godotengine.org/en/3.4/getting_started/workflow/export/feature_tags.html]Feature Tags[/url] documentation for more details.
  *
  * **Note:** Tag names are case-sensitive.
  *
@@ -649,7 +757,7 @@ move_window_to_foreground(): void;
 /**
  * Returns `true` if native video is playing.
  *
- * **Note:** This method is implemented on Android and iOS.
+ * **Note:** This method is only implemented on iOS.
  *
 */
 native_video_is_playing(): boolean;
@@ -657,7 +765,7 @@ native_video_is_playing(): boolean;
 /**
  * Pauses native video playback.
  *
- * **Note:** This method is implemented on Android and iOS.
+ * **Note:** This method is only implemented on iOS.
  *
 */
 native_video_pause(): void;
@@ -665,7 +773,7 @@ native_video_pause(): void;
 /**
  * Plays native video from the specified path, at the given volume and with audio and subtitle tracks.
  *
- * **Note:** This method is implemented on Android and iOS, and the current Android implementation does not support the `volume`, `audio_track` and `subtitle_track` options.
+ * **Note:** This method is only implemented on iOS.
  *
 */
 native_video_play(path: string, volume: float, audio_track: string, subtitle_track: string): int;
@@ -673,7 +781,7 @@ native_video_play(path: string, volume: float, audio_track: string, subtitle_tra
 /**
  * Stops native video playback.
  *
- * **Note:** This method is implemented on Android and iOS.
+ * **Note:** This method is implemented on iOS.
  *
 */
 native_video_stop(): void;
@@ -681,7 +789,7 @@ native_video_stop(): void;
 /**
  * Resumes native video playback.
  *
- * **Note:** This method is implemented on Android and iOS.
+ * **Note:** This method is implemented on iOS.
  *
 */
 native_video_unpause(): void;
@@ -718,12 +826,20 @@ request_attention(): void;
 request_permission(name: string): boolean;
 
 /**
- * With this function you can request dangerous permissions since normal permissions are automatically granted at install time in Android application.
+ * With this function, you can request dangerous permissions since normal permissions are automatically granted at install time in Android applications.
  *
  * **Note:** This method is implemented on Android.
  *
 */
 request_permissions(): boolean;
+
+/**
+ * Sets the value of the environment variable `variable` to `value`. The environment variable will be set for the Godot process and any process executed with [method execute] after running [method set_environment]. The environment variable will **not** persist to processes run after the Godot process was terminated.
+ *
+ * **Note:** Double-check the casing of `variable`. Environment variable names are case-sensitive on all platforms except Windows.
+ *
+*/
+set_environment(variable: string, value: string): boolean;
 
 /**
  * Sets the game's icon using an [Image] resource.
@@ -782,6 +898,29 @@ set_use_file_access_save_and_swap(enabled: boolean): void;
 set_window_always_on_top(enabled: boolean): void;
 
 /**
+ * Sets a polygonal region of the window which accepts mouse events. Mouse events outside the region will be passed through.
+ *
+ * Passing an empty array will disable passthrough support (all mouse events will be intercepted by the window, which is the default behavior).
+ *
+ * @example 
+ * 
+ * # Set region, using Path2D node.
+ * OS.set_window_mouse_passthrough($Path2D.curve.get_baked_points())
+ * # Set region, using Polygon2D node.
+ * OS.set_window_mouse_passthrough($Polygon2D.polygon)
+ * # Reset region to default.
+ * OS.set_window_mouse_passthrough([])
+ * @summary 
+ * 
+ *
+ * **Note:** On Windows, the portion of a window that lies outside the region is not drawn, while on Linux and macOS it is.
+ *
+ * **Note:** This method is implemented on Linux, macOS and Windows.
+ *
+*/
+set_window_mouse_passthrough(region: PoolVector2Array): void;
+
+/**
  * Sets the window title to the specified string.
  *
  * **Note:** This should be used sporadically. Don't set this every frame, as that will negatively affect performance on some window managers.
@@ -819,7 +958,8 @@ shell_open(uri: string): int;
 */
 show_virtual_keyboard(existing_text?: string, multiline?: boolean): void;
 
-  connect<T extends SignalsOf<OSClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<OSClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<OSClassSignals>>(signal: T, method: SignalFunction<OSClassSignals[T]>): number;
 
 
 
@@ -827,248 +967,306 @@ show_virtual_keyboard(existing_text?: string, multiline?: boolean): void;
  * The GLES2 rendering backend. It uses OpenGL ES 2.0 on mobile devices, OpenGL 2.1 on desktop platforms and WebGL 1.0 on the web.
  *
 */
-static VIDEO_DRIVER_GLES2: 1;
+static VIDEO_DRIVER_GLES2: any;
 
 /**
  * The GLES3 rendering backend. It uses OpenGL ES 3.0 on mobile devices, OpenGL 3.3 on desktop platforms and WebGL 2.0 on the web.
  *
 */
-static VIDEO_DRIVER_GLES3: 0;
+static VIDEO_DRIVER_GLES3: any;
 
 /**
  * Sunday.
  *
 */
-static DAY_SUNDAY: 0;
+static DAY_SUNDAY: any;
 
 /**
  * Monday.
  *
 */
-static DAY_MONDAY: 1;
+static DAY_MONDAY: any;
 
 /**
  * Tuesday.
  *
 */
-static DAY_TUESDAY: 2;
+static DAY_TUESDAY: any;
 
 /**
  * Wednesday.
  *
 */
-static DAY_WEDNESDAY: 3;
+static DAY_WEDNESDAY: any;
 
 /**
  * Thursday.
  *
 */
-static DAY_THURSDAY: 4;
+static DAY_THURSDAY: any;
 
 /**
  * Friday.
  *
 */
-static DAY_FRIDAY: 5;
+static DAY_FRIDAY: any;
 
 /**
  * Saturday.
  *
 */
-static DAY_SATURDAY: 6;
+static DAY_SATURDAY: any;
 
 /**
  * January.
  *
 */
-static MONTH_JANUARY: 1;
+static MONTH_JANUARY: any;
 
 /**
  * February.
  *
 */
-static MONTH_FEBRUARY: 2;
+static MONTH_FEBRUARY: any;
 
 /**
  * March.
  *
 */
-static MONTH_MARCH: 3;
+static MONTH_MARCH: any;
 
 /**
  * April.
  *
 */
-static MONTH_APRIL: 4;
+static MONTH_APRIL: any;
 
 /**
  * May.
  *
 */
-static MONTH_MAY: 5;
+static MONTH_MAY: any;
 
 /**
  * June.
  *
 */
-static MONTH_JUNE: 6;
+static MONTH_JUNE: any;
 
 /**
  * July.
  *
 */
-static MONTH_JULY: 7;
+static MONTH_JULY: any;
 
 /**
  * August.
  *
 */
-static MONTH_AUGUST: 8;
+static MONTH_AUGUST: any;
 
 /**
  * September.
  *
 */
-static MONTH_SEPTEMBER: 9;
+static MONTH_SEPTEMBER: any;
 
 /**
  * October.
  *
 */
-static MONTH_OCTOBER: 10;
+static MONTH_OCTOBER: any;
 
 /**
  * November.
  *
 */
-static MONTH_NOVEMBER: 11;
+static MONTH_NOVEMBER: any;
 
 /**
  * December.
  *
 */
-static MONTH_DECEMBER: 12;
+static MONTH_DECEMBER: any;
+
+/**
+ * Application handle:
+ *
+ * - Windows: `HINSTANCE` of the application
+ *
+ * - MacOS: `NSApplication*` of the application (not yet implemented)
+ *
+ * - Android: `JNIEnv*` of the application (not yet implemented)
+ *
+*/
+static APPLICATION_HANDLE: any;
+
+/**
+ * Display handle:
+ *
+ * - Linux: `X11::Display*` for the display
+ *
+*/
+static DISPLAY_HANDLE: any;
+
+/**
+ * Window handle:
+ *
+ * - Windows: `HWND` of the main window
+ *
+ * - Linux: `X11::Window*` of the main window
+ *
+ * - MacOS: `NSWindow*` of the main window (not yet implemented)
+ *
+ * - Android: `jObject` the main android activity (not yet implemented)
+ *
+*/
+static WINDOW_HANDLE: any;
+
+/**
+ * Window view:
+ *
+ * - Windows: `HDC` of the main window drawing context
+ *
+ * - MacOS: `NSView*` of the main windows view (not yet implemented)
+ *
+*/
+static WINDOW_VIEW: any;
+
+/**
+ * OpenGL Context:
+ *
+ * - Windows: `HGLRC`
+ *
+ * - Linux: `X11::GLXContext`
+ *
+ * - MacOS: `NSOpenGLContext*` (not yet implemented)
+ *
+*/
+static OPENGL_CONTEXT: any;
 
 /**
  * Landscape screen orientation.
  *
 */
-static SCREEN_ORIENTATION_LANDSCAPE: 0;
+static SCREEN_ORIENTATION_LANDSCAPE: any;
 
 /**
  * Portrait screen orientation.
  *
 */
-static SCREEN_ORIENTATION_PORTRAIT: 1;
+static SCREEN_ORIENTATION_PORTRAIT: any;
 
 /**
  * Reverse landscape screen orientation.
  *
 */
-static SCREEN_ORIENTATION_REVERSE_LANDSCAPE: 2;
+static SCREEN_ORIENTATION_REVERSE_LANDSCAPE: any;
 
 /**
  * Reverse portrait screen orientation.
  *
 */
-static SCREEN_ORIENTATION_REVERSE_PORTRAIT: 3;
+static SCREEN_ORIENTATION_REVERSE_PORTRAIT: any;
 
 /**
  * Uses landscape or reverse landscape based on the hardware sensor.
  *
 */
-static SCREEN_ORIENTATION_SENSOR_LANDSCAPE: 4;
+static SCREEN_ORIENTATION_SENSOR_LANDSCAPE: any;
 
 /**
  * Uses portrait or reverse portrait based on the hardware sensor.
  *
 */
-static SCREEN_ORIENTATION_SENSOR_PORTRAIT: 5;
+static SCREEN_ORIENTATION_SENSOR_PORTRAIT: any;
 
 /**
  * Uses most suitable orientation based on the hardware sensor.
  *
 */
-static SCREEN_ORIENTATION_SENSOR: 6;
+static SCREEN_ORIENTATION_SENSOR: any;
 
 /**
  * Desktop directory path.
  *
 */
-static SYSTEM_DIR_DESKTOP: 0;
+static SYSTEM_DIR_DESKTOP: any;
 
 /**
  * DCIM (Digital Camera Images) directory path.
  *
 */
-static SYSTEM_DIR_DCIM: 1;
+static SYSTEM_DIR_DCIM: any;
 
 /**
  * Documents directory path.
  *
 */
-static SYSTEM_DIR_DOCUMENTS: 2;
+static SYSTEM_DIR_DOCUMENTS: any;
 
 /**
  * Downloads directory path.
  *
 */
-static SYSTEM_DIR_DOWNLOADS: 3;
+static SYSTEM_DIR_DOWNLOADS: any;
 
 /**
  * Movies directory path.
  *
 */
-static SYSTEM_DIR_MOVIES: 4;
+static SYSTEM_DIR_MOVIES: any;
 
 /**
  * Music directory path.
  *
 */
-static SYSTEM_DIR_MUSIC: 5;
+static SYSTEM_DIR_MUSIC: any;
 
 /**
  * Pictures directory path.
  *
 */
-static SYSTEM_DIR_PICTURES: 6;
+static SYSTEM_DIR_PICTURES: any;
 
 /**
  * Ringtones directory path.
  *
 */
-static SYSTEM_DIR_RINGTONES: 7;
+static SYSTEM_DIR_RINGTONES: any;
 
 /**
  * Unknown powerstate.
  *
 */
-static POWERSTATE_UNKNOWN: 0;
+static POWERSTATE_UNKNOWN: any;
 
 /**
  * Unplugged, running on battery.
  *
 */
-static POWERSTATE_ON_BATTERY: 1;
+static POWERSTATE_ON_BATTERY: any;
 
 /**
  * Plugged in, no battery available.
  *
 */
-static POWERSTATE_NO_BATTERY: 2;
+static POWERSTATE_NO_BATTERY: any;
 
 /**
  * Plugged in, battery charging.
  *
 */
-static POWERSTATE_CHARGING: 3;
+static POWERSTATE_CHARGING: any;
 
 /**
  * Plugged in, battery fully charged.
  *
 */
-static POWERSTATE_CHARGED: 4;
+static POWERSTATE_CHARGED: any;
 
+}
 
+declare class OSClassSignals extends ObjectSignals {
   
 }

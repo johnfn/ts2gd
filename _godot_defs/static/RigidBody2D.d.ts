@@ -1,6 +1,6 @@
 
 /**
- * This node implements simulated 2D physics. You do not control a RigidBody2D directly. Instead you apply forces to it (gravity, impulses, etc.) and the physics simulation calculates the resulting movement based on its mass, friction, and other physical properties.
+ * This node implements simulated 2D physics. You do not control a RigidBody2D directly. Instead, you apply forces to it (gravity, impulses, etc.) and the physics simulation calculates the resulting movement based on its mass, friction, and other physical properties.
  *
  * A RigidBody2D has 4 behavior [member mode]s: Rigid, Static, Character, and Kinematic.
  *
@@ -17,7 +17,7 @@ declare class RigidBody2D extends PhysicsBody2D {
 
   
 /**
- * This node implements simulated 2D physics. You do not control a RigidBody2D directly. Instead you apply forces to it (gravity, impulses, etc.) and the physics simulation calculates the resulting movement based on its mass, friction, and other physical properties.
+ * This node implements simulated 2D physics. You do not control a RigidBody2D directly. Instead, you apply forces to it (gravity, impulses, etc.) and the physics simulation calculates the resulting movement based on its mass, friction, and other physical properties.
  *
  * A RigidBody2D has 4 behavior [member mode]s: Rigid, Static, Character, and Kinematic.
  *
@@ -35,7 +35,12 @@ declare class RigidBody2D extends PhysicsBody2D {
 
 
 
-/** Damps the body's [member angular_velocity]. If [code]-1[/code], the body will use the [b]Default Angular Damp[/b] defined in [b]Project > Project Settings > Physics > 2d[/b]. */
+/**
+ * Damps the body's [member angular_velocity]. If `-1`, the body will use the **Default Angular Damp** defined in **Project > Project Settings > Physics > 2d**.
+ *
+ * See [member ProjectSettings.physics/2d/default_angular_damp] for more details about damping.
+ *
+*/
 angular_damp: float;
 
 /** The body's rotational velocity. */
@@ -69,7 +74,7 @@ contact_monitor: boolean;
 /**
  * The maximum number of contacts that will be recorded. Requires [member contact_monitor] to be set to `true`.
  *
- * **Note:** The number of contacts is different from the number of collisions. Collisions between parallel edges will result in two contacts (one at each end), and collisions between parallel faces will result in four contacts (one at each corner).
+ * **Note:** The number of contacts is different from the number of collisions. Collisions between parallel edges will result in two contacts (one at each end).
  *
 */
 contacts_reported: int;
@@ -99,7 +104,12 @@ gravity_scale: float;
 /** The body's moment of inertia. This is like mass, but for rotation: it determines how much torque it takes to rotate the body. The moment of inertia is usually computed automatically from the mass and the shapes, but this function allows you to set a custom value. Set 0 inertia to return to automatically computing it. */
 inertia: float;
 
-/** Damps the body's [member linear_velocity]. If [code]-1[/code], the body will use the [b]Default Linear Damp[/b] in [b]Project > Project Settings > Physics > 2d[/b]. */
+/**
+ * Damps the body's [member linear_velocity]. If `-1`, the body will use the **Default Linear Damp** in **Project > Project Settings > Physics > 2d**.
+ *
+ * See [member ProjectSettings.physics/2d/default_linear_damp] for more details about damping.
+ *
+*/
 linear_damp: float;
 
 /** The body's linear velocity. */
@@ -160,7 +170,8 @@ set_axis_velocity(axis_velocity: Vector2): void;
 /** Returns [code]true[/code] if a collision would result from moving in the given vector. [code]margin[/code] increases the size of the shapes involved in the collision detection, and [code]result[/code] is an object of type [Physics2DTestMotionResult], which contains additional information about the collision (should there be one). */
 test_motion(motion: Vector2, infinite_inertia?: boolean, margin?: float, result?: Physics2DTestMotionResult): boolean;
 
-  connect<T extends SignalsOf<RigidBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<RigidBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<RigidBody2DSignals>>(signal: T, method: SignalFunction<RigidBody2DSignals[T]>): number;
 
 
 
@@ -168,68 +179,90 @@ test_motion(motion: Vector2, infinite_inertia?: boolean, margin?: float, result?
  * Rigid mode. The body behaves as a physical object. It collides with other bodies and responds to forces applied to it. This is the default mode.
  *
 */
-static MODE_RIGID: 0;
+static MODE_RIGID: any;
 
 /**
  * Static mode. The body behaves like a [StaticBody2D] and does not move.
  *
 */
-static MODE_STATIC: 1;
+static MODE_STATIC: any;
 
 /**
  * Character mode. Similar to [constant MODE_RIGID], but the body can not rotate.
  *
 */
-static MODE_CHARACTER: 2;
+static MODE_CHARACTER: any;
 
 /**
  * Kinematic mode. The body behaves like a [KinematicBody2D], and must be moved by code.
  *
 */
-static MODE_KINEMATIC: 3;
+static MODE_KINEMATIC: any;
 
 /**
  * Continuous collision detection disabled. This is the fastest way to detect body collisions, but can miss small, fast-moving objects.
  *
 */
-static CCD_MODE_DISABLED: 0;
+static CCD_MODE_DISABLED: any;
 
 /**
  * Continuous collision detection enabled using raycasting. This is faster than shapecasting but less precise.
  *
 */
-static CCD_MODE_CAST_RAY: 1;
+static CCD_MODE_CAST_RAY: any;
 
 /**
  * Continuous collision detection enabled using shapecasting. This is the slowest CCD method and the most precise.
  *
 */
-static CCD_MODE_CAST_SHAPE: 2;
+static CCD_MODE_CAST_SHAPE: any;
 
+}
 
+declare class RigidBody2DSignals extends PhysicsBody2DSignals {
   /**
- * Emitted when a body enters into contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when a collision with another [PhysicsBody2D] or [TileMap] occurs. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
 */
 body_entered: Signal<(body: Node) => void>
 
 /**
- * Emitted when a body exits contact with this one. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when the collision with another [PhysicsBody2D] or [TileMap] ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
 */
 body_exited: Signal<(body: Node) => void>
 
 /**
- * Emitted when a body enters into contact with this one. Reports colliding shape information. See [CollisionObject2D] for shape index information. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when one of this RigidBody2D's [Shape2D]s collides with another [PhysicsBody2D] or [TileMap]'s [Shape2D]s. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
+ *
+ * `body_id` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
+ *
+ * `body_shape` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer].
+ *
+ * `local_shape` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer].
  *
 */
-body_shape_entered: Signal<(body_id: int, body: Node, body_shape: int, local_shape: int) => void>
+body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
 
 /**
- * Emitted when a body shape exits contact with this one. Reports colliding shape information. See [CollisionObject2D] for shape index information. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions.
+ * Emitted when the collision between one of this RigidBody2D's [Shape2D]s and another [PhysicsBody2D] or [TileMap]'s [Shape2D]s ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
+ *
+ * `body_id` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
+ *
+ * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
+ *
+ * `body_shape` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer].
+ *
+ * `local_shape` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer].
  *
 */
-body_shape_exited: Signal<(body_id: int, body: Node, body_shape: int, local_shape: int) => void>
+body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
 
 /**
  * Emitted when the physics engine changes the body's sleeping state.

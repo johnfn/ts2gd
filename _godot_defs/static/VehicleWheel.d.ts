@@ -82,11 +82,14 @@ get_skidinfo(): float;
 /** Returns [code]true[/code] if this wheel is in contact with a surface. */
 is_in_contact(): boolean;
 
-  connect<T extends SignalsOf<VehicleWheel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  // connect<T extends SignalsOf<VehicleWheel>, U extends Node>(signal: T, node: U, method: keyof U): number;
+  connect<T extends SignalsOf<VehicleWheelSignals>>(signal: T, method: SignalFunction<VehicleWheelSignals[T]>): number;
 
 
 
 
+}
 
+declare class VehicleWheelSignals extends SpatialSignals {
   
 }
