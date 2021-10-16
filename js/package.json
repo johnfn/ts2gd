@@ -1,11 +1,11 @@
 {
     "name": "ts2gd",
-    "version": "0.0.30",
+    "version": "0.0.31",
     "description": "TypeScript to GDScript transpiler.",
     "main": "js/main.js",
     "scripts": {
         "publish-local": "npm run tsc && npm link",
-        "publish": "npm run tsc && npm publish",
+        "publish": "npm run tsc && git commit -m 'include generated JS' && npm publish",
         "tsc": "tsc",
         "dev": "ts-node-dev --respawn main.ts",
         "test": "ts-node-dev --respawn --clear tests/test.ts",
