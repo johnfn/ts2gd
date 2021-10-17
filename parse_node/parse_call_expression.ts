@@ -149,7 +149,6 @@ export const parseCallExpression = (
     const type = props.program
       .getTypeChecker()
       .getTypeAtLocation(prop.expression)
-    const stringType = props.program.getTypeChecker().typeToString(type)
 
     if (isArrayType(type)) {
       if (functionName in LibraryFunctions) {
@@ -194,29 +193,6 @@ export const parseCallExpression = (
         ]
 
         return result
-      }
-    }
-
-    if (
-      stringType === "Vector2" ||
-      stringType === "Vector2i" ||
-      stringType === "Vector3" ||
-      stringType === "Vector3i"
-    ) {
-      let operator: undefined | string = undefined
-
-      if (functionName === "add") operator = "+"
-      if (functionName === "sub") operator = "-"
-      if (functionName === "mul") operator = "*"
-      if (functionName === "div") operator = "/"
-
-      if (operator) {
-        return combine({
-          parent: node,
-          nodes: [prop.expression, node.arguments[0]],
-          props,
-          parsedStrings: (exp, arg) => `${exp} ${operator} ${arg}`,
-        })
       }
     }
   }

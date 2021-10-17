@@ -35,7 +35,7 @@ export const parseSourceFile = (
     .sourceFiles()
     .find((file) => file.fsPath === node.fileName)
 
-  props.usages = utils.collectVariableUsage(node)
+  // props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false
 
   const classDecl = statements.find(

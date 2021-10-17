@@ -6,6 +6,7 @@ import path from "path"
 import { Scope } from "../scope"
 import chalk from "chalk"
 import { TsGdError } from "../errors"
+import { AssetSourceFile } from "../project/assets/asset_source_file"
 
 export const compileTs = (
   code: string,
@@ -13,13 +14,13 @@ export const compileTs = (
 ): { compiled: ParseNodeType; errors: TsGdError[] } => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
 
-  const sourceFile = ts.createSourceFile(
+  const sourceFile = AssetSourceFile.transformSourceFile(ts.createSourceFile(
     filename,
     code,
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.TS
-  )
+  ))
 
   const libDTs = ts.createSourceFile(
     "lib.d.ts",
@@ -68,9 +69,16 @@ export const compileTs = (
   let i = 0
   const errors: TsGdError[] = []
 
+  const printer: ts.Printer = ts.createPrinter();
+
+  const getNodeText = (node: ts.Node) => {
+    return printer.printNode(ts.EmitHint.Unspecified, node, sourceFile);
+  }
+
   // TODO: Make this less silly.
   const godotFile = parseNode(sourceFile, {
     indent: "",
+    getNodeText,
     scope: new Scope(program),
     isConstructor: false,
     program,

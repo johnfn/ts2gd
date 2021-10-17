@@ -77,6 +77,8 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
 
   addError: (error: TsGdError) => void
+
+  getNodeText: (node: ts.Node) => string
 }
 
 export type ExtraLine = {
@@ -226,7 +228,7 @@ export function combine(args: {
     }
 
     if (isStandAloneLine || lines.length > 1) {
-      const preceding = generatePrecedingNewlines(node)
+      const preceding = generatePrecedingNewlines(node, props.getNodeText(node))
       formattedContent = preceding + formattedContent
     }
 

@@ -1,5 +1,5 @@
 import fs from "fs"
-import ts, { isPropertySignature, SyntaxKind } from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import path from "path"
 
 import { BaseAsset } from "./base_asset"
@@ -251,6 +251,74 @@ Hint: try ${chalk.blueBright(
     return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
+  static transformSourceFile(
+    sourceFile: ts.SourceFile
+  ): ts.SourceFile {
+    const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (rootNode: T) => {
+      function visit(node: ts.Node): ts.Node {
+        if (node.kind === ts.SyntaxKind.CallExpression) {
+          const call = node as ts.CallExpression;
+
+          if (call.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
+            const pae = call.expression as ts.PropertyAccessExpression;
+
+            if (pae.name.text === "add") {
+              const newExpr = ts.factory.createBinaryExpression(
+                pae.expression,
+                ts.factory.createToken(ts.SyntaxKind.PlusToken),
+                call.arguments[0],
+              )
+
+              return newExpr;
+            }
+
+            if (pae.name.text === "sub") {
+              const newExpr = ts.factory.createBinaryExpression(
+                pae.expression,
+                ts.factory.createToken(ts.SyntaxKind.MinusToken),
+                call.arguments[0],
+              )
+
+              return newExpr;
+            }
+
+            if (pae.name.text === "mul") {
+              const newExpr = ts.factory.createBinaryExpression(
+                pae.expression,
+                ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
+                call.arguments[0],
+              )
+
+              return newExpr;
+            }
+
+            if (pae.name.text === "div") {
+              const newExpr = ts.factory.createBinaryExpression(
+                pae.expression,
+                ts.factory.createToken(ts.SyntaxKind.SlashToken),
+                call.arguments[0],
+              )
+
+              return newExpr;
+            }
+          }
+
+        }
+
+        return ts.visitEachChild(node, visit, context);
+      }
+
+      return ts.visitNode(rootNode, visit);
+  };
+
+    const transformResult = ts.transform(sourceFile, [transformer])
+    const transformedSourceFile = transformResult.transformed[0] as ts.SourceFile;
+    // TODO: Error if >1 file results
+
+    return transformedSourceFile;
+
+  }
+
   async compile(
     watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
   ): Promise<TsGdReturn<null>> {
@@ -286,12 +354,19 @@ Hint: try ${chalk.blueBright(
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
+    const transformedSourceFile = AssetSourceFile.transformSourceFile(sourceFileAst)
+    const printer: ts.Printer = ts.createPrinter();
+
+    const getNodeText = (node: ts.Node) => {
+      return printer.printNode(ts.EmitHint.Unspecified, node, transformedSourceFile);
+    }
+
     const result: {
       result: null
       errors: TsGdError[]
     } = { result: null, errors: [] }
 
-    const parsedNode = parseNode(sourceFileAst, {
+    const parsedNode = parseNode(transformedSourceFile, {
       indent: "",
       isConstructor: false,
       scope: new Scope(watchProgram.getProgram().getProgram()),
@@ -301,6 +376,7 @@ Hint: try ${chalk.blueBright(
       program: watchProgram.getProgram().getProgram(),
       usages: new Map(),
       addError: (newError) => result.errors.push(newError),
+      getNodeText,
     })
 
     // TODO: Only do this once per program run max!

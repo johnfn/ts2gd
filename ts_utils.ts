@@ -67,8 +67,7 @@ export const isDictionary = (type: ts.Type): boolean => {
   return false
 }
 
-export const generatePrecedingNewlines = (node: ts.Node): string => {
-  const fullText = node.getFullText()
+export const generatePrecedingNewlines = (node: ts.Node, fullText: string): string => {
   let numNewlines = 0
 
   for (const ch of [...fullText]) {
@@ -175,7 +174,7 @@ export function getGodotType(
   // If we have a precise initializer, use that first
 
   if (initializer) {
-    let preciseInitializerType = getPreciseInitializerType(initializer)
+    let preciseInitializerType = getPreciseInitializerType(initializer, props.getNodeText(initializer))
 
     if (preciseInitializerType) {
       return { result: preciseInitializerType }
@@ -267,13 +266,12 @@ export function notEmpty<TValue>(
  * that the first one is a "float" and the second one is an "int".
  */
 export function getPreciseInitializerType(
-  initializer: ts.Expression | undefined
+  initializer: ts.Expression | undefined,
+  initStr: string
 ): string | undefined {
   if (!initializer) {
     return ""
   }
-
-  const initStr = initializer.getText()
 
   // attempt to figure out from the literal type whether this is a int or a float.
   let isInt = !!initStr.match(/^[0-9]+$/)

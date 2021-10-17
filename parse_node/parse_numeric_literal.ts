@@ -14,7 +14,7 @@ export const parseNumericLiteral = (
     parent: node,
     nodes: [],
     props,
-    parsedStrings: () => node.getText(),
+    parsedStrings: () => props.getNodeText(node),
   })
 }
 
