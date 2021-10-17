@@ -307,11 +307,17 @@ export const parseCallExpression = (
               location: secondArg,
             })
           } else {
+            const { capturedScopeObject } = getCapturedScope(
+              arrowFunctionObj.node,
+              props.program.getTypeChecker()
+            )
+
             // anonymous arrow functions are always declared on the current class.
             parsedStringArgs = [
               parsedArgs[0].content,
               "self",
               `"${arrowFunctionObj?.name}"`,
+              `[${ capturedScopeObject }]`
             ]
           }
         } else {

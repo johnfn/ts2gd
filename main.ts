@@ -4,9 +4,10 @@
 
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
+
 // TODO:
-//       this.get_tree().connect("network_peer_connected", (new_id: int) => this.new_peer(new_id))
-// This doesnt work ^
+//   print([1, 3, 2, 4].sort_custom((a, b) => a - b))
+// This also doesn't work ^ 
 
 // USEFUL
 
