@@ -1,6 +1,10 @@
-# TypeScript 2 Godot
+# ts2gd: Compile TypeScript to GDScript
 
-Combining the best gamedev experience with the best language.
+Why use ts2gd?
+
+* Incrementally compiles to GDScript in under a tenth of a second.
+* Provides insanely good autocomplete and documentation.
+* Use all of TS's extremely powerful type system.
 
 ## Install:
 
@@ -90,6 +94,10 @@ export const MyAutoload = new MyAutoloadClass()
 
 In order to mark an instance variable as `export`, use `@export`.
 
+### remotesync, remote
+
+To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respectively.
+
 ### yield
 
 Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names, but `yield` is a keyword in TypeScript, which can't provide completion like functions can. So, you can continue to use `yield` if you'd like, but you can also use the global function `Yield`. `Yield` works just like `yield` but provides type completion on the signal argument.
@@ -129,6 +137,16 @@ const myComplexDict: Dictionary<Node2D, int> = todict({})
 
 myComplexDict.put(myNode, 5)
 ```
+
+### Latest and greatest Godot definitions
+
+If you'd like ts2gd to generate the latest TS definitions from Godot, clone the Godot repository and point it at the 3.x tag. Then add the following to your ts2gd.json:
+
+```
+  "godotSourceRepoPath": "/path/to/your/godot/clone"
+```
+
+This shouldn't be necessary unless you want some really recent features from Godot, or you're developing the ts2gd compiler.
 
 # Roadmap
 

@@ -18,6 +18,19 @@ export const parseMethodDeclaration = (
 
   props.scope.enterScope()
 
+  let isRemote = false;
+  let isRemoteSync = false;
+
+  for (const dec of node.decorators ?? []) {
+    if (dec.expression.getText() === "remote") {
+      isRemote = true;
+    }
+
+    if (dec.expression.getText() === "remotesync") {
+      isRemoteSync = true;
+    }
+  }
+
   let result = combine({
     parent: node,
     nodes: [node.body, ...node.parameters],
@@ -35,7 +48,7 @@ export const parseMethodDeclaration = (
       }
 
       return `
-func ${funcName}(${joinedParams}):
+${ isRemote ? "remote " : "" }${ isRemoteSync ? "remotesync " : "" }func ${funcName}(${joinedParams}):
   ${body || " pass"}
 `
     },

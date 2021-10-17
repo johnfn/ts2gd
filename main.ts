@@ -4,9 +4,13 @@
 
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
+// TODO:
+//       this.get_tree().connect("network_peer_connected", (new_id: int) => this.new_peer(new_id))
+// This doesnt work ^
 
 // USEFUL
 
+// TODO: Handle string interpolation
 // TODO: Have a github action that auto publishes an html5 build
 // TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
 // TODO  make load/preload() work and return proper string
