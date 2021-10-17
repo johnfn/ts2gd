@@ -517,8 +517,32 @@ class_name Test
 func __gen(body, captures):
   print(body)
 func _ready():
-  self.connect("body_entered", self, "__gen")
+  self.connect("body_entered", self, "__gen", [{}])
 `,
+}
+
+export const testConnectWithClosures: Test = {
+  ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+    let x = 1, y = 2;
+
+    this.connect("body_entered", (body: Node) => { print(x + y) })
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(_body, captures):
+  var x = captures.x
+  var y = captures.y
+  print(x + y)
+func _ready():
+  var x: int = 1
+  var y: int = 2
+  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`
 }
 
 export const testRewriteDictPut2: Test = {
