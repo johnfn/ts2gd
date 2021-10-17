@@ -80,19 +80,25 @@ export const getCapturedScope = (
   unwrapCapturedScope: string
 } => {
   const freeVariables = getFreeVariables(node.body, checker, node)
-
   const uniqueFreeVariables = freeVariables.filter(
     (item, index) => freeVariables.indexOf(item) === index
   )
 
+  // We don't want to capture `this` as part of our scope. There's no reason to
+  // do it: lambdas are only ever executed in the current class, so `this` will
+  // never be different. Plus, we'd have to rewrite all `this` access in the
+  // function to be `_self`, which would be confusing, and look stupid, and
+  // basically be a completely pointless workaround.
+  const freeVariablesWithoutThis = uniqueFreeVariables.filter(v => v.getText() !== "this");
+
   const capturedScopeObject =
     "{" +
-    uniqueFreeVariables
+    freeVariablesWithoutThis
       .map((freeVar) => `"${freeVar.getText()}": ${freeVar.getText()}`)
       .join(", ") +
     "}"
 
-  const unwrapCapturedScope = uniqueFreeVariables
+  const unwrapCapturedScope = freeVariablesWithoutThis
     .map((v) => `  var ${v.getText()} = captures.${v.getText()}\n`)
     .join("")
 

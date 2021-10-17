@@ -545,6 +545,31 @@ func _ready():
   self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`
 }
 
+// we intentionally do not capture `this` as self - see comment in parse_arrow_function.ts for rationale
+export const testConnectWithClosuresNoThis: Test = {
+  ts: `
+export class Test extends Area2D {
+  constructor() {
+    super()
+    let x = 1, y = 2;
+
+    this.connect("body_entered", (body: Node) => { this.print(x + y) })
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(_body, captures):
+  var x = captures.x
+  var y = captures.y
+  self.print(x + y)
+func _ready():
+  var x: int = 1
+  var y: int = 2
+  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`
+}
+
 export const testRewriteDictPut2: Test = {
   ts: `
 let d = todict({ 'a': 1 })
