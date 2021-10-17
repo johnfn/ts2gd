@@ -338,3 +338,13 @@ export const getCommonElements = <T>(
     lists.every((list) => list.find((listElem) => eq(listElem, elem)))
   )
 }
+
+export const getTimestamp = () => {
+  const now = new Date();
+
+  const h = now.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+  const m = now.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+  const s = now.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+
+  return `[${ h }:${ m}:${ s }]`;
+}
