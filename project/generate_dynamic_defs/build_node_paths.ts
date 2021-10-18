@@ -204,7 +204,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     get_node(path: string): Node
-    connect<T extends SignalsOf<${extendedClassName}Signals>>(signal: T, method: SignalFunction<${extendedClassName}Signals[T]>): number;
+    connect<T extends SignalsOf<${extendedClassName}Signals & ${className }>>(signal: T, method: SignalFunction<(${extendedClassName}Signals & ${ className })[T]>): number;
   }
 
   namespace ${className} {

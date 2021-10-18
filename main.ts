@@ -2,6 +2,10 @@
 
 // TODO: Windows build.
 
+// TODO: This doesnt work:
+//       enem.connect("on_die", () => { this.enemies.erase(enem) });
+// b/c it captures "this.enemies"
+
 // TODO: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
 
