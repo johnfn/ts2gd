@@ -270,42 +270,22 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
 
           if (call.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
             const pae = call.expression as ts.PropertyAccessExpression;
-            let newExpr: ts.BinaryExpression | null = null;
+            // TODO: Could have null and non-null coalescing lib functions.
 
-            if (pae.name.text === "add") {
-              newExpr = context.factory.createBinaryExpression(
-                ts.visitNode(pae.expression, visit),
-                context.factory.createToken(ts.SyntaxKind.PlusToken),
-                ts.visitNode(call.arguments[0], visit),
-              );
-            }
-
-            if (pae.name.text === "sub") {
-              newExpr = ts.factory.createBinaryExpression(
-                ts.visitNode(pae.expression, visit),
-                ts.factory.createToken(ts.SyntaxKind.MinusToken),
-                ts.visitNode(call.arguments[0], visit),
-              );
-            }
-
-            if (pae.name.text === "mul") {
-              newExpr = ts.factory.createBinaryExpression(
-                ts.visitNode(pae.expression, visit),
-                ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
-                ts.visitNode(call.arguments[0], visit),
-              );
-            }
-
-            if (pae.name.text === "div") {
-              ts.factory.createBinaryExpression(
-                ts.visitNode(pae.expression, visit),
-                ts.factory.createToken(ts.SyntaxKind.SlashToken),
-                ts.visitNode(call.arguments[0], visit),
-              );
-            }
-
-            if (newExpr !== null) {
-              return newExpr;
+            if (
+              pae.name.text === "add" ||
+              pae.name.text === "sub" ||
+              pae.name.text === "mul" ||
+              pae.name.text === "div"
+            ) {
+              return context.factory.createCallExpression(
+                context.factory.createIdentifier(`${ pae.name.text }_vec_lib`),
+                [],
+                [
+                  ts.visitNode(pae.expression, visit),
+                  ts.visitNode(call.arguments[0], visit),
+                ]
+              )
             }
           }
         }

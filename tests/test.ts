@@ -15,13 +15,17 @@ export const compileTs = (
 ): { compiled: ParseNodeType; errors: TsGdError[] } => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
 
-  const sourceFile = AssetSourceFile.transformSourceFile(ts.createSourceFile(
+  const sourceFile = ts.createSourceFile(
     filename,
     code,
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.TS
-  ))
+  )
+
+  const transformedSourceFile = AssetSourceFile.transformSourceFile(
+    sourceFile
+  )
 
   const libDTs = ts.createSourceFile(
     "lib.d.ts",
@@ -40,7 +44,7 @@ export const compileTs = (
   const customCompilerHost: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
       if (name === filename) {
-        return sourceFile
+        return transformedSourceFile
       } else if (name === "lib.d.ts") {
         return libDTs
       } else {
@@ -73,11 +77,11 @@ export const compileTs = (
   const printer: ts.Printer = ts.createPrinter();
 
   const getNodeText = (node: ts.Node) => {
-    return printer.printNode(ts.EmitHint.Unspecified, node, sourceFile);
+    return printer.printNode(ts.EmitHint.Unspecified, node, transformedSourceFile);
   }
 
   // TODO: Make this less silly.
-  const godotFile = parseNode(sourceFile, {
+  const godotFile = parseNode(transformedSourceFile, {
     indent: "",
     getNodeText,
     scope: new Scope(program),

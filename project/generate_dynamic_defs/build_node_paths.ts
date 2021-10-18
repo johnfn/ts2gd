@@ -180,13 +180,12 @@ ${references
       return "// This is an autoload class\n"
     } else if (ref.type === "script") {
       return (
-        "// script: " +
-        ref.use +
-        "\n" +
-        ref.children.map((c) => "//  - " + c + " \n").join("")
+        "// As a script:\n" +
+        "//   " + ref.use + "\n" +
+        ref.children.map((c) => "//     - " + c + " \n").join("")
       )
     } else if (ref.type === "instance") {
-      return "// instance: " + ref.use + "\n"
+      return "// As an instance:\n" + "//  " + ref.use + "\n"
     }
   })
   .join("")}

@@ -1,10 +1,6 @@
 import ts, {
-  isFunctionLike,
-  isFunctionTypeNode,
   SymbolFlags,
   SyntaxKind,
-  TypeFlags,
-  TypeFormatFlags,
 } from "typescript"
 import {
   combine,
@@ -69,6 +65,8 @@ export const parsePropertyAccessExpression = (
     props,
     parsedStrings: (lhs, rhs) => {
       if (node.questionDotToken) {
+        console.log("Hello");
+
         const type = props.program
           .getTypeChecker()
           .getTypeAtLocation(node)

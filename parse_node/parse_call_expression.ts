@@ -18,6 +18,10 @@ export type LibraryFunctionName =
   | "min_by"
   | "join"
   | "random_element"
+  | "add_vec_lib"
+  | "sub_vec_lib"
+  | "mul_vec_lib"
+  | "div_vec_lib"
 
 export const LibraryFunctions: {
   [key in LibraryFunctionName]: {
@@ -25,6 +29,38 @@ export const LibraryFunctions: {
     definition: (name: string) => string
   }
 } = {
+  add_vec_lib: {
+    name: "add_vec_lib",
+    definition: () => `
+func add_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 + v2
+`,
+  },
+
+  sub_vec_lib: {
+    name: "sub_vec_lib",
+    definition: () => `
+func sub_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 - v2
+`,
+  },
+
+  div_vec_lib: {
+    name: "div_vec_lib",
+    definition: () => `
+func div_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 / v2
+`,
+  },
+
+  mul_vec_lib: {
+    name: "mul_vec_lib",
+    definition: () => `
+func mul_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 * v2
+`,
+  },
+
   map: {
     name: "map",
     definition: (name: string) => `
@@ -353,6 +389,25 @@ export const parseCallExpression = (
 
   result.extraLines = [...(result.extraLines ?? []), ...nullCoalesce]
 
+  if (expression.kind === SyntaxKind.Identifier) {
+    const prop = node.expression as ts.Identifier
+    const functionName = prop.text;
+
+    if (
+      functionName === "add_vec_lib" ||
+      functionName === "sub_vec_lib" ||
+      functionName === "div_vec_lib" ||
+      functionName === "mul_vec_lib"
+    ) {
+      if (!result.hoistedLibraryFunctions) {
+        result.hoistedLibraryFunctions = new Set();
+      }
+
+      result.hoistedLibraryFunctions.add(functionName);
+    }
+  }
+
+
   return result
 }
 
@@ -364,18 +419,22 @@ export const testBasicCall: Test = {
 export const testAddVec: Test = {
   ts: `const v1: Vector2; const v2: Vector2; v1.add(v2)`,
   expected: `
+func add_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 + v2
 var v1
 var v2
-v1 + v2
+add_vec_lib(v1, v2)
 `,
 }
 
 export const testAddVec2: Test = {
   ts: `const foo: { v: Vector2; }; const v2: Vector2; foo.v.add(v2)`,
   expected: `
+func add_vec_lib(v1, v2):
+  return null if (v1 == null or v2 == null) else v1 + v2
 var foo
 var v2
-foo.v + v2
+add_vec_lib(foo.v, v2)
 `,
 }
 
