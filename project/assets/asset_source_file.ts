@@ -274,33 +274,33 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
 
             if (pae.name.text === "add") {
               newExpr = context.factory.createBinaryExpression(
-                ts.visitEachChild(pae.expression, visit, context),
+                ts.visitNode(pae.expression, visit),
                 context.factory.createToken(ts.SyntaxKind.PlusToken),
-                ts.visitEachChild(call.arguments[0], visit, context),
+                ts.visitNode(call.arguments[0], visit),
               );
             }
 
             if (pae.name.text === "sub") {
               newExpr = ts.factory.createBinaryExpression(
-                pae.expression,
+                ts.visitNode(pae.expression, visit),
                 ts.factory.createToken(ts.SyntaxKind.MinusToken),
-                call.arguments[0],
+                ts.visitNode(call.arguments[0], visit),
               );
             }
 
             if (pae.name.text === "mul") {
               newExpr = ts.factory.createBinaryExpression(
-                pae.expression,
+                ts.visitNode(pae.expression, visit),
                 ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
-                call.arguments[0],
+                ts.visitNode(call.arguments[0], visit),
               );
             }
 
             if (pae.name.text === "div") {
               ts.factory.createBinaryExpression(
-                pae.expression,
+                ts.visitNode(pae.expression, visit),
                 ts.factory.createToken(ts.SyntaxKind.SlashToken),
-                call.arguments[0],
+                ts.visitNode(call.arguments[0], visit),
               );
             }
 
@@ -308,7 +308,6 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
               return newExpr;
             }
           }
-
         }
 
         return ts.visitEachChild(node, visit, context);
