@@ -150,11 +150,11 @@ const setup = (tsgdJson: Paths) => {
 
   const host = ts.createWatchCompilerHost(
     tsgdJson.tsconfigPath,
-    {},
+    { },
     ts.sys,
     ts.createEmitAndSemanticDiagnosticsBuilderProgram,
     reportDiagnostic,
-    reportWatchStatusChanged
+    reportWatchStatusChanged,
   )
   watchProgram = ts.createWatchProgram(host)
   const configFile = ts.readJsonConfigFile(

@@ -7,6 +7,7 @@ import { Scope } from "../scope"
 import chalk from "chalk"
 import { TsGdError } from "../errors"
 import { AssetSourceFile } from "../project/assets/asset_source_file"
+import * as utils from "tsutils"
 
 export const compileTs = (
   code: string,
@@ -34,7 +35,7 @@ export const compileTs = (
     strict: true,
   }
 
-  const defaultCompilerHost = ts.createCompilerHost(tsconfigOptions)
+  const defaultCompilerHost = ts.createCompilerHost(tsconfigOptions, true)
 
   const customCompilerHost: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
@@ -168,7 +169,7 @@ export const compileTs = (
     },
     mostRecentControlStructureIsSwitch: false,
     isAutoload: false,
-    usages: new Map(),
+    usages: utils.collectVariableUsage(sourceFile),
   })
 
   return { compiled: godotFile, errors }

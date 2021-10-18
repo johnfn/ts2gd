@@ -5,6 +5,7 @@ import {
   ParseState,
 } from "../parse_node"
 import * as utils from "tsutils"
+import { LibraryFunctions } from "./parse_call_expression"
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
@@ -49,10 +50,13 @@ export const parseSourceFile = (
     parseNode(statement, props)
   )
 
+  const allHoistedLibraryFunctions = new Set(parsedStatements.flatMap(x => [...(x.hoistedLibraryFunctions?.keys() ?? [])]));
+  const allHoistedLibraryFunctionDefinitions = [...allHoistedLibraryFunctions.keys()].map(item => LibraryFunctions[item].definition("__" + LibraryFunctions[item].name));
+
   const content = [
     classDecl ? preprocessClassDecl(classDecl, props) : "",
     parsedStatements.flatMap((x) => x.hoistedEnumImports ?? []).join("\n"),
-    parsedStatements.flatMap((x) => x.hoistedLibraryFunctions ?? []).join("\n"),
+    allHoistedLibraryFunctionDefinitions.join("\n"),
     parsedStatements
       .flatMap((x) => x.hoistedArrowFunctions ?? [])
       .map((obj) => obj.content)

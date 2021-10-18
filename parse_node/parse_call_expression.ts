@@ -11,14 +11,15 @@ import {
 } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
-type LibraryFunctionName =
+export type LibraryFunctionName =
   | "map"
   | "filter"
   | "max_by"
   | "min_by"
   | "join"
   | "random_element"
-const LibraryFunctions: {
+
+export const LibraryFunctions: {
   [key in LibraryFunctionName]: {
     name: LibraryFunctionName
     definition: (name: string) => string
@@ -187,10 +188,8 @@ export const parseCallExpression = (
           })
         }
 
-        result.hoistedLibraryFunctions = [
-          ...(result.hoistedLibraryFunctions ?? []),
-          LibraryFunctions[libFunctionName].definition("__" + libFunctionName),
-        ]
+        result.hoistedLibraryFunctions = result.hoistedLibraryFunctions ?? new Set();
+        result.hoistedLibraryFunctions.add(libFunctionName)
 
         return result
       }
@@ -258,7 +257,7 @@ export const parseCallExpression = (
             (expr.extraLines?.length ?? 0 > 0) ||
             (expr.hoistedArrowFunctions?.length ?? 0 > 0) ||
             (expr.hoistedEnumImports?.length ?? 0 > 0) ||
-            (expr.hoistedLibraryFunctions?.length ?? 0 > 0)
+            (expr.hoistedLibraryFunctions?.size ?? 0 > 0)
           ) {
             props.addError({
               description:
@@ -335,6 +334,7 @@ export const parseCallExpression = (
 
       if (isNullable(node, props.program.getTypeChecker())) {
         const newName = props.scope.createUniqueName()
+        // TODO: This is wrong, need to cache expr
         const expr = parsedExpr.content
 
         nullCoalesce = [
@@ -483,6 +483,7 @@ export class Test extends Area2D {
   constructor() {
     super()
 
+    let x = 5
     this.connect("body_entered", (body: Node) => { print(body) })
   }
 }
@@ -493,6 +494,7 @@ class_name Test
 func __gen(body, captures):
   print(body)
 func _ready():
+  var _x: int = 5
   self.connect("body_entered", self, "__gen", [{}])
 `,
 }

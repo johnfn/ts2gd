@@ -43,7 +43,7 @@ import { parseYieldExpression } from "./parse_node/parse_yield_expression"
 import { parseReturnStatement } from "./parse_node/parse_return_statement"
 import { parseBreakStatement } from "./parse_node/parse_break_statement"
 import { parseBlock } from "./parse_node/parse_block"
-import { parseCallExpression } from "./parse_node/parse_call_expression"
+import { LibraryFunctionName, parseCallExpression } from "./parse_node/parse_call_expression"
 import { parseVariableStatement } from "./parse_node/parse_variable_statement"
 import { parseSetAccessor } from "./parse_node/parse_set_accessor"
 import { parseGetAccessor } from "./parse_node/parse_get_accessor"
@@ -96,7 +96,7 @@ export type ParseNodeType = {
     content: string
     node: ts.ArrowFunction
   }[]
-  hoistedLibraryFunctions?: string[]
+  hoistedLibraryFunctions?: Set<LibraryFunctionName>
   extraLines?: ExtraLine[]
   enums?: {
     /** Content of the enum */
@@ -153,7 +153,7 @@ export function combine(args: {
         extraLines: [],
         hoistedEnumImports: [],
         hoistedArrowFunctions: [],
-        hoistedLibraryFunctions: [],
+        hoistedLibraryFunctions: new Set(),
       }
 
       return res
@@ -169,7 +169,7 @@ export function combine(args: {
       extraLines: parsed.extraLines ?? [],
       hoistedEnumImports: parsed.hoistedEnumImports ?? [],
       hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
-      hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
+      hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? new Set(),
     }
   })
 
@@ -250,9 +250,9 @@ export function combine(args: {
     hoistedEnumImports: parsedNodes.flatMap(
       (node) => node.hoistedEnumImports ?? []
     ),
-    hoistedLibraryFunctions: parsedNodes.flatMap(
-      (node) => node.hoistedLibraryFunctions ?? []
-    ),
+    hoistedLibraryFunctions: new Set(parsedNodes.flatMap(
+      (node) => [...(node.hoistedLibraryFunctions?.keys() ?? [])]
+    )),
     hoistedArrowFunctions: parsedNodes.flatMap(
       (node) => node.hoistedArrowFunctions ?? []
     ),

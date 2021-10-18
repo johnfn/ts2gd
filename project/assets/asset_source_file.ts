@@ -8,6 +8,7 @@ import { ErrorName, TsGdError, TsGdReturn } from "../../errors"
 import { Scope } from "../../scope"
 import { TsGdProjectClass } from "../project"
 import chalk from "chalk"
+import * as utils from "tsutils"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
@@ -178,12 +179,20 @@ Hint: try ${chalk.blueBright(
       }
     }
 
-    // TODO: Better error.
+    // TODO: Error could say the exact loc to write
     return {
       error: ErrorName.CantFindAutoloadInstance,
       location: ast ?? this.tsRelativePath,
       description:
-        "Can't find the autoload instance variable for this autoload class. Check the README.",
+        `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
+        
+@autoload
+class MyAutoloadClass extends Node2D {
+  public string hello = "hi"
+}
+
+${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line is what you're missing!
+`,
     }
   }
 
@@ -261,44 +270,41 @@ Hint: try ${chalk.blueBright(
 
           if (call.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
             const pae = call.expression as ts.PropertyAccessExpression;
+            let newExpr: ts.BinaryExpression | null = null;
 
             if (pae.name.text === "add") {
-              const newExpr = ts.factory.createBinaryExpression(
-                pae.expression,
-                ts.factory.createToken(ts.SyntaxKind.PlusToken),
-                call.arguments[0],
-              )
-
-              return newExpr;
+              newExpr = context.factory.createBinaryExpression(
+                ts.visitEachChild(pae.expression, visit, context),
+                context.factory.createToken(ts.SyntaxKind.PlusToken),
+                ts.visitEachChild(call.arguments[0], visit, context),
+              );
             }
 
             if (pae.name.text === "sub") {
-              const newExpr = ts.factory.createBinaryExpression(
+              newExpr = ts.factory.createBinaryExpression(
                 pae.expression,
                 ts.factory.createToken(ts.SyntaxKind.MinusToken),
                 call.arguments[0],
-              )
-
-              return newExpr;
+              );
             }
 
             if (pae.name.text === "mul") {
-              const newExpr = ts.factory.createBinaryExpression(
+              newExpr = ts.factory.createBinaryExpression(
                 pae.expression,
                 ts.factory.createToken(ts.SyntaxKind.AsteriskToken),
                 call.arguments[0],
-              )
-
-              return newExpr;
+              );
             }
 
             if (pae.name.text === "div") {
-              const newExpr = ts.factory.createBinaryExpression(
+              ts.factory.createBinaryExpression(
                 pae.expression,
                 ts.factory.createToken(ts.SyntaxKind.SlashToken),
                 call.arguments[0],
-              )
+              );
+            }
 
+            if (newExpr !== null) {
               return newExpr;
             }
           }
@@ -311,7 +317,7 @@ Hint: try ${chalk.blueBright(
       return ts.visitNode(rootNode, visit);
   };
 
-    const transformResult = ts.transform(sourceFile, [transformer])
+    const transformResult = ts.transform(sourceFile, [transformer], { })
     const transformedSourceFile = transformResult.transformed[0] as ts.SourceFile;
     // TODO: Error if >1 file results
 
@@ -374,7 +380,9 @@ Hint: try ${chalk.blueBright(
       mostRecentControlStructureIsSwitch: false,
       isAutoload: this.isProjectAutoload(),
       program: watchProgram.getProgram().getProgram(),
-      usages: new Map(),
+      // NOTE: We use thie OLD sourceFileAst because tsutils can't process our
+      // new one after we used TS to transform it - it will crash if we do so.
+      usages: utils.collectVariableUsage(sourceFileAst),
       addError: (newError) => result.errors.push(newError),
       getNodeText,
     })
