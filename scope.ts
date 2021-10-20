@@ -80,7 +80,8 @@ export class Scope {
       newName = declaredVariableName + String(++increment)
     }
 
-    this.namesInScope[this.namesInScope.length - 1].push([undefined, newName])
+    // Generated functions go into global scope, so we add our new name into global scope.
+    this.namesInScope[0].push([undefined, newName])
 
     return newName
   }

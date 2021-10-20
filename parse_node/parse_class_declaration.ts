@@ -1,7 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../tests/test"
 
 const getSettersAndGetters = (members: readonly ts.ClassElement[]) => {
   const setOrGetters = members.filter(

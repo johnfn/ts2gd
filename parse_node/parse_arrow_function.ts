@@ -27,8 +27,8 @@ const getFreeVariables = (
     node.kind === SyntaxKind.Identifier ||
     node.kind === SyntaxKind.PropertyAccessExpression
   ) {
-    if (node.kind === SyntaxKind.PropertyAccessExpression) {
-      // In cases like "a.b.c", only return "a".
+    // In cases like "a.b.c", only return "a".
+    while (node.kind === SyntaxKind.PropertyAccessExpression) {
       const pae = node as ts.PropertyAccessExpression
       node = pae.expression
     }
@@ -83,23 +83,30 @@ export const getCapturedScope = (
   const uniqueFreeVariables = freeVariables.filter(
     (item, index) => freeVariables.indexOf(item) === index
   )
-
   // We don't want to capture `this` as part of our scope. There's no reason to
   // do it: lambdas are only ever executed in the current class, so `this` will
   // never be different. Plus, we'd have to rewrite all `this` access in the
   // function to be `_self`, which would be confusing, and look stupid, and
   // basically be a completely pointless workaround.
-  const freeVariablesWithoutThis = uniqueFreeVariables.filter(v => v.getText() !== "this");
+  const freeVariablesWithoutThis = uniqueFreeVariables.filter(
+    (v) => v.getText() !== "this"
+  )
+
+  const getNodeName = (node: ts.Node) => {
+    const text = node.getText()
+
+    return text
+  }
 
   const capturedScopeObject =
     "{" +
     freeVariablesWithoutThis
-      .map((freeVar) => `"${freeVar.getText()}": ${freeVar.getText()}`)
+      .map((freeVar) => `"${getNodeName(freeVar)}": ${getNodeName(freeVar)}`)
       .join(", ") +
     "}"
 
   const unwrapCapturedScope = freeVariablesWithoutThis
-    .map((v) => `  var ${v.getText()} = captures.${v.getText()}\n`)
+    .map((v) => `  var ${getNodeName(v)} = captures.${getNodeName(v)}\n`)
     .join("")
 
   return {

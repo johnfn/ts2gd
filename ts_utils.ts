@@ -67,7 +67,10 @@ export const isDictionary = (type: ts.Type): boolean => {
   return false
 }
 
-export const generatePrecedingNewlines = (node: ts.Node, fullText: string): string => {
+export const generatePrecedingNewlines = (
+  node: ts.Node,
+  fullText: string
+): string => {
   let numNewlines = 0
 
   for (const ch of [...fullText]) {
@@ -174,7 +177,10 @@ export function getGodotType(
   // If we have a precise initializer, use that first
 
   if (initializer) {
-    let preciseInitializerType = getPreciseInitializerType(initializer, props.getNodeText(initializer))
+    let preciseInitializerType = getPreciseInitializerType(
+      initializer,
+      props.getNodeText(initializer)
+    )
 
     if (preciseInitializerType) {
       return { result: preciseInitializerType }
@@ -218,9 +224,9 @@ export function getGodotType(
     return { result: "bool" }
   }
 
-  if (tsTypeName.startsWith("{")) {
-    return { result: "Dictionary" }
-  }
+  // if (tsTypeName.startsWith("{")) {
+  //   return { result: "Dictionary" }
+  // }
 
   if (tsTypeName.startsWith("IterableIterator")) {
     return { result: "Array" }
@@ -338,11 +344,17 @@ export const getCommonElements = <T>(
 }
 
 export const getTimestamp = () => {
-  const now = new Date();
+  const now = new Date()
 
-  const h = now.getHours().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-  const m = now.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-  const s = now.getSeconds().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+  const h = now
+    .getHours()
+    .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })
+  const m = now
+    .getMinutes()
+    .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })
+  const s = now
+    .getSeconds()
+    .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false })
 
-  return `[${ h }:${ m}:${ s }]`;
+  return `[${h}:${m}:${s}]`
 }

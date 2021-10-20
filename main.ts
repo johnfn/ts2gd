@@ -1,41 +1,45 @@
 // VERY USEFUL
 
-// TODO: Windows build.
+// [ ]: strongly typed RPCs
 
-// TODO: This doesnt work:
-//       enem.connect("on_die", () => { this.enemies.erase(enem) });
-// b/c it captures "this.enemies"
+// [ ]: Windows build.
+// [ ]: Could gitignore compiled files?
+// [ ]: Yield autocompletion stopped working
 
-// TODO: Import constants from other files.
+// [ ]: Parse input actions
+
+// [ ]: Add a test to make sure that signals on classes typecheck
+
+// [ ]: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
 
-// TODO:
+// [ ]:
 //   print([1, 3, 2, 4].sort_custom((a, b) => a - b))
-// This also doesn't work ^ 
+// This also doesn't work ^
 
 // USEFUL
 
-// TODO: Handle string interpolation
-// TODO: Have a github action that auto publishes an html5 build
-// TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
-// TODO  make load/preload() work and return proper string
-// TODO make FooTscn return proper type of root node (without script, not just Node)
-// TODO: Merge conflict markers in project.godot cause a ts2gd crash.
-// TODO: Better print() output, with spacing
-// TODO: check for E_OK
-// TODO: Deleting a scene can cause a "I dont know the type of that thing." error.
-// TODO: Every file should export something - show an error otherwise
+// [x] Handle string interpolation
+// [ ]: Have a github action that auto publishes an html5 build
+// [ ]: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
+// [ ] make FooTscn return proper type of root node (without script, not just Node)
+// [ ]: Merge conflict markers in project.godot cause a ts2gd crash.
+// [x]  make load/preload() work and return proper string
+// [x]: Better print() output, with spacing (there is prints, nevermind)
+// [ ]: check for E_OK
+// [ ]: Deleting a scene can cause a "I dont know the type of that thing." error.
+// [ ]: Every file should export something - show an error otherwise
 
-// TODO: Ensure that there aren't any bugs with _ prefixes.
+// [ ]: Ensure that there aren't any bugs with _ prefixes.
 
 // HIGH
 
-// TODO: Rename ParsedArgs to ParsedFlags
-// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
+// [ ]: Rename ParsedArgs to ParsedFlags
+// [ ]: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
 
-// TODO: It might be handy to keep ParseNodeTypes around for subnodes etc and return an entire tree of them. this would help code in parse_call_express that wants to inspect child nodes to see what they are etc
+// [ ]: It might be handy to keep ParseNodeTypes around for subnodes etc and return an entire tree of them. this would help code in parse_call_express that wants to inspect child nodes to see what they are etc
 
-// TODO: Refactor error handling strategy.
+// [x]: Refactor error handling strategy.
 // TODO: change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
 // TODO: Make a testing harness for project-related stuff.
 // TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
@@ -46,7 +50,7 @@
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
 // TODO: new assets aren't immediately imported.
-// TODO: There are bugs when you have both a constructor and an _ready() method.
+// TODO: There are bugs when you have both a constructor and a _ready() method.
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
 
@@ -154,11 +158,11 @@ const setup = (tsgdJson: Paths) => {
 
   const host = ts.createWatchCompilerHost(
     tsgdJson.tsconfigPath,
-    { },
+    {},
     ts.sys,
     ts.createEmitAndSemanticDiagnosticsBuilderProgram,
     reportDiagnostic,
-    reportWatchStatusChanged,
+    reportWatchStatusChanged
   )
   watchProgram = ts.createWatchProgram(host)
   const configFile = ts.readJsonConfigFile(

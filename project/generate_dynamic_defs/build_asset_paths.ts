@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import { AssetGodotScene } from "../assets/asset_godot_scene"
+import { AssetSourceFile } from "../assets/asset_source_file"
 import { TsGdProjectClass } from "../project"
 
 export function buildAssetPathsType(project: TsGdProjectClass) {
@@ -8,7 +9,13 @@ export function buildAssetPathsType(project: TsGdProjectClass) {
 declare type AssetType = {
 ${project.assets
   .filter((obj) => obj.tsType() !== null)
-  .map((obj) => `  '${obj.resPath}': ${obj.tsType()}`)
+  .map((obj) => {
+    if (obj instanceof AssetSourceFile) {
+      return `  '${obj.resPath}': PackedScene<${obj.tsType()}>`
+    }
+
+    return `  '${obj.resPath}': ${obj.tsType()}`
+  })
   .join(",\n")}
 }
 

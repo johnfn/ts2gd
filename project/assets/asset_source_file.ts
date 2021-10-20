@@ -183,15 +183,16 @@ Hint: try ${chalk.blueBright(
     return {
       error: ErrorName.CantFindAutoloadInstance,
       location: ast ?? this.tsRelativePath,
-      description:
-        `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
+      description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
         
 @autoload
 class MyAutoloadClass extends Node2D {
   public string hello = "hi"
 }
 
-${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line is what you're missing!
+${chalk.green(
+  "export const MyAutoload = new MyAutoloadClass()"
+)} // This line is what you're missing!
 `,
     }
   }
@@ -260,48 +261,50 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
     return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
-  static transformSourceFile(
-    sourceFile: ts.SourceFile
-  ): ts.SourceFile {
-    const transformer = <T extends ts.Node>(context: ts.TransformationContext) => (rootNode: T) => {
-      function visit(node: ts.Node): ts.Node {
-        if (node.kind === ts.SyntaxKind.CallExpression) {
-          const call = node as ts.CallExpression;
-
-          if (call.expression.kind === ts.SyntaxKind.PropertyAccessExpression) {
-            const pae = call.expression as ts.PropertyAccessExpression;
-            // TODO: Could have null and non-null coalescing lib functions.
+  static transformSourceFile(sourceFile: ts.SourceFile): ts.SourceFile {
+    const transformer =
+      <T extends ts.Node>(context: ts.TransformationContext) =>
+      (rootNode: T) => {
+        function visit(node: ts.Node): ts.Node {
+          if (node.kind === ts.SyntaxKind.CallExpression) {
+            const call = node as ts.CallExpression
 
             if (
-              pae.name.text === "add" ||
-              pae.name.text === "sub" ||
-              pae.name.text === "mul" ||
-              pae.name.text === "div"
+              call.expression.kind === ts.SyntaxKind.PropertyAccessExpression
             ) {
-              return context.factory.createCallExpression(
-                context.factory.createIdentifier(`${ pae.name.text }_vec_lib`),
-                [],
-                [
-                  ts.visitNode(pae.expression, visit),
-                  ts.visitNode(call.arguments[0], visit),
-                ]
-              )
+              const pae = call.expression as ts.PropertyAccessExpression
+              // TODO: Could have null and non-null coalescing lib functions.
+
+              if (
+                pae.name.text === "add" ||
+                pae.name.text === "sub" ||
+                pae.name.text === "mul" ||
+                pae.name.text === "div"
+              ) {
+                return context.factory.createCallExpression(
+                  context.factory.createIdentifier(`${pae.name.text}_vec_lib`),
+                  [],
+                  [
+                    ts.visitNode(pae.expression, visit),
+                    ts.visitNode(call.arguments[0], visit),
+                  ]
+                )
+              }
             }
           }
+
+          return ts.visitEachChild(node, visit, context)
         }
 
-        return ts.visitEachChild(node, visit, context);
+        return ts.visitNode(rootNode, visit)
       }
 
-      return ts.visitNode(rootNode, visit);
-  };
-
-    const transformResult = ts.transform(sourceFile, [transformer], { })
-    const transformedSourceFile = transformResult.transformed[0] as ts.SourceFile;
+    const transformResult = ts.transform(sourceFile, [transformer], {})
+    const transformedSourceFile = transformResult
+      .transformed[0] as ts.SourceFile
     // TODO: Error if >1 file results
 
-    return transformedSourceFile;
-
+    return transformedSourceFile
   }
 
   async compile(
@@ -339,11 +342,16 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
-    const transformedSourceFile = AssetSourceFile.transformSourceFile(sourceFileAst)
-    const printer: ts.Printer = ts.createPrinter();
+    const transformedSourceFile =
+      AssetSourceFile.transformSourceFile(sourceFileAst)
+    const printer: ts.Printer = ts.createPrinter()
 
     const getNodeText = (node: ts.Node) => {
-      return printer.printNode(ts.EmitHint.Unspecified, node, transformedSourceFile);
+      return printer.printNode(
+        ts.EmitHint.Unspecified,
+        node,
+        transformedSourceFile
+      )
     }
 
     const result: {
@@ -368,10 +376,10 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
 
     // TODO: Only do this once per program run max!
     fs.mkdirSync(path.dirname(this.gdPath), { recursive: true })
-    fs.writeFileSync(this.gdPath, parsedNode.content)
+    fs.writeFileSync(this.gdPath, this.getFileHeader() + parsedNode.content)
 
     for (const { content, name } of parsedNode.enums ?? []) {
-      fs.writeFileSync(this.getEnumPath(name), content)
+      fs.writeFileSync(this.getEnumPath(name), this.getFileHeader() + content)
     }
 
     const err = this.checkForAutoloadChanges()
@@ -389,6 +397,10 @@ ${ chalk.green("export const MyAutoload = new MyAutoloadClass()") } // This line
     }
 
     return result
+  }
+
+  getFileHeader(): string {
+    return `# This file has been autogenerated by ts2gd. DO NOT EDIT!\n\n`
   }
 
   validateAutoloadClass(): TsGdError | null {

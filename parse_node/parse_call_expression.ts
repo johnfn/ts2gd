@@ -224,7 +224,8 @@ export const parseCallExpression = (
           })
         }
 
-        result.hoistedLibraryFunctions = result.hoistedLibraryFunctions ?? new Set();
+        result.hoistedLibraryFunctions =
+          result.hoistedLibraryFunctions ?? new Set()
         result.hoistedLibraryFunctions.add(libFunctionName)
 
         return result
@@ -328,7 +329,7 @@ export const parseCallExpression = (
               parsedArgs[0].content,
               "self",
               `"${arrowFunctionObj?.name}"`,
-              `[${ capturedScopeObject }]`
+              `[${capturedScopeObject}]`,
             ]
           }
         } else {
@@ -391,7 +392,7 @@ export const parseCallExpression = (
 
   if (expression.kind === SyntaxKind.Identifier) {
     const prop = node.expression as ts.Identifier
-    const functionName = prop.text;
+    const functionName = prop.text
 
     if (
       functionName === "add_vec_lib" ||
@@ -400,13 +401,12 @@ export const parseCallExpression = (
       functionName === "mul_vec_lib"
     ) {
       if (!result.hoistedLibraryFunctions) {
-        result.hoistedLibraryFunctions = new Set();
+        result.hoistedLibraryFunctions = new Set()
       }
 
-      result.hoistedLibraryFunctions.add(functionName);
+      result.hoistedLibraryFunctions.add(functionName)
     }
   }
-
 
   return result
 }
@@ -443,6 +443,31 @@ export const testNormalVec: Test = {
   expected: `
 var v1
 v1.distance_to(v1)
+`,
+}
+
+export const testArrowScoping: Test = {
+  ts: `
+class Foo {
+  a() {
+    const a = () => {};
+  }
+
+  b() {
+    const b = () => {};
+  }
+}
+  `,
+  expected: `
+class_name Foo
+func __gen(captures):
+  pass
+func __gen1(captures):
+  pass
+func a():
+  var _a = funcref(self, "__gen")
+func b():
+  var _b = funcref(self, "__gen1")
 `,
 }
 
@@ -579,7 +604,7 @@ func __gen(_body, captures):
 func _ready():
   var x: int = 1
   var y: int = 2
-  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`
+  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`,
 }
 
 // we intentionally do not capture `this` as self - see comment in parse_arrow_function.ts for rationale
@@ -604,7 +629,31 @@ func __gen(_body, captures):
 func _ready():
   var x: int = 1
   var y: int = 2
-  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`
+  self.connect("body_entered", self, "__gen", [{"x": x, "y": y}])`,
+}
+
+export const testConnectComplex: Test = {
+  ts: `
+class Test {
+  enemies: any;
+
+  foo() {
+    let enem: any;
+
+    enem.connect("on_die", () => { this.enemies.erase(enem) });  
+  }
+}
+  `,
+  expected: `
+class_name Test
+func __gen(captures):
+  var enem = captures.enem
+  self.enemies.erase(enem)
+var enemies
+func foo():
+  var enem
+  enem.connect("on_die", self, "__gen", [{"enem": enem}])  
+`,
 }
 
 export const testRewriteDictPut2: Test = {

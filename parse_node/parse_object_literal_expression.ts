@@ -16,7 +16,7 @@ export const parseObjectLiteralExpression = (
     })
   }
 
-  const isMultiline = node.getText().includes("\n")
+  const isMultiline = props.getNodeText(node).includes("\n")
 
   const unprocessedKeys = node.properties.map((prop) => {
     if (prop.kind === SyntaxKind.PropertyAssignment) {
@@ -68,7 +68,7 @@ export const parseObjectLiteralExpression = (
       if (isMultiline) {
         return `
 {
-${pairs.map(([k, v]) => `  ${k}: ${v},\n`).join("")}
+${pairs.map(([k, v]) => `  ${k}: ${v},`).join("\n")}
 }      
       `
       } else {
@@ -142,4 +142,23 @@ var _x = {
   "b": 1,
 }
   `,
+}
+
+export const testObjectLiteralMultiline3: Test = {
+  ts: `
+{
+  let foo = {
+    a: 1,
+    b: 2,
+  }
+  foo
+}
+  `,
+  expected: `
+var foo = {
+  "a": 1,
+  "b": 2,
+}
+foo  
+`,
 }

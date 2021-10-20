@@ -2,9 +2,9 @@
 
 Why use ts2gd?
 
-* Incrementally compiles to GDScript in under a tenth of a second.
-* Provides insanely good autocomplete and documentation.
-* Use all of TS's extremely powerful type system.
+- Incrementally compiles to GDScript in under a tenth of a second.
+- Provides insanely good autocomplete and documentation.
+- Use all of TS's extremely powerful type system.
 
 ## Install:
 
@@ -36,6 +36,18 @@ Now, run the compiler on tsgd.json:
 `ts-node main.ts tsgd.json`
 
 ## Details and Differences
+
+### load/preload
+
+Sure, you _could_ do preload("YourScriptFile.tscn)... but why would you? ts2gd automatically creates globals for your scenes that you can
+import directly. e.g. if you want to instance, "YourScriptFile.tscn", just type YourScriptFileTscn and allow TS to auto-import it. You can
+then instance() it as normal. e.g., this:
+
+`const new_obj = preload("res://MyScene.tscn).instance()`
+
+is equivalent to this:
+
+`const new_obj = MySceneTscn.instance()`
 
 ### Enums
 

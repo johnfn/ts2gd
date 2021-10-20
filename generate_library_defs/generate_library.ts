@@ -483,7 +483,7 @@ ${Object.keys(enums)
   //   let fileName = 'KinematicBody2D.xml';
   //   const result = await parseFile(godotDocumentationPath + fileName);
 
-  //   console.log(result);
+  //   console.info(result);
   // }
 
   await main()

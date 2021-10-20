@@ -6,6 +6,7 @@ import { parseSourceFile } from "./parse_node/parse_source_file"
 import {
   generatePrecedingNewlines,
   syntaxKindToString as kindToString,
+  syntaxKindToString,
 } from "./ts_utils"
 import { parseTypeReference } from "./parse_node/parse_type_reference"
 import { parseNumericLiteral } from "./parse_node/parse_numeric_literal"
@@ -43,7 +44,10 @@ import { parseYieldExpression } from "./parse_node/parse_yield_expression"
 import { parseReturnStatement } from "./parse_node/parse_return_statement"
 import { parseBreakStatement } from "./parse_node/parse_break_statement"
 import { parseBlock } from "./parse_node/parse_block"
-import { LibraryFunctionName, parseCallExpression } from "./parse_node/parse_call_expression"
+import {
+  LibraryFunctionName,
+  parseCallExpression,
+} from "./parse_node/parse_call_expression"
 import { parseVariableStatement } from "./parse_node/parse_variable_statement"
 import { parseSetAccessor } from "./parse_node/parse_set_accessor"
 import { parseGetAccessor } from "./parse_node/parse_get_accessor"
@@ -58,6 +62,7 @@ import { parseTypeofExpression } from "./parse_node/parse_typeof_expression"
 import { TsGdProjectClass } from "./project/project"
 import { Scope } from "./scope"
 import { ErrorName, TsGdError } from "./errors"
+import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 
 export type ParseState = {
   isConstructor: boolean
@@ -129,8 +134,10 @@ export function combine(args: {
 }): ParseNodeType {
   let { parent, nodes, props, parsedStrings, parsedObjs, addIndent } = args
 
-  if (!parsedStrings && !parsedObjs) {
-    throw new Error("Need at least one of parsedStrings or parsedObjs")
+  if ((!parsedStrings && !parsedObjs) || (parsedStrings && parsedObjs)) {
+    throw new Error(
+      "Need at least one of parsedStrings or parsedObjs, but not both."
+    )
   }
 
   if (Array.isArray(nodes)) {
@@ -174,7 +181,7 @@ export function combine(args: {
   })
 
   for (const parsedNode of parsedNodes) {
-    const { node, content, enums, extraLines } = parsedNode
+    const { node, content, extraLines } = parsedNode
 
     if (!node) {
       continue
@@ -223,7 +230,7 @@ export function combine(args: {
       }
     }
 
-    if (isStandAloneLine && lines.length === 1) {
+    if (isStandAloneLine) {
       formattedContent = formattedContent + "\n"
     }
 
@@ -250,9 +257,11 @@ export function combine(args: {
     hoistedEnumImports: parsedNodes.flatMap(
       (node) => node.hoistedEnumImports ?? []
     ),
-    hoistedLibraryFunctions: new Set(parsedNodes.flatMap(
-      (node) => [...(node.hoistedLibraryFunctions?.keys() ?? [])]
-    )),
+    hoistedLibraryFunctions: new Set(
+      parsedNodes.flatMap((node) => [
+        ...(node.hoistedLibraryFunctions?.keys() ?? []),
+      ])
+    ),
     hoistedArrowFunctions: parsedNodes.flatMap(
       (node) => node.hoistedArrowFunctions ?? []
     ),
@@ -355,6 +364,11 @@ export const parseNode = (
       return parseReturnStatement(genericNode as ts.ReturnStatement, props)
     case SyntaxKind.StringLiteral:
       return parseStringLiteral(genericNode as ts.StringLiteral, props)
+    case SyntaxKind.TemplateExpression:
+      return parseTemplateExpression(
+        genericNode as ts.TemplateExpression,
+        props
+      )
     case SyntaxKind.BreakStatement:
       return parseBreakStatement(genericNode as ts.BreakStatement, props)
     case SyntaxKind.ContinueStatement:
@@ -478,6 +492,7 @@ export const parseNode = (
       return { content: "null" }
 
     default:
+      console.error(syntaxKindToString(genericNode.kind))
       props.addError({
         error: ErrorName.UnknownTsSyntax,
         location: genericNode,

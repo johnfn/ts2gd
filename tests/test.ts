@@ -23,9 +23,7 @@ export const compileTs = (
     ts.ScriptKind.TS
   )
 
-  const transformedSourceFile = AssetSourceFile.transformSourceFile(
-    sourceFile
-  )
+  const transformedSourceFile = AssetSourceFile.transformSourceFile(sourceFile)
 
   const libDTs = ts.createSourceFile(
     "lib.d.ts",
@@ -74,10 +72,14 @@ export const compileTs = (
   let i = 0
   const errors: TsGdError[] = []
 
-  const printer: ts.Printer = ts.createPrinter();
+  const printer: ts.Printer = ts.createPrinter()
 
   const getNodeText = (node: ts.Node) => {
-    return printer.printNode(ts.EmitHint.Unspecified, node, transformedSourceFile);
+    return printer.printNode(
+      ts.EmitHint.Unspecified,
+      node,
+      transformedSourceFile
+    )
   }
 
   // TODO: Make this less silly.
@@ -352,7 +354,9 @@ export const runTests = async () => {
   const elapsed = (new Date().getTime() - start) / 1000 + "s"
 
   if (failures.length === 0) {
-    console.info("All", total, "tests passed!")
+    console.info(
+      `All ${total} tests ` + chalk.green(`passed`) + ` in ${elapsed}!`
+    )
   } else if (
     failures.length > 0 &&
     failures.filter((x) => x.expectFail).length === failures.length
