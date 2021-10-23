@@ -1,7 +1,5 @@
 // VERY USEFUL
 
-// [ ]: strongly typed RPCs
-
 // [ ]: Windows build.
 // [ ]: Could gitignore compiled files?
 // [ ]: Yield autocompletion stopped working

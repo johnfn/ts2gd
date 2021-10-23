@@ -32,7 +32,9 @@ export const getCodeForMethod = (
     argumentList: string
     returnType: string
     isAbstract: boolean
-  }
+  },
+  // TOOD: This should really not be undefined
+  containingClassName?: string
 ) => {
   const {
     name,
@@ -157,7 +159,7 @@ export const parseMethod = (
 
   return {
     ...result,
-    codegen: getCodeForMethod(generateAsGlobal, result),
+    codegen: getCodeForMethod(generateAsGlobal, result, containingClassName),
   }
 }
 

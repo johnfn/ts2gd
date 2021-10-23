@@ -28,11 +28,20 @@ declare function float(x: number): number
 
 declare type NodePathType = string
 
+/**
+ * Exclude from T those types that are assignable to U
+ */
+type Exclude<T, U> = T extends U ? never : T;
+
 // Used for typing connect()
 type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
 type SignalFunction<T> = T extends Signal<infer R> ? R : never;
+
+// Used for typing rpc(), rpc_id() etc
+type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
+type FunctionsOf<T> = KeysMatching<T, Function>;
 
 interface FunctionConstructor {
   (...args: string[]): Function;

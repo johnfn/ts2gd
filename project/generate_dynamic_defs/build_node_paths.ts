@@ -172,7 +172,7 @@ export const buildNodePathsTypeForScript = (
   }
 
   let result = `${
-    references.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""
+    references.length > 0 ? `// Uses of "${script.resPath}": \n` : ""
   }
 ${references
   .map((ref) => {
@@ -181,7 +181,9 @@ ${references
     } else if (ref.type === "script") {
       return (
         "// As a script:\n" +
-        "//   " + ref.use + "\n" +
+        "//   " +
+        ref.use +
+        "\n" +
         ref.children.map((c) => "//     - " + c + " \n").join("")
       )
     } else if (ref.type === "instance") {
@@ -204,7 +206,9 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     get_node(path: string): Node
-    connect<T extends SignalsOf<${extendedClassName}Signals & ${className }>>(signal: T, method: SignalFunction<(${extendedClassName}Signals & ${ className })[T]>): number;
+    connect<T extends SignalsOf<${extendedClassName}Signals & ${className}>>(signal: T, method: SignalFunction<(${extendedClassName}Signals & ${className})[T]>): number;
+    rpc<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(name: T, ...rest: Parameters<${className}[T]>): void
+    rpc_id<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(id: number, name: T, ...rest: Parameters<${className}[T]>): void
   }
 
   namespace ${className} {
@@ -212,7 +216,12 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 
     export { _new as new };
   }
-}`
+}
+
+interface SignalClassNames {
+  ${extendedClassName}: SignalsOf<${extendedClassName}Signals & ${className}>;
+}
+`
 
   const destPath = path.join(
     TsGdProjectClass.Paths.dynamicGodotDefsPath,
