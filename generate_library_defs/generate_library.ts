@@ -195,6 +195,10 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
     )
     const constructorInfo = methods.filter((method) => method.isConstructor)
 
+    // This is true for classes that can be constructed without a new keyword, e.g. const myVector = Vector2();
+    let isSpecialConstructorClass =
+      className === "Vector2" || className === "Vector3"
+
     if (className === "Signal") {
       className = "Signal<T extends (...args: any[]): any>"
     }
@@ -203,34 +207,55 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
       className += "Class"
     }
 
+    const constructors = (() => {
+      if (className.toLowerCase() === "signal<t>") {
+        return ""
+      }
+
+      let typeAnnotation = isSpecialConstructorClass ? `: ${className}` : ""
+      let constructors = ""
+
+      if (constructorInfo.length === 0) {
+        constructors += `  new()${typeAnnotation}; \n`
+      } else {
+        constructors += `
+${constructorInfo
+  .map((inf) => `  new(${inf.argumentList})${typeAnnotation};`)
+  .join("\n")}
+`
+      }
+
+      // This is for being able to do etc. const x = Vector2();
+      if (isSpecialConstructorClass) {
+        constructors += `
+${constructorInfo
+  .map((inf) => `  (${inf.argumentList})${typeAnnotation};`)
+  .join("\n")}
+`
+      }
+
+      if (!isSpecialConstructorClass) {
+        constructors += `  static "new"()${typeAnnotation} \n`
+      }
+
+      return constructors
+    })()
+
     const output = `
 ${formatJsDoc(json.class.description[0])}
-declare class ${className}${inherits ? ` extends ${inherits}` : ""} {
+${(() => {
+  if (isSpecialConstructorClass) {
+    return `declare class ${className}Constructor {`
+  } else {
+    return `declare class ${className}${
+      inherits ? ` extends ${inherits} ` : ""
+    } {`
+  }
+})()}
 
   
 ${formatJsDoc(json.class.description[0])}
-${(() => {
-  if ((className as string).toLowerCase() === "signal<t>") {
-    return ""
-  }
-
-  let constructors = ""
-
-  if (constructorInfo.length === 0) {
-    constructors += `  "new"(): ${className};\n`
-  } else {
-    constructors += `
-${constructorInfo
-  .map((inf) => `  constructor(${inf.argumentList});`)
-  .join("\n")}
-`
-  }
-
-  constructors += `  static "new"(): ${className};\n`
-
-  return constructors
-})()}
-
+${isSpecialConstructorClass ? "" : constructors}
 ${members
   .map((property: any) => {
     const propertyName = sanitizeGodotNameForTs(property["$"].name, "property")
@@ -256,7 +281,6 @@ ${methods
   })
   .join("\n\n")}
 
-  // connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
   connect<T extends SignalsOf<${className}Signals>>(signal: T, method: SignalFunction<${className}Signals[T]>): number;
 
 ${(() => {
@@ -294,6 +318,17 @@ ${constants
   })
   .join("\n")}
 }
+${(() => {
+  if (isSpecialConstructorClass) {
+    return `
+declare type ${className} = ${className}Constructor;
+declare var ${className}: typeof ${className}Constructor & {
+  ${constructors}
+}`
+  }
+
+  return ""
+})()}
 
 declare class ${className}Signals${
       inherits ? ` extends ${inherits}Signals` : ""

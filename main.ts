@@ -18,8 +18,6 @@
 // USEFUL
 
 // [x] Handle string interpolation
-// [ ]: Have a github action that auto publishes an html5 build
-// [ ]: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
 // [ ] make FooTscn return proper type of root node (without script, not just Node)
 // [ ]: Merge conflict markers in project.godot cause a ts2gd crash.
 // [x]  make load/preload() work and return proper string
