@@ -410,9 +410,9 @@ ${chalk.green(
       return classNode
     }
 
-    const modifiers = classNode?.modifiers?.map((x) => x.getText()) ?? []
+    const result = this.getAutoloadNameFromExportedVariable()
 
-    if (!this.getAutoloadNameFromExportedVariable()) {
+    if (typeof result !== "string") {
       return {
         error: ErrorName.AutoloadNotExported,
         description: `Be sure to export an instance of your autoload class, e.g.:

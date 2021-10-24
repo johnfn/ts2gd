@@ -17,6 +17,7 @@ export type LibraryFunctionName =
   | "max_by"
   | "min_by"
   | "join"
+  | "entries"
   | "random_element"
   | "add_vec_lib"
   | "sub_vec_lib"
@@ -29,6 +30,21 @@ export const LibraryFunctions: {
     definition: (name: string) => string
   }
 } = {
+  entries: {
+    name: "entries",
+    definition: () => `
+func __entries(dict):
+  var result = []
+
+  for key in dict.keys():
+    var value = dict[key]
+
+    result.push_back([key, value])
+  
+  return result
+`,
+  },
+
   add_vec_lib: {
     name: "add_vec_lib",
     definition: () => `
@@ -186,6 +202,25 @@ export const parseCallExpression = (
     const type = props.program
       .getTypeChecker()
       .getTypeAtLocation(prop.expression)
+
+    if (isDictionary(type)) {
+      if (functionName === "entries") {
+        let result = combine({
+          parent: node,
+          nodes: [prop.expression],
+          props,
+          parsedStrings: (expr) => {
+            return `__entries(${[expr].join(", ")})`
+          },
+        })
+
+        result.hoistedLibraryFunctions =
+          result.hoistedLibraryFunctions ?? new Set()
+        result.hoistedLibraryFunctions.add("entries")
+
+        return result
+      }
+    }
 
     if (isArrayType(type)) {
       if (functionName in LibraryFunctions) {

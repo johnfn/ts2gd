@@ -265,7 +265,8 @@ size(): int;
 /** Returns the list of values in the [Dictionary]. */
 values(): V[];
 
-
+/** Returns the list of key, value tuples in the [Dictionary]. */
+entries(): [K, V][];
   
 }
 
