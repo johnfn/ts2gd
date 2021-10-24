@@ -10,7 +10,7 @@ declare type AssetType = {
 ${project.assets
   .filter((obj) => obj.tsType() !== null)
   .map((obj) => {
-    if (obj instanceof AssetSourceFile) {
+    if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
       return `  '${obj.resPath}': PackedScene<${obj.tsType()}>`
     }
 

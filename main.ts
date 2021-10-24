@@ -1,5 +1,7 @@
 // VERY USEFUL
 
+// [ ]: why doesnt enemy have root paths?
+
 // [ ]: Windows build.
 // [ ]: Could gitignore compiled files?
 // [ ]: Yield autocompletion stopped working

@@ -308,7 +308,7 @@ export const parseCallExpression = (
         parsedExpr.content = "yield"
       }
 
-      if (parsedExpr.content === "self.get_node_safe") {
+      if (parsedExpr.content === "self.get_node_unsafe") {
         parsedExpr.content = "self.get_node"
       }
 
@@ -741,7 +741,7 @@ export const testRewriteGetNode: Test = {
   ts: `
 export class Test {
   foo() {
-    this.get_node_safe('hello')
+    this.get_node('hello')
   }
 }
   `,
@@ -757,7 +757,7 @@ export const testRewriteGetNode2: Test = {
   ts: `
 export class Test {
   foo() {
-    this.get_node('hello')
+    this.get_node_unsafe('hello')
   }
 }
   `,
