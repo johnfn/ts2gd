@@ -768,3 +768,22 @@ func foo():
   self.get_node("hello")
 `,
 }
+
+export const testDoubleCapture: Test = {
+  ts: `
+let big = { a : 6 }
+let x = []
+x.map(() => {
+  return big.a + big.a
+})
+  `,
+  expected: `
+${LibraryFunctions.map.definition("__map")}
+func __gen(captures):
+  var big = captures.big
+  return big.a + big.a
+var big = { "a": 6 }
+var x = []
+__map(x, funcref(self, "__gen"), {"big": big})
+`,
+}

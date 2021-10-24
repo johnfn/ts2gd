@@ -1,6 +1,12 @@
 // VERY USEFUL
 
 // [ ]: why doesnt enemy have root paths?
+// [ ]: why can i CALL NUMBERS
+// [ ]: we could write the autoload export for u
+
+// [ ]: signal API is annoying
+
+// [ ]: get_children returns any[]
 
 // [ ]: Windows build.
 // [ ]: Could gitignore compiled files?

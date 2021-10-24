@@ -1,6 +1,8 @@
 import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../tests/test"
+import { LibraryFunctions } from "./parse_call_expression"
 
 /**
  * Get all identifiers in a scope that were declared in an enclosing scope.
@@ -81,8 +83,11 @@ export const getCapturedScope = (
 } => {
   const freeVariables = getFreeVariables(node.body, checker, node)
   const uniqueFreeVariables = freeVariables.filter(
-    (item, index) => freeVariables.indexOf(item) === index
+    (item, index) =>
+      freeVariables.findIndex((obj) => obj.getText() === item.getText()) ===
+      index
   )
+
   // We don't want to capture `this` as part of our scope. There's no reason to
   // do it: lambdas are only ever executed in the current class, so `this` will
   // never be different. Plus, we'd have to rewrite all `this` access in the
