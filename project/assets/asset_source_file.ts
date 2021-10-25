@@ -115,7 +115,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
   exportedTsClassName(): string | TsGdError {
     const node = this.getClassNode()
 
-    if (node === null || "error" in node) {
+    if ("error" in node) {
       return node
     }
 
@@ -174,8 +174,13 @@ Hint: try ${chalk.blueBright(
     for (const d of topLevelDefinitions.getChildren()) {
       if (d.kind === SyntaxKind.VariableStatement) {
         const vs = d as ts.VariableStatement
+        const isExported = vs.modifiers?.find(
+          (mod) => mod.kind === SyntaxKind.ExportKeyword
+        )
 
-        return vs.declarationList.declarations[0].name.getText()
+        if (isExported) {
+          return vs.declarationList.declarations[0].name.getText()
+        }
       }
     }
 
@@ -310,6 +315,8 @@ ${chalk.green(
   async compile(
     watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
   ): Promise<TsGdReturn<null>> {
+    const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
+
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
     let tries = 0
 
@@ -394,6 +401,23 @@ ${chalk.green(
       if (error !== null) {
         result.errors.push(error)
       }
+
+      const newAutoloadClassName = this.getAutoloadNameFromExportedVariable()
+
+      if (
+        typeof oldAutoloadClassName === "string" &&
+        typeof newAutoloadClassName === "string"
+      ) {
+        // TODO: Somehow put this autoload logic elsewhere.
+        // Check if they changed the name of the exported autoload variable.
+        if (newAutoloadClassName !== oldAutoloadClassName) {
+          this.project.godotProject.removeAutoload(this.resPath)
+          this.project.godotProject.addAutoload(
+            newAutoloadClassName,
+            this.resPath
+          )
+        }
+      }
     }
 
     return result
@@ -433,7 +457,6 @@ ${chalk.white(
   }
 
   checkForAutoloadChanges(): TsGdError | null {
-    const autoloadClassName = this.getGodotClassName()
     let shouldBeAutoload: boolean
     let prevAutoload = this.isAutoload()
 
@@ -455,6 +478,15 @@ ${chalk.white(
 
     if (!prevAutoload && shouldBeAutoload) {
       if (!this.isProjectAutoload()) {
+        const autoloadClassName = this.getAutoloadNameFromExportedVariable()
+
+        if (
+          typeof autoloadClassName !== "string" &&
+          "error" in autoloadClassName
+        ) {
+          return autoloadClassName
+        }
+
         this.project.godotProject.addAutoload(autoloadClassName, this.resPath)
       }
 
@@ -475,10 +507,7 @@ ${chalk.white(
 
     if (prevAutoload && !shouldBeAutoload) {
       if (this.isProjectAutoload()) {
-        this.project.godotProject.removeAutoload(
-          autoloadClassName,
-          this.resPath
-        )
+        this.project.godotProject.removeAutoload(this.resPath)
       }
 
       if (this.isDecoratedAutoload()) {
@@ -506,7 +535,6 @@ ${chalk.white(
     fs.rmSync(this.gdPath)
 
     // Delete the generated enum files
-
     const filesInDirectory = fs.readdirSync(this.gdContainingDirectory)
     const nameWithoutExtension = this.gdPath.slice(0, -".gd".length)
 
@@ -518,9 +546,6 @@ ${chalk.white(
       }
     }
 
-    this.project.godotProject.removeAutoload(
-      this.getGodotClassName(),
-      this.resPath
-    )
+    this.project.godotProject.removeAutoload(this.resPath)
   }
 }
