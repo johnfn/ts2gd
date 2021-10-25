@@ -212,7 +212,7 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
         return ""
       }
 
-      let typeAnnotation = isSpecialConstructorClass ? `: ${className}` : ""
+      let typeAnnotation = `: ${className}`
       let constructors = ""
 
       if (constructorInfo.length === 0) {
@@ -375,8 +375,8 @@ declare class ${className}Signals${
     const result = `
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
 declare const preload: <T extends AssetPath>(path: T) => AssetType[T];
-declare function remotesync(target: Function, key: any, descriptor: any): any;
-declare function remote(target: Function, key: any, descriptor: any): any;
+declare function remotesync(target: any, key: string, descriptor: any): any
+declare function remote(target: any, key: string, descriptor: any): any
 
 ${properties
   .map((property: any) => {

@@ -2,9 +2,10 @@
 
 // [ ]: why doesnt enemy have root paths?
 // [ ]: why can i CALL NUMBERS
-// [ ]: we could write the autoload export for u
+// [ ]: the autoload syntax should just be export blargh = new class { derp() }
+// [ ]: autoload class names are based on the file rather than the exported variable rn
 
-// [ ]: signal API is annoying
+// [ ]: signal API is annoying - mostly hard to remember...
 
 // [ ]: get_children returns any[]
 

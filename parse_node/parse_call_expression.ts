@@ -1,4 +1,4 @@
-import ts, { isOptionalChain, isOptionalTypeNode, SyntaxKind } from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import { ErrorName } from "../errors"
 import { combine, ExtraLine, parseNode, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"

@@ -63,6 +63,7 @@ import { TsGdProjectClass } from "./project/project"
 import { Scope } from "./scope"
 import { ErrorName, TsGdError } from "./errors"
 import { parseTemplateExpression } from "./parse_node/parse_template_expression"
+import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 
 export type ParseState = {
   isConstructor: boolean
@@ -367,6 +368,11 @@ export const parseNode = (
     case SyntaxKind.TemplateExpression:
       return parseTemplateExpression(
         genericNode as ts.TemplateExpression,
+        props
+      )
+    case SyntaxKind.NoSubstitutionTemplateLiteral:
+      return parseNoSubstitutionTemplateLiteral(
+        genericNode as ts.NoSubstitutionTemplateLiteral,
         props
       )
     case SyntaxKind.BreakStatement:
