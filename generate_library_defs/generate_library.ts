@@ -163,9 +163,14 @@ export function formatJsDoc(input: string): string {
 
 export async function generateGodotLibraryDefinitions(): Promise<void> {
   // TODO: Refactor this out
+  // TODO: Hmm... prob theres a better way than a huge manual list!
   let csgClassesPath = path.join(
     TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
     "modules/csg/doc_classes"
+  )
+  let websocketClassesPath = path.join(
+    TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
+    "modules/websocket/doc_classes"
   )
   let normalClassesPath = path.join(
     TsGdProjectClass.Paths.godotSourceRepoPath ?? "",
@@ -197,7 +202,10 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
 
     // This is true for classes that can be constructed without a new keyword, e.g. const myVector = Vector2();
     let isSpecialConstructorClass =
-      className === "Vector2" || className === "Vector3"
+      className === "Vector2" ||
+      className === "Vector3" ||
+      className === "Rect" ||
+      className === "Color"
 
     if (className === "Signal") {
       className = "Signal<T extends (...args: any[]): any>"
@@ -461,14 +469,9 @@ ${Object.keys(enums)
       globalFunctions
     )
 
-    const xmlPaths = [
-      ...fs
-        .readdirSync(csgClassesPath)
-        .map((x) => path.join(csgClassesPath, x)),
-      ...fs
-        .readdirSync(normalClassesPath)
-        .map((x) => path.join(normalClassesPath, x)),
-    ].filter((file) => file.endsWith(".xml"))
+    const xmlPaths = [csgClassesPath, websocketClassesPath, normalClassesPath]
+      .flatMap((dir) => fs.readdirSync(dir).map((p) => path.join(dir, p)))
+      .filter((file) => file.endsWith(".xml"))
 
     for (let fullPath of xmlPaths) {
       const fileName = path.basename(fullPath)

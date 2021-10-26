@@ -146,6 +146,23 @@ export const parseMethod = (
 }[]`
   }
 
+  if (name === "get_datetime") {
+    returnType = `{
+      year: number;
+      month: number;
+      day: number;
+      weekday: number;
+      dst: boolean;
+      hour: number;
+      minute: number;
+      second: number;
+    }`
+  }
+
+  if (name === "get_children") {
+    returnType = `Node[]`
+  }
+
   const isAbstract = name.startsWith("_")
 
   const result = {

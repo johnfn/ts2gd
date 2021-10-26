@@ -1,9 +1,22 @@
 // VERY USEFUL
 
+// [ ]: construct Color without new
+// [ ]: construct and Rect without new
+// [ ]: also Color constructor is wrong
+
+// [ ]: what if vectors are just bigints?
+
+// [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
+// [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
-// [ ]: why can i CALL NUMBERS
-// [ ]: the autoload syntax should just be export blargh = new class { derp() }
-// [ ]: autoload class names are based on the file rather than the exported variable rn
+// [ ]: i get autoload errors on empty ts files
+// [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
+// [ ]: error for RPCing to a function that doesnt have @rpc?
+// [x]: why can i CALL NUMBERS
+// [x]: autoload class names are based on the file rather than the exported variable rn
+// [ ]: autoload could be injected into global scope? ironically maybe the best
+//      way to do it would be to NOT export a var and then auto export for u - but
+//      then goto def wouldnt work.
 
 // [ ]: signal API is annoying - mostly hard to remember...
 
@@ -16,6 +29,8 @@
 // [ ]: Parse input actions
 
 // [ ]: Add a test to make sure that signals on classes typecheck
+
+// [ ]: bool as alias for boolean, remove generated bool class
 
 // [ ]: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
