@@ -484,6 +484,10 @@ ${Object.keys(enums)
         continue
       }
 
+      if (fileName === "bool.xml") {
+        continue
+      }
+
       if (fileName === "Dictionary.xml") {
         continue
       }
