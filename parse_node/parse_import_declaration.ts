@@ -193,7 +193,7 @@ export const parseImportDeclaration = (
       imports
         .map(({ importedName, type, resPath }) => {
           if (type === "class") {
-            return `const ${importedName} = preload("${resPath}")`
+            return `var ${importedName} = load("${resPath}")`
           } else if (type === "enum") {
             return `const ${importedName} = preload("${resPath}").${importedName}`
           } else if (type === "scene") {
