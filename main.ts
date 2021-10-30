@@ -1,5 +1,8 @@
 // VERY USEFUL
 
+// [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
+//        ^ generates incorrect code
+// [ ]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
 // [ ]: i get autoload errors on empty ts files

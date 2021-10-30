@@ -191,8 +191,6 @@ export const parseCallExpression = (
     })
   }
 
-  // This block compiles vec.add(vec2) into vec + vec2.
-
   // node = [[ a.b(c) ]]
   if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
     // prop = [[ a.b ]](c)
@@ -404,7 +402,7 @@ export const parseCallExpression = (
         ].join(", ")})`
       }
 
-      if (isNullable(node, props.program.getTypeChecker())) {
+      if (isNullable(expression, props.program.getTypeChecker())) {
         const newName = props.scope.createUniqueName()
         // TODO: This is wrong, need to cache expr
         const expr = parsedExpr.content
@@ -785,5 +783,32 @@ func __gen(captures):
 var big = { "a": 6 }
 var x = []
 __map(x, funcref(self, "__gen"), {"big": big})
+`,
+}
+
+export const testFunctionNull: Test = {
+  ts: `
+  declare class Foo {
+    x(): number | null;
+  }
+
+  class Test {
+    example() {
+      const thing: Foo = new Foo()
+      let result = thing.x()
+
+      if (result) {
+        console.log("Woohoo")
+      }
+    }
+  }
+  `,
+  expected: `
+class_name Test
+func example():
+  var thing = Foo.new()
+  var result = thing.x()
+  if result:
+    console.log("Woohoo")
 `,
 }
