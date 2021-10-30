@@ -1,36 +1,24 @@
 import path from "path"
 import fs from "fs"
 import { TsGdProjectClass } from "../project"
-import { AssetSourceFile } from "../assets/asset_source_file"
 
 export const buildGroupTypes = (project: TsGdProjectClass) => {
-  const groupNameToTypes: { [key: string]: AssetSourceFile[] } = {}
+  const groupNameToTypes: { [key: string]: Set<string> } = {}
 
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
-      const script = node.getScript()
-
-      if (!script) {
-        continue
-      }
-
-      const type = script.exportedTsClassName()
-
-      if (!type) {
-        continue
-      }
-
       for (const group of node.groups) {
-        groupNameToTypes[group] = [...(groupNameToTypes[group] ?? []), script]
+        groupNameToTypes[group] ??= new Set()
+        groupNameToTypes[group].add(node.tsType())
       }
     }
   }
 
-  let result = `declare type Groups = {`
+  let result = `declare type Groups = {\n`
 
   for (const [group, commonTypes] of Object.entries(groupNameToTypes)) {
-    result += `  '${group}': ${commonTypes
-      .map((type) => type.tsType())
+    result += `  '${group}': ${[...commonTypes]
+      .map((type) => type)
       .join(" | ")}\n`
   }
 

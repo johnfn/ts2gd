@@ -63,6 +63,18 @@ declare type NodePathType = string
  */
 type Exclude<T, U> = T extends U ? never : T;
 
+/**
+ * From T, pick a set of properties whose keys are in the union K
+ */
+ type Pick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+
+/**
+ * Construct a type with the properties of T except for those in type K.
+ */
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>
+
 // Used for typing connect()
 type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
@@ -80,7 +92,15 @@ interface IArguments {
 
 }
 
-declare const Yield: <A extends Object, T extends SignalsOf<A>>(node: A, name: T) => void;
+// We need this so that we can get the keys of polymorphic this types.
+type Explode<T> = {[K in keyof T]: T[K]}
+
+type ExtraSignalsOf<T> = T extends { __extraSignals: any }
+  ? SignalsOf<T["__extraSignals"]>
+  : never
+
+
+declare const Yield: SignalClassNames['signals'];
 
 interface NewableFunction {
 

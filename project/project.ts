@@ -235,7 +235,7 @@ export class TsGdProjectClass {
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
     if (oldAsset) {
-      let newAsset = (this.createAsset(path) as any) as BaseAsset
+      let newAsset = this.createAsset(path) as any as BaseAsset
       this.assets = this.assets.filter((a) => a.fsPath !== path)
       this.assets.push(newAsset)
 
@@ -256,10 +256,10 @@ export class TsGdProjectClass {
     }
 
     if (showTime) {
-      const time = (new Date().getTime() - start) / 1000;
+      const time = (new Date().getTime() - start) / 1000
 
       console.info()
-      console.info(`${ chalk.gray(getTimestamp()) } Done in ${ time }s`)
+      console.info(`${chalk.gray(getTimestamp())} Done in ${time}s`)
     }
 
     return result

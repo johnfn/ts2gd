@@ -209,6 +209,8 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
     connect<T extends SignalsOf<${extendedClassName}Signals & ${className}>>(signal: T, method: SignalFunction<(${extendedClassName}Signals & ${className})[T]>): number;
     rpc<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(name: T, ...rest: Parameters<${className}[T]>): void
     rpc_id<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(id: number, name: T, ...rest: Parameters<${className}[T]>): void
+
+    __extraSignals: ${extendedClassName}Signals
   }
 
   namespace ${className} {
@@ -218,8 +220,10 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   }
 }
 
-interface SignalClassNames {
-  ${extendedClassName}: SignalsOf<${extendedClassName}Signals & ${className}>;
+declare global {
+  interface SignalClassNames {
+    signals(thing: ${className}, name: SignalsOf<${extendedClassName}Signals & ${className}>): void
+  }
 }
 `
 

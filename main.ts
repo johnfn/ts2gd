@@ -1,12 +1,6 @@
 // VERY USEFUL
 
-// [ ]: construct Color without new
-// [ ]: construct and Rect without new
-// [ ]: also Color constructor is wrong
-
-// [ ]: what if vectors are just bigints?
-
-// [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
+// [ ]: handle signals w interface SignalClassNames w no nodes
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
 // [ ]: i get autoload errors on empty ts files
@@ -17,6 +11,14 @@
 // [ ]: autoload could be injected into global scope? ironically maybe the best
 //      way to do it would be to NOT export a var and then auto export for u - but
 //      then goto def wouldnt work.
+
+// [x]: construct Color without new
+// [x]: construct and Rect without new
+// [x]: also Color constructor is wrong
+
+// [x]: what if vectors are just bigints? (this doesnt work for a lot of reasons, e.g. 3n * 3 is not allowed even still)
+
+// [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
 
 // [ ]: signal API is annoying - mostly hard to remember...
 

@@ -51,14 +51,25 @@ export const getCodeForMethod = (
     case "typeof":
     case "print":
       return ""
+    case "get_node":
+      return `${docString}
+get_node(path: NodePathType): Node;
+
+${docString}
+get_node_unsafe<T extends Node>(path: NodePathType): T;
+`
     case "change_scene":
-      return `change_scene(path: SceneName): int`
+      return `${docString}
+change_scene(path: SceneName): int`
     case "get_nodes_in_group":
-      return `get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
+      return `${docString}
+get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
     case "has_group":
-      return `has_group<T extends keyof Groups>(name: T): bool`
+      return `${docString}
+has_group<T extends keyof Groups>(name: T): bool`
     case "emit_signal":
-      return "emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;"
+      return `${docString}
+emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;`
     default:
       if (isConstructor) {
         return ""

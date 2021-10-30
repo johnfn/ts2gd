@@ -325,6 +325,8 @@ ${constants
     }
   })
   .join("\n")}
+
+  __extraSignals: ${className}Signals
 }
 ${(() => {
   if (isSpecialConstructorClass) {
@@ -352,6 +354,10 @@ declare class ${className}Signals${
         .join(", ")}) => void>\n`
     })
     .join("\n")}
+}
+
+interface SignalClassNames {
+  signals(thing: ${className}, name: SignalsOf<${className}Signals>): void
 }
 `
 
