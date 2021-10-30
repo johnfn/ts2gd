@@ -219,12 +219,6 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
     export { _new as new };
   }
 }
-
-declare global {
-  interface SignalClassNames {
-    signals(thing: ${className}, name: SignalsOf<${extendedClassName}Signals & ${className}>): void
-  }
-}
 `
 
   const destPath = path.join(

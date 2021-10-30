@@ -355,10 +355,6 @@ declare class ${className}Signals${
     })
     .join("\n")}
 }
-
-interface SignalClassNames {
-  signals(thing: ${className}, name: SignalsOf<${className}Signals>): void
-}
 `
 
     return output

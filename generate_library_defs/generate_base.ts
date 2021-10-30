@@ -92,15 +92,7 @@ interface IArguments {
 
 }
 
-// We need this so that we can get the keys of polymorphic this types.
-type Explode<T> = {[K in keyof T]: T[K]}
-
-type ExtraSignalsOf<T> = T extends { __extraSignals: any }
-  ? SignalsOf<T["__extraSignals"]>
-  : never
-
-
-declare const Yield: SignalClassNames['signals'];
+declare const Yield: <T> (obj: { __extraSignals: T }, name: keyof T): void;
 
 interface NewableFunction {
 

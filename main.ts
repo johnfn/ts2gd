@@ -1,6 +1,5 @@
 // VERY USEFUL
 
-// [ ]: handle signals w interface SignalClassNames w no nodes
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
 // [ ]: i get autoload errors on empty ts files
