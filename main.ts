@@ -1,6 +1,7 @@
 // VERY USEFUL
 
 // [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+// [ ]: error for generator functions that might never call yield
 
 // [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
 //        ^ generates incorrect code

@@ -153,6 +153,9 @@ export function formatJsDoc(input: string): string {
     line = line.replaceAll("[codeblocks]", "")
     line = line.replaceAll("[/codeblocks]", "")
 
+    // This is the most fun edge case of all time - in RichTextLabel.xml
+    line = line.replaceAll("*/", "")
+
     result += " * " + line + "\n" + (!insideCodeBlock ? " *\n" : "")
   }
 

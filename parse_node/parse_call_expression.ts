@@ -306,7 +306,7 @@ export const parseCallExpression = (
         parsedExpr.content = "yield"
       }
 
-      // This is for the y() helper method
+      // This is for the y() helper method (TODO: Could be a bit more precise about how we check...)
       if (parsedExpr.content === "y") {
         parsedExpr.content = " "
       }
