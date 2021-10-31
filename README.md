@@ -112,7 +112,11 @@ To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respe
 
 ### yield
 
-Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names, but `yield` is a keyword in TypeScript, which can't provide completion like functions can. So, you can continue to use `yield` if you'd like, but you can also use the global function `Yield`. `Yield` works just like `yield` but provides type completion on the signal argument.
+Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names, but `yield` is a keyword in TypeScript, which can't provide completion like functions can. So, you can use a helper function, `y`, which is compiled into nothing, but provides `yield` autocomplete. Example:
+
+```
+yield y(this.get_tree(), "idle_frame");
+```
 
 ### Vector2 / Vector3 operator overloading
 
