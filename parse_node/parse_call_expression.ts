@@ -306,8 +306,11 @@ export const parseCallExpression = (
         parsedExpr.content = "yield"
       }
 
-      if (parsedExpr.content === "self.get_node_unsafe") {
-        parsedExpr.content = "self.get_node"
+      if (parsedExpr.content.endsWith("get_node_unsafe")) {
+        parsedExpr.content = parsedExpr.content.replace(
+          "get_node_unsafe",
+          "get_node"
+        )
       }
 
       // TODO - there are less brittle ways of checking for this.
@@ -810,5 +813,16 @@ func example():
   var result = thing.x()
   if result:
     console.log("Woohoo")
+`,
+}
+
+export const testRewriteGetNodeUnsafe: Test = {
+  ts: `
+let x: Node = 0 as any
+x.get_node_unsafe("Foo")
+  `,
+  expected: `
+var x = 0
+x.get_node("Foo")
 `,
 }
