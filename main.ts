@@ -1,10 +1,13 @@
 // VERY USEFUL
 
+// [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+
 // [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
 //        ^ generates incorrect code
 // [ ]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
+// [ ]: Auto rebuild libraries when version changes
 // [ ]: i get autoload errors on empty ts files
 // [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
 // [ ]: error for RPCing to a function that doesnt have @rpc?
@@ -21,8 +24,6 @@
 // [x]: what if vectors are just bigints? (this doesnt work for a lot of reasons, e.g. 3n * 3 is not allowed even still)
 
 // [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
-
-// [ ]: signal API is annoying - mostly hard to remember...
 
 // [ ]: get_children returns any[]
 

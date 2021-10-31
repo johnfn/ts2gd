@@ -71,6 +71,11 @@ type Exclude<T, U> = T extends U ? never : T;
 }
 
 /**
+ * Obtain the return type of a function type
+ */
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+
+/**
  * Construct a type with the properties of T except for those in type K.
  */
 type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>
@@ -80,6 +85,7 @@ type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) 
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
 type SignalFunction<T> = T extends Signal<infer R> ? R : never;
+type SignalReturnValue<T> = T extends Signal<infer U> ? ReturnType<U> : never;
 
 // Used for typing rpc(), rpc_id() etc
 type FunctionsOf<T> = KeysMatching<T, Function>;
@@ -92,7 +98,8 @@ interface IArguments {
 
 }
 
-declare const Yield: <T> (obj: { __extraSignals: T }, name: keyof T): void;
+declare const Yield: <T> (obj: { __extraSignals: T }, name: keyof T) => void;
+declare const y: <T, U extends keyof T> (obj: { __extraSignals: T }, name: U) => SignalReturnValue<T[U]>;
 
 interface NewableFunction {
 
@@ -137,7 +144,11 @@ interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
   return?(value?: TReturn): IteratorResult<T, TReturn>;
   throw?(e?: any): IteratorResult<T, TReturn>;
 
-  completed: Signal<any>;
+  __extraSignals: IteratorSignals<T>;
+}
+
+declare class IteratorSignals<T> extends ObjectSignals {
+  completed: Signal<() => T>;
 }
 
 interface Symbol { }

@@ -306,6 +306,11 @@ export const parseCallExpression = (
         parsedExpr.content = "yield"
       }
 
+      // This is for the y() helper method
+      if (parsedExpr.content === "y") {
+        parsedExpr.content = " "
+      }
+
       if (parsedExpr.content.endsWith("get_node_unsafe")) {
         parsedExpr.content = parsedExpr.content.replace(
           "get_node_unsafe",
@@ -825,4 +830,19 @@ x.get_node_unsafe("Foo")
 var x = 0
 x.get_node("Foo")
 `,
+}
+
+export const testRewriteY: Test = {
+  ts: `
+class Test extends Node {
+  f() {
+    yield y(this.get_tree(), "idle_frame")
+  }
+}
+  `,
+  expected: `
+extends Node
+class_name Test
+func f():
+  yield (self.get_tree(), "idle_frame")`,
 }
