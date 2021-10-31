@@ -21,7 +21,7 @@ const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
 
     if (
       node.initializer.getText().includes("get_node(") ||
-      node.initializer.getText().includes("get_node_unsafe(")
+      node.initializer.getText().includes("get_node_unsafe")
     ) {
       return true
     }
