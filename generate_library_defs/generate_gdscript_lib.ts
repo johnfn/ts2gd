@@ -51,6 +51,18 @@ export const getCodeForMethod = (
     case "typeof":
     case "print":
       return ""
+    case "is_action_just_pressed":
+      return `${ docString}
+is_action_just_pressed(action: Action): boolean;
+      `
+    case "is_action_pressed":
+      return `${ docString}
+is_action_pressed(action: Action): boolean;
+      `
+    case "is_action_just_released":
+      return `${ docString}
+is_action_just_released(action: Action): boolean;
+      `
     case "get_node":
       return `${docString}
 get_node(path: NodePathType): Node;
