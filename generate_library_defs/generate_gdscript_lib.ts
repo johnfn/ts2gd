@@ -67,6 +67,8 @@ get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
     case "has_group":
       return `${docString}
 has_group<T extends keyof Groups>(name: T): bool`
+    case "make_input_local":
+      return "make_input_local<T extends InputEvent>(event: T): T"
     case "emit_signal":
       return `${docString}
 emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;`

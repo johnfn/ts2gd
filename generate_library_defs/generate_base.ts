@@ -75,6 +75,8 @@ type Exclude<T, U> = T extends U ? never : T;
  */
 type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
 
+type GeneratorReturnType<T extends Generator> = T extends Generator<any, infer R, any> ? R: never;
+
 /**
  * Construct a type with the properties of T except for those in type K.
  */
@@ -145,6 +147,14 @@ interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
   throw?(e?: any): IteratorResult<T, TReturn>;
 
   __extraSignals: IteratorSignals<T>;
+}
+
+interface Generator<T = unknown, TReturn = any, TNext = unknown> extends Iterator<T, TReturn, TNext> {
+  // NOTE: 'next' is defined using a tuple to ensure we report the correct assignability errors in all places.
+  next(...args: [] | [TNext]): IteratorResult<T, TReturn>;
+  return(value: TReturn): IteratorResult<T, TReturn>;
+  throw(e: any): IteratorResult<T, TReturn>;
+  [Symbol.iterator](): Generator<T, TReturn, TNext>;
 }
 
 declare class IteratorSignals<T> extends ObjectSignals {

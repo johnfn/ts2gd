@@ -207,7 +207,9 @@ export async function generateGodotLibraryDefinitions(): Promise<void> {
     let isSpecialConstructorClass =
       className === "Vector2" ||
       className === "Vector3" ||
-      className === "Rect" ||
+      className === "Vector2i" ||
+      className === "Vector3i" ||
+      className === "Rect2" ||
       className === "Color"
 
     if (className === "Signal") {
