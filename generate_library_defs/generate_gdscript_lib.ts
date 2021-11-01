@@ -66,7 +66,7 @@ change_scene(path: SceneName): int`
 get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]`
     case "has_group":
       return `${docString}
-has_group<T extends keyof Groups>(name: T): bool`
+has_group<T extends keyof Groups>(name: T): boolean`
     case "make_input_local":
       return "make_input_local<T extends InputEvent>(event: T): T"
     case "emit_signal":
@@ -152,7 +152,7 @@ export const parseMethod = (
   if (name === "tile_get_shapes") {
     returnType = `{
   autotile_coord: Vector2,
-  one_way: bool,
+  one_way: boolean,
   one_way_margin: int,
   shape: CollisionShape2D,
   shape_transform: Transform2D,

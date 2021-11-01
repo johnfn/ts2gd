@@ -18,6 +18,7 @@ export function sanitizeGodotNameForTs(
     name === "with" ||
     name === "var" ||
     name === "class" ||
+    name === "enum" ||
     name === "default" ||
     name === "in"
   ) {

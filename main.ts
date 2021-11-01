@@ -18,6 +18,9 @@
 //      way to do it would be to NOT export a var and then auto export for u - but
 //      then goto def wouldnt work.
 
+// [ ]: There are errors when godotSourceRepoPath points to the wrong thing / doesnt exist at all and we execute ts2gd with ts-node, because
+// it tries to use a relative path and fails.
+
 // [x]: construct Color without new
 // [x]: construct and Rect without new
 // [x]: also Color constructor is wrong

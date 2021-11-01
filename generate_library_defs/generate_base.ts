@@ -182,7 +182,7 @@ interface IterableIterator<T> extends Iterator<T> {
 
   // Generator functions found on GDScriptFunctionState
 
-  is_valid(extended_check: bool): boolean;
+  is_valid(extended_check: boolean): boolean;
   resume(arg?: any): void;
 }
 
