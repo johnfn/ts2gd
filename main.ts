@@ -1,6 +1,6 @@
 // VERY USEFUL
 
-// [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+// [ ]: I dont get the coroutine api
 // [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
 // [ ]: error for generator functions that might never call yield
 
@@ -13,6 +13,8 @@
 // [ ]: why doesnt enemy have root paths?
 // [ ]: Auto rebuild libraries when version changes
 // [ ]: Argument destructuring
+// [ ]: could ts consider undefined and null the same? i doubt it. it's annoying for null coalescing
+// [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
 // [ ]: i get autoload errors on empty ts files
 // [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
 // [ ]: error for RPCing to a function that doesnt have @rpc?
