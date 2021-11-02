@@ -52,15 +52,15 @@ export const getCodeForMethod = (
     case "print":
       return ""
     case "is_action_just_pressed":
-      return `${ docString}
+      return `${docString}
 is_action_just_pressed(action: Action): boolean;
       `
     case "is_action_pressed":
-      return `${ docString}
+      return `${docString}
 is_action_pressed(action: Action): boolean;
       `
     case "is_action_just_released":
-      return `${ docString}
+      return `${docString}
 is_action_just_released(action: Action): boolean;
       `
     case "get_node":
@@ -169,6 +169,10 @@ export const parseMethod = (
   shape: CollisionShape2D,
   shape_transform: Transform2D,
 }[]`
+  }
+
+  if (name === "assert") {
+    returnType = `asserts condition`
   }
 
   if (name === "get_datetime") {

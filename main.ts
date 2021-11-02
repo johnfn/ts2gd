@@ -1,14 +1,18 @@
 // VERY USEFUL
 
 // [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+// [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
 // [ ]: error for generator functions that might never call yield
+
+// [ ]; rpc_id on other things is not typesafe. Also, autoload classes.
 
 // [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
 //        ^ generates incorrect code
-// [ ]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
+// [x]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
 // [ ]: Auto rebuild libraries when version changes
+// [ ]: Argument destructuring
 // [ ]: i get autoload errors on empty ts files
 // [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
 // [ ]: error for RPCing to a function that doesnt have @rpc?
