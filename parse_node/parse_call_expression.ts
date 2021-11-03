@@ -325,9 +325,58 @@ export const parseCallExpression = (
         // this.connect("body_entered", this.handle_body_enter)
         const secondArg = args[1]
 
-        if (secondArg.kind === SyntaxKind.PropertyAccessExpression) {
+        if (!secondArg) {
+          // We are connecting directly to a signal - e.g. this.signal.connect(() => { })
+          if (expression.kind === SyntaxKind.PropertyAccessExpression) {
+            const pae = expression as ts.PropertyAccessExpression
+
+            // TODO: This is a giant copypasta because we have two slightly different ways of doing .connect().
+            // Eventually, we should remove the other one and only use this one.
+            if (pae.kind === SyntaxKind.PropertyAccessExpression) {
+              const pae2 = pae.expression as ts.PropertyAccessExpression
+              const signalName = pae2.name.getText()
+
+              const af = args[0] as ts.ArrowFunction
+              const arrowFunctionObj =
+                parsedArgs[0].hoistedArrowFunctions?.find(
+                  (obj) => obj.node === af
+                )
+
+              if (!arrowFunctionObj) {
+                props.addError({
+                  description:
+                    "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+                  error: ErrorName.Ts2GdError,
+                  location: secondArg,
+                })
+              } else {
+                const { capturedScopeObject } = getCapturedScope(
+                  arrowFunctionObj.node,
+                  props.program.getTypeChecker()
+                )
+
+                parsedStringArgs = [
+                  `"${signalName}"`,
+                  "self",
+                  `"${arrowFunctionObj?.name}"`,
+                  `[${capturedScopeObject}]`,
+                ]
+
+                parsedExpr = {
+                  content: "self.connect",
+                }
+              }
+            }
+          } else {
+            props.addError({
+              description: "Unsupported use of connect",
+              error: ErrorName.NoComplicatedConnect,
+              location: expression,
+            })
+          }
+        } else if (secondArg.kind === SyntaxKind.PropertyAccessExpression) {
           const propAccess = secondArg as ts.PropertyAccessExpression
-          const name = propAccess.name.text
+          const signalName = propAccess.name.text
           const expr = parseNode(propAccess.expression, props)
 
           if (
@@ -345,7 +394,11 @@ export const parseCallExpression = (
             })
           }
 
-          parsedStringArgs = [parsedArgs[0].content, expr.content, `"${name}"`]
+          parsedStringArgs = [
+            parsedArgs[0].content,
+            expr.content,
+            `"${signalName}"`,
+          ]
         } else if (secondArg.kind === SyntaxKind.ArrowFunction) {
           const af = secondArg as ts.ArrowFunction
           const arrowFunctionObj = parsedArgs[1].hoistedArrowFunctions?.find(
@@ -845,4 +898,29 @@ extends Node
 class_name Test
 func f():
   yield (self.get_tree(), "idle_frame")`,
+}
+
+export const testConnectDirectlyToSig: Test = {
+  ts: `
+export class Test extends Area2D {
+  mysig!: Signal
+
+  constructor() {
+    super()
+
+    this.mysig.connect(() => {
+      print("OK")
+    })
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(captures):
+  print("OK")
+signal mysig
+func _ready():
+  self.connect("mysig", self, "__gen", [{}])
+`,
 }

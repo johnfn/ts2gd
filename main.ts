@@ -1,8 +1,11 @@
 // VERY USEFUL
 
+// [ ]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
 // [ ]: I dont get the coroutine api
 // [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
 // [ ]: error for generator functions that might never call yield
+// [ ]: typeof() doesnt work on primitive types because it uses get_class rather than typeof...
+// might be able to figure this out... or just code a better typeof library function?
 
 // [ ]; rpc_id on other things is not typesafe. Also, autoload classes.
 
