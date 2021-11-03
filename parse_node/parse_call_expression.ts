@@ -362,8 +362,19 @@ export const parseCallExpression = (
                   `[${capturedScopeObject}]`,
                 ]
 
+                const secondDot = parsedExpr.content.lastIndexOf(".")
+                const firstDot = parsedExpr.content.lastIndexOf(
+                  ".",
+                  secondDot - 1
+                )
+
+                // We have "self.variable.signal.connect" but we want
+                // "self.signal.connect".
+                // TODO: This is kinda a hack.
                 parsedExpr = {
-                  content: "self.connect",
+                  content:
+                    parsedExpr.content.substring(0, firstDot) +
+                    parsedExpr.content.substring(secondDot),
                 }
               }
             }
@@ -922,5 +933,32 @@ func __gen(captures):
 signal mysig
 func _ready():
   self.connect("mysig", self, "__gen", [{}])
+`,
+}
+
+export const testNestedDirectSignalConnect: Test = {
+  ts: `
+export class Test extends Area2D {
+  mysig!: Signal
+  test!: Test
+
+  constructor() {
+    super()
+
+    this.test.mysig.connect(() => {
+      print("OK")
+    })
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(captures):
+  print("OK")
+signal mysig
+var test
+func _ready():
+  self.test.connect("mysig", self, "__gen", [{}])
 `,
 }

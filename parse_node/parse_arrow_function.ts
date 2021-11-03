@@ -63,7 +63,11 @@ const getFreeVariables = (
         return []
       }
     } else {
-      console.log(node.getText(), "no symbol")
+      if (node.kind === SyntaxKind.Identifier) {
+        // Expressions like this.get_node("HBoxContainer/BuildButton").visible give
+        // "no symbol" logs. I don't understand why
+        console.log(node.getText(), "no symbol")
+      }
     }
 
     return []

@@ -193,6 +193,9 @@ ${PackedSceneDef}
 declare class Signal<T extends (...args: any[]) => any = () => void> {
   /** Don't use this - it's only to get typechecking working! */
   private __unused: T;
+
+  /** Connect a callback to this signal. */
+  connect(callback: T): void
 }
 `
 
