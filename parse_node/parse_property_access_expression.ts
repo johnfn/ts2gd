@@ -1,7 +1,4 @@
-import ts, {
-  SymbolFlags,
-  SyntaxKind,
-} from "typescript"
+import ts, { SymbolFlags, SyntaxKind } from "typescript"
 import {
   combine,
   ExtraLine,
@@ -203,7 +200,7 @@ export class Test {
   mouseenter!: Signal<[]>;
 
   test() {
-    this.emit_signal(this.mouseenter)
+    this.mouseenter.emit()
   }
 }
   `,

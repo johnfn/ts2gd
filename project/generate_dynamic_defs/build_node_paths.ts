@@ -206,11 +206,9 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     get_node_unsafe<T>(path: string): T
-    connect<T extends SignalsOf<${extendedClassName}Signals & ${className}>>(signal: T, method: SignalFunction<(${extendedClassName}Signals & ${className})[T]>): number;
+    connect<T extends SignalsOf<${extendedClassName} & ${className}>>(signal: T, method: SignalFunction<(${extendedClassName} & ${className})[T]>): number;
     rpc<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(name: T, ...rest: Parameters<${className}[T]>): void
     rpc_id<T extends Exclude<FunctionsOf<${className}>, "rpc" | "rpc_id">>(id: number, name: T, ...rest: Parameters<${className}[T]>): void
-
-    __extraSignals: ${extendedClassName}Signals
   }
 
   namespace ${className} {

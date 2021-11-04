@@ -84,6 +84,7 @@ type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>
 
 // Used for typing connect()
 type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
+type KeysOnly<T, V> = { [K in keyof T as T[K] extends V ? K : never]: T[K] }
 type KeysMatching<T, V> = {[K in keyof T]-?: T[K] extends V ? K : never}[keyof T];
 type SignalsOf<T> = KeysMatching<T, Signal<any>>;
 type SignalFunction<T> = T extends Signal<infer R> ? R : never;
@@ -100,8 +101,8 @@ interface IArguments {
 
 }
 
-declare const Yield: <T> (obj: { __extraSignals: T }, name: keyof T) => void;
-declare const y: <T, U extends keyof T> (obj: { __extraSignals: T }, name: U) => SignalReturnValue<T[U]>;
+declare const Yield: <T, U extends keyof T> (obj: KeysOnly<T, Signal<any>>, name: U) => void;
+declare const y: <T, U extends keyof T> (obj: KeysOnly<T, Signal<any>>, name: U) => SignalReturnValue<T[U]>;
 
 interface NewableFunction {
 
@@ -146,7 +147,7 @@ interface Iterator<T, TReturn = any, TNext = undefined> extends Object {
   return?(value?: TReturn): IteratorResult<T, TReturn>;
   throw?(e?: any): IteratorResult<T, TReturn>;
 
-  __extraSignals: IteratorSignals<T>;
+  $completed: Signal<() => TReturn>;
 }
 
 interface Generator<T = unknown, TReturn = any, TNext = unknown> extends Iterator<T, TReturn, TNext> {
@@ -155,10 +156,8 @@ interface Generator<T = unknown, TReturn = any, TNext = unknown> extends Iterato
   return(value: TReturn): IteratorResult<T, TReturn>;
   throw(e: any): IteratorResult<T, TReturn>;
   [Symbol.iterator](): Generator<T, TReturn, TNext>;
-}
 
-declare class IteratorSignals<T> extends ObjectSignals {
-  completed: Signal<() => T>;
+  $completed: Signal<() => TReturn>;
 }
 
 interface Symbol { }
@@ -194,8 +193,14 @@ declare class Signal<T extends (...args: any[]) => any = () => void> {
   /** Don't use this - it's only to get typechecking working! */
   private __unused: T;
 
+  /** This lets us yield* this signal. */
+  [Symbol.iterator](): Generator<T, ReturnType<T>, any>;
+
   /** Connect a callback to this signal. */
   connect(callback: T): void
+
+  /** Emit this signal. */
+  emit(...args: Parameters<T>): void;
 }
 `
 

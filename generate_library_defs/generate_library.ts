@@ -295,7 +295,7 @@ ${methods
   })
   .join("\n\n")}
 
-  connect<T extends SignalsOf<${className}Signals>>(signal: T, method: SignalFunction<${className}Signals[T]>): number;
+  connect<T extends SignalsOf<${className}>>(signal: T, method: SignalFunction<${className}[T]>): number;
 
 ${(() => {
   // Generate wrapper functions for operator overloading stuff.
@@ -332,7 +332,17 @@ ${constants
   })
   .join("\n")}
 
-  __extraSignals: ${className}Signals
+${signals
+  .map((signal: any) => {
+    return `${formatJsDoc(signal.description[0])}\n$${
+      signal["$"].name
+    }: Signal<(${(signal.argument || [])
+      .map(
+        (arg: any) => arg["$"].name + ": " + godotTypeToTsType(arg["$"].type)
+      )
+      .join(", ")}) => void>\n`
+  })
+  .join("\n")}
 }
 ${(() => {
   if (isSpecialConstructorClass) {
@@ -345,22 +355,6 @@ declare var ${className}: typeof ${className}Constructor & {
 
   return ""
 })()}
-
-declare class ${className}Signals${
-      inherits ? ` extends ${inherits}Signals` : ""
-    } {
-  ${signals
-    .map((signal: any) => {
-      return `${formatJsDoc(signal.description[0])}\n${
-        signal["$"].name
-      }: Signal<(${(signal.argument || [])
-        .map(
-          (arg: any) => arg["$"].name + ": " + godotTypeToTsType(arg["$"].type)
-        )
-        .join(", ")}) => void>\n`
-    })
-    .join("\n")}
-}
 `
 
     return output

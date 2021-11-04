@@ -1,4 +1,4 @@
-import ts from "typescript"
+import ts, { nodeModuleNameResolver } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
@@ -84,11 +84,17 @@ export const parsePropertyDeclaration = (
   }
 
   if (typeName === "Signal") {
+    let signalName = node.name.getText()
+
+    if (signalName.startsWith("$")) {
+      signalName = signalName.slice(1)
+    }
+
     return combine({
       parent: node,
       nodes: [],
       props,
-      parsedStrings: () => `signal ${node.name.getText()}`,
+      parsedStrings: () => `signal ${signalName}`,
     })
   }
 

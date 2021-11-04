@@ -318,6 +318,32 @@ export const parseCallExpression = (
         )
       }
 
+      // Rewrite this.$signal.emit() to this.emit_signal("signal")
+      if (parsedExpr.content.endsWith(".emit")) {
+        const secondDot = parsedExpr.content.lastIndexOf(".")
+        const firstDot = parsedExpr.content.lastIndexOf(".", secondDot - 1)
+        let signalName = parsedExpr.content.slice(firstDot + 1, secondDot)
+
+        if (signalName.startsWith("$")) {
+          signalName = signalName.slice(1)
+        }
+
+        if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
+          const pae = node.expression as ts.PropertyAccessExpression
+          if (pae.expression.kind === SyntaxKind.PropertyAccessExpression) {
+            const pae2 = pae.expression as ts.PropertyAccessExpression
+            const expr = parseNode(pae2.expression, props)
+
+            console.log(expr.content)
+
+            parsedStringArgs = [`"${signalName}"`]
+            parsedExpr = {
+              content: expr.content + ".emit_signal",
+            }
+          }
+        }
+      }
+
       // TODO - there are less brittle ways of checking for this.
 
       // We need to rewrite .connect() to handle function arguments
@@ -334,7 +360,11 @@ export const parseCallExpression = (
             // Eventually, we should remove the other one and only use this one.
             if (pae.kind === SyntaxKind.PropertyAccessExpression) {
               const pae2 = pae.expression as ts.PropertyAccessExpression
-              const signalName = pae2.name.getText()
+              let signalName = pae2.name.getText()
+
+              if (signalName.startsWith("$")) {
+                signalName = signalName.slice(1)
+              }
 
               const af = args[0] as ts.ArrowFunction
               const arrowFunctionObj =
@@ -358,7 +388,7 @@ export const parseCallExpression = (
                 parsedStringArgs = [
                   `"${signalName}"`,
                   "self",
-                  `"${arrowFunctionObj?.name}"`,
+                  `"${arrowFunctionObj.name}"`,
                   `[${capturedScopeObject}]`,
                 ]
 
@@ -387,8 +417,12 @@ export const parseCallExpression = (
           }
         } else if (secondArg.kind === SyntaxKind.PropertyAccessExpression) {
           const propAccess = secondArg as ts.PropertyAccessExpression
-          const signalName = propAccess.name.text
+          let signalName = propAccess.name.text
           const expr = parseNode(propAccess.expression, props)
+
+          if (signalName.startsWith("$")) {
+            signalName = signalName.slice(1)
+          }
 
           if (
             (expr.enums?.length ?? 0 > 0) ||
@@ -446,16 +480,6 @@ export const parseCallExpression = (
             location: node,
           })
         }
-      }
-
-      // Translate `this.emit_signal(this.signal)`
-      // into `this.emit_signal("signal")`
-      if (parsedExpr.content === "self.emit_signal") {
-        if (parsedArgs[0].content.startsWith("self")) {
-          parsedStringArgs[0] = parsedStringArgs[0].slice("self.".length)
-        }
-
-        parsedStringArgs[0] = '"' + parsedStringArgs[0] + '"'
       }
 
       if (parsedExpr.content === "todict") {
@@ -777,7 +801,7 @@ export const testEmitSignal: Test = {
 export class CityGridCollision extends Area {
   mouseenter!: Signal<[]>;
   test() {
-    this.emit_signal(this.mouseenter)
+    this.mouseenter.emit()
   }
 }
   `,
@@ -939,15 +963,18 @@ func _ready():
 export const testNestedDirectSignalConnect: Test = {
   ts: `
 export class Test extends Area2D {
-  mysig!: Signal
+  $mysig!: Signal
   test!: Test
 
   constructor() {
     super()
 
-    this.test.mysig.connect(() => {
+    this.test.$mysig.connect(() => {
       print("OK")
     })
+
+    this.test.$mysig.emit()
+    this.$mysig.emit()
   }
 }
   `,
@@ -960,5 +987,7 @@ signal mysig
 var test
 func _ready():
   self.test.connect("mysig", self, "__gen", [{}])
+  self.test.emit_signal("mysig")
+  self.emit_signal("mysig")
 `,
 }
