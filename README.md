@@ -132,14 +132,6 @@ In order to mark an instance variable as `export`, use `@export`.
 
 To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respectively.
 
-### yield
-
-Godot lets you do `yield(object, signal)`. We'd like to autocomplete signal names, but `yield` is a keyword in TypeScript, which can't provide completion like functions can. So, you can use a helper function, `y`, which is compiled into nothing, but provides `yield` autocomplete. Example:
-
-```
-yield y(this.get_tree(), "idle_frame");
-```
-
 ### Vector2 / Vector3 operator overloading
 
 TypeScript sadly has no support for operator overloading.
