@@ -334,8 +334,6 @@ export const parseCallExpression = (
             const pae2 = pae.expression as ts.PropertyAccessExpression
             const expr = parseNode(pae2.expression, props)
 
-            console.log(expr.content)
-
             parsedStringArgs = [`"${signalName}"`]
             parsedExpr = {
               content: expr.content + ".emit_signal",
@@ -894,7 +892,7 @@ export const testFunctionNull: Test = {
       let result = thing.x()
 
       if (result) {
-        console.log("Woohoo")
+        print("Woohoo")
       }
     }
   }
@@ -905,7 +903,7 @@ func example():
   var thing = Foo.new()
   var result = thing.x()
   if result:
-    console.log("Woohoo")
+    print("Woohoo")
 `,
 }
 

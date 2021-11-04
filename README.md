@@ -69,18 +69,40 @@ For the full list of namespaced enums, you can see the generated @globals.d.ts f
 
 In the future, this could become a configuration setting on tsgd.json.
 
-### `connect`
+### `signals`
 
-Connect has been improved. It now only has two arguments: the signal you're connecting to, and the method that should be called when the signal fires. Additionally, you can pass in an arrow function to the second parameter.
+Signals have been improved. All signals now start with `$` and are properties of the class they're defined on.
 
-```
-this.connect("body_entered", this.body_entered)
-```
+#### `connect`
 
-Or simply:
+This is what connect looks like in ts2gd:
 
 ```
-this.connect("body_entered", body => print("Body entered:", body))
+this.my_button.$pressed.connect(() => {
+  print("Clicked the button!)
+})
+```
+
+#### `yield`
+
+This is what yield looks like in ts2gd:
+
+```
+yield this.get_tree().$idle_frame
+```
+
+#### `emit`
+
+This is what emit looks like in ts2gd:
+
+```
+class MySignallingClass extends Node2D {
+  $my_signal!: Signal // ! to avoid the TS error about this signal being unassigned
+
+  _process() {
+    this.$my_signal.emit()
+  }
+}
 ```
 
 ### Autoloads

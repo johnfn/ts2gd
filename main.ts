@@ -1,6 +1,7 @@
 // VERY USEFUL
 
-// [ ]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
+// [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
+// [ ]: signals: we could just do $signal_prop = Signal() to avoid the ts ! weirdness
 // [ ]: I dont get the coroutine api
 // [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
 // [ ]: error for generator functions that might never call yield
