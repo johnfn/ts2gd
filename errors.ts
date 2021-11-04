@@ -18,6 +18,8 @@ export enum ErrorName {
   AutoloadDecoratedButNotProject,
   AutoloadNotExported,
   NoComplicatedConnect,
+
+  SignalsMustBePrefixedWith$,
 }
 
 export type TsGdReturn<T> = {
@@ -36,10 +38,7 @@ export const displayErrors = (errors: TsGdError[]) => {
     if (typeof error.location === "string") {
       console.warn("Error at", `${chalk.blueBright(error.location)}`)
     } else {
-      const {
-        line,
-        character,
-      } = error.location
+      const { line, character } = error.location
         .getSourceFile()
         ?.getLineAndCharacterOfPosition(error.location.getStart())
       console.warn()

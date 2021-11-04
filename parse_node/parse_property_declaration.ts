@@ -2,6 +2,7 @@ import ts, { nodeModuleNameResolver } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
+import { ErrorName } from "../errors"
 
 const isExported = (node: ts.PropertyDeclaration) => {
   for (const dec of node.decorators ?? []) {
@@ -88,6 +89,12 @@ export const parsePropertyDeclaration = (
 
     if (signalName.startsWith("$")) {
       signalName = signalName.slice(1)
+    } else {
+      props.addError({
+        description: "Signals must be prefixed with $.",
+        error: ErrorName.SignalsMustBePrefixedWith$,
+        location: node,
+      })
     }
 
     return combine({
