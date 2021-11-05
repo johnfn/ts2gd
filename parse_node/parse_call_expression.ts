@@ -190,7 +190,7 @@ export const parseCallExpression = (
   if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
     // prop = [[ a.b ]](c)
     const prop = node.expression as ts.PropertyAccessExpression
-    const functionName = prop.name.getText()
+    const functionName = props.getNodeText(prop.name)
 
     const type = props.program
       .getTypeChecker()
@@ -403,9 +403,9 @@ export const parseCallExpression = (
         if (expression.kind === SyntaxKind.PropertyAccessExpression) {
           const pae = expression as ts.PropertyAccessExpression
 
-          if (pae.kind === SyntaxKind.PropertyAccessExpression) {
+          if (pae.expression.kind === SyntaxKind.PropertyAccessExpression) {
             const pae2 = pae.expression as ts.PropertyAccessExpression
-            const rpcFunctionName = pae2.name.getText()
+            const rpcFunctionName = props.getNodeText(pae2.name)
 
             const secondDot = parsedExpr.content.lastIndexOf(".")
             const firstDot = parsedExpr.content.lastIndexOf(".", secondDot - 1)
@@ -432,6 +432,12 @@ export const parseCallExpression = (
             parsedExpr = {
               content: expressionWithoutRpcName,
             }
+          } else {
+            props.addError({
+              description: "I'm confused by this rpc",
+              error: ErrorName.Ts2GdError,
+              location: pae.expression,
+            })
           }
         }
       }

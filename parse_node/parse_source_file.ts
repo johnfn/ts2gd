@@ -4,7 +4,6 @@ import {
   ParseNodeType,
   ParseState,
 } from "../parse_node"
-import * as utils from "tsutils"
 import { LibraryFunctions } from "./parse_call_expression"
 
 /**
@@ -50,8 +49,16 @@ export const parseSourceFile = (
     parseNode(statement, props)
   )
 
-  const allHoistedLibraryFunctions = new Set(parsedStatements.flatMap(x => [...(x.hoistedLibraryFunctions?.keys() ?? [])]));
-  const allHoistedLibraryFunctionDefinitions = [...allHoistedLibraryFunctions.keys()].map(item => LibraryFunctions[item].definition("__" + LibraryFunctions[item].name));
+  const allHoistedLibraryFunctions = new Set(
+    parsedStatements.flatMap((x) => [
+      ...(x.hoistedLibraryFunctions?.keys() ?? []),
+    ])
+  )
+  const allHoistedLibraryFunctionDefinitions = [
+    ...allHoistedLibraryFunctions.keys(),
+  ].map((item) =>
+    LibraryFunctions[item].definition("__" + LibraryFunctions[item].name)
+  )
 
   const content = [
     classDecl ? preprocessClassDecl(classDecl, props) : "",

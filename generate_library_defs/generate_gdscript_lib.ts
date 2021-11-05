@@ -49,6 +49,8 @@ export const getCodeForMethod = (
     case "connect":
     case "yield":
     case "typeof":
+    case "rpc":
+    case "rpc_id":
     case "print":
       return ""
     case "is_action_just_pressed":
