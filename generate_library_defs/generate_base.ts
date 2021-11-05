@@ -28,6 +28,10 @@ declare interface CallableFunction {
 
   /** The object containing the referenced function. This object must be of a type actually inheriting from [Object], not a built-in type such as [int], [Vector2] or [Dictionary]. */
   set_instance(instance: Object): void
+
+  rpc<T>(this: T, ...args: Parameters<T>): void;
+
+  rpc_id<T>(this: T, id: int, ...args: Parameters<T>): void;
 }
 
 interface Function {
@@ -190,9 +194,6 @@ ${DictionaryDefinition}
 ${PackedSceneDef}
 
 declare class Signal<T extends (...args: any[]) => any = () => void> {
-  /** Don't use this - it's only to get typechecking working! */
-  private __unused: T;
-
   /** This lets us yield* this signal. */
   [Symbol.iterator](): Generator<T, ReturnType<T>, any>;
 

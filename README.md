@@ -20,7 +20,7 @@ GDScript is a great language - it's perfectly designed for quick prototyping. Bu
 
 We can also get really, really good autocomplete and refactoring support.
 
-## How it works
+## Setup
 
 Add a ts2gd.json file to your Godot project root:
 
@@ -112,7 +112,7 @@ In order to make a class autoload, decorate your class with `@autoload`, and cre
 Here's a full example of an autoload class.
 
 ```
-@autoload.
+@autoload
 class MyAutoloadClass extends Node2D {
   public string hello = "hi"
 }

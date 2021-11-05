@@ -1,9 +1,10 @@
 // VERY USEFUL
 
-// [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
+// [ ]: Actions aren't regenerated except with --buildLibraries
 // [ ]: signals: we could just do $signal_prop = Signal() to avoid the ts ! weirdness
 // [ ]: I dont get the coroutine api
 // [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
+// .    actually better is this.name_of_fn.rpc(blah, blargh)
 // [ ]: error for generator functions that might never call yield
 // [ ]: typeof() doesnt work on primitive types because it uses get_class rather than typeof...
 // might be able to figure this out... or just code a better typeof library function?
@@ -125,6 +126,8 @@
 // just have autoloads stored as Assets
 
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
+
+// [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
 
 import ts from "typescript"
 import * as process from "process"

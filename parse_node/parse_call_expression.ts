@@ -3,12 +3,7 @@ import { ErrorName } from "../errors"
 import { combine, ExtraLine, parseNode, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import {
-  isArrayType,
-  isDictionary,
-  isNullable,
-  syntaxKindToString,
-} from "../ts_utils"
+import { isArrayType, isDictionary, isNullable } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
 export type LibraryFunctionName =
@@ -344,139 +339,100 @@ export const parseCallExpression = (
 
       // TODO - there are less brittle ways of checking for this.
 
-      // We need to rewrite .connect() to handle function arguments
+      // Rewrite this.$signal.connect(() => stuff()) to this.connect(this, 'signal', method)
       if (parsedExpr.content.endsWith(".connect")) {
-        // this.connect("body_entered", this.handle_body_enter)
-        const secondArg = args[1]
+        if (expression.kind === SyntaxKind.PropertyAccessExpression) {
+          const pae = expression as ts.PropertyAccessExpression
 
-        if (!secondArg) {
-          // We are connecting directly to a signal - e.g. this.signal.connect(() => { })
-          if (expression.kind === SyntaxKind.PropertyAccessExpression) {
-            const pae = expression as ts.PropertyAccessExpression
+          if (pae.kind === SyntaxKind.PropertyAccessExpression) {
+            const pae2 = pae.expression as ts.PropertyAccessExpression
+            let signalName = props.getNodeText(pae2.name)
 
-            // TODO: This is a giant copypasta because we have two slightly different ways of doing .connect().
-            // Eventually, we should remove the other one and only use this one.
-            if (pae.kind === SyntaxKind.PropertyAccessExpression) {
-              const pae2 = pae.expression as ts.PropertyAccessExpression
-              let signalName = pae2.name.getText()
-
-              if (signalName.startsWith("$")) {
-                signalName = signalName.slice(1)
-              }
-
-              const af = args[0] as ts.ArrowFunction
-              const arrowFunctionObj =
-                parsedArgs[0].hoistedArrowFunctions?.find(
-                  (obj) => obj.node === af
-                )
-
-              if (!arrowFunctionObj) {
-                props.addError({
-                  description:
-                    "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
-                  error: ErrorName.Ts2GdError,
-                  location: secondArg,
-                })
-              } else {
-                const { capturedScopeObject } = getCapturedScope(
-                  arrowFunctionObj.node,
-                  props.program.getTypeChecker()
-                )
-
-                parsedStringArgs = [
-                  `"${signalName}"`,
-                  "self",
-                  `"${arrowFunctionObj.name}"`,
-                  `[${capturedScopeObject}]`,
-                ]
-
-                const secondDot = parsedExpr.content.lastIndexOf(".")
-                const firstDot = parsedExpr.content.lastIndexOf(
-                  ".",
-                  secondDot - 1
-                )
-
-                // We have "self.variable.signal.connect" but we want
-                // "self.signal.connect".
-                // TODO: This is kinda a hack.
-                parsedExpr = {
-                  content:
-                    parsedExpr.content.substring(0, firstDot) +
-                    parsedExpr.content.substring(secondDot),
-                }
-              }
+            if (signalName.startsWith("$")) {
+              signalName = signalName.slice(1)
             }
-          } else {
-            props.addError({
-              description: "Unsupported use of connect",
-              error: ErrorName.NoComplicatedConnect,
-              location: expression,
-            })
-          }
-        } else if (secondArg.kind === SyntaxKind.PropertyAccessExpression) {
-          const propAccess = secondArg as ts.PropertyAccessExpression
-          let signalName = propAccess.name.text
-          const expr = parseNode(propAccess.expression, props)
 
-          if (signalName.startsWith("$")) {
-            signalName = signalName.slice(1)
-          }
-
-          if (
-            (expr.enums?.length ?? 0 > 0) ||
-            (expr.extraLines?.length ?? 0 > 0) ||
-            (expr.hoistedArrowFunctions?.length ?? 0 > 0) ||
-            (expr.hoistedEnumImports?.length ?? 0 > 0) ||
-            (expr.hoistedLibraryFunctions?.size ?? 0 > 0)
-          ) {
-            props.addError({
-              description:
-                "ts2gd does not handle complicated types in .connect().",
-              error: ErrorName.NoComplicatedConnect,
-              location: expression,
-            })
-          }
-
-          parsedStringArgs = [
-            parsedArgs[0].content,
-            expr.content,
-            `"${signalName}"`,
-          ]
-        } else if (secondArg.kind === SyntaxKind.ArrowFunction) {
-          const af = secondArg as ts.ArrowFunction
-          const arrowFunctionObj = parsedArgs[1].hoistedArrowFunctions?.find(
-            (obj) => obj.node === af
-          )
-
-          if (!arrowFunctionObj) {
-            props.addError({
-              description:
-                "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
-              error: ErrorName.Ts2GdError,
-              location: secondArg,
-            })
-          } else {
-            const { capturedScopeObject } = getCapturedScope(
-              arrowFunctionObj.node,
-              props.program.getTypeChecker()
+            const af = args[0] as ts.ArrowFunction
+            const arrowFunctionObj = parsedArgs[0].hoistedArrowFunctions?.find(
+              (obj) => obj.node === af
             )
 
-            // anonymous arrow functions are always declared on the current class.
-            parsedStringArgs = [
-              parsedArgs[0].content,
-              "self",
-              `"${arrowFunctionObj?.name}"`,
-              `[${capturedScopeObject}]`,
-            ]
+            if (!arrowFunctionObj) {
+              props.addError({
+                description:
+                  "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+                error: ErrorName.Ts2GdError,
+                location: expression,
+              })
+            } else {
+              const { capturedScopeObject } = getCapturedScope(
+                arrowFunctionObj.node,
+                props.program.getTypeChecker()
+              )
+
+              parsedStringArgs = [
+                `"${signalName}"`,
+                "self",
+                `"${arrowFunctionObj.name}"`,
+                `[${capturedScopeObject}]`,
+              ]
+
+              const secondDot = parsedExpr.content.lastIndexOf(".")
+              const firstDot = parsedExpr.content.lastIndexOf(
+                ".",
+                secondDot - 1
+              )
+
+              // We have "self.variable.signal.connect" but we want
+              // "self.signal.connect".
+              // TODO: This is kinda a hack.
+              parsedExpr = {
+                content:
+                  parsedExpr.content.substring(0, firstDot) +
+                  parsedExpr.content.substring(secondDot),
+              }
+            }
           }
-        } else {
-          props.addError({
-            description: `ts2gd requires the second argument of .connect() to be a method or an arrow function. It was: ${syntaxKindToString(
-              secondArg.kind
-            )}`,
-            error: ErrorName.NoComplicatedConnect,
-            location: node,
-          })
+        }
+      }
+
+      if (
+        parsedExpr.content.endsWith(".rpc") ||
+        parsedExpr.content.endsWith(".rpc_id")
+      ) {
+        if (expression.kind === SyntaxKind.PropertyAccessExpression) {
+          const pae = expression as ts.PropertyAccessExpression
+
+          if (pae.kind === SyntaxKind.PropertyAccessExpression) {
+            const pae2 = pae.expression as ts.PropertyAccessExpression
+            const rpcFunctionName = pae2.name.getText()
+
+            const secondDot = parsedExpr.content.lastIndexOf(".")
+            const firstDot = parsedExpr.content.lastIndexOf(".", secondDot - 1)
+
+            const expressionWithoutRpcName =
+              parsedExpr.content.substring(0, firstDot) +
+              parsedExpr.content.substring(secondDot)
+
+            const isRpcId = parsedExpr.content.endsWith(".rpc_id")
+
+            if (isRpcId) {
+              parsedStringArgs = [
+                parsedArgs[0].content,
+                `"${rpcFunctionName}"`,
+                ...parsedArgs.slice(1).map((arg) => arg.content),
+              ]
+            } else {
+              parsedStringArgs = [
+                `"${rpcFunctionName}"`,
+                ...parsedArgs.map((arg) => arg.content),
+              ]
+            }
+
+            parsedExpr = {
+              content: expressionWithoutRpcName,
+            }
+          }
         }
       }
 
@@ -665,12 +621,13 @@ d["b"] = 2
 }
 
 export const testConnect: Test = {
+  expectFail: true,
   ts: `
 export class Test extends Area2D {
   constructor() {
     super()
 
-    this.connect("body_entered", this.on_body_entered)
+    this.$body_entered.connect(this.on_body_entered)
   }
 
   on_body_entered(body: Node) {
@@ -695,7 +652,7 @@ export class Test extends Area2D {
     super()
 
     let x = 5
-    this.connect("body_entered", (body: Node) => { print(body) })
+    this.$body_entered.connect((body: Node) => { print(body) })
   }
 }
   `,
@@ -717,7 +674,7 @@ export class Test extends Area2D {
     super()
     let x = 1, y = 2;
 
-    this.connect("body_entered", (body: Node) => { print(x + y) })
+    this.$body_entered.connect((body: Node) => { print(x + y) })
   }
 }
   `,
@@ -742,7 +699,7 @@ export class Test extends Area2D {
     super()
     let x = 1, y = 2;
 
-    this.connect("body_entered", (body: Node) => { this.print(x + y) })
+    this.$body_entered.connect((body: Node) => { this.print(x + y) })
   }
 }
   `,
@@ -767,7 +724,7 @@ class Test {
   foo() {
     let enem: any;
 
-    enem.connect("on_die", () => { this.enemies.erase(enem) });  
+    enem.$on_die.connect(() => { this.enemies.erase(enem) });  
   }
 }
   `,
@@ -797,9 +754,9 @@ d[[1, 2]] = 2
 export const testEmitSignal: Test = {
   ts: `
 export class CityGridCollision extends Area {
-  mouseenter!: Signal<[]>;
+  $mouseenter!: Signal<[]>;
   test() {
-    this.mouseenter.emit()
+    this.$mouseenter.emit()
   }
 }
   `,
@@ -936,12 +893,12 @@ func f():
 export const testConnectDirectlyToSig: Test = {
   ts: `
 export class Test extends Area2D {
-  mysig!: Signal
+  $mysig!: Signal
 
   constructor() {
     super()
 
-    this.mysig.connect(() => {
+    this.$mysig.connect(() => {
       print("OK")
     })
   }
@@ -987,5 +944,45 @@ func _ready():
   self.test.connect("mysig", self, "__gen", [{}])
   self.test.emit_signal("mysig")
   self.emit_signal("mysig")
+`,
+}
+
+export const testRpcRewrite: Test = {
+  ts: `
+export class Test extends Area2D {
+  rpc_me() {
+
+  }
+
+  rpc_me_2() {
+
+  }
+
+  rpc_me_3() {
+
+  }
+
+  constructor() {
+    super()
+
+    this.rpc_me.rpc()
+    this.rpc_me_2.rpc(1, 2, 3)
+    this.rpc_me_3.rpc_id(1, "egg")
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func rpc_me():
+  pass
+func rpc_me_2():
+  pass
+func rpc_me_3():
+  pass
+func _ready():
+  self.rpc("rpc_me")
+  self.rpc("rpc_me_2", 1, 2, 3)
+  self.rpc_id(1, "rpc_me_3", "egg")
 `,
 }

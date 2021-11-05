@@ -197,10 +197,10 @@ foo[0].bar = 2
 export const testNoSelfForSignal: Test = {
   ts: `
 export class Test {
-  mouseenter!: Signal<[]>;
+  $mouseenter!: Signal<[]>;
 
   test() {
-    this.mouseenter.emit()
+    this.$mouseenter.emit()
   }
 }
   `,
