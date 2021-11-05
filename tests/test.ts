@@ -220,7 +220,25 @@ const test = (
 ): TestResult => {
   const { ts, expected } = props
 
-  const { compiled, errors } = compileTs(ts, props.isAutoload ?? false)
+  let compiled: ParseNodeType | null = null
+  let errors: TsGdError[] = []
+
+  try {
+    const result = compileTs(ts, props.isAutoload ?? false)
+
+    compiled = result.compiled
+    errors = result.errors
+  } catch (e) {
+    return {
+      type: "fail",
+      result: `Threw the following error: ${(e as any).stack}`,
+      expected: `No errors`,
+      name,
+      expectFail: props.expectFail ?? false,
+      path,
+    }
+  }
+
   const output = compiled.content
 
   if (errors.length > 0) {
@@ -351,6 +369,7 @@ export const runTests = async () => {
       failures.push(result)
     }
   }
+
   const elapsed = (new Date().getTime() - start) / 1000 + "s"
 
   if (failures.length === 0) {
