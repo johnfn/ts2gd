@@ -69,6 +69,22 @@ For the full list of namespaced enums, you can see the generated @globals.d.ts f
 
 In the future, this could become a configuration setting on tsgd.json.
 
+### `rpc`
+
+The RPC syntax has been improved.
+
+GDScript:
+
+```
+this.rpc("my_rpc_method", "some-argument)
+```
+
+TypeScript:
+
+```
+this.my_rpc_method.rpc("some-argument")
+```
+
 ### `signals`
 
 Signals have been improved. All signals now start with `$` and are properties of the class they're defined on.
