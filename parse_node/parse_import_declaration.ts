@@ -121,7 +121,7 @@ export const parseImportDeclaration = (
 
         imports.push({ importedName: enumName, resPath: resPath, type: "enum" })
       } else if (type.symbol?.name === "PackedScene") {
-        const importedName = bindings.elements[0].name.text
+        const importedName = element.name.text
         const className = importedName.slice(0, -"Tscn".length)
         const resPath = props.project
           .godotScenes()

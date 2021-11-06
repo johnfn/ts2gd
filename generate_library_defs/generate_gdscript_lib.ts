@@ -177,6 +177,10 @@ export const parseMethod = (
     returnType = `asserts condition`
   }
 
+  if (name === "get_overlapping_bodies") {
+    returnType = "PhysicsBody2D[]"
+  }
+
   if (name === "get_datetime") {
     returnType = `{
       year: number;

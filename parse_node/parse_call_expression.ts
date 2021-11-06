@@ -329,7 +329,10 @@ export const parseCallExpression = (
             const pae2 = pae.expression as ts.PropertyAccessExpression
             const expr = parseNode(pae2.expression, props)
 
-            parsedStringArgs = [`"${signalName}"`]
+            parsedStringArgs = [
+              `"${signalName}"`,
+              ...parsedArgs.map((arg) => arg.content),
+            ]
             parsedExpr = {
               content: expr.content + ".emit_signal",
             }
@@ -935,7 +938,7 @@ export class Test extends Area2D {
     })
 
     this.test.$mysig.emit()
-    this.$mysig.emit()
+    this.$mysig.emit(1, 2, 3)
   }
 }
   `,
@@ -949,7 +952,7 @@ var test
 func _ready():
   self.test.connect("mysig", self, "__gen", [{}])
   self.test.emit_signal("mysig")
-  self.emit_signal("mysig")
+  self.emit_signal("mysig", 1, 2, 3)
 `,
 }
 

@@ -1,15 +1,26 @@
 // VERY USEFUL
 
+// [ ]: Can't import two Tscn from same file
+
+// [ ]: "Can't find the autoload instance variable" error is displayed on empty classes
+// [ ]: Get enum values
+// [ ]: access children directly with property access, e.g. this.get_node("A/B") could be written this.A.B
+
+// [ ]: Make GridCellTscn.instance(1, 2) convert into calling the constructor w/ those 2 parameters.
+
 // [ ]: Actions aren't regenerated except with --buildLibraries
 // [ ]: signals: we could just do $signal_prop = Signal() to avoid the ts ! weirdness
 // [ ]: I dont get the coroutine api
-// [ ]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
-// .    actually better is this.name_of_fn.rpc(blah, blargh)
 // [ ]: error for generator functions that might never call yield
 // [ ]: typeof() doesnt work on primitive types because it uses get_class rather than typeof...
 // might be able to figure this out... or just code a better typeof library function?
 
-// [ ]; rpc_id on other things is not typesafe. Also, autoload classes.
+// [ ]: Argument destructuring
+
+// [x]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
+//      actually better is this.name_of_fn.rpc(blah, blargh)
+
+// [x]; rpc_id on other things is not typesafe. Also, autoload classes.
 
 // [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
 //        ^ generates incorrect code
@@ -17,7 +28,6 @@
 // [ ]: [] isnt assignable to PoolStringArray
 // [ ]: why doesnt enemy have root paths?
 // [ ]: Auto rebuild libraries when version changes
-// [ ]: Argument destructuring
 // [ ]: could ts consider undefined and null the same? i doubt it. it's annoying for null coalescing
 // [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
 // [ ]: i get autoload errors on empty ts files
@@ -25,7 +35,7 @@
 // [ ]: error for RPCing to a function that doesnt have @rpc?
 // [x]: why can i CALL NUMBERS
 // [x]: autoload class names are based on the file rather than the exported variable rn
-// [ ]: autoload could be injected into global scope? ironically maybe the best
+// [x]: autoload could be injected into global scope? ironically maybe the best
 //      way to do it would be to NOT export a var and then auto export for u - but
 //      then goto def wouldnt work.
 
@@ -40,17 +50,16 @@
 
 // [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
 
-// [ ]: get_children returns any[]
+// [x]: get_children returns any[]
 
 // [ ]: Windows build.
 // [ ]: Could gitignore compiled files?
-// [ ]: Yield autocompletion stopped working
-
-// [ ]: Parse input actions
+// [x]: Yield autocompletion stopped working
+// [x]: Parse input actions
 
 // [ ]: Add a test to make sure that signals on classes typecheck
 
-// [ ]: bool as alias for boolean, remove generated bool class
+// [x]: bool as alias for boolean, remove generated bool class
 
 // [ ]: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
@@ -84,7 +93,7 @@
 // TODO: Make a testing harness for project-related stuff.
 // TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
 // TODO: The onChange flow in project.ts delets the old obj and adds a new one - but then you lose local state. I should think of a way to address this.
-// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
+// [x]: Could get best of both worlds with yield Yield() (although that looks stupid).
 // TODO: have a way to compile all files, and collate all errors.
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Taking in funcrefs and calling them.
@@ -115,7 +124,7 @@
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: refactor resPath and tsPath and etc
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
-// TODO: The whole Class() thing is clearly possible - see String() for
+// [x]: The whole Class() thing is clearly possible - see String() for
 //       an example!
 // TODO: SUbtracting vectors gives a number for some reason
 
