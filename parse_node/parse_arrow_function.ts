@@ -129,6 +129,11 @@ export const getCapturedScope = (
   }
 }
 
+// We emit all arrow functions as a tuple of [function object, closed-over
+// variables]. (Previously, when we passed an arrow function to another
+// function, we were just passing in captured variables as a second argument,
+// but this gets messy and complicated when we pass function arguments through
+// multiple functions.)
 export const parseArrowFunction = (
   node: ts.ArrowFunction,
   props: ParseState
@@ -165,9 +170,17 @@ ${unwrapCapturedScope}
 
   props.scope.leaveScope()
 
+  const decls = props.program.getTypeChecker().getTypeAtLocation(node)
+    .symbol?.declarations
+
+  const { capturedScopeObject } = getCapturedScope(
+    decls[0] as ts.ArrowFunction,
+    props
+  )
+
   // NOTE: parse_call_expression expects all arrow functions to be declared on self.
   return {
-    content: `funcref(self, "${name}")`,
+    content: `[funcref(self, "${name}"), ${capturedScopeObject}]`,
     hoistedArrowFunctions: [
       {
         name,

@@ -81,11 +81,11 @@ func mul_vec_lib(v1, v2):
   map: {
     name: "map",
     definition: (name: string) => `
-func ${name}(list, fn, captures):
+func ${name}(list, fn):
   var result = []
 
   for item in list:
-    result.append(fn.call_func(item, captures))
+    result.append(fn[0].call_func(item, fn[1]))
 
   return result
     `,
@@ -94,12 +94,12 @@ func ${name}(list, fn, captures):
   flatten: {
     name: "flatten",
     definition: (name: string) => `
-func ${name}(list, captures):
+func ${name}(list):
   var result = []
 
   for item in list:
     if (typeof(item) == TYPE_ARRAY):
-      var inner_result = ${name}(item, captures)
+      var inner_result = ${name}(item)
 
       for inner in inner_result:
         result.append(inner)
@@ -113,11 +113,11 @@ func ${name}(list, captures):
   filter: {
     name: "filter",
     definition: (name: string) => `
-func ${name}(list, fn, captures):
+func ${name}(list, fn):
   var result = []
 
   for item in list:
-    if fn.call_func(item, captures):
+    if fn[0].call_func(item, fn[1]):
       result.append(item)
 
   return result
@@ -127,7 +127,7 @@ func ${name}(list, fn, captures):
   max_by: {
     name: "max_by",
     definition: (name: string) => `
-func ${name}(list, fn, captures):
+func ${name}(list, fn):
   if len(list) == 0: 
     return null
 
@@ -136,7 +136,7 @@ func ${name}(list, fn, captures):
   var best_score = -INF
 
   for item in list:
-    var score = fn.call_func(item, captures)
+    var score = fn[0].call_func(item, fn[1])
 
     if score > best_score:
       best_score = score
@@ -149,7 +149,7 @@ func ${name}(list, fn, captures):
   min_by: {
     name: "min_by",
     definition: (name: string) => `
-func ${name}(list, fn, captures):
+func ${name}(list, fn):
   if len(list) == 0: 
     return null
 
@@ -158,7 +158,7 @@ func ${name}(list, fn, captures):
   var best_score = INF
 
   for item in list:
-    var score = fn.call_func(item, captures)
+    var score = fn[0].call_func(item, fn[1])
 
     if score < best_score:
       best_score = score
@@ -245,34 +245,14 @@ export const parseCallExpression = (
         const libFunctionName = functionName as LibraryFunctionName
         let result: ParseNodeType
 
-        if (
-          node.arguments.length > 0 &&
-          node.arguments[0].kind === SyntaxKind.ArrowFunction
-        ) {
-          const arrowFunction = node.arguments[0] as ts.ArrowFunction
-
-          const { capturedScopeObject } = getCapturedScope(arrowFunction, props)
-
-          result = combine({
-            parent: node,
-            nodes: [prop.expression, ...args],
-            props,
-            parsedStrings: (expr, ...args) => {
-              return `__${libFunctionName}(${[expr, ...args].join(
-                ", "
-              )}, ${capturedScopeObject})`
-            },
-          })
-        } else {
-          result = combine({
-            parent: node,
-            nodes: [prop.expression, ...args],
-            props,
-            parsedStrings: (expr, ...args) => {
-              return `__${libFunctionName}(${[expr, ...args].join(", ")})`
-            },
-          })
-        }
+        result = combine({
+          parent: node,
+          nodes: [prop.expression, ...args],
+          props,
+          parsedStrings: (expr, ...args) => {
+            return `__${libFunctionName}(${[expr, ...args].join(", ")})`
+          },
+        })
 
         result.hoistedLibraryFunctions =
           result.hoistedLibraryFunctions ?? new Set()
@@ -471,44 +451,53 @@ export const parseCallExpression = (
         return parsedArgs[0].content
       }
 
-      if (isExpressionArrowFunction) {
-        const { capturedScopeObject } = getCapturedScope(
-          decls[0] as ts.ArrowFunction,
-          props
-        )
-
-        return `${parsedExpr.content}.call_func(${[
-          ...parsedArgs,
-          capturedScopeObject,
-        ].join(", ")})`
-      }
-
-      if (isNullable(expression, props.program.getTypeChecker())) {
-        const newName = props.scope.createUniqueName()
-        // TODO: This is wrong, need to cache expr
-        const expr = parsedExpr.content
-
-        nullCoalesce = [
-          {
-            type: "before",
-            line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
-          },
-        ]
-
-        return `${newName}`
-      }
-
       // When we pass in functions to other functions, they're passed in as parameters.
       const symbol = props.program
         .getTypeChecker()
         .getSymbolAtLocation(expression)
 
-      const calledExpressionType = symbol?.getDeclarations()?.[0].kind
-      const isFunctionObject = calledExpressionType === ts.SyntaxKind.Parameter
+      const decl = symbol?.getDeclarations() ?? []
+      let isFromLib = false
 
-      return `${parsedExpr.content}${
-        isFunctionObject ? ".call_func" : ""
-      }(${parsedStringArgs.join(", ")})`
+      for (const d of decl) {
+        if (d.getSourceFile().fileName.endsWith(".d.ts")) {
+          isFromLib = true
+        }
+      }
+
+      const calledExpressionType = symbol?.getDeclarations()?.[0].kind
+      const isFunctionObject =
+        !isFromLib &&
+        (calledExpressionType === ts.SyntaxKind.Parameter ||
+          calledExpressionType === ts.SyntaxKind.VariableDeclaration)
+
+      if (isFunctionObject) {
+        parsedStringArgs = [...parsedStringArgs, parsedExpr.content + "[1]"]
+      }
+
+      if (isNullable(expression, props.program.getTypeChecker())) {
+        const newName = props.scope.createUniqueName()
+        // TODO: This is wrong, need to cache expr
+
+        if (symbol)
+          parsedExpr.content + "[1]",
+            (nullCoalesce = [
+              {
+                type: "before",
+                line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+              },
+            ])
+
+        return `${newName}`
+      }
+
+      if (isFunctionObject) {
+        return `${parsedExpr.content}[0].call_func(${parsedStringArgs.join(
+          ", "
+        )})`
+      } else {
+        return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`
+      }
     },
   })
 
@@ -589,9 +578,9 @@ func __gen(captures):
 func __gen1(captures):
   pass
 func a():
-  var _a = funcref(self, "__gen")
+  var _a = [funcref(self, "__gen"), {}]
 func b():
-  var _b = funcref(self, "__gen1")
+  var _b = [funcref(self, "__gen1"), {}]
 `,
 }
 
@@ -603,8 +592,8 @@ test()
   expected: `
 func __gen(captures):
   return 5
-var test = funcref(self, "__gen")
-test.call_func({})
+var test = [funcref(self, "__gen"), {}]
+test[0].call_func(test[1])
 `,
 }
 
@@ -618,7 +607,7 @@ ${LibraryFunctions.map.definition("__map")}
 func __gen(y: String, captures):
   return y + "1"
 var x = ["a", "b", "c"]
-__map(x, funcref(self, "__gen"), {})
+__map(x, [funcref(self, "__gen"), {}])
 `,
 }
 
@@ -640,7 +629,7 @@ func __gen(y, captures):
 var x = [1, 2, 3]
 var z: int = 5
 var big = { "a": 6 }
-__map(x, funcref(self, "__gen"), {"z": z, "big": big})
+__map(x, [funcref(self, "__gen"), {"z": z, "big": big}])
 `,
 }
 
@@ -823,7 +812,7 @@ func __gen(x: String, captures):
 func __gen1(x: String, captures):
   return x
 var a = []
-__map(__filter(a, funcref(self, "__gen"), {}), funcref(self, "__gen1"), {})
+__map(__filter(a, [funcref(self, "__gen"), {}]), [funcref(self, "__gen1"), {}])
 `,
 }
 
@@ -874,7 +863,7 @@ func __gen(captures):
   return big.a + big.a
 var big = { "a": 6 }
 var x = []
-__map(x, funcref(self, "__gen"), {"big": big})
+__map(x, [funcref(self, "__gen"), {"big": big}])
 `,
 }
 
@@ -1053,10 +1042,10 @@ func __gen(captures):
 func __gen1(captures):
   pass
 func fn(other):
-  other.call_func()
+  other[0].call_func(other[1])
 func _ready():
-  var fnObject = funcref(self, "__gen")
-  self.fn(funcref(self, "__gen1"))
-  fnObject.call_func({})
+  var fnObject = [funcref(self, "__gen"), {}]
+  self.fn([funcref(self, "__gen1"), {}])
+  fnObject[0].call_func(fnObject[1])
 `,
 }
