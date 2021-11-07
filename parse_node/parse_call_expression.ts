@@ -3,7 +3,12 @@ import { ErrorName } from "../errors"
 import { combine, ExtraLine, parseNode, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import { isArrayType, isDictionary, isNullable } from "../ts_utils"
+import {
+  isArrayType,
+  isDictionary,
+  isNullable,
+  syntaxKindToString,
+} from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
 
 export type LibraryFunctionName =
@@ -13,6 +18,7 @@ export type LibraryFunctionName =
   | "min_by"
   | "join"
   | "entries"
+  | "flatten"
   | "random_element"
   | "add_vec_lib"
   | "sub_vec_lib"
@@ -80,6 +86,25 @@ func ${name}(list, fn, captures):
 
   for item in list:
     result.append(fn.call_func(item, captures))
+
+  return result
+    `,
+  },
+
+  flatten: {
+    name: "flatten",
+    definition: (name: string) => `
+func ${name}(list, captures):
+  var result = []
+
+  for item in list:
+    if (typeof(item) == TYPE_ARRAY):
+      var inner_result = ${name}(item, captures)
+
+      for inner in inner_result:
+        result.append(inner)
+    else:
+      result.append(item)
 
   return result
     `,
@@ -226,10 +251,7 @@ export const parseCallExpression = (
         ) {
           const arrowFunction = node.arguments[0] as ts.ArrowFunction
 
-          const { capturedScopeObject } = getCapturedScope(
-            arrowFunction,
-            props.program.getTypeChecker()
-          )
+          const { capturedScopeObject } = getCapturedScope(arrowFunction, props)
 
           result = combine({
             parent: node,
@@ -370,7 +392,7 @@ export const parseCallExpression = (
             } else {
               const { capturedScopeObject } = getCapturedScope(
                 arrowFunctionObj.node,
-                props.program.getTypeChecker()
+                props
               )
 
               parsedStringArgs = [
@@ -452,7 +474,7 @@ export const parseCallExpression = (
       if (isExpressionArrowFunction) {
         const { capturedScopeObject } = getCapturedScope(
           decls[0] as ts.ArrowFunction,
-          props.program.getTypeChecker()
+          props
         )
 
         return `${parsedExpr.content}.call_func(${[
@@ -476,7 +498,17 @@ export const parseCallExpression = (
         return `${newName}`
       }
 
-      return `${parsedExpr.content}(${parsedStringArgs.join(", ")})`
+      // When we pass in functions to other functions, they're passed in as parameters.
+      const symbol = props.program
+        .getTypeChecker()
+        .getSymbolAtLocation(expression)
+
+      const calledExpressionType = symbol?.getDeclarations()?.[0].kind
+      const isFunctionObject = calledExpressionType === ts.SyntaxKind.Parameter
+
+      return `${parsedExpr.content}${
+        isFunctionObject ? ".call_func" : ""
+      }(${parsedStringArgs.join(", ")})`
     },
   })
 
@@ -993,5 +1025,38 @@ func _ready():
   self.rpc("rpc_me")
   self.rpc("rpc_me_2", 1, 2, 3)
   self.rpc_id(1, "rpc_me_3", "egg")
+`,
+}
+
+export const testPassInFunction: Test = {
+  ts: `
+export class Test extends Area2D {
+  fn(other: () => void) {
+    other()
+  }
+
+  constructor() {
+    super()
+
+    const fnObject = () => {}
+
+    this.fn(() => {})
+    fnObject()
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func __gen(captures):
+  pass
+func __gen1(captures):
+  pass
+func fn(other):
+  other.call_func()
+func _ready():
+  var fnObject = funcref(self, "__gen")
+  self.fn(funcref(self, "__gen1"))
+  fnObject.call_func({})
 `,
 }

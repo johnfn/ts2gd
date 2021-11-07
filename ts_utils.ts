@@ -3,6 +3,7 @@ import { ParseState } from "./parse_node"
 import { ErrorName, TsGdReturn } from "./errors"
 import fs from "fs"
 import path from "path"
+import chalk from "chalk"
 
 export const isNullable = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)
@@ -204,7 +205,9 @@ export function getGodotType(
     return {
       errors: [
         {
-          description: `Please add either "int" or "float" here (not number)`,
+          description: `Please annotate ${chalk.yellow(
+            props.getNodeText(node)
+          )} with either "int" or "float".`,
           error: ErrorName.InvalidNumber,
           location: node,
         },

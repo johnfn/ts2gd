@@ -91,8 +91,6 @@ foo.bar = 1
 }
 
 export const testNestedAssignmentToDict: Test = {
-  expectFail: false,
-
   ts: `const foo = { bar: {} };
 foo.bar.baz = 1`,
   expected: `

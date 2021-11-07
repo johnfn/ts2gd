@@ -1,8 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { Test } from "../tests/test"
-import { LibraryFunctions } from "./parse_call_expression"
 
 /**
  * Get all identifiers in a scope that were declared in an enclosing scope.
@@ -18,8 +16,8 @@ import { LibraryFunctions } from "./parse_call_expression"
  */
 const getFreeVariables = (
   node: ts.Node | undefined | null,
-  typeChecker: ts.TypeChecker,
-  root: ts.ArrowFunction
+  root: ts.ArrowFunction,
+  props: ParseState
 ): (ts.Identifier | ts.PropertyAccessExpression)[] => {
   if (!node) {
     return []
@@ -35,7 +33,7 @@ const getFreeVariables = (
       node = pae.expression
     }
 
-    const symbol = typeChecker.getSymbolAtLocation(node)
+    const symbol = props.program.getTypeChecker().getSymbolAtLocation(node)
 
     if (symbol) {
       const decl = symbol.declarations[0]
@@ -66,30 +64,37 @@ const getFreeVariables = (
       if (node.kind === SyntaxKind.Identifier) {
         // Expressions like this.get_node("HBoxContainer/BuildButton").visible give
         // "no symbol" logs. I don't understand why
-        console.log(node.getText(), "no symbol")
+        console.log(props.getNodeText(node), "no symbol")
       }
     }
 
     return []
   }
 
-  return node
-    .getChildren()
-    .flatMap((child) => getFreeVariables(child, typeChecker, root))
+  let result: (ts.Identifier | ts.PropertyAccessExpression)[][] = []
+
+  ts.forEachChild(node, (ch) => {
+    result.push(getFreeVariables(ch, root, props))
+  })
+
+  return result.flat()
 }
 
 export const getCapturedScope = (
   node: ts.ArrowFunction,
-  checker: ts.TypeChecker
+  props: ParseState
 ): {
   capturedScopeObject: string
   unwrapCapturedScope: string
 } => {
-  const freeVariables = getFreeVariables(node.body, checker, node)
+  const { getNodeText } = props
+
+  const freeVariables = getFreeVariables(node.body, node, props)
   const uniqueFreeVariables = freeVariables.filter(
     (item, index) =>
-      freeVariables.findIndex((obj) => obj.getText() === item.getText()) ===
-      index
+      freeVariables.findIndex(
+        (obj) => getNodeText(obj) === getNodeText(item)
+      ) === index
   )
 
   // We don't want to capture `this` as part of our scope. There's no reason to
@@ -130,10 +135,7 @@ export const parseArrowFunction = (
 ): ParseNodeType => {
   const name = props.scope.createUniqueName()
 
-  const { unwrapCapturedScope } = getCapturedScope(
-    node,
-    props.program.getTypeChecker()
-  )
+  const { unwrapCapturedScope } = getCapturedScope(node, props)
 
   props.scope.enterScope()
 

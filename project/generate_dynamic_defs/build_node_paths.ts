@@ -171,6 +171,59 @@ export const buildNodePathsTypeForScript = (
     }
   }
 
+  type RecursivePath = {
+    type: string
+    name: string
+    children: { [name: string]: RecursivePath }
+  }
+  const obj: RecursivePath = {
+    type: "",
+    name: "",
+    children: {},
+  }
+
+  for (const { path, node } of commonRelativePaths) {
+    if (path.startsWith("/")) {
+      continue
+    }
+
+    const names = path.split("/")
+    let cur = obj
+
+    for (const name of names) {
+      if (!cur.children[name]) {
+        cur.children[name] = {
+          type: "",
+          name: name,
+          children: {},
+        }
+      }
+
+      cur = cur.children[name]
+    }
+
+    cur.type = pathToImport[path]
+    cur.name = names[names.length - 1]
+  }
+
+  function process(obj: RecursivePath, indent = "") {
+    let result = ""
+
+    result += indent + obj.name + ": " + obj.type + " & {\n"
+
+    for (const childName of Object.keys(obj.children)) {
+      result += process(obj.children[childName], indent + "  ")
+    }
+
+    result += indent + "}\n"
+
+    return result
+  }
+
+  const directNodeAccessPaths = Object.values(obj.children)
+    .map((c) => process(c))
+    .join("\n")
+
   let result = `${
     references.length > 0 ? `// Uses of "${script.resPath}": \n` : ""
   }
@@ -206,7 +259,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
     get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
     get_node_unsafe<T>(path: string): T
-    connect<T extends SignalsOf<${extendedClassName} & ${className}>>(signal: T, method: SignalFunction<(${extendedClassName} & ${className})[T]>): number;
+
   }
 
   namespace ${className} {

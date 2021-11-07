@@ -329,3 +329,28 @@ func test(_x):
   print(__gen1)
   `,
 }
+
+export const testPropertyConvertToFuncRef: Test = {
+  ts: `
+class Test extends Area2D {
+  foo(arg: () => void) {
+
+  }
+
+  bar() {
+    this.foo(this.foo)
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func foo(arg):
+  pass
+
+func bar():
+  this.foo(funcref(self, "foo"))
+  `,
+
+  expectFail: true,
+}

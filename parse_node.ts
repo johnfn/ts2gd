@@ -83,7 +83,7 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
 
   addError: (error: TsGdError) => void
-
+  sourceFile: ts.SourceFile
   getNodeText: (node: ts.Node) => string
 }
 

@@ -20,9 +20,11 @@ const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
     // then have the type checker re-analyze them, so the get_node() calls have a habit
     // of coming back as 'any' when we use the typechecker on them.
 
+    const initializerText = props.getNodeText(node.initializer)
+
     if (
-      node.initializer.getText().includes("get_node(") ||
-      node.initializer.getText().includes("get_node_unsafe")
+      initializerText.includes("get_node(") ||
+      initializerText.includes("get_node_unsafe")
     ) {
       return true
     }

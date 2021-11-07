@@ -378,6 +378,7 @@ ${chalk.green(
       // new one after we used TS to transform it - it will crash if we do so.
       usages: utils.collectVariableUsage(sourceFileAst),
       addError: (newError) => result.errors.push(newError),
+      sourceFile: sourceFileAst,
       getNodeText,
     })
 

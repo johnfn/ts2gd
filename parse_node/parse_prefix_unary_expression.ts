@@ -123,7 +123,6 @@ if true:
 }
 
 export const testIfStatement2: Test = {
-  expectFail: true,
   ts: `
 let x = 0
 if (true) {

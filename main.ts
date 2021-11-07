@@ -1,6 +1,11 @@
 // VERY USEFUL
 
-// [ ]: Can't import two Tscn from same file
+// [ ]: pass in methods as first class objects to other functions.
+// [x]: Can't import two Tscn from same file
+// [ ]: Color and ColorConstructor are backwards lol
+// [ ]: We don't clean up old generated .d.ts files when we rename a file.
+
+// [ ]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
 
 // [ ]: "Can't find the autoload instance variable" error is displayed on empty classes
 // [ ]: Get enum values
@@ -71,7 +76,7 @@
 // USEFUL
 
 // [x] Handle string interpolation
-// [ ] make FooTscn return proper type of root node (without script, not just Node)
+// [x] make FooTscn return proper type of root node (without script, not just Node)
 // [ ]: Merge conflict markers in project.godot cause a ts2gd crash.
 // [x]  make load/preload() work and return proper string
 // [x]: Better print() output, with spacing (there is prints, nevermind)

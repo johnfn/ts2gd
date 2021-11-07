@@ -85,6 +85,7 @@ export const compileTs = (
   // TODO: Make this less silly.
   const godotFile = parseNode(transformedSourceFile, {
     indent: "",
+    sourceFile: transformedSourceFile,
     getNodeText,
     scope: new Scope(program),
     isConstructor: false,
