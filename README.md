@@ -130,7 +130,7 @@ Here's a full example of an autoload class.
 ```
 @autoload
 class MyAutoloadClass extends Node2D {
-  public string hello = "hi"
+  public hello = "hi"
 }
 
 export const MyAutoload = new MyAutoloadClass()
@@ -142,7 +142,14 @@ export const MyAutoload = new MyAutoloadClass()
 
 ### Exports
 
-In order to mark an instance variable as `export`, use `@export`.
+In order to mark an instance variable as `export`, use `@exports`, e.g.:
+
+```
+class ExportExample extends Node2D {
+  @exports
+  public hello = "exported"
+}
+```
 
 ### remotesync, remote
 
