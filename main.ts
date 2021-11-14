@@ -21,6 +21,7 @@
 // might be able to figure this out... or just code a better typeof library function?
 
 // [ ]: Argument destructuring
+// [ ]: --buildOnly doesn't need to start up a file watcher
 
 // [x]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
 //      actually better is this.name_of_fn.rpc(blah, blargh)
@@ -282,11 +283,21 @@ export const main = async (args: ParsedArgs) => {
   showLoadingMessage("Compiling all source files", args)
   project.compileAllSourceFiles()
 
-  showLoadingMessage(
-    `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
-    args,
-    true
-  )
+  if (args.buildOnly) {
+    showLoadingMessage(
+      `Build complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
+      args,
+      true
+    )
+
+    process.exit()
+  } else {
+    showLoadingMessage(
+      `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
+      args,
+      true
+    )
+  }
 }
 
 if (!process.argv[1].includes("test")) {
