@@ -74,7 +74,7 @@ const parseImportDeclaration = (node, props) => {
                 imports.push({ importedName: enumName, resPath: resPath, type: "enum" });
             }
             else if (type.symbol?.name === "PackedScene") {
-                const importedName = bindings.elements[0].name.text;
+                const importedName = element.name.text;
                 const className = importedName.slice(0, -"Tscn".length);
                 const resPath = props.project
                     .godotScenes()
@@ -134,7 +134,7 @@ const parseImportDeclaration = (node, props) => {
         parsedStrings: () => imports
             .map(({ importedName, type, resPath }) => {
             if (type === "class") {
-                return `const ${importedName} = preload("${resPath}")`;
+                return `var ${importedName} = load("${resPath}")`;
             }
             else if (type === "enum") {
                 return `const ${importedName} = preload("${resPath}").${importedName}`;

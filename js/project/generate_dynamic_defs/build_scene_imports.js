@@ -10,13 +10,7 @@ const project_1 = require("../project");
 const buildSceneImports = (project) => {
     let result = ``;
     for (const scene of project.godotScenes()) {
-        const sceneScript = scene.rootNode.getScript();
-        if (sceneScript?.exportedTsClassName()) {
-            result += `export const ${path_1.default.basename(scene.fsPath, ".tscn")}Tscn: PackedScene<import('${sceneScript.fsPath.slice(0, -".ts".length)}').${sceneScript.exportedTsClassName()}>\n`;
-        }
-        else {
-            result += `export const ${path_1.default.basename(scene.fsPath, ".tscn")}Tscn: PackedScene<Node>\n`;
-        }
+        result += `export const ${path_1.default.basename(scene.fsPath, ".tscn")}Tscn: PackedScene<${scene.tsType() ?? "Node"}>;\n`;
     }
     const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, "@scenes.d.ts");
     fs_1.default.writeFileSync(destPath, result);

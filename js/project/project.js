@@ -22,6 +22,7 @@ const asset_image_1 = require("./assets/asset_image");
 const asset_source_file_1 = require("./assets/asset_source_file");
 const base_asset_1 = require("./assets/base_asset");
 const errors_1 = require("../errors");
+const ts_utils_1 = require("../ts_utils");
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
@@ -180,8 +181,9 @@ class TsGdProjectClass {
             }
         }
         if (showTime) {
+            const time = (new Date().getTime() - start) / 1000;
             console.info();
-            console.info("Done in", (new Date().getTime() - start) / 1000 + "s");
+            console.info(`${chalk_1.default.gray(ts_utils_1.getTimestamp())} Done in ${time}s`);
         }
         return result;
     }

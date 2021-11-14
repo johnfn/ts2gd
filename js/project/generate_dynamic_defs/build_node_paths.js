@@ -115,20 +115,57 @@ const buildNodePathsTypeForScript = (script, project) => {
             pathToImport[path] = node.tsType();
         }
     }
-    let result = `${references.length > 0 ? `\n// Uses of "${script.resPath}": \n` : ""}
+    const obj = {
+        type: "",
+        name: "",
+        children: {},
+    };
+    for (const { path, node } of commonRelativePaths) {
+        if (path.startsWith("/")) {
+            continue;
+        }
+        const names = path.split("/");
+        let cur = obj;
+        for (const name of names) {
+            if (!cur.children[name]) {
+                cur.children[name] = {
+                    type: "",
+                    name: name,
+                    children: {},
+                };
+            }
+            cur = cur.children[name];
+        }
+        cur.type = pathToImport[path];
+        cur.name = names[names.length - 1];
+    }
+    function process(obj, indent = "") {
+        let result = "";
+        result += indent + obj.name + ": " + obj.type + " & {\n";
+        for (const childName of Object.keys(obj.children)) {
+            result += process(obj.children[childName], indent + "  ");
+        }
+        result += indent + "}\n";
+        return result;
+    }
+    const directNodeAccessPaths = Object.values(obj.children)
+        .map((c) => process(c))
+        .join("\n");
+    let result = `${references.length > 0 ? `// Uses of "${script.resPath}": \n` : ""}
 ${references
         .map((ref) => {
         if (ref.type === "autoload") {
             return "// This is an autoload class\n";
         }
         else if (ref.type === "script") {
-            return ("// script: " +
+            return ("// As a script:\n" +
+                "//   " +
                 ref.use +
                 "\n" +
-                ref.children.map((c) => "//  - " + c + " \n").join(""));
+                ref.children.map((c) => "//     - " + c + " \n").join(""));
         }
         else if (ref.type === "instance") {
-            return "// instance: " + ref.use + "\n";
+            return "// As an instance:\n" + "//  " + ref.use + "\n";
         }
     })
         .join("")}
@@ -144,9 +181,9 @@ import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   interface ${className} {
-    get_node_safe<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
-    get_node(path: string): Node
-    connect<T extends SignalsOf<${extendedClassName}Signals>>(signal: T, method: SignalFunction<${extendedClassName}Signals[T]>): number;
+    get_node<T extends keyof NodePathToType${className}>(path: T): NodePathToType${className}[T];
+    get_node_unsafe<T>(path: string): T
+
   }
 
   namespace ${className} {
@@ -154,7 +191,8 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 
     export { _new as new };
   }
-}`;
+}
+`;
     const destPath = path_1.default.join(project_1.TsGdProjectClass.Paths.dynamicGodotDefsPath, `@node_paths_${script.getGodotClassName()}.d.ts`);
     fs_1.default.writeFileSync(destPath, result);
 };

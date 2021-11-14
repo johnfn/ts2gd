@@ -38,12 +38,29 @@ class GodotProjectFile {
         }
         fs_1.default.writeFileSync(this.fsPath, lines.join("\n"));
     }
-    removeAutoload(className, resPath) {
-        this.project.godotProject.autoloads = this.project.godotProject.autoloads.filter((a) => a.resPath !== resPath);
+    removeAutoload(resPath) {
+        this.project.godotProject.autoloads =
+            this.project.godotProject.autoloads.filter((a) => a.resPath !== resPath);
+        // TODO: This is a big hack
         let lines = fs_1.default.readFileSync(this.fsPath, "utf-8").split("\n");
-        const autoloadLine = `${className}="*${resPath}"`;
-        lines = lines.filter((l) => l.trim() !== autoloadLine);
-        fs_1.default.writeFileSync(this.fsPath, lines.join("\n"));
+        let resultLines = [];
+        let inAutoloadSection = false;
+        const autoloadLine = `="*${resPath}"`;
+        for (const line of lines) {
+            if (line.trim().startsWith("[") && line.trim().endsWith("]")) {
+                if (line.trim() === "[autoload]") {
+                    inAutoloadSection = true;
+                }
+                else {
+                    inAutoloadSection = false;
+                }
+            }
+            if (inAutoloadSection && line.trim().endsWith(autoloadLine)) {
+                continue;
+            }
+            resultLines.push(line);
+        }
+        fs_1.default.writeFileSync(this.fsPath, resultLines.join("\n"));
     }
     mainScene() {
         let mainSceneResPath = this.rawConfig.application?.["run/main_scene"];

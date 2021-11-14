@@ -8,7 +8,9 @@ const parseBlock = (node, props) => {
             parent: node,
             nodes: node.statements,
             props,
-            parsedStrings: (...parsed) => parsed.join(""),
+            parsedStrings: (...parsed) => {
+                return parsed.join("");
+            },
         });
     }
     else {

@@ -6,6 +6,7 @@ const parseArgs = () => {
     const flags = {
         help: false,
         buildLibraries: false,
+        buildOnly: false,
         printVersion: false,
         init: false,
         debug: false,
@@ -19,6 +20,9 @@ const parseArgs = () => {
         }
         else if (arg === "--buildLibraries") {
             flags.buildLibraries = true;
+        }
+        else if (arg === "--buildOnly") {
+            flags.buildOnly = true;
         }
         else if (arg === "--version") {
             flags.printVersion = true;
@@ -43,6 +47,7 @@ const printHelp = () => {
     console.info();
     console.info("Arguments:");
     console.info("--buildLibraries    Force ts2gd to regenerate the TypeScript definitions for Godot.");
+    console.info("--buildOnly         Compiles the project to TypeScript and immediately exits.");
     console.info("--init              Initialize a ts2gd project here.");
     console.info("--help              Print this help.");
     console.info();

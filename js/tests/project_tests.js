@@ -9,6 +9,7 @@ const test = () => {
         init: false,
         debug: false,
         printVersion: false,
+        buildOnly: false,
     });
 };
 exports.test = test;

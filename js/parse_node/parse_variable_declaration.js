@@ -36,7 +36,7 @@ const parseVariableDeclaration = (node, props) => {
     if (declaredType !== "int" && declaredType !== "float") {
         declaredType = undefined;
     }
-    let inferredType = ts_utils_1.getPreciseInitializerType(node.initializer);
+    let inferredType = ts_utils_1.getPreciseInitializerType(node.initializer, node.initializer ? props.getNodeText(node.initializer) : "");
     const type = declaredType ?? inferredType;
     const usages = props.usages.get(node.name);
     const unused = usages?.uses.length === 0 ? "_" : "";

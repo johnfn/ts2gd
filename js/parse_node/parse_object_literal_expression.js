@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testObjectLiteralMultiline2 = exports.testObjectLiteralMultiline = exports.testObjectLiteralShorthand2 = exports.testObjectLiteralShorthand = exports.testObjectLiteral2 = exports.testObjectLiteral = exports.parseObjectLiteralExpression = void 0;
+exports.testObjectLiteralMultiline3 = exports.testObjectLiteralMultiline2 = exports.testObjectLiteralMultiline = exports.testObjectLiteralShorthand2 = exports.testObjectLiteralShorthand = exports.testObjectLiteral2 = exports.testObjectLiteral = exports.parseObjectLiteralExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const parseObjectLiteralExpression = (node, props) => {
@@ -12,7 +12,7 @@ const parseObjectLiteralExpression = (node, props) => {
             parsedStrings: () => "{}",
         });
     }
-    const isMultiline = node.getText().includes("\n");
+    const isMultiline = props.getNodeText(node).includes("\n");
     const unprocessedKeys = node.properties.map((prop) => {
         if (prop.kind === typescript_1.SyntaxKind.PropertyAssignment) {
             if (prop.name.kind === typescript_1.SyntaxKind.ComputedPropertyName) {
@@ -58,7 +58,7 @@ const parseObjectLiteralExpression = (node, props) => {
             if (isMultiline) {
                 return `
 {
-${pairs.map(([k, v]) => `  ${k}: ${v},\n`).join("")}
+${pairs.map(([k, v]) => `  ${k}: ${v},`).join("\n")}
 }      
       `;
             }
@@ -128,5 +128,23 @@ var _x = {
   "b": 1,
 }
   `,
+};
+exports.testObjectLiteralMultiline3 = {
+    ts: `
+{
+  let foo = {
+    a: 1,
+    b: 2,
+  }
+  foo
+}
+  `,
+    expected: `
+var foo = {
+  "a": 1,
+  "b": 2,
+}
+foo  
+`,
 };
 //# sourceMappingURL=parse_object_literal_expression.js.map

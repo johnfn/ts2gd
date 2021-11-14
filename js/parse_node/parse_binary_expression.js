@@ -71,7 +71,6 @@ foo.bar = 1
 `,
 };
 exports.testNestedAssignmentToDict = {
-    expectFail: false,
     ts: `const foo = { bar: {} };
 foo.bar.baz = 1`,
     expected: `

@@ -15,6 +15,7 @@ function sanitizeGodotNameForTs(name, type) {
     if (name === "with" ||
         name === "var" ||
         name === "class" ||
+        name === "enum" ||
         name === "default" ||
         name === "in") {
         if (type === "argument") {
@@ -124,6 +125,8 @@ function formatJsDoc(input) {
         line = line.replaceAll("[/codeblock]", "");
         line = line.replaceAll("[codeblocks]", "");
         line = line.replaceAll("[/codeblocks]", "");
+        // This is the most fun edge case of all time - in RichTextLabel.xml
+        line = line.replaceAll("*/", "");
         result += " * " + line + "\n" + (!insideCodeBlock ? " *\n" : "");
     }
     result += "*/";
@@ -132,7 +135,9 @@ function formatJsDoc(input) {
 exports.formatJsDoc = formatJsDoc;
 async function generateGodotLibraryDefinitions() {
     // TODO: Refactor this out
+    // TODO: Hmm... prob theres a better way than a huge manual list!
     let csgClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/csg/doc_classes");
+    let websocketClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/websocket/doc_classes");
     let normalClassesPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "doc/classes");
     let gdscriptPath = path_1.default.join(project_1.TsGdProjectClass.Paths.godotSourceRepoPath ?? "", "modules/gdscript/doc_classes");
     fs_1.default.mkdirSync(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, { recursive: true });
@@ -149,37 +154,62 @@ async function generateGodotLibraryDefinitions() {
         const signals = (json.class.signals ?? [])[0]?.signal ?? [];
         const methods = methodsXml.map((method) => generate_gdscript_lib_1.parseMethod(method, { containgClassName: className }));
         const constructorInfo = methods.filter((method) => method.isConstructor);
+        // This is true for classes that can be constructed without a new keyword, e.g. const myVector = Vector2();
+        let isSpecialConstructorClass = className === "Vector2" ||
+            className === "Vector3" ||
+            className === "Vector2i" ||
+            className === "Vector3i" ||
+            className === "Rect2" ||
+            className === "Color";
         if (className === "Signal") {
             className = "Signal<T extends (...args: any[]): any>";
         }
         if (singletons.includes(className)) {
             className += "Class";
         }
-        const output = `
-${formatJsDoc(json.class.description[0])}
-declare class ${className}${inherits ? ` extends ${inherits}` : ""} {
-
-  
-${formatJsDoc(json.class.description[0])}
-${(() => {
+        const constructors = (() => {
             if (className.toLowerCase() === "signal<t>") {
                 return "";
             }
+            let typeAnnotation = `: ${className}`;
             let constructors = "";
             if (constructorInfo.length === 0) {
-                constructors += `  "new"(): ${className};\n`;
+                constructors += `  new()${typeAnnotation}; \n`;
             }
             else {
                 constructors += `
 ${constructorInfo
-                    .map((inf) => `  constructor(${inf.argumentList});`)
+                    .map((inf) => `  new(${inf.argumentList})${typeAnnotation};`)
                     .join("\n")}
 `;
             }
-            constructors += `  static "new"(): ${className};\n`;
+            // This is for being able to do etc. const x = Vector2();
+            if (isSpecialConstructorClass) {
+                constructors += `
+${constructorInfo
+                    .map((inf) => `  (${inf.argumentList})${typeAnnotation};`)
+                    .join("\n")}
+`;
+            }
+            if (!isSpecialConstructorClass) {
+                constructors += `  static "new"()${typeAnnotation} \n`;
+            }
             return constructors;
+        })();
+        const output = `
+${formatJsDoc(json.class.description[0])}
+${(() => {
+            if (isSpecialConstructorClass) {
+                return `declare class ${className}Constructor {`;
+            }
+            else {
+                return `declare class ${className}${inherits ? ` extends ${inherits} ` : ""} {`;
+            }
         })()}
 
+  
+${formatJsDoc(json.class.description[0])}
+${isSpecialConstructorClass ? "" : constructors}
 ${members
             .map((property) => {
             const propertyName = sanitizeGodotNameForTs(property["$"].name, "property");
@@ -202,8 +232,7 @@ ${methods
         })
             .join("\n\n")}
 
-  // connect<T extends SignalsOf<${className}>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<${className}Signals>>(signal: T, method: SignalFunction<${className}Signals[T]>): number;
+  connect<T extends SignalsOf<${className}>>(signal: T, method: SignalFunction<${className}[T]>): number;
 
 ${(() => {
             // Generate wrapper functions for operator overloading stuff.
@@ -237,17 +266,25 @@ ${constants
             }
         })
             .join("\n")}
-}
 
-declare class ${className}Signals${inherits ? ` extends ${inherits}Signals` : ""} {
-  ${signals
+${signals
             .map((signal) => {
-            return `${formatJsDoc(signal.description[0])}\n${signal["$"].name}: Signal<(${(signal.argument || [])
+            return `${formatJsDoc(signal.description[0])}\n$${signal["$"].name}: Signal<(${(signal.argument || [])
                 .map((arg) => arg["$"].name + ": " + godotTypeToTsType(arg["$"].type))
                 .join(", ")}) => void>\n`;
         })
             .join("\n")}
 }
+${(() => {
+            if (isSpecialConstructorClass) {
+                return `
+declare type ${className} = ${className}Constructor;
+declare var ${className}: typeof ${className}Constructor & {
+  ${constructors}
+}`;
+            }
+            return "";
+        })()}
 `;
         return output;
     }
@@ -273,6 +310,9 @@ declare class ${className}Signals${inherits ? ` extends ${inherits}Signals` : ""
         const result = `
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
 declare const preload: <T extends AssetPath>(path: T) => AssetType[T];
+declare function remotesync(target: any, key: string, descriptor: any): any
+declare function remote(target: any, key: string, descriptor: any): any
+
 ${properties
             .map((property) => {
             const name = sanitizeGodotNameForTs(property["$"].name, "property");
@@ -324,20 +364,18 @@ ${Object.keys(enums)
         fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, "@globals.d.ts"), globalScope);
         const globalFunctions = await generate_gdscript_lib_1.generateGdscriptLib(path_1.default.join(gdscriptPath, "@GDScript.xml"));
         fs_1.default.writeFileSync(path_1.default.join(project_1.TsGdProjectClass.Paths.staticGodotDefsPath, "@global_functions.d.ts"), globalFunctions);
-        const xmlPaths = [
-            ...fs_1.default
-                .readdirSync(csgClassesPath)
-                .map((x) => path_1.default.join(csgClassesPath, x)),
-            ...fs_1.default
-                .readdirSync(normalClassesPath)
-                .map((x) => path_1.default.join(normalClassesPath, x)),
-        ].filter((file) => file.endsWith(".xml"));
+        const xmlPaths = [csgClassesPath, websocketClassesPath, normalClassesPath]
+            .flatMap((dir) => fs_1.default.readdirSync(dir).map((p) => path_1.default.join(dir, p)))
+            .filter((file) => file.endsWith(".xml"));
         for (let fullPath of xmlPaths) {
             const fileName = path_1.default.basename(fullPath);
             if (fileName === "@GlobalScope.xml") {
                 continue;
             }
             if (fileName === "Array.xml") {
+                continue;
+            }
+            if (fileName === "bool.xml") {
                 continue;
             }
             if (fileName === "Dictionary.xml") {
@@ -363,7 +401,7 @@ ${Object.keys(enums)
     // async function debug() {
     //   let fileName = 'KinematicBody2D.xml';
     //   const result = await parseFile(godotDocumentationPath + fileName);
-    //   console.log(result);
+    //   console.info(result);
     // }
     await main();
 }

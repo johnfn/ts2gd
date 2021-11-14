@@ -24,36 +24,87 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.showLoadingMessage = void 0;
-// TODO: Windows build.
-// TODO: Import constants from other files.
+// [ ]: pass in methods as first class objects to other functions.
+// [x]: Can't import two Tscn from same file
+// [ ]: Color and ColorConstructor are backwards lol
+// [ ]: We don't clean up old generated .d.ts files when we rename a file.
+// [ ]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
+// [ ]: "Can't find the autoload instance variable" error is displayed on empty classes
+// [ ]: Get enum values
+// [ ]: access children directly with property access, e.g. this.get_node("A/B") could be written this.A.B
+// [ ]: Make GridCellTscn.instance(1, 2) convert into calling the constructor w/ those 2 parameters.
+// [ ]: Actions aren't regenerated except with --buildLibraries
+// [ ]: signals: we could just do $signal_prop = Signal() to avoid the ts ! weirdness
+// [ ]: I dont get the coroutine api
+// [ ]: error for generator functions that might never call yield
+// [ ]: typeof() doesnt work on primitive types because it uses get_class rather than typeof...
+// might be able to figure this out... or just code a better typeof library function?
+// [ ]: Argument destructuring
+// [ ]: --buildOnly doesn't need to start up a file watcher
+// [x]: convert rpc to this.rpc(this.name_of_fn, blah, blargh)
+//      actually better is this.name_of_fn.rpc(blah, blargh)
+// [x]; rpc_id on other things is not typesafe. Also, autoload classes.
+// [ ]:   const x = () => randi() % 2 === 0 ? 1 : null
+//        ^ generates incorrect code
+// [x]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
+// [ ]: [] isnt assignable to PoolStringArray
+// [ ]: why doesnt enemy have root paths?
+// [ ]: Auto rebuild libraries when version changes
+// [ ]: could ts consider undefined and null the same? i doubt it. it's annoying for null coalescing
+// [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+// [ ]: i get autoload errors on empty ts files
+// [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
+// [ ]: error for RPCing to a function that doesnt have @rpc?
+// [x]: why can i CALL NUMBERS
+// [x]: autoload class names are based on the file rather than the exported variable rn
+// [x]: autoload could be injected into global scope? ironically maybe the best
+//      way to do it would be to NOT export a var and then auto export for u - but
+//      then goto def wouldnt work.
+// [ ]: There are errors when godotSourceRepoPath points to the wrong thing / doesnt exist at all and we execute ts2gd with ts-node, because
+// it tries to use a relative path and fails.
+// [x]: construct Color without new
+// [x]: construct and Rect without new
+// [x]: also Color constructor is wrong
+// [x]: what if vectors are just bigints? (this doesnt work for a lot of reasons, e.g. 3n * 3 is not allowed even still)
+// [ ]: 'modules/websocket/doc_classes' - we need to grab all doc_classes from modules
+// [x]: get_children returns any[]
+// [ ]: Windows build.
+// [ ]: Could gitignore compiled files?
+// [x]: Yield autocompletion stopped working
+// [x]: Parse input actions
+// [ ]: Add a test to make sure that signals on classes typecheck
+// [x]: bool as alias for boolean, remove generated bool class
+// [ ]: Import constants from other files.
 // - we'd have to extract these into a standard global autoload class, and point all references to constants to that global autoload.
+// [ ]:
+//   print([1, 3, 2, 4].sort_custom((a, b) => a - b))
+// This also doesn't work ^
 // USEFUL
-// TODO: Have a github action that auto publishes an html5 build
-// TODO: https://gist.github.com/tmaybe/4c9d94712711229cd506 use this strategy to avoid conflicts in the /compiled folder
-// TODO  make load/preload() work and return proper string
-// TODO make FooTscn return proper type of root node (without script, not just Node)
-// TODO: Merge conflict markers in project.godot cause a ts2gd crash.
-// TODO: Better print() output, with spacing
-// TODO: check for E_OK
-// TODO: Deleting a scene can cause a "I dont know the type of that thing." error.
-// TODO: Every file should export something - show an error otherwise
-// TODO: Ensure that there aren't any bugs with _ prefixes.
+// [x] Handle string interpolation
+// [x] make FooTscn return proper type of root node (without script, not just Node)
+// [ ]: Merge conflict markers in project.godot cause a ts2gd crash.
+// [x]  make load/preload() work and return proper string
+// [x]: Better print() output, with spacing (there is prints, nevermind)
+// [ ]: check for E_OK
+// [ ]: Deleting a scene can cause a "I dont know the type of that thing." error.
+// [ ]: Every file should export something - show an error otherwise
+// [ ]: Ensure that there aren't any bugs with _ prefixes.
 // HIGH
-// TODO: Rename ParsedArgs to ParsedFlags
-// TODO: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
-// TODO: It might be handy to keep ParseNodeTypes around for subnodes etc and return an entire tree of them. this would help code in parse_call_express that wants to inspect child nodes to see what they are etc
-// TODO: Refactor error handling strategy.
+// [ ]: Rename ParsedArgs to ParsedFlags
+// [ ]: It would be extremely useful for some things - like the project settings and ParsedArgs - to be singletons.
+// [ ]: It might be handy to keep ParseNodeTypes around for subnodes etc and return an entire tree of them. this would help code in parse_call_express that wants to inspect child nodes to see what they are etc
+// [x]: Refactor error handling strategy.
 // TODO: change_scene_to takes a PackedScene but since it's a <T> it's treated as an any.
 // TODO: Make a testing harness for project-related stuff.
 // TODO: I need to abstract over the TS and chokidar file watcher interface thingy.
 // TODO: The onChange flow in project.ts delets the old obj and adds a new one - but then you lose local state. I should think of a way to address this.
-// TODO: Could get best of both worlds with yield Yield() (although that looks stupid).
+// [x]: Could get best of both worlds with yield Yield() (although that looks stupid).
 // TODO: have a way to compile all files, and collate all errors.
 // TODO: we need to clean up old node_paths when we delete or rename a class.
 // TODO: Taking in funcrefs and calling them.
 //   specifically for mapping over my 2d board.
 // TODO: new assets aren't immediately imported.
-// TODO: There are bugs when you have both a constructor and an _ready() method.
+// TODO: There are bugs when you have both a constructor and a _ready() method.
 // TODO: Inline gdscript
 // TODO: Resolve node paths even through instances.
 // MED
@@ -76,7 +127,7 @@ exports.main = exports.showLoadingMessage = void 0;
 // TODO: "a" + 1 doesnt work but prob should
 // TODO: refactor resPath and tsPath and etc
 // TODO: Find most commonly used godot functions etc and see if we can do anything w them.
-// TODO: The whole Class() thing is clearly possible - see String() for
+// [x]: The whole Class() thing is clearly possible - see String() for
 //       an example!
 // TODO: SUbtracting vectors gives a number for some reason
 // LOW
@@ -84,6 +135,7 @@ exports.main = exports.showLoadingMessage = void 0;
 // Instead of doing stuff like         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
 // just have autoloads stored as Assets
 // TODO: Move get/set to the same hoisting thing - and then classes - and then functions.
+// [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
 const typescript_1 = __importDefault(require("typescript"));
 const process = __importStar(require("process"));
 const package_json_1 = __importDefault(require("./package.json"));
@@ -164,7 +216,13 @@ const main = async (args) => {
     }
     exports.showLoadingMessage("Compiling all source files", args);
     project.compileAllSourceFiles();
-    exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, args, true);
+    if (args.buildOnly) {
+        exports.showLoadingMessage(`Build complete in ${(new Date().getTime() - start) / 1000 + "s"}`, args, true);
+        process.exit();
+    }
+    else {
+        exports.showLoadingMessage(`Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`, args, true);
+    }
 };
 exports.main = main;
 if (!process.argv[1].includes("test")) {

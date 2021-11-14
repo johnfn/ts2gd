@@ -12,7 +12,8 @@ const parseNewExpression = (node, props) => {
                 expr === "Vector3" ||
                 expr === "Color" ||
                 expr === "Vector2i" ||
-                expr === "Vector3i") {
+                expr === "Vector3i" ||
+                expr === "Rect2") {
                 // Special cases that do not require .new
                 return `${expr}(${args.join(", ")})`;
             }

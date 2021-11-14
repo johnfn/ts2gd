@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testNullCoalesce5 = exports.testNullCoalesce4 = exports.testNullCoalesce3 = exports.testNullCoalesce2 = exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
+exports.testPropertyConvertToFuncRef = exports.testNullCoalesce5 = exports.testNullCoalesce4 = exports.testNullCoalesce3 = exports.testNullCoalesce2 = exports.testNullCoalesce = exports.testAddSelfForParams = exports.testNoSelfForSignal = exports.testComplexLhs = exports.testOptionalAssignment = exports.testOptionalAccess = exports.testNullableAccess = exports.testAccessRewriting2 = exports.testAccessRewriting = exports.testAccess = exports.parsePropertyAccessExpression = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
@@ -68,7 +68,7 @@ const parsePropertyAccessExpression = (node, props) => {
             // Godot does not like var foo = bar.baz when baz is not a key of bar
             // However, Godot is fine with bar.baz = foo even if baz is not a key.
             if (ts_utils_1.isDictionary(exprType) &&
-                ts_utils_1.isNullable(node.name, props.program.getTypeChecker()) &&
+                ts_utils_1.isNullableNode(node.name, props.program.getTypeChecker()) &&
                 isRhs(node)) {
                 return `(${lhs}.${rhs} if ${lhs}.has("${rhs}") else null)`;
             }
@@ -161,10 +161,10 @@ foo[0].bar = 2
 exports.testNoSelfForSignal = {
     ts: `
 export class Test {
-  mouseenter!: Signal<[]>;
+  $mouseenter!: Signal<[]>;
 
   test() {
-    this.emit_signal(this.mouseenter)
+    this.$mouseenter.emit()
   }
 }
   `,
@@ -190,9 +190,9 @@ export class Test {
   `,
     expected: `
 class_name Test
-var a
+var a: float
 var b: String
-func test(a, b: String):
+func test(a: float, b: String):
   self.a = a
   self.b = b
 `,
@@ -280,11 +280,34 @@ export class Test {
   `,
     expected: `
 class_name Test
-func test(_x):
+func test(_x: int):
   var foo = null
   var __gen = funcref(foo, "test") if foo != null else null
   var __gen1 = __gen.call_func(1) if __gen != null else null
   print(__gen1)
   `,
+};
+exports.testPropertyConvertToFuncRef = {
+    ts: `
+class Test extends Area2D {
+  foo(arg: () => void) {
+
+  }
+
+  bar() {
+    this.foo(this.foo)
+  }
+}
+  `,
+    expected: `
+extends Area2D
+class_name Test
+func foo(arg):
+  pass
+
+func bar():
+  this.foo(funcref(self, "foo"))
+  `,
+    expectFail: true,
 };
 //# sourceMappingURL=parse_property_access_expression.js.map

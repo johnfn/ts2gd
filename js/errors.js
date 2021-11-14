@@ -16,11 +16,13 @@ var ErrorName;
     ErrorName[ErrorName["CantFindAutoloadInstance"] = 6] = "CantFindAutoloadInstance";
     ErrorName[ErrorName["UnknownTsSyntax"] = 7] = "UnknownTsSyntax";
     ErrorName[ErrorName["PathNotFound"] = 8] = "PathNotFound";
-    ErrorName[ErrorName["Ts2GdError"] = 9] = "Ts2GdError";
-    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 10] = "AutoloadProjectButNotDecorated";
-    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 11] = "AutoloadDecoratedButNotProject";
-    ErrorName[ErrorName["AutoloadNotExported"] = 12] = "AutoloadNotExported";
-    ErrorName[ErrorName["NoComplicatedConnect"] = 13] = "NoComplicatedConnect";
+    ErrorName[ErrorName["ExportedVariableError"] = 9] = "ExportedVariableError";
+    ErrorName[ErrorName["Ts2GdError"] = 10] = "Ts2GdError";
+    ErrorName[ErrorName["AutoloadProjectButNotDecorated"] = 11] = "AutoloadProjectButNotDecorated";
+    ErrorName[ErrorName["AutoloadDecoratedButNotProject"] = 12] = "AutoloadDecoratedButNotProject";
+    ErrorName[ErrorName["AutoloadNotExported"] = 13] = "AutoloadNotExported";
+    ErrorName[ErrorName["NoComplicatedConnect"] = 14] = "NoComplicatedConnect";
+    ErrorName[ErrorName["SignalsMustBePrefixedWith$"] = 15] = "SignalsMustBePrefixedWith$";
 })(ErrorName = exports.ErrorName || (exports.ErrorName = {}));
 const displayErrors = (errors) => {
     for (const error of errors) {
@@ -28,7 +30,7 @@ const displayErrors = (errors) => {
             console.warn("Error at", `${chalk_1.default.blueBright(error.location)}`);
         }
         else {
-            const { line, character, } = error.location
+            const { line, character } = error.location
                 .getSourceFile()
                 ?.getLineAndCharacterOfPosition(error.location.getStart());
             console.warn();

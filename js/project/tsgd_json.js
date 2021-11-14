@@ -68,11 +68,13 @@ class Paths {
   "source": "./src"
 }`);
         // Can't hurt!
-        fs_1.default.mkdirSync("compiled");
-        fs_1.default.mkdirSync("src");
-        fs_1.default.mkdirSync(".vscode");
+        fs_1.default.mkdirSync("compiled", { recursive: true });
+        fs_1.default.mkdirSync("src", { recursive: true });
+        fs_1.default.mkdirSync(".vscode", { recursive: true });
+        const launch = path_1.default.join(process_1.default.cwd(), ".vscode", "launch.json");
         // TODO: Put in a separate file.
-        fs_1.default.writeFileSync(path_1.default.join(process_1.default.cwd(), ".vscode", "launch.json"), `{
+        if (!fs_1.default.existsSync(launch))
+            fs_1.default.writeFileSync(launch, `{
       "version": "0.2.0",
       "configurations": [
         {

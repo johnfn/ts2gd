@@ -11,6 +11,16 @@ const specialMethods = [
 const parseMethodDeclaration = (node, props) => {
     const funcName = node.name.getText();
     props.scope.enterScope();
+    let isRemote = false;
+    let isRemoteSync = false;
+    for (const dec of node.decorators ?? []) {
+        if (dec.expression.getText() === "remote") {
+            isRemote = true;
+        }
+        if (dec.expression.getText() === "remotesync") {
+            isRemoteSync = true;
+        }
+    }
     let result = parse_node_1.combine({
         parent: node,
         nodes: [node.body, ...node.parameters],
@@ -23,7 +33,7 @@ const parseMethodDeclaration = (node, props) => {
                 joinedParams = specialMethod.args;
             }
             return `
-func ${funcName}(${joinedParams}):
+${isRemote ? "remote " : ""}${isRemoteSync ? "remotesync " : ""}func ${funcName}(${joinedParams}):
   ${body || " pass"}
 `;
         },
@@ -54,7 +64,7 @@ class Foo extends Node2D {
     expected: `
 extends Node2D
 class_name Foo
-func _process(_d):
+func _process(_d: float):
   pass
   `,
 };

@@ -50,14 +50,16 @@ const parse_conditional_expression_1 = require("./parse_node/parse_conditional_e
 const parse_arrow_function_1 = require("./parse_node/parse_arrow_function");
 const parse_typeof_expression_1 = require("./parse_node/parse_typeof_expression");
 const errors_1 = require("./errors");
+const parse_template_expression_1 = require("./parse_node/parse_template_expression");
+const parse_no_substitution_template_expression_1 = require("./parse_node/parse_no_substitution_template_expression");
 const isTsNodeArray = (x) => {
     // Poor man's hack
     return x && "pos" in x && "find" in x;
 };
 function combine(args) {
     let { parent, nodes, props, parsedStrings, parsedObjs, addIndent } = args;
-    if (!parsedStrings && !parsedObjs) {
-        throw new Error("Need at least one of parsedStrings or parsedObjs");
+    if ((!parsedStrings && !parsedObjs) || (parsedStrings && parsedObjs)) {
+        throw new Error("Need at least one of parsedStrings or parsedObjs, but not both.");
     }
     if (Array.isArray(nodes)) {
         nodes = [...nodes];
@@ -78,7 +80,7 @@ function combine(args) {
                 extraLines: [],
                 hoistedEnumImports: [],
                 hoistedArrowFunctions: [],
-                hoistedLibraryFunctions: [],
+                hoistedLibraryFunctions: new Set(),
             };
             return res;
         }
@@ -91,11 +93,11 @@ function combine(args) {
             extraLines: parsed.extraLines ?? [],
             hoistedEnumImports: parsed.hoistedEnumImports ?? [],
             hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
-            hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? [],
+            hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? new Set(),
         };
     });
     for (const parsedNode of parsedNodes) {
-        const { node, content, enums, extraLines } = parsedNode;
+        const { node, content, extraLines } = parsedNode;
         if (!node) {
             continue;
         }
@@ -131,11 +133,11 @@ function combine(args) {
                     .join("");
             }
         }
-        if (isStandAloneLine && lines.length === 1) {
+        if (isStandAloneLine) {
             formattedContent = formattedContent + "\n";
         }
         if (isStandAloneLine || lines.length > 1) {
-            const preceding = ts_utils_1.generatePrecedingNewlines(node);
+            const preceding = ts_utils_1.generatePrecedingNewlines(node, props.getNodeText(node));
             formattedContent = preceding + formattedContent;
         }
         parsedNode.content = formattedContent;
@@ -151,7 +153,9 @@ function combine(args) {
         content: stringResult,
         enums: parsedNodes.flatMap((node) => node.enums ?? []),
         hoistedEnumImports: parsedNodes.flatMap((node) => node.hoistedEnumImports ?? []),
-        hoistedLibraryFunctions: parsedNodes.flatMap((node) => node.hoistedLibraryFunctions ?? []),
+        hoistedLibraryFunctions: new Set(parsedNodes.flatMap((node) => [
+            ...(node.hoistedLibraryFunctions?.keys() ?? []),
+        ])),
         hoistedArrowFunctions: parsedNodes.flatMap((node) => node.hoistedArrowFunctions ?? []),
         extraLines: parsedNodes.flatMap((node) => node.extraLines ?? []),
     };
@@ -225,6 +229,10 @@ const parseNode = (genericNode, props) => {
             return parse_return_statement_1.parseReturnStatement(genericNode, props);
         case typescript_1.SyntaxKind.StringLiteral:
             return parse_string_literal_1.parseStringLiteral(genericNode, props);
+        case typescript_1.SyntaxKind.TemplateExpression:
+            return parse_template_expression_1.parseTemplateExpression(genericNode, props);
+        case typescript_1.SyntaxKind.NoSubstitutionTemplateLiteral:
+            return parse_no_substitution_template_expression_1.parseNoSubstitutionTemplateLiteral(genericNode, props);
         case typescript_1.SyntaxKind.BreakStatement:
             return parse_break_statement_1.parseBreakStatement(genericNode, props);
         case typescript_1.SyntaxKind.ContinueStatement:
@@ -325,6 +333,7 @@ const parseNode = (genericNode, props) => {
         case typescript_1.SyntaxKind.NullKeyword:
             return { content: "null" };
         default:
+            console.error(ts_utils_1.syntaxKindToString(genericNode.kind));
             props.addError({
                 error: errors_1.ErrorName.UnknownTsSyntax,
                 location: genericNode,

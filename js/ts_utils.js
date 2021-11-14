@@ -22,19 +22,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCommonElements = exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.syntaxKindToString = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullable = void 0;
+exports.getTimestamp = exports.getCommonElements = exports.copyFolderRecursiveSync = exports.getPreciseInitializerType = exports.notEmpty = exports.getGodotType = exports.syntaxKindToString = exports.isEnumType = exports.isArrayType = exports.generatePrecedingNewlines = exports.isDictionary = exports.getTypeHierarchy = exports.isNullableType = exports.isNullableNode = void 0;
 const typescript_1 = __importStar(require("typescript"));
 const errors_1 = require("./errors");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const isNullable = (node, typechecker) => {
+const chalk_1 = __importDefault(require("chalk"));
+const isNullableNode = (node, typechecker) => {
     const type = typechecker.getTypeAtLocation(node);
-    return type.isUnion() &&
-        type.types.find((type) => type.flags & typescript_1.TypeFlags.Null || type.flags & typescript_1.TypeFlags.Undefined)
-        ? true
-        : false;
+    return (type.isUnion() &&
+        type.types.find((type) => type.flags & typescript_1.TypeFlags.Null || type.flags & typescript_1.TypeFlags.Undefined));
 };
-exports.isNullable = isNullable;
+exports.isNullableNode = isNullableNode;
+const isNullableType = (type) => {
+    return (type.isUnion() &&
+        type.types.find((type) => type.flags & typescript_1.TypeFlags.Null || type.flags & typescript_1.TypeFlags.Undefined));
+};
+exports.isNullableType = isNullableType;
 /**
  * Gets the inheritance tree of the provided type. E.g. if Foo extends Bar
  * extends Baz, and we pass in Foo, then this returns [Bar, Baz].
@@ -78,8 +82,7 @@ const isDictionary = (type) => {
     return false;
 };
 exports.isDictionary = isDictionary;
-const generatePrecedingNewlines = (node) => {
-    const fullText = node.getFullText();
+const generatePrecedingNewlines = (node, fullText) => {
     let numNewlines = 0;
     for (const ch of [...fullText]) {
         if (ch.trim() !== "") {
@@ -158,16 +161,18 @@ exports.syntaxKindToString = syntaxKindToString;
  * Note we need actualType because if we have let x: float, TS will say the
  * type is number (not float!), which isn't very useful.
  *
+ * @param node This is the node we're producing a Godot type for. It is only
+ * used for error display; it's typecheckerInferredType that we actually process
+ * to produce a type for.
  * @param typecheckerInferredType This is the type that getTypeAtLocation returns
  * @param actualType This is the actual type node in the program, if there is one
+ *
+ * NOTE: Boy, this function is a mess. The logic is straightforward, though.
  */
-function getGodotType(node, props, initializer, actualType) {
-    const typecheckerInferredType = props.program
-        .getTypeChecker()
-        .getTypeAtLocation(node);
+function getGodotType(node, typecheckerInferredType, props, isExport, initializer, actualType) {
     // If we have a precise initializer, use that first
     if (initializer) {
-        let preciseInitializerType = getPreciseInitializerType(initializer);
+        let preciseInitializerType = getPreciseInitializerType(initializer, props.getNodeText(initializer));
         if (preciseInitializerType) {
             return { result: preciseInitializerType };
         }
@@ -184,10 +189,22 @@ function getGodotType(node, props, initializer, actualType) {
             .typeToString(typecheckerInferredType);
     }
     if (tsTypeName === "number") {
+        let errorString = "";
+        let nodeText = props.getNodeText(node);
+        if (nodeText.includes("\n")) {
+            errorString = `Please annotate
+
+${chalk_1.default.yellow(props.getNodeText(node))} 
+
+with either "int" or "float".`;
+        }
+        else {
+            errorString = `Please annotate ${chalk_1.default.yellow(props.getNodeText(node))} with either "int" or "float".`;
+        }
         return {
             errors: [
                 {
-                    description: `Please add either "int" or "float" here (not number)`,
+                    description: errorString,
                     error: errors_1.ErrorName.InvalidNumber,
                     location: node,
                 },
@@ -199,31 +216,97 @@ function getGodotType(node, props, initializer, actualType) {
     if (tsTypeName === "string") {
         return { result: "String" };
     }
+    if (tsTypeName === "int") {
+        return { result: "int" };
+    }
+    if (tsTypeName === "float") {
+        return { result: "float" };
+    }
     if (tsTypeName === "boolean") {
         return { result: "bool" };
-    }
-    if (tsTypeName.startsWith("{")) {
-        return { result: "Dictionary" };
     }
     if (tsTypeName.startsWith("IterableIterator")) {
         return { result: "Array" };
     }
-    // if (tsTypeName.includes("[")) {
-    //   return "Array"
-    // }
+    // This ends the list of all the types we can say safely.
+    // TODO: Doing all these cases for parameters and properties is subtle to get
+    // right, and doesn't confer a lot of benefit. In some cases (e.g. using
+    // user-defined types) it actually causes errors due to cyclic dependencies,
+    // and those would be a huge pain to resolve properly.
+    if (!isExport) {
+        return { result: null };
+    }
+    // For exports, we really want to do a best effort to get *a* typename
+    if (!actualType) {
+        return {
+            result: null,
+            errors: [
+                {
+                    description: `This exported variable needs a type declaration:
+
+${chalk_1.default.yellow(props.getNodeText(node))}          
+          `,
+                    error: errors_1.ErrorName.ExportedVariableError,
+                    location: node,
+                },
+            ],
+        };
+    }
+    if (exports.isNullableType(typecheckerInferredType)) {
+        // Remove the nullable parts of the type and try again
+        let nonNullTypes = [];
+        let nonNullTypeNodes = [];
+        if (typecheckerInferredType.isUnion()) {
+            nonNullTypes = typecheckerInferredType.types.filter((type) => {
+                return !(type.flags & typescript_1.TypeFlags.Null || type.flags & typescript_1.TypeFlags.Undefined);
+            });
+            if (actualType.kind === typescript_1.SyntaxKind.UnionType) {
+                const unionTypeNode = actualType;
+                nonNullTypeNodes = unionTypeNode.types.filter((typeNode) => {
+                    if (typeNode.kind === typescript_1.SyntaxKind.LiteralType) {
+                        const litType = typeNode;
+                        return !(litType.literal.kind === typescript_1.SyntaxKind.NullKeyword ||
+                            litType.literal.kind === typescript_1.SyntaxKind.UndefinedKeyword);
+                    }
+                    // Apparently `undefined` is just a keyword, whereas null is a
+                    // literal??? I'm confused.
+                    if (typeNode.kind === typescript_1.SyntaxKind.UndefinedKeyword) {
+                        return false;
+                    }
+                    return true;
+                });
+            }
+            if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
+                return {
+                    result: null,
+                    errors: [
+                        {
+                            description: `You can't export a union type:
+
+${chalk_1.default.yellow(props.getNodeText(node))}          
+          `,
+                            error: errors_1.ErrorName.ExportedVariableError,
+                            location: node,
+                        },
+                    ],
+                };
+            }
+            return getGodotType(node, nonNullTypes[0], props, isExport, initializer, nonNullTypeNodes[0]);
+        }
+    }
+    if (exports.isDictionary(typecheckerInferredType)) {
+        return { result: "Dictionary" };
+    }
+    if (isArrayType(typecheckerInferredType)) {
+        return { result: "Array" };
+    }
     // if (tsTypeName.startsWith("PackedScene")) {
     // This is a generic type in TS, so just return the non-generic Godot type.
     //   return "PackedScene"
     // }
-    // Enum type names are actually not imported!
-    // TODO: They are now!
-    // if (isEnumType(typecheckerInferredType)) {
-    //   return tsTypeName;
-    // }
-    // TODO: Doing all these cases is subtle to get right and doesn't confer a lot
-    // of benefit. In some cases (e.g. using user-defined types) it actually
-    // causes errors due to cyclic dependencies, and those would be a huge pain to
-    // resolve properly.
+    if (isEnumType(typecheckerInferredType)) {
+        return { result: tsTypeName };
+    }
     return { result: null };
 }
 exports.getGodotType = getGodotType;
@@ -240,11 +323,10 @@ exports.notEmpty = notEmpty;
  * TypeScript will infer both of those to be type "number", but we want to be able to say
  * that the first one is a "float" and the second one is an "int".
  */
-function getPreciseInitializerType(initializer) {
+function getPreciseInitializerType(initializer, initStr) {
     if (!initializer) {
         return "";
     }
-    const initStr = initializer.getText();
     // attempt to figure out from the literal type whether this is a int or a float.
     let isInt = !!initStr.match(/^[0-9]+$/);
     let isFloat = !!initStr.match(/^([0-9]+)?\.([0-9]+)?$/) && initStr.length > 1;
@@ -296,4 +378,18 @@ const getCommonElements = (lists, eq) => {
     return lists[0].filter((elem) => lists.every((list) => list.find((listElem) => eq(listElem, elem))));
 };
 exports.getCommonElements = getCommonElements;
+const getTimestamp = () => {
+    const now = new Date();
+    const h = now
+        .getHours()
+        .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false });
+    const m = now
+        .getMinutes()
+        .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false });
+    const s = now
+        .getSeconds()
+        .toLocaleString("en-US", { minimumIntegerDigits: 2, useGrouping: false });
+    return `[${h}:${m}:${s}]`;
+};
+exports.getTimestamp = getTimestamp;
 //# sourceMappingURL=ts_utils.js.map

@@ -30,18 +30,21 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const scope_1 = require("../scope");
 const chalk_1 = __importDefault(require("chalk"));
+const asset_source_file_1 = require("../project/assets/asset_source_file");
+const utils = __importStar(require("tsutils"));
 const compileTs = (code, isAutoload) => {
     const filename = isAutoload ? "autoload.ts" : "test.ts";
     const sourceFile = ts.createSourceFile(filename, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+    const transformedSourceFile = asset_source_file_1.AssetSourceFile.transformSourceFile(sourceFile);
     const libDTs = ts.createSourceFile("lib.d.ts", generate_base_1.baseContentForTests, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
     const tsconfigOptions = {
         strict: true,
     };
-    const defaultCompilerHost = ts.createCompilerHost(tsconfigOptions);
+    const defaultCompilerHost = ts.createCompilerHost(tsconfigOptions, true);
     const customCompilerHost = {
         getSourceFile: (name, languageVersion) => {
             if (name === filename) {
-                return sourceFile;
+                return transformedSourceFile;
             }
             else if (name === "lib.d.ts") {
                 return libDTs;
@@ -66,9 +69,15 @@ const compileTs = (code, isAutoload) => {
     const program = ts.createProgram(["test.ts", "autoload.ts"], tsconfigOptions, customCompilerHost);
     let i = 0;
     const errors = [];
+    const printer = ts.createPrinter();
+    const getNodeText = (node) => {
+        return printer.printNode(ts.EmitHint.Unspecified, node, transformedSourceFile);
+    };
     // TODO: Make this less silly.
-    const godotFile = parse_node_1.parseNode(sourceFile, {
+    const godotFile = parse_node_1.parseNode(transformedSourceFile, {
         indent: "",
+        sourceFile: transformedSourceFile,
+        getNodeText,
         scope: new scope_1.Scope(program),
         isConstructor: false,
         program,
@@ -76,6 +85,7 @@ const compileTs = (code, isAutoload) => {
         project: {
             args: {
                 buildLibraries: false,
+                buildOnly: false,
                 printVersion: false,
                 debug: false,
                 help: false,
@@ -158,7 +168,7 @@ const compileTs = (code, isAutoload) => {
         },
         mostRecentControlStructureIsSwitch: false,
         isAutoload: false,
-        usages: new Map(),
+        usages: utils.collectVariableUsage(sourceFile),
     });
     return { compiled: godotFile, errors };
 };
@@ -172,7 +182,23 @@ const trim = (s) => {
 };
 const test = (props, name, testFileName, path) => {
     const { ts, expected } = props;
-    const { compiled, errors } = exports.compileTs(ts, props.isAutoload ?? false);
+    let compiled = null;
+    let errors = [];
+    try {
+        const result = exports.compileTs(ts, props.isAutoload ?? false);
+        compiled = result.compiled;
+        errors = result.errors;
+    }
+    catch (e) {
+        return {
+            type: "fail",
+            result: `Threw the following error: ${e.stack}`,
+            expected: `No errors`,
+            name,
+            expectFail: props.expectFail ?? false,
+            path,
+        };
+    }
     const output = compiled.content;
     if (errors.length > 0) {
         return {
@@ -271,7 +297,7 @@ const runTests = async () => {
     }
     const elapsed = (new Date().getTime() - start) / 1000 + "s";
     if (failures.length === 0) {
-        console.info("All", total, "tests passed!");
+        console.info(`All ${total} tests ` + chalk_1.default.green(`passed`) + ` in ${elapsed}!`);
     }
     else if (failures.length > 0 &&
         failures.filter((x) => x.expectFail).length === failures.length) {

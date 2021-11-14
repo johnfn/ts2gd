@@ -133,10 +133,10 @@ class AssetGodotScene extends base_asset_1.BaseAsset {
             if (!className) {
                 return null;
             }
-            return `PackedScene<import('${rootSourceFile.fsPath.slice(0, -".ts".length)}').${rootSourceFile.exportedTsClassName()}>`;
+            return `import('${rootSourceFile.fsPath.slice(0, -".ts".length)}').${rootSourceFile.exportedTsClassName()}`;
         }
         else {
-            return `PackedScene<${this.rootNode.tsType()}>`;
+            return `${this.rootNode.tsType()}`;
         }
     }
     static extensions() {

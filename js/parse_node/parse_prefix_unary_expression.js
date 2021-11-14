@@ -112,7 +112,6 @@ if true:
 `,
 };
 exports.testIfStatement2 = {
-    expectFail: true,
     ts: `
 let x = 0
 if (true) {
