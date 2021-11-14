@@ -124,13 +124,16 @@ export class Paths {
     )
 
     // Can't hurt!
-    fs.mkdirSync("compiled")
-    fs.mkdirSync("src")
-    fs.mkdirSync(".vscode")
+    fs.mkdirSync("compiled", { recursive: true })
+    fs.mkdirSync("src", { recursive: true })
+    fs.mkdirSync(".vscode", { recursive: true })
+
+    const launch = path.join(process.cwd(), ".vscode", "launch.json")
 
     // TODO: Put in a separate file.
-    fs.writeFileSync(
-      path.join(process.cwd(), ".vscode", "launch.json"),
+    if (!fs.existsSync(launch))
+      fs.writeFileSync(
+      launch,
       `{
       "version": "0.2.0",
       "configurations": [
