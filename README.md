@@ -2,7 +2,7 @@
 
 ⚠️ Need help? Contact me on Discord: johnfn#0001.
 
-Why use ts2gd?
+## Why use ts2gd?
 
 - Compiles directly to GDScript with virtually no performance penalty - no embedded JS runtime.
 - Insanely fast dev experience - after startup, incremental compiles take under a tenth of a second.
