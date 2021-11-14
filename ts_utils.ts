@@ -330,8 +330,6 @@ ${chalk.yellow(props.getNodeText(node))}
         })
       }
 
-      // nonNullTypeNodes = actualType.
-
       if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
         console.log(nonNullTypes.length, nonNullTypeNodes.length)
 
