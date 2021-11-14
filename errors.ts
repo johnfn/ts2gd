@@ -11,6 +11,7 @@ export enum ErrorName {
   CantFindAutoloadInstance,
   UnknownTsSyntax,
   PathNotFound,
+  ExportedVariableError,
 
   Ts2GdError,
 

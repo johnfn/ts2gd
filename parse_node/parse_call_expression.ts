@@ -6,7 +6,7 @@ import { Test } from "../tests/test"
 import {
   isArrayType,
   isDictionary,
-  isNullable,
+  isNullableNode,
   syntaxKindToString,
 } from "../ts_utils"
 import { getCapturedScope } from "./parse_arrow_function"
@@ -475,7 +475,7 @@ export const parseCallExpression = (
         parsedStringArgs = [...parsedStringArgs, parsedExpr.content + "[1]"]
       }
 
-      if (isNullable(expression, props.program.getTypeChecker())) {
+      if (isNullableNode(expression, props.program.getTypeChecker())) {
         const newName = props.scope.createUniqueName()
         // TODO: This is wrong, need to cache expr
 
@@ -622,7 +622,7 @@ x.map((y: int) => {
   `,
   expected: `
 ${LibraryFunctions.map.definition("__map")}
-func __gen(y, captures):
+func __gen(y: int, captures):
   var z = captures.z
   var big = captures.big
   return z + big.a + y * 3

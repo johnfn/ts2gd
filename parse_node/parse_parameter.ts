@@ -8,7 +8,14 @@ export const parseParameter = (
   node: ts.ParameterDeclaration,
   props: ParseState
 ): ParseNodeType => {
-  const type = getGodotType(node, props, node.initializer, node.type)
+  const type = getGodotType(
+    node,
+    props.program.getTypeChecker().getTypeAtLocation(node),
+    props,
+    false,
+    node.initializer,
+    node.type
+  )
   const usages = props.usages.get(node.name as ts.Identifier)
   const unusedPrefix = usages?.uses.length === 0 ? "_" : ""
   const typeString = type.result ? `: ${type.result}` : ""
@@ -39,7 +46,7 @@ class Test {
   expected: `
 class_name Test
 
-func test(a, _b: String):
+func test(a: int, _b: String):
   print(a)
   `,
 }

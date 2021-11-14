@@ -30,8 +30,8 @@ class Foo {
   expected: `
 class_name Foo
 var x setget x_set,
-var _x
-func x_set(value):
+var _x: float
+func x_set(value: float):
   _x = value
   `,
 }

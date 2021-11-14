@@ -4,16 +4,26 @@ import { ErrorName, TsGdReturn } from "./errors"
 import fs from "fs"
 import path from "path"
 import chalk from "chalk"
+import { isNullLiteral } from "tsutils"
 
-export const isNullable = (node: ts.Node, typechecker: ts.TypeChecker) => {
+export const isNullableNode = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)
 
-  return type.isUnion() &&
+  return (
+    type.isUnion() &&
     type.types.find(
       (type) => type.flags & TypeFlags.Null || type.flags & TypeFlags.Undefined
     )
-    ? true
-    : false
+  )
+}
+
+export const isNullableType = (type: ts.Type) => {
+  return (
+    type.isUnion() &&
+    type.types.find(
+      (type) => type.flags & TypeFlags.Null || type.flags & TypeFlags.Undefined
+    )
+  )
 }
 
 /**
@@ -162,19 +172,22 @@ export const syntaxKindToString = (kind: ts.Node["kind"]) => {
  * Note we need actualType because if we have let x: float, TS will say the
  * type is number (not float!), which isn't very useful.
  *
+ * @param node This is the node we're producing a Godot type for. It is only
+ * used for error display; it's typecheckerInferredType that we actually process
+ * to produce a type for.
  * @param typecheckerInferredType This is the type that getTypeAtLocation returns
  * @param actualType This is the actual type node in the program, if there is one
+ *
+ * NOTE: Boy, this function is a mess. The logic is straightforward, though.
  */
 export function getGodotType(
   node: ts.Node,
+  typecheckerInferredType: ts.Type,
   props: ParseState,
+  isExport: boolean,
   initializer?: ts.Expression,
   actualType?: ts.TypeNode
 ): TsGdReturn<string | null> {
-  const typecheckerInferredType = props.program
-    .getTypeChecker()
-    .getTypeAtLocation(node)
-
   // If we have a precise initializer, use that first
 
   if (initializer) {
@@ -202,12 +215,25 @@ export function getGodotType(
   }
 
   if (tsTypeName === "number") {
+    let errorString = ""
+    let nodeText = props.getNodeText(node)
+
+    if (nodeText.includes("\n")) {
+      errorString = `Please annotate
+
+${chalk.yellow(props.getNodeText(node))} 
+
+with either "int" or "float".`
+    } else {
+      errorString = `Please annotate ${chalk.yellow(
+        props.getNodeText(node)
+      )} with either "int" or "float".`
+    }
+
     return {
       errors: [
         {
-          description: `Please annotate ${chalk.yellow(
-            props.getNodeText(node)
-          )} with either "int" or "float".`,
+          description: errorString,
           error: ErrorName.InvalidNumber,
           location: node,
         },
@@ -223,21 +249,125 @@ export function getGodotType(
     return { result: "String" }
   }
 
+  if (tsTypeName === "int") {
+    return { result: "int" }
+  }
+
+  if (tsTypeName === "float") {
+    return { result: "float" }
+  }
+
   if (tsTypeName === "boolean") {
     return { result: "bool" }
   }
-
-  // if (tsTypeName.startsWith("{")) {
-  //   return { result: "Dictionary" }
-  // }
 
   if (tsTypeName.startsWith("IterableIterator")) {
     return { result: "Array" }
   }
 
-  // if (tsTypeName.includes("[")) {
-  //   return "Array"
-  // }
+  // This ends the list of all the types we can say safely.
+
+  // TODO: Doing all these cases for parameters and properties is subtle to get
+  // right, and doesn't confer a lot of benefit. In some cases (e.g. using
+  // user-defined types) it actually causes errors due to cyclic dependencies,
+  // and those would be a huge pain to resolve properly.
+
+  if (!isExport) {
+    return { result: null }
+  }
+
+  // For exports, we really want to do a best effort to get *a* typename
+
+  if (!actualType) {
+    return {
+      result: null,
+      errors: [
+        {
+          description: `This exported variable needs a type declaration:
+
+${chalk.yellow(props.getNodeText(node))}          
+          `,
+          error: ErrorName.ExportedVariableError,
+          location: node,
+        },
+      ],
+    }
+  }
+
+  if (isNullableType(typecheckerInferredType)) {
+    // Remove the nullable parts of the type and try again
+
+    let nonNullTypes: ts.Type[] = []
+    let nonNullTypeNodes: ts.TypeNode[] = []
+
+    if (typecheckerInferredType.isUnion()) {
+      nonNullTypes = typecheckerInferredType.types.filter((type) => {
+        return !(
+          type.flags & TypeFlags.Null || type.flags & TypeFlags.Undefined
+        )
+      })
+
+      if (actualType.kind === SyntaxKind.UnionType) {
+        const unionTypeNode = actualType as ts.UnionTypeNode
+
+        nonNullTypeNodes = unionTypeNode.types.filter((typeNode) => {
+          if (typeNode.kind === SyntaxKind.LiteralType) {
+            const litType = typeNode as ts.LiteralTypeNode
+
+            return !(
+              litType.literal.kind === SyntaxKind.NullKeyword ||
+              litType.literal.kind === SyntaxKind.UndefinedKeyword
+            )
+          }
+
+          // Apparently `undefined` is just a keyword, whereas null is a
+          // literal??? I'm confused.
+          if (typeNode.kind === SyntaxKind.UndefinedKeyword) {
+            return false
+          }
+
+          return true
+        })
+      }
+
+      // nonNullTypeNodes = actualType.
+
+      if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
+        console.log(nonNullTypes.length, nonNullTypeNodes.length)
+
+        return {
+          result: null,
+          errors: [
+            {
+              description: `You can't export a union type:
+
+${chalk.yellow(props.getNodeText(node))}          
+          `,
+              error: ErrorName.ExportedVariableError,
+              location: node,
+            },
+          ],
+        }
+      }
+
+      return getGodotType(
+        node,
+        nonNullTypes[0],
+        props,
+        isExport,
+        initializer,
+        nonNullTypeNodes[0]
+      )
+    }
+  }
+
+  if (isDictionary(typecheckerInferredType)) {
+    return { result: "Dictionary" }
+  }
+
+  if (isArrayType(typecheckerInferredType)) {
+    return { result: "Array" }
+  }
 
   // if (tsTypeName.startsWith("PackedScene")) {
   // This is a generic type in TS, so just return the non-generic Godot type.
@@ -250,11 +380,6 @@ export function getGodotType(
   // if (isEnumType(typecheckerInferredType)) {
   //   return tsTypeName;
   // }
-
-  // TODO: Doing all these cases is subtle to get right and doesn't confer a lot
-  // of benefit. In some cases (e.g. using user-defined types) it actually
-  // causes errors due to cyclic dependencies, and those would be a huge pain to
-  // resolve properly.
 
   return { result: null }
 }

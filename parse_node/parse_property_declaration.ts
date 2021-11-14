@@ -3,6 +3,7 @@ import { combine, ParseState } from "../parse_node"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
 import { ErrorName } from "../errors"
+import { Test } from "../tests/test"
 
 const isExported = (node: ts.PropertyDeclaration) => {
   for (const dec of node.decorators ?? []) {
@@ -68,7 +69,14 @@ export const parsePropertyDeclaration = (
   let type = props.program.getTypeChecker().getTypeAtLocation(node)
   let superclassType = getSuperclassType(classType)
 
-  let nameOrError = getGodotType(node, props, node.initializer, node.type)
+  let nameOrError = getGodotType(
+    node,
+    props.program.getTypeChecker().getTypeAtLocation(node),
+    props,
+    false,
+    node.initializer,
+    node.type
+  )
 
   if (nameOrError.errors) {
     for (const error of nameOrError.errors) {
@@ -76,7 +84,14 @@ export const parsePropertyDeclaration = (
     }
   }
 
-  let typeGodotName = getGodotType(node, props, node.initializer, node.type)
+  let typeGodotName = getGodotType(
+    node,
+    props.program.getTypeChecker().getTypeAtLocation(node),
+    props,
+    false,
+    node.initializer,
+    node.type
+  )
   let typeName = type.symbol?.getName() ?? ""
   let typeHintName = typeGodotName.result
 
@@ -107,7 +122,25 @@ export const parsePropertyDeclaration = (
     })
   }
 
-  const exportText = isExported(node) ? `export(${typeGodotName.result}) ` : ""
+  let exportText = ""
+
+  if (isExported(node)) {
+    let typeGodotName = getGodotType(
+      node,
+      props.program.getTypeChecker().getTypeAtLocation(node),
+      props,
+      true, // isExported
+      node.initializer,
+      node.type
+    )
+
+    // TODO: Have a fallback
+
+    exportText = isExported(node)
+      ? `export(${typeGodotName.result ?? "null"}) `
+      : ""
+  }
+
   const onReady = isOnReady(node, props)
 
   return combine({
@@ -127,4 +160,121 @@ export const parsePropertyDeclaration = (
       }${initializer && ` = ${initializer}`}`
     },
   })
+}
+
+export const testNormalExportedVariable: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: int
+}
+  `,
+  expected: `
+class_name Test
+export(int) var foo: int
+`,
+}
+
+export const testNormalExportedVariable2: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: float
+}
+  `,
+  expected: `
+class_name Test
+export(float) var foo: float
+`,
+}
+
+export const testNormalExportedVariable3: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: string
+}
+  `,
+  expected: `
+class_name Test
+export(String) var foo: String
+`,
+}
+
+export const testNormalExportedVariable4: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: { [key: string]: string }
+}
+  `,
+  expected: `
+class_name Test
+export(Dictionary) var foo
+`,
+}
+
+export const testNormalExportedVariable5: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: number[]
+}
+  `,
+  expected: `
+class_name Test
+export(Array) var foo
+`,
+}
+
+export const testNotSoNormalExportedVariable6: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: { [key: string]: string }[]
+}
+  `,
+  expected: `
+class_name Test
+export(Array) var foo
+`,
+}
+
+export const testNotSoNormalExportedVariable7: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: int | null
+}
+  `,
+  expected: `
+class_name Test
+export(int) var foo
+`,
+}
+
+export const testNotSoNormalExportedVariable8: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: int | null | undefined
+}
+  `,
+  expected: `
+class_name Test
+export(int) var foo
+`,
+}
+
+export const testNotSoNormalExportedVariable9: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: { [key: string]: string } | null | undefined
+}
+  `,
+  expected: `
+class_name Test
+export(Dictionary) var foo
+`,
 }

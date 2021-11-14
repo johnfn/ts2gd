@@ -7,7 +7,7 @@ import {
   ParseState,
 } from "../parse_node"
 import { Test } from "../tests/test"
-import { isDictionary, isEnumType, isNullable } from "../ts_utils"
+import { isDictionary, isEnumType, isNullableNode } from "../ts_utils"
 
 const isRhs = (node: ts.PropertyAccessExpression) => {
   let parentExpression: ts.Node = node
@@ -93,7 +93,7 @@ export const parsePropertyAccessExpression = (
 
       if (
         isDictionary(exprType) &&
-        isNullable(node.name, props.program.getTypeChecker()) &&
+        isNullableNode(node.name, props.program.getTypeChecker()) &&
         isRhs(node)
       ) {
         return `(${lhs}.${rhs} if ${lhs}.has("${rhs}") else null)`
@@ -227,9 +227,9 @@ export class Test {
   `,
   expected: `
 class_name Test
-var a
+var a: float
 var b: String
-func test(a, b: String):
+func test(a: float, b: String):
   self.a = a
   self.b = b
 `,
@@ -322,7 +322,7 @@ export class Test {
   `,
   expected: `
 class_name Test
-func test(_x):
+func test(_x: int):
   var foo = null
   var __gen = funcref(foo, "test") if foo != null else null
   var __gen1 = __gen.call_func(1) if __gen != null else null
