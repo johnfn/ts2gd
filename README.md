@@ -22,20 +22,21 @@ GDScript is a great language - it's perfectly designed for quick prototyping. Bu
 
 We can also get really, really good autocomplete and refactoring support.
 
-## Setup
+## Usage
 
-Add a ts2gd.json file to your Godot project root:
+To initialize a new project:
 
 ```
-{
-  "destination": "./compiled",
-  "source": "./src"
-}
+ts2gd --init
 ```
 
-Now, run the compiler on tsgd.json:
+To watch TS files for changes and automatically compile them to GDScript:
 
-`ts-node main.ts tsgd.json`
+`ts2gd`
+
+To compile all source files once:
+
+`ts2gd --buildOnly`
 
 ## Details and Differences
 
