@@ -3,16 +3,15 @@
  * This node extends [Camera] to add collisions with [Area] and/or [PhysicsBody] nodes. The camera cannot move through colliding objects.
  *
 */
-declare class ClippedCamera extends Camera {
+declare class ClippedCamera extends Camera  {
 
   
 /**
  * This node extends [Camera] to add collisions with [Area] and/or [PhysicsBody] nodes. The camera cannot move through colliding objects.
  *
 */
-  "new"(): ClippedCamera;
-  static "new"(): ClippedCamera;
-
+  new(): ClippedCamera; 
+  static "new"(): ClippedCamera 
 
 
 /** If [code]true[/code], the camera stops on contact with [Area]s. */
@@ -64,8 +63,7 @@ remove_exception_rid(rid: RID): void;
 */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  // connect<T extends SignalsOf<ClippedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ClippedCameraSignals>>(signal: T, method: SignalFunction<ClippedCameraSignals[T]>): number;
+  connect<T extends SignalsOf<ClippedCamera>>(signal: T, method: SignalFunction<ClippedCamera[T]>): number;
 
 
 
@@ -81,8 +79,7 @@ static CLIP_PROCESS_PHYSICS: any;
 */
 static CLIP_PROCESS_IDLE: any;
 
+
+
 }
 
-declare class ClippedCameraSignals extends CameraSignals {
-  
-}

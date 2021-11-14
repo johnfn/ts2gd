@@ -3,16 +3,15 @@
  * This class contains the shape and other parameters for 3D intersection/collision queries.
  *
 */
-declare class PhysicsShapeQueryParameters extends Reference {
+declare class PhysicsShapeQueryParameters extends Reference  {
 
   
 /**
  * This class contains the shape and other parameters for 3D intersection/collision queries.
  *
 */
-  "new"(): PhysicsShapeQueryParameters;
-  static "new"(): PhysicsShapeQueryParameters;
-
+  new(): PhysicsShapeQueryParameters; 
+  static "new"(): PhysicsShapeQueryParameters 
 
 
 /** If [code]true[/code], the query will take [Area]s into account. */
@@ -39,14 +38,12 @@ transform: Transform;
 /** Sets the [Shape] that will be used for collision/intersection queries. */
 set_shape(shape: Resource): void;
 
-  // connect<T extends SignalsOf<PhysicsShapeQueryParameters>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicsShapeQueryParametersSignals>>(signal: T, method: SignalFunction<PhysicsShapeQueryParametersSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicsShapeQueryParameters>>(signal: T, method: SignalFunction<PhysicsShapeQueryParameters[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PhysicsShapeQueryParametersSignals extends ReferenceSignals {
-  
-}

@@ -7,7 +7,7 @@
  * You can add vertices to the blend space with [method add_blend_point] and automatically triangulate it by setting [member auto_triangles] to `true`. Otherwise, use [method add_triangle] and [method remove_triangle] to create up the blend space by hand.
  *
 */
-declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
+declare class AnimationNodeBlendSpace2D extends AnimationRootNode  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
  * You can add vertices to the blend space with [method add_blend_point] and automatically triangulate it by setting [member auto_triangles] to `true`. Otherwise, use [method add_triangle] and [method remove_triangle] to create up the blend space by hand.
  *
 */
-  "new"(): AnimationNodeBlendSpace2D;
-  static "new"(): AnimationNodeBlendSpace2D;
-
+  new(): AnimationNodeBlendSpace2D; 
+  static "new"(): AnimationNodeBlendSpace2D 
 
 
 /** If [code]true[/code], the blend space is triangulated automatically. The mesh updates every time you add or remove points with [method add_blend_point] and [method remove_blend_point]. */
@@ -77,8 +76,7 @@ set_blend_point_node(point: int, node: AnimationRootNode): void;
 /** Updates the position of the point at index [code]point[/code] on the blend axis. */
 set_blend_point_position(point: int, pos: Vector2): void;
 
-  // connect<T extends SignalsOf<AnimationNodeBlendSpace2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeBlendSpace2DSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace2DSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeBlendSpace2D>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace2D[T]>): number;
 
 
 
@@ -100,13 +98,12 @@ static BLEND_MODE_DISCRETE: any;
 */
 static BLEND_MODE_DISCRETE_CARRY: any;
 
-}
 
-declare class AnimationNodeBlendSpace2DSignals extends AnimationRootNodeSignals {
-  /**
+/**
  * Emitted every time the blend space's triangles are created, removed, or when one of their vertices changes position.
  *
 */
-triangles_updated: Signal<() => void>
+$triangles_updated: Signal<() => void>
 
 }
+

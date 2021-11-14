@@ -1,6 +1,9 @@
 
 declare const load: <T extends AssetPath>(path: T) => AssetType[T];
 declare const preload: <T extends AssetPath>(path: T) => AssetType[T];
+declare function remotesync(target: any, key: string, descriptor: any): any
+declare function remote(target: any, key: string, descriptor: any): any
+
 
 /** The [ARVRServer] singleton. */
 declare const ARVRServer: ARVRServerClass;
@@ -1434,7 +1437,7 @@ KEY_MASK_CTRL = 268435456,
  * Command key mask. On macOS, this is equivalent to [constant KEY_MASK_META]. On other platforms, this is equivalent to [constant KEY_MASK_CTRL]. This mask should be preferred to [constant KEY_MASK_META] or [constant KEY_MASK_CTRL] for system shortcuts as it handles all platforms correctly.
  *
 */
-KEY_MASK_CMD = 268435456,
+KEY_MASK_CMD = "platform-dependent",
 /**
  * Keypad key mask.
  *

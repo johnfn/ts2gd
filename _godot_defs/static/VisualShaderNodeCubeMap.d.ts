@@ -3,16 +3,15 @@
  * Translated to `texture(cubemap, vec3)` in the shader language. Returns a color vector and alpha channel as scalar.
  *
 */
-declare class VisualShaderNodeCubeMap extends VisualShaderNode {
+declare class VisualShaderNodeCubeMap extends VisualShaderNode  {
 
   
 /**
  * Translated to `texture(cubemap, vec3)` in the shader language. Returns a color vector and alpha channel as scalar.
  *
 */
-  "new"(): VisualShaderNodeCubeMap;
-  static "new"(): VisualShaderNodeCubeMap;
-
+  new(): VisualShaderNodeCubeMap; 
+  static "new"(): VisualShaderNodeCubeMap 
 
 
 /** The [CubeMap] texture to sample when using [constant SOURCE_TEXTURE] as [member source]. */
@@ -26,8 +25,7 @@ texture_type: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeCubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeCubeMapSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCubeMapSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeCubeMap>>(signal: T, method: SignalFunction<VisualShaderNodeCubeMap[T]>): number;
 
 
 
@@ -61,8 +59,7 @@ static TYPE_COLOR: any;
 */
 static TYPE_NORMALMAP: any;
 
+
+
 }
 
-declare class VisualShaderNodeCubeMapSignals extends VisualShaderNodeSignals {
-  
-}

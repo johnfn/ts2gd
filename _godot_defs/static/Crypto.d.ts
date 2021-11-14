@@ -36,7 +36,7 @@
  * **Note:** Not available in HTML5 exports.
  *
 */
-declare class Crypto extends Reference {
+declare class Crypto extends Reference  {
 
   
 /**
@@ -76,9 +76,8 @@ declare class Crypto extends Reference {
  * **Note:** Not available in HTML5 exports.
  *
 */
-  "new"(): Crypto;
-  static "new"(): Crypto;
-
+  new(): Crypto; 
+  static "new"(): Crypto 
 
 
 
@@ -144,14 +143,12 @@ sign(hash_type: int, hash: PoolByteArray, key: CryptoKey): PoolByteArray;
 /** Verify that a given [code]signature[/code] for [code]hash[/code] of type [code]hash_type[/code] against the provided public [code]key[/code]. */
 verify(hash_type: int, hash: PoolByteArray, signature: PoolByteArray, key: CryptoKey): boolean;
 
-  // connect<T extends SignalsOf<Crypto>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CryptoSignals>>(signal: T, method: SignalFunction<CryptoSignals[T]>): number;
+  connect<T extends SignalsOf<Crypto>>(signal: T, method: SignalFunction<Crypto[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CryptoSignals extends ReferenceSignals {
-  
-}

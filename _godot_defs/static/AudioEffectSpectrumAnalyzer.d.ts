@@ -5,7 +5,7 @@
  * See also [AudioStreamGenerator] for procedurally generating sounds.
  *
 */
-declare class AudioEffectSpectrumAnalyzer extends AudioEffect {
+declare class AudioEffectSpectrumAnalyzer extends AudioEffect  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioEffectSpectrumAnalyzer extends AudioEffect {
  * See also [AudioStreamGenerator] for procedurally generating sounds.
  *
 */
-  "new"(): AudioEffectSpectrumAnalyzer;
-  static "new"(): AudioEffectSpectrumAnalyzer;
-
+  new(): AudioEffectSpectrumAnalyzer; 
+  static "new"(): AudioEffectSpectrumAnalyzer 
 
 
 /** The length of the buffer to keep (in seconds). Higher values keep data around for longer, but require more memory. */
@@ -28,8 +27,7 @@ fft_size: int;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectSpectrumAnalyzer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectSpectrumAnalyzerSignals>>(signal: T, method: SignalFunction<AudioEffectSpectrumAnalyzerSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectSpectrumAnalyzer>>(signal: T, method: SignalFunction<AudioEffectSpectrumAnalyzer[T]>): number;
 
 
 
@@ -69,8 +67,7 @@ static FFT_SIZE_4096: any;
 */
 static FFT_SIZE_MAX: any;
 
+
+
 }
 
-declare class AudioEffectSpectrumAnalyzerSignals extends AudioEffectSignals {
-  
-}

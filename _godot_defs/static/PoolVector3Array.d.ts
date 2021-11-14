@@ -15,9 +15,8 @@ declare class PoolVector3Array {
  *
 */
 
-  constructor(from: any[]);
-  static "new"(): PoolVector3Array;
-
+  new(from: any[]): PoolVector3Array;
+  static "new"(): PoolVector3Array 
 
 
 
@@ -53,14 +52,12 @@ set(idx: int, vector3: Vector3): any;
 /** Returns the size of the array. */
 size(): int;
 
-  // connect<T extends SignalsOf<PoolVector3Array>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PoolVector3ArraySignals>>(signal: T, method: SignalFunction<PoolVector3ArraySignals[T]>): number;
+  connect<T extends SignalsOf<PoolVector3Array>>(signal: T, method: SignalFunction<PoolVector3Array[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PoolVector3ArraySignals {
-  
-}

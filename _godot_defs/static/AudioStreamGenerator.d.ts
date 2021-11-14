@@ -7,7 +7,7 @@
  * **Note:** Due to performance constraints, this class is best used from C# or from a compiled language via GDNative. If you still want to use this class from GDScript, consider using a lower [member mix_rate] such as 11,025 Hz or 22,050 Hz.
  *
 */
-declare class AudioStreamGenerator extends AudioStream {
+declare class AudioStreamGenerator extends AudioStream  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AudioStreamGenerator extends AudioStream {
  * **Note:** Due to performance constraints, this class is best used from C# or from a compiled language via GDNative. If you still want to use this class from GDScript, consider using a lower [member mix_rate] such as 11,025 Hz or 22,050 Hz.
  *
 */
-  "new"(): AudioStreamGenerator;
-  static "new"(): AudioStreamGenerator;
-
+  new(): AudioStreamGenerator; 
+  static "new"(): AudioStreamGenerator 
 
 
 /** The length of the buffer to generate (in seconds). Lower values result in less latency, but require the script to generate audio data faster, resulting in increased CPU usage and more risk for audio cracking if the CPU can't keep up. */
@@ -38,14 +37,12 @@ mix_rate: float;
 
 
 
-  // connect<T extends SignalsOf<AudioStreamGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioStreamGeneratorSignals>>(signal: T, method: SignalFunction<AudioStreamGeneratorSignals[T]>): number;
+  connect<T extends SignalsOf<AudioStreamGenerator>>(signal: T, method: SignalFunction<AudioStreamGenerator[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioStreamGeneratorSignals extends AudioStreamSignals {
-  
-}

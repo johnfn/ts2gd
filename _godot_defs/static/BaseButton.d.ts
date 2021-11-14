@@ -3,16 +3,15 @@
  * BaseButton is the abstract base class for buttons, so it shouldn't be used directly (it doesn't display anything). Other types of buttons inherit from it.
  *
 */
-declare class BaseButton extends Control {
+declare class BaseButton extends Control  {
 
   
 /**
  * BaseButton is the abstract base class for buttons, so it shouldn't be used directly (it doesn't display anything). Other types of buttons inherit from it.
  *
 */
-  "new"(): BaseButton;
-  static "new"(): BaseButton;
-
+  new(): BaseButton; 
+  static "new"(): BaseButton 
 
 
 /** Determines when the button is considered clicked, one of the [enum ActionMode] constants. */
@@ -81,8 +80,7 @@ is_hovered(): boolean;
 */
 set_pressed_no_signal(pressed: boolean): void;
 
-  // connect<T extends SignalsOf<BaseButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BaseButtonSignals>>(signal: T, method: SignalFunction<BaseButtonSignals[T]>): number;
+  connect<T extends SignalsOf<BaseButton>>(signal: T, method: SignalFunction<BaseButton[T]>): number;
 
 
 
@@ -128,20 +126,18 @@ static ACTION_MODE_BUTTON_PRESS: any;
 */
 static ACTION_MODE_BUTTON_RELEASE: any;
 
-}
 
-declare class BaseButtonSignals extends ControlSignals {
-  /**
+/**
  * Emitted when the button starts being held down.
  *
 */
-button_down: Signal<() => void>
+$button_down: Signal<() => void>
 
 /**
  * Emitted when the button stops being held down.
  *
 */
-button_up: Signal<() => void>
+$button_up: Signal<() => void>
 
 /**
  * Emitted when the button is toggled or pressed. This is on [signal button_down] if [member action_mode] is [constant ACTION_MODE_BUTTON_PRESS] and on [signal button_up] otherwise.
@@ -149,12 +145,13 @@ button_up: Signal<() => void>
  * If you need to know the button's pressed state (and [member toggle_mode] is active), use [signal toggled] instead.
  *
 */
-pressed: Signal<() => void>
+$pressed: Signal<() => void>
 
 /**
  * Emitted when the button was just toggled between pressed and normal states (only if [member toggle_mode] is active). The new state is contained in the `button_pressed` argument.
  *
 */
-toggled: Signal<(button_pressed: boolean) => void>
+$toggled: Signal<(button_pressed: boolean) => void>
 
 }
+

@@ -7,7 +7,7 @@
  * **Note:** AtlasTextures don't support repetition. The [constant Texture.FLAG_REPEAT] and [constant Texture.FLAG_MIRRORED_REPEAT] flags are ignored when using an AtlasTexture.
  *
 */
-declare class AtlasTexture extends Texture {
+declare class AtlasTexture extends Texture  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AtlasTexture extends Texture {
  * **Note:** AtlasTextures don't support repetition. The [constant Texture.FLAG_REPEAT] and [constant Texture.FLAG_MIRRORED_REPEAT] flags are ignored when using an AtlasTexture.
  *
 */
-  "new"(): AtlasTexture;
-  static "new"(): AtlasTexture;
-
+  new(): AtlasTexture; 
+  static "new"(): AtlasTexture 
 
 
 /** The texture that contains the atlas. Can be any [Texture] subtype. */
@@ -38,14 +37,12 @@ region: Rect2;
 
 
 
-  // connect<T extends SignalsOf<AtlasTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AtlasTextureSignals>>(signal: T, method: SignalFunction<AtlasTextureSignals[T]>): number;
+  connect<T extends SignalsOf<AtlasTexture>>(signal: T, method: SignalFunction<AtlasTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AtlasTextureSignals extends TextureSignals {
-  
-}

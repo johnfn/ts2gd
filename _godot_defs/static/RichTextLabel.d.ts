@@ -6,14 +6,14 @@
  *
  * **Note:** RichTextLabel doesn't support entangled BBCode tags. For example, instead of using `**bold**bold italic**italic**`, use `**bold**bold italic******italic**`.
  *
- * **Note:** `push_*/pop` functions won't affect BBCode.
+ * **Note:** `push_pop` functions won't affect BBCode.
  *
  * **Note:** Unlike [Label], RichTextLabel doesn't have a **property** to horizontally align text to the center. Instead, enable [member bbcode_enabled] and surround the text in a `[center]` tag as follows: `[center]Example[/center]`. There is currently no built-in way to vertically align text either, but this can be emulated by relying on anchors/containers and the [member fit_content_height] property.
  *
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-declare class RichTextLabel extends Control {
+declare class RichTextLabel extends Control  {
 
   
 /**
@@ -23,16 +23,15 @@ declare class RichTextLabel extends Control {
  *
  * **Note:** RichTextLabel doesn't support entangled BBCode tags. For example, instead of using `**bold**bold italic**italic**`, use `**bold**bold italic******italic**`.
  *
- * **Note:** `push_*/pop` functions won't affect BBCode.
+ * **Note:** `push_pop` functions won't affect BBCode.
  *
  * **Note:** Unlike [Label], RichTextLabel doesn't have a **property** to horizontally align text to the center. Instead, enable [member bbcode_enabled] and surround the text in a `[center]` tag as follows: `[center]Example[/center]`. There is currently no built-in way to vertically align text either, but this can be emulated by relying on anchors/containers and the [member fit_content_height] property.
  *
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-  "new"(): RichTextLabel;
-  static "new"(): RichTextLabel;
-
+  new(): RichTextLabel; 
+  static "new"(): RichTextLabel 
 
 
 /**
@@ -141,7 +140,12 @@ get_line_count(): int;
 /** Returns the total number of characters from text tags. Does not include BBCodes. */
 get_total_character_count(): int;
 
-/** Returns the vertical scrollbar. */
+/**
+ * Returns the vertical scrollbar.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_v_scroll(): VScrollBar;
 
 /** Returns the number of visible lines. */
@@ -228,8 +232,7 @@ scroll_to_line(line: int): void;
 */
 set_table_column_expand(column: int, expand: boolean, ratio: int): void;
 
-  // connect<T extends SignalsOf<RichTextLabel>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RichTextLabelSignals>>(signal: T, method: SignalFunction<RichTextLabelSignals[T]>): number;
+  connect<T extends SignalsOf<RichTextLabel>>(signal: T, method: SignalFunction<RichTextLabel[T]>): number;
 
 
 
@@ -332,25 +335,24 @@ static ITEM_CUSTOMFX: any;
 /** No documentation provided. */
 static ITEM_META: any;
 
-}
 
-declare class RichTextLabelSignals extends ControlSignals {
-  /**
+/**
  * Triggered when the user clicks on content between meta tags. If the meta is defined in text, e.g. `[url={"data"="hi"}]hi[/url]`, then the parameter for this signal will be a [String] type. If a particular type or an object is desired, the [method push_meta] method must be used to manually insert the data into the tag stack.
  *
 */
-meta_clicked: Signal<(meta: any) => void>
+$meta_clicked: Signal<(meta: any) => void>
 
 /**
  * Triggers when the mouse exits a meta tag.
  *
 */
-meta_hover_ended: Signal<(meta: any) => void>
+$meta_hover_ended: Signal<(meta: any) => void>
 
 /**
  * Triggers when the mouse enters a meta tag.
  *
 */
-meta_hover_started: Signal<(meta: any) => void>
+$meta_hover_started: Signal<(meta: any) => void>
 
 }
+

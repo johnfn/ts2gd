@@ -150,22 +150,19 @@ declare class Variant {
  * Modifications to a container will modify all references to it. A [Mutex] should be created to lock it if multi-threaded access is desired.
  *
 */
-  "new"(): Variant;
-  static "new"(): Variant;
+  new(): Variant; 
+  static "new"(): Variant 
 
 
 
 
 
+  connect<T extends SignalsOf<Variant>>(signal: T, method: SignalFunction<Variant[T]>): number;
 
-  // connect<T extends SignalsOf<Variant>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VariantSignals>>(signal: T, method: SignalFunction<VariantSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class VariantSignals {
-  
-}

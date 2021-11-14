@@ -31,7 +31,7 @@
  * **Note:** Only available in the HTML5 platform.
  *
 */
-declare class JavaScriptObject extends Reference {
+declare class JavaScriptObject extends Reference  {
 
   
 /**
@@ -66,22 +66,19 @@ declare class JavaScriptObject extends Reference {
  * **Note:** Only available in the HTML5 platform.
  *
 */
-  "new"(): JavaScriptObject;
-  static "new"(): JavaScriptObject;
+  new(): JavaScriptObject; 
+  static "new"(): JavaScriptObject 
 
 
 
 
 
+  connect<T extends SignalsOf<JavaScriptObject>>(signal: T, method: SignalFunction<JavaScriptObject[T]>): number;
 
-  // connect<T extends SignalsOf<JavaScriptObject>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JavaScriptObjectSignals>>(signal: T, method: SignalFunction<JavaScriptObjectSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class JavaScriptObjectSignals extends ReferenceSignals {
-  
-}

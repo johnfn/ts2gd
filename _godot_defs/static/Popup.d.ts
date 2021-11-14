@@ -3,16 +3,15 @@
  * Popup is a base [Control] used to show dialogs and popups. It's a subwindow and modal by default (see [Control]) and has helpers for custom popup behavior. All popup methods ensure correct placement within the viewport.
  *
 */
-declare class Popup extends Control {
+declare class Popup extends Control  {
 
   
 /**
  * Popup is a base [Control] used to show dialogs and popups. It's a subwindow and modal by default (see [Control]) and has helpers for custom popup behavior. All popup methods ensure correct placement within the viewport.
  *
 */
-  "new"(): Popup;
-  static "new"(): Popup;
-
+  new(): Popup; 
+  static "new"(): Popup 
 
 
 /**
@@ -42,8 +41,7 @@ popup_centered_ratio(ratio?: float): void;
 /** Shrink popup to keep to the minimum size of content. */
 set_as_minsize(): void;
 
-  // connect<T extends SignalsOf<Popup>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PopupSignals>>(signal: T, method: SignalFunction<PopupSignals[T]>): number;
+  connect<T extends SignalsOf<Popup>>(signal: T, method: SignalFunction<Popup[T]>): number;
 
 
 
@@ -59,19 +57,18 @@ static NOTIFICATION_POST_POPUP: any;
 */
 static NOTIFICATION_POPUP_HIDE: any;
 
-}
 
-declare class PopupSignals extends ControlSignals {
-  /**
+/**
  * Emitted when a popup is about to be shown. This is often used in [PopupMenu] to clear the list of options then create a new one according to the current context.
  *
 */
-about_to_show: Signal<() => void>
+$about_to_show: Signal<() => void>
 
 /**
  * Emitted when a popup is hidden.
  *
 */
-popup_hide: Signal<() => void>
+$popup_hide: Signal<() => void>
 
 }
+

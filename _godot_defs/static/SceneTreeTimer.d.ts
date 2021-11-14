@@ -14,7 +14,7 @@
  * 
  *
 */
-declare class SceneTreeTimer extends Reference {
+declare class SceneTreeTimer extends Reference  {
 
   
 /**
@@ -32,9 +32,8 @@ declare class SceneTreeTimer extends Reference {
  * 
  *
 */
-  "new"(): SceneTreeTimer;
-  static "new"(): SceneTreeTimer;
-
+  new(): SceneTreeTimer; 
+  static "new"(): SceneTreeTimer 
 
 
 /** The time remaining. */
@@ -42,19 +41,17 @@ time_left: float;
 
 
 
-  // connect<T extends SignalsOf<SceneTreeTimer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SceneTreeTimerSignals>>(signal: T, method: SignalFunction<SceneTreeTimerSignals[T]>): number;
+  connect<T extends SignalsOf<SceneTreeTimer>>(signal: T, method: SignalFunction<SceneTreeTimer[T]>): number;
 
 
 
 
-}
 
-declare class SceneTreeTimerSignals extends ReferenceSignals {
-  /**
+/**
  * Emitted when the timer reaches 0.
  *
 */
-timeout: Signal<() => void>
+$timeout: Signal<() => void>
 
 }
+

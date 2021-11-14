@@ -5,7 +5,7 @@
  * **Note:** By default, this event is only emitted once per frame rendered at most. If you need more precise input reporting, call [method Input.set_use_accumulated_input] with `false` to make events emitted as often as possible. If you use InputEventMouseMotion to draw lines, consider implementing [url=https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm]Bresenham's line algorithm[/url] as well to avoid visible gaps in lines if the user is moving the mouse quickly.
  *
 */
-declare class InputEventMouseMotion extends InputEventMouse {
+declare class InputEventMouseMotion extends InputEventMouse  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class InputEventMouseMotion extends InputEventMouse {
  * **Note:** By default, this event is only emitted once per frame rendered at most. If you need more precise input reporting, call [method Input.set_use_accumulated_input] with `false` to make events emitted as often as possible. If you use InputEventMouseMotion to draw lines, consider implementing [url=https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm]Bresenham's line algorithm[/url] as well to avoid visible gaps in lines if the user is moving the mouse quickly.
  *
 */
-  "new"(): InputEventMouseMotion;
-  static "new"(): InputEventMouseMotion;
-
+  new(): InputEventMouseMotion; 
+  static "new"(): InputEventMouseMotion 
 
 
 /** Represents the pressure the user puts on the pen. Ranges from [code]0.0[/code] to [code]1.0[/code]. */
@@ -38,14 +37,12 @@ tilt: Vector2;
 
 
 
-  // connect<T extends SignalsOf<InputEventMouseMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventMouseMotionSignals>>(signal: T, method: SignalFunction<InputEventMouseMotionSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventMouseMotion>>(signal: T, method: SignalFunction<InputEventMouseMotion[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventMouseMotionSignals extends InputEventMouseSignals {
-  
-}

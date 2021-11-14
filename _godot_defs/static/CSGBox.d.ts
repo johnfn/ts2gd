@@ -3,16 +3,15 @@
  * This node allows you to create a box for use with the CSG system.
  *
 */
-declare class CSGBox extends CSGPrimitive {
+declare class CSGBox extends CSGPrimitive  {
 
   
 /**
  * This node allows you to create a box for use with the CSG system.
  *
 */
-  "new"(): CSGBox;
-  static "new"(): CSGBox;
-
+  new(): CSGBox; 
+  static "new"(): CSGBox 
 
 
 /** Depth of the box measured from the center of the box. */
@@ -29,14 +28,12 @@ width: float;
 
 
 
-  // connect<T extends SignalsOf<CSGBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGBoxSignals>>(signal: T, method: SignalFunction<CSGBoxSignals[T]>): number;
+  connect<T extends SignalsOf<CSGBox>>(signal: T, method: SignalFunction<CSGBox[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CSGBoxSignals extends CSGPrimitiveSignals {
-  
-}

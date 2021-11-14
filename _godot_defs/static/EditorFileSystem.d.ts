@@ -5,7 +5,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_resource_filesystem].
  *
 */
-declare class EditorFileSystem extends Node {
+declare class EditorFileSystem extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorFileSystem extends Node {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_resource_filesystem].
  *
 */
-  "new"(): EditorFileSystem;
-  static "new"(): EditorFileSystem;
-
+  new(): EditorFileSystem; 
+  static "new"(): EditorFileSystem 
 
 
 
@@ -47,37 +46,35 @@ update_file(path: string): void;
 /** Scans the script files and updates the list of custom class names. */
 update_script_classes(): void;
 
-  // connect<T extends SignalsOf<EditorFileSystem>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorFileSystemSignals>>(signal: T, method: SignalFunction<EditorFileSystemSignals[T]>): number;
+  connect<T extends SignalsOf<EditorFileSystem>>(signal: T, method: SignalFunction<EditorFileSystem[T]>): number;
 
 
 
 
-}
 
-declare class EditorFileSystemSignals extends NodeSignals {
-  /**
+/**
  * Emitted if the filesystem changed.
  *
 */
-filesystem_changed: Signal<() => void>
+$filesystem_changed: Signal<() => void>
 
 /**
  * Emitted if a resource is reimported.
  *
 */
-resources_reimported: Signal<(resources: PoolStringArray) => void>
+$resources_reimported: Signal<(resources: PoolStringArray) => void>
 
 /**
  * Emitted if at least one resource is reloaded when the filesystem is scanned.
  *
 */
-resources_reload: Signal<(resources: PoolStringArray) => void>
+$resources_reload: Signal<(resources: PoolStringArray) => void>
 
 /**
  * Emitted if the source of any imported file changed.
  *
 */
-sources_changed: Signal<(exist: boolean) => void>
+$sources_changed: Signal<(exist: boolean) => void>
 
 }
+

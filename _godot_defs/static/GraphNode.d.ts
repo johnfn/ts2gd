@@ -7,7 +7,7 @@
  * In the Inspector you can enable (show) or disable (hide) slots. By default, all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
  *
 */
-declare class GraphNode extends Container {
+declare class GraphNode extends Container  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class GraphNode extends Container {
  * In the Inspector you can enable (show) or disable (hide) slots. By default, all slots are disabled so you may not see any slots on your GraphNode initially. You can assign a type to each slot. Only slots of the same type will be able to connect to each other. You can also assign colors to slots. A tuple of input and output slots is defined for each GUI element included in the GraphNode. Input connections are on the left and output connections are on the right side of GraphNode. Only enabled slots are counted as connections.
  *
 */
-  "new"(): GraphNode;
-  static "new"(): GraphNode;
-
+  new(): GraphNode; 
+  static "new"(): GraphNode 
 
 
 /** If [code]true[/code], the GraphNode is a comment node. */
@@ -143,8 +142,7 @@ set_slot_type_left(idx: int, type_left: int): void;
 /** Sets the right (output) type of the slot [code]idx[/code] to [code]type_right[/code]. */
 set_slot_type_right(idx: int, type_right: int): void;
 
-  // connect<T extends SignalsOf<GraphNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GraphNodeSignals>>(signal: T, method: SignalFunction<GraphNodeSignals[T]>): number;
+  connect<T extends SignalsOf<GraphNode>>(signal: T, method: SignalFunction<GraphNode[T]>): number;
 
 
 
@@ -166,43 +164,42 @@ static OVERLAY_BREAKPOINT: any;
 */
 static OVERLAY_POSITION: any;
 
-}
 
-declare class GraphNodeSignals extends ContainerSignals {
-  /**
+/**
  * Emitted when the GraphNode is requested to be closed. Happens on clicking the close button (see [member show_close]).
  *
 */
-close_request: Signal<() => void>
+$close_request: Signal<() => void>
 
 /**
  * Emitted when the GraphNode is dragged.
  *
 */
-dragged: Signal<(from: Vector2, to: Vector2) => void>
+$dragged: Signal<(from: Vector2, to: Vector2) => void>
 
 /**
  * Emitted when the GraphNode is moved.
  *
 */
-offset_changed: Signal<() => void>
+$offset_changed: Signal<() => void>
 
 /**
  * Emitted when the GraphNode is requested to be displayed over other ones. Happens on focusing (clicking into) the GraphNode.
  *
 */
-raise_request: Signal<() => void>
+$raise_request: Signal<() => void>
 
 /**
  * Emitted when the GraphNode is requested to be resized. Happens on dragging the resizer handle (see [member resizable]).
  *
 */
-resize_request: Signal<(new_minsize: Vector2) => void>
+$resize_request: Signal<(new_minsize: Vector2) => void>
 
 /**
  * Emitted when any GraphNode's slot is updated.
  *
 */
-slot_updated: Signal<(idx: int) => void>
+$slot_updated: Signal<(idx: int) => void>
 
 }
+

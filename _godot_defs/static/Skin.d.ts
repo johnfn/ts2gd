@@ -1,14 +1,13 @@
 
 /**
 */
-declare class Skin extends Resource {
+declare class Skin extends Resource  {
 
   
 /**
 */
-  "new"(): Skin;
-  static "new"(): Skin;
-
+  new(): Skin; 
+  static "new"(): Skin 
 
 
 
@@ -42,14 +41,12 @@ set_bind_name(bind_index: int, name: string): void;
 /** No documentation provided. */
 set_bind_pose(bind_index: int, pose: Transform): void;
 
-  // connect<T extends SignalsOf<Skin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SkinSignals>>(signal: T, method: SignalFunction<SkinSignals[T]>): number;
+  connect<T extends SignalsOf<Skin>>(signal: T, method: SignalFunction<Skin[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SkinSignals extends ResourceSignals {
-  
-}

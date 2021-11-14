@@ -3,16 +3,15 @@
  * [CanvasItemMaterial]s provide a means of modifying the textures associated with a CanvasItem. They specialize in describing blend and lighting behaviors for textures. Use a [ShaderMaterial] to more fully customize a material's interactions with a [CanvasItem].
  *
 */
-declare class CanvasItemMaterial extends Material {
+declare class CanvasItemMaterial extends Material  {
 
   
 /**
  * [CanvasItemMaterial]s provide a means of modifying the textures associated with a CanvasItem. They specialize in describing blend and lighting behaviors for textures. Use a [ShaderMaterial] to more fully customize a material's interactions with a [CanvasItem].
  *
 */
-  "new"(): CanvasItemMaterial;
-  static "new"(): CanvasItemMaterial;
-
+  new(): CanvasItemMaterial; 
+  static "new"(): CanvasItemMaterial 
 
 
 /** The manner in which a material's rendering is applied to underlying textures. */
@@ -55,8 +54,7 @@ particles_animation: boolean;
 
 
 
-  // connect<T extends SignalsOf<CanvasItemMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CanvasItemMaterialSignals>>(signal: T, method: SignalFunction<CanvasItemMaterialSignals[T]>): number;
+  connect<T extends SignalsOf<CanvasItemMaterial>>(signal: T, method: SignalFunction<CanvasItemMaterial[T]>): number;
 
 
 
@@ -108,8 +106,7 @@ static LIGHT_MODE_UNSHADED: any;
 */
 static LIGHT_MODE_LIGHT_ONLY: any;
 
+
+
 }
 
-declare class CanvasItemMaterialSignals extends MaterialSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Base class for all 3D shape resources. Nodes that inherit from this can be used as shapes for a [PhysicsBody] or [Area] objects.
  *
 */
-declare class Shape extends Resource {
+declare class Shape extends Resource  {
 
   
 /**
  * Base class for all 3D shape resources. Nodes that inherit from this can be used as shapes for a [PhysicsBody] or [Area] objects.
  *
 */
-  "new"(): Shape;
-  static "new"(): Shape;
-
+  new(): Shape; 
+  static "new"(): Shape 
 
 
 /**
@@ -26,14 +25,12 @@ margin: float;
 /** Returns the [ArrayMesh] used to draw the debug collision for this [Shape]. */
 get_debug_mesh(): ArrayMesh;
 
-  // connect<T extends SignalsOf<Shape>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ShapeSignals>>(signal: T, method: SignalFunction<ShapeSignals[T]>): number;
+  connect<T extends SignalsOf<Shape>>(signal: T, method: SignalFunction<Shape[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ShapeSignals extends ResourceSignals {
-  
-}

@@ -7,7 +7,7 @@
  * **Kinematic characters:** KinematicBody also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
-declare class KinematicBody extends PhysicsBody {
+declare class KinematicBody extends PhysicsBody  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class KinematicBody extends PhysicsBody {
  * **Kinematic characters:** KinematicBody also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
-  "new"(): KinematicBody;
-  static "new"(): KinematicBody;
-
+  new(): KinematicBody; 
+  static "new"(): KinematicBody 
 
 
 /** Lock the body's X axis movement. */
@@ -132,14 +131,12 @@ set_axis_lock(axis: int, lock: boolean): void;
 /** Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform], then tries to move the body along the vector [code]rel_vec[/code]. Returns [code]true[/code] if a collision would occur. */
 test_move(from: Transform, rel_vec: Vector3, infinite_inertia?: boolean): boolean;
 
-  // connect<T extends SignalsOf<KinematicBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<KinematicBodySignals>>(signal: T, method: SignalFunction<KinematicBodySignals[T]>): number;
+  connect<T extends SignalsOf<KinematicBody>>(signal: T, method: SignalFunction<KinematicBody[T]>): number;
+
+
 
 
 
 
 }
 
-declare class KinematicBodySignals extends PhysicsBodySignals {
-  
-}

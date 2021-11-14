@@ -5,7 +5,7 @@
  * This class is used internally by the editor inspector and script debugger, but can also be used in plugins to pass and display objects as their IDs.
  *
 */
-declare class EncodedObjectAsID extends Reference {
+declare class EncodedObjectAsID extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EncodedObjectAsID extends Reference {
  * This class is used internally by the editor inspector and script debugger, but can also be used in plugins to pass and display objects as their IDs.
  *
 */
-  "new"(): EncodedObjectAsID;
-  static "new"(): EncodedObjectAsID;
-
+  new(): EncodedObjectAsID; 
+  static "new"(): EncodedObjectAsID 
 
 
 /** The [Object] identifier stored in this [EncodedObjectAsID] instance. The object instance can be retrieved with [method @GDScript.instance_from_id]. */
@@ -24,14 +23,12 @@ object_id: int;
 
 
 
-  // connect<T extends SignalsOf<EncodedObjectAsID>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EncodedObjectAsIDSignals>>(signal: T, method: SignalFunction<EncodedObjectAsIDSignals[T]>): number;
+  connect<T extends SignalsOf<EncodedObjectAsID>>(signal: T, method: SignalFunction<EncodedObjectAsID[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EncodedObjectAsIDSignals extends ReferenceSignals {
-  
-}

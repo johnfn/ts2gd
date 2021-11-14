@@ -9,7 +9,7 @@
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-declare class Font extends Resource {
+declare class Font extends Resource  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class Font extends Resource {
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-  "new"(): Font;
-  static "new"(): Font;
-
+  new(): Font; 
+  static "new"(): Font 
 
 
 
@@ -66,14 +65,12 @@ is_distance_field_hint(): boolean;
 /** After editing a font (changing size, ascent, char rects, etc.). Call this function to propagate changes to controls that might use it. */
 update_changes(): void;
 
-  // connect<T extends SignalsOf<Font>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<FontSignals>>(signal: T, method: SignalFunction<FontSignals[T]>): number;
+  connect<T extends SignalsOf<Font>>(signal: T, method: SignalFunction<Font[T]>): number;
+
+
 
 
 
 
 }
 
-declare class FontSignals extends ResourceSignals {
-  
-}

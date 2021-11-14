@@ -3,16 +3,15 @@
  * Arranges child controls in a way to preserve their aspect ratio automatically whenever the container is resized. Solves the problem where the container size is dynamic and the contents' size needs to adjust accordingly without losing proportions.
  *
 */
-declare class AspectRatioContainer extends Container {
+declare class AspectRatioContainer extends Container  {
 
   
 /**
  * Arranges child controls in a way to preserve their aspect ratio automatically whenever the container is resized. Solves the problem where the container size is dynamic and the contents' size needs to adjust accordingly without losing proportions.
  *
 */
-  "new"(): AspectRatioContainer;
-  static "new"(): AspectRatioContainer;
-
+  new(): AspectRatioContainer; 
+  static "new"(): AspectRatioContainer 
 
 
 /** Specifies the horizontal relative position of child controls. */
@@ -29,8 +28,7 @@ stretch_mode: int;
 
 
 
-  // connect<T extends SignalsOf<AspectRatioContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AspectRatioContainerSignals>>(signal: T, method: SignalFunction<AspectRatioContainerSignals[T]>): number;
+  connect<T extends SignalsOf<AspectRatioContainer>>(signal: T, method: SignalFunction<AspectRatioContainer[T]>): number;
 
 
 
@@ -78,8 +76,7 @@ static ALIGN_CENTER: any;
 */
 static ALIGN_END: any;
 
+
+
 }
 
-declare class AspectRatioContainerSignals extends ContainerSignals {
-  
-}

@@ -5,7 +5,7 @@
  * **Note:** [RootMotionView] is only visible in the editor. It will be hidden automatically in the running project, and will also be converted to a plain [Node] in the running project. This means a script attached to a [RootMotionView] node **must** have `extends Node` instead of `extends RootMotionView`. Additionally, it must not be a `@tool` script.
  *
 */
-declare class RootMotionView extends VisualInstance {
+declare class RootMotionView extends VisualInstance  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class RootMotionView extends VisualInstance {
  * **Note:** [RootMotionView] is only visible in the editor. It will be hidden automatically in the running project, and will also be converted to a plain [Node] in the running project. This means a script attached to a [RootMotionView] node **must** have `extends Node` instead of `extends RootMotionView`. Additionally, it must not be a `@tool` script.
  *
 */
-  "new"(): RootMotionView;
-  static "new"(): RootMotionView;
-
+  new(): RootMotionView; 
+  static "new"(): RootMotionView 
 
 
 /** Path to an [AnimationTree] node to use as a basis for root motion. */
@@ -36,14 +35,12 @@ zero_y: boolean;
 
 
 
-  // connect<T extends SignalsOf<RootMotionView>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RootMotionViewSignals>>(signal: T, method: SignalFunction<RootMotionViewSignals[T]>): number;
+  connect<T extends SignalsOf<RootMotionView>>(signal: T, method: SignalFunction<RootMotionView[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RootMotionViewSignals extends VisualInstanceSignals {
-  
-}

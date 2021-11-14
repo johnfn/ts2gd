@@ -3,16 +3,15 @@
  * Base class for all primitive meshes. Handles applying a [Material] to a primitive mesh. Examples include [CapsuleMesh], [CubeMesh], [CylinderMesh], [PlaneMesh], [PrismMesh], [QuadMesh], and [SphereMesh].
  *
 */
-declare class PrimitiveMesh extends Mesh {
+declare class PrimitiveMesh extends Mesh  {
 
   
 /**
  * Base class for all primitive meshes. Handles applying a [Material] to a primitive mesh. Examples include [CapsuleMesh], [CubeMesh], [CylinderMesh], [PlaneMesh], [PrismMesh], [QuadMesh], and [SphereMesh].
  *
 */
-  "new"(): PrimitiveMesh;
-  static "new"(): PrimitiveMesh;
-
+  new(): PrimitiveMesh; 
+  static "new"(): PrimitiveMesh 
 
 
 /** Overrides the [AABB] with one defined by user for use with frustum culling. Especially useful to avoid unexpected culling when using a shader to offset vertices. */
@@ -43,14 +42,12 @@ material: Material;
 */
 get_mesh_arrays(): any[];
 
-  // connect<T extends SignalsOf<PrimitiveMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PrimitiveMeshSignals>>(signal: T, method: SignalFunction<PrimitiveMeshSignals[T]>): number;
+  connect<T extends SignalsOf<PrimitiveMesh>>(signal: T, method: SignalFunction<PrimitiveMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PrimitiveMeshSignals extends MeshSignals {
-  
-}

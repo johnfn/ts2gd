@@ -3,16 +3,15 @@
  * The first 3 DOF axes are linear axes, which represent translation of Bodies, and the latter 3 DOF axes represent the angular motion. Each axis can be either locked, or limited.
  *
 */
-declare class Generic6DOFJoint extends Joint {
+declare class Generic6DOFJoint extends Joint  {
 
   
 /**
  * The first 3 DOF axes are linear axes, which represent translation of Bodies, and the latter 3 DOF axes represent the angular motion. Each axis can be either locked, or limited.
  *
 */
-  "new"(): Generic6DOFJoint;
-  static "new"(): Generic6DOFJoint;
-
+  new(): Generic6DOFJoint; 
+  static "new"(): Generic6DOFJoint 
 
 
 /**
@@ -260,8 +259,7 @@ set_param_y(param: int, value: float): void;
 /** No documentation provided. */
 set_param_z(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<Generic6DOFJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Generic6DOFJointSignals>>(signal: T, method: SignalFunction<Generic6DOFJointSignals[T]>): number;
+  connect<T extends SignalsOf<Generic6DOFJoint>>(signal: T, method: SignalFunction<Generic6DOFJoint[T]>): number;
 
 
 
@@ -421,8 +419,7 @@ static FLAG_ENABLE_LINEAR_MOTOR: any;
 */
 static FLAG_MAX: any;
 
+
+
 }
 
-declare class Generic6DOFJointSignals extends JointSignals {
-  
-}

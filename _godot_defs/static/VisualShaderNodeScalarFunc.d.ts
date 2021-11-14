@@ -1,21 +1,19 @@
 
 /**
 */
-declare class VisualShaderNodeScalarFunc extends VisualShaderNode {
+declare class VisualShaderNodeScalarFunc extends VisualShaderNode  {
 
   
 /**
 */
-  "new"(): VisualShaderNodeScalarFunc;
-  static "new"(): VisualShaderNodeScalarFunc;
+  new(): VisualShaderNodeScalarFunc; 
+  static "new"(): VisualShaderNodeScalarFunc 
 
 
 
 
 
-
-  // connect<T extends SignalsOf<VisualShaderNodeScalarFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeScalarFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeScalarFuncSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeScalarFunc>>(signal: T, method: SignalFunction<VisualShaderNodeScalarFunc[T]>): number;
 
 
 
@@ -115,8 +113,7 @@ static FUNC_TRUNC: any;
 /** No documentation provided. */
 static FUNC_ONEMINUS: any;
 
+
+
 }
 
-declare class VisualShaderNodeScalarFuncSignals extends VisualShaderNodeSignals {
-  
-}

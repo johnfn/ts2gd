@@ -3,16 +3,15 @@
  * EditorSpatialGizmoPlugin allows you to define a new type of Gizmo. There are two main ways to do so: extending [EditorSpatialGizmoPlugin] for the simpler gizmos, or creating a new [EditorSpatialGizmo] type. See the tutorial in the documentation for more info.
  *
 */
-declare class EditorSpatialGizmoPlugin extends Resource {
+declare class EditorSpatialGizmoPlugin extends Resource  {
 
   
 /**
  * EditorSpatialGizmoPlugin allows you to define a new type of Gizmo. There are two main ways to do so: extending [EditorSpatialGizmoPlugin] for the simpler gizmos, or creating a new [EditorSpatialGizmo] type. See the tutorial in the documentation for more info.
  *
 */
-  "new"(): EditorSpatialGizmoPlugin;
-  static "new"(): EditorSpatialGizmoPlugin;
-
+  new(): EditorSpatialGizmoPlugin; 
+  static "new"(): EditorSpatialGizmoPlugin 
 
 
 
@@ -77,14 +76,12 @@ redraw(gizmo: EditorSpatialGizmo): void;
 /** Update the value of a handle after it has been updated. Called for this plugin's active gizmos. */
 set_handle(gizmo: EditorSpatialGizmo, index: int, camera: Camera, point: Vector2): void;
 
-  // connect<T extends SignalsOf<EditorSpatialGizmoPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorSpatialGizmoPluginSignals>>(signal: T, method: SignalFunction<EditorSpatialGizmoPluginSignals[T]>): number;
+  connect<T extends SignalsOf<EditorSpatialGizmoPlugin>>(signal: T, method: SignalFunction<EditorSpatialGizmoPlugin[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorSpatialGizmoPluginSignals extends ResourceSignals {
-  
-}

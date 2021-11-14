@@ -3,16 +3,15 @@
  * A more generalized, low-level variation of the directory concept.
  *
 */
-declare class EditorFileSystemDirectory extends Object {
+declare class EditorFileSystemDirectory extends Object  {
 
   
 /**
  * A more generalized, low-level variation of the directory concept.
  *
 */
-  "new"(): EditorFileSystemDirectory;
-  static "new"(): EditorFileSystemDirectory;
-
+  new(): EditorFileSystemDirectory; 
+  static "new"(): EditorFileSystemDirectory 
 
 
 
@@ -58,14 +57,12 @@ get_subdir(idx: int): EditorFileSystemDirectory;
 /** Returns the number of subdirectories in this directory. */
 get_subdir_count(): int;
 
-  // connect<T extends SignalsOf<EditorFileSystemDirectory>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorFileSystemDirectorySignals>>(signal: T, method: SignalFunction<EditorFileSystemDirectorySignals[T]>): number;
+  connect<T extends SignalsOf<EditorFileSystemDirectory>>(signal: T, method: SignalFunction<EditorFileSystemDirectory[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorFileSystemDirectorySignals extends ObjectSignals {
-  
-}

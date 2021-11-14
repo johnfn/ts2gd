@@ -3,16 +3,15 @@
  * SSL stream peer. This object can be used to connect to an SSL server or accept a single SSL client connection.
  *
 */
-declare class StreamPeerSSL extends StreamPeer {
+declare class StreamPeerSSL extends StreamPeer  {
 
   
 /**
  * SSL stream peer. This object can be used to connect to an SSL server or accept a single SSL client connection.
  *
 */
-  "new"(): StreamPeerSSL;
-  static "new"(): StreamPeerSSL;
-
+  new(): StreamPeerSSL; 
+  static "new"(): StreamPeerSSL 
 
 
 
@@ -36,8 +35,7 @@ get_status(): int;
 /** Poll the connection to check for incoming bytes. Call this right before [method StreamPeer.get_available_bytes] for it to work properly. */
 poll(): void;
 
-  // connect<T extends SignalsOf<StreamPeerSSL>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StreamPeerSSLSignals>>(signal: T, method: SignalFunction<StreamPeerSSLSignals[T]>): number;
+  connect<T extends SignalsOf<StreamPeerSSL>>(signal: T, method: SignalFunction<StreamPeerSSL[T]>): number;
 
 
 
@@ -71,8 +69,7 @@ static STATUS_ERROR: any;
 */
 static STATUS_ERROR_HOSTNAME_MISMATCH: any;
 
+
+
 }
 
-declare class StreamPeerSSLSignals extends StreamPeerSignals {
-  
-}

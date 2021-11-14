@@ -17,7 +17,7 @@
  * See also [AudioEffectEQ], [AudioEffectEQ10], [AudioEffectEQ21].
  *
 */
-declare class AudioEffectEQ6 extends AudioEffectEQ {
+declare class AudioEffectEQ6 extends AudioEffectEQ  {
 
   
 /**
@@ -38,22 +38,19 @@ declare class AudioEffectEQ6 extends AudioEffectEQ {
  * See also [AudioEffectEQ], [AudioEffectEQ10], [AudioEffectEQ21].
  *
 */
-  "new"(): AudioEffectEQ6;
-  static "new"(): AudioEffectEQ6;
+  new(): AudioEffectEQ6; 
+  static "new"(): AudioEffectEQ6 
 
 
 
 
 
+  connect<T extends SignalsOf<AudioEffectEQ6>>(signal: T, method: SignalFunction<AudioEffectEQ6[T]>): number;
 
-  // connect<T extends SignalsOf<AudioEffectEQ6>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectEQ6Signals>>(signal: T, method: SignalFunction<AudioEffectEQ6Signals[T]>): number;
+
 
 
 
 
 }
 
-declare class AudioEffectEQ6Signals extends AudioEffectEQSignals {
-  
-}

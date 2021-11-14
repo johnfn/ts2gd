@@ -5,7 +5,7 @@
  * **Note:** In a boolean context, a Vector2 will evaluate to `false` if it's equal to `Vector2(0, 0)`. Otherwise, a Vector2 will always evaluate to `true`.
  *
 */
-declare class Vector2 {
+declare class Vector2Constructor {
 
   
 /**
@@ -14,10 +14,6 @@ declare class Vector2 {
  * **Note:** In a boolean context, a Vector2 will evaluate to `false` if it's equal to `Vector2(0, 0)`. Otherwise, a Vector2 will always evaluate to `true`.
  *
 */
-
-  constructor(x: float, y: float);
-  static "new"(): Vector2;
-
 
 
 /** The vector's X component. Also accessible by using the index position [code][0][/code]. */
@@ -170,8 +166,7 @@ snapped(by: Vector2): Vector2;
 /** Returns a perpendicular vector rotated 90 degrees counter-clockwise compared to the original, with the same length. */
 tangent(): Vector2;
 
-  // connect<T extends SignalsOf<Vector2>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Vector2Signals>>(signal: T, method: SignalFunction<Vector2Signals[T]>): number;
+  connect<T extends SignalsOf<Vector2>>(signal: T, method: SignalFunction<Vector2[T]>): number;
 
 
 add(other: number | Vector2): Vector2;
@@ -234,8 +229,15 @@ static UP: Vector2;
 */
 static DOWN: Vector2;
 
+
+
 }
 
-declare class Vector2Signals {
+declare type Vector2 = Vector2Constructor;
+declare var Vector2: typeof Vector2Constructor & {
   
+  new(x: float, y: float): Vector2;
+
+  (x: float, y: float): Vector2;
+
 }

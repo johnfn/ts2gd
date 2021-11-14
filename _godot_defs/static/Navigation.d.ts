@@ -5,7 +5,7 @@
  * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
  *
 */
-declare class Navigation extends Spatial {
+declare class Navigation extends Spatial  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Navigation extends Spatial {
  * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
  *
 */
-  "new"(): Navigation;
-  static "new"(): Navigation;
-
+  new(): Navigation; 
+  static "new"(): Navigation 
 
 
 /** Defines which direction is up. By default, this is [code](0, 1, 0)[/code], which is the world's "up" direction. */
@@ -51,14 +50,12 @@ navmesh_remove(id: int): void;
 /** Sets the transform applied to the [NavigationMesh] with the given ID. */
 navmesh_set_transform(id: int, xform: Transform): void;
 
-  // connect<T extends SignalsOf<Navigation>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NavigationSignals>>(signal: T, method: SignalFunction<NavigationSignals[T]>): number;
+  connect<T extends SignalsOf<Navigation>>(signal: T, method: SignalFunction<Navigation[T]>): number;
+
+
 
 
 
 
 }
 
-declare class NavigationSignals extends SpatialSignals {
-  
-}

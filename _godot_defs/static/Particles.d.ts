@@ -9,7 +9,7 @@
  * **Note:** After working on a Particles node, remember to update its [member visibility_aabb] by selecting it, clicking the **Particles** menu at the top of the 3D editor viewport then choose **Generate Visibility AABB**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
  *
 */
-declare class Particles extends GeometryInstance {
+declare class Particles extends GeometryInstance  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class Particles extends GeometryInstance {
  * **Note:** After working on a Particles node, remember to update its [member visibility_aabb] by selecting it, clicking the **Particles** menu at the top of the 3D editor viewport then choose **Generate Visibility AABB**. Otherwise, particles may suddenly disappear depending on the camera position and angle.
  *
 */
-  "new"(): Particles;
-  static "new"(): Particles;
-
+  new(): Particles; 
+  static "new"(): Particles 
 
 
 /**
@@ -108,8 +107,7 @@ restart(): void;
 /** Sets the [Mesh] that is drawn at index [code]pass[/code]. */
 set_draw_pass_mesh(pass: int, mesh: Mesh): void;
 
-  // connect<T extends SignalsOf<Particles>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ParticlesSignals>>(signal: T, method: SignalFunction<ParticlesSignals[T]>): number;
+  connect<T extends SignalsOf<Particles>>(signal: T, method: SignalFunction<Particles[T]>): number;
 
 
 
@@ -137,8 +135,7 @@ static DRAW_ORDER_VIEW_DEPTH: any;
 */
 static MAX_DRAW_PASSES: any;
 
+
+
 }
 
-declare class ParticlesSignals extends GeometryInstanceSignals {
-  
-}

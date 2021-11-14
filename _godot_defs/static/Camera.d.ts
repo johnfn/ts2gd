@@ -3,16 +3,15 @@
  * Camera is a special node that displays what is visible from its current location. Cameras register themselves in the nearest [Viewport] node (when ascending the tree). Only one camera can be active per viewport. If no viewport is available ascending the tree, the camera will register in the global viewport. In other words, a camera just provides 3D display capabilities to a [Viewport], and, without one, a scene registered in that [Viewport] (or higher viewports) can't be displayed.
  *
 */
-declare class Camera extends Spatial {
+declare class Camera extends Spatial  {
 
   
 /**
  * Camera is a special node that displays what is visible from its current location. Cameras register themselves in the nearest [Viewport] node (when ascending the tree). Only one camera can be active per viewport. If no viewport is available ascending the tree, the camera will register in the global viewport. In other words, a camera just provides 3D display capabilities to a [Viewport], and, without one, a scene registered in that [Viewport] (or higher viewports) can't be displayed.
  *
 */
-  "new"(): Camera;
-  static "new"(): Camera;
-
+  new(): Camera; 
+  static "new"(): Camera 
 
 
 /** The culling mask that describes which 3D render layers are rendered by this camera. */
@@ -139,8 +138,7 @@ set_perspective(fov: float, z_near: float, z_far: float): void;
 */
 unproject_position(world_point: Vector3): Vector2;
 
-  // connect<T extends SignalsOf<Camera>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CameraSignals>>(signal: T, method: SignalFunction<CameraSignals[T]>): number;
+  connect<T extends SignalsOf<Camera>>(signal: T, method: SignalFunction<Camera[T]>): number;
 
 
 
@@ -192,8 +190,7 @@ static DOPPLER_TRACKING_IDLE_STEP: any;
 */
 static DOPPLER_TRACKING_PHYSICS_STEP: any;
 
+
+
 }
 
-declare class CameraSignals extends SpatialSignals {
-  
-}

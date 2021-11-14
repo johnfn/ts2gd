@@ -5,7 +5,7 @@
  * It is notably used to provide AR modules with a video feed from the camera.
  *
 */
-declare class CameraServerClass extends Object {
+declare class CameraServerClass extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class CameraServerClass extends Object {
  * It is notably used to provide AR modules with a video feed from the camera.
  *
 */
-  "new"(): CameraServerClass;
-  static "new"(): CameraServerClass;
-
+  new(): CameraServerClass; 
+  static "new"(): CameraServerClass 
 
 
 
@@ -35,8 +34,7 @@ get_feed_count(): int;
 /** Removes a [CameraFeed]. */
 remove_feed(feed: CameraFeed): void;
 
-  // connect<T extends SignalsOf<CameraServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CameraServerClassSignals>>(signal: T, method: SignalFunction<CameraServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<CameraServerClass>>(signal: T, method: SignalFunction<CameraServerClass[T]>): number;
 
 
 
@@ -64,19 +62,18 @@ static FEED_Y_IMAGE: any;
 */
 static FEED_CBCR_IMAGE: any;
 
-}
 
-declare class CameraServerClassSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when a [CameraFeed] is added (e.g. webcam is plugged in).
  *
 */
-camera_feed_added: Signal<(id: int) => void>
+$camera_feed_added: Signal<(id: int) => void>
 
 /**
  * Emitted when a [CameraFeed] is removed (e.g. webcam is unplugged).
  *
 */
-camera_feed_removed: Signal<(id: int) => void>
+$camera_feed_removed: Signal<(id: int) => void>
 
 }
+

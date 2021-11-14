@@ -3,16 +3,15 @@
  * Performs a lookup operation on the texture provided as a uniform for the shader.
  *
 */
-declare class VisualShaderNodeTextureUniform extends VisualShaderNodeUniform {
+declare class VisualShaderNodeTextureUniform extends VisualShaderNodeUniform  {
 
   
 /**
  * Performs a lookup operation on the texture provided as a uniform for the shader.
  *
 */
-  "new"(): VisualShaderNodeTextureUniform;
-  static "new"(): VisualShaderNodeTextureUniform;
-
+  new(): VisualShaderNodeTextureUniform; 
+  static "new"(): VisualShaderNodeTextureUniform 
 
 
 /** Sets the default color if no texture is assigned to the uniform. */
@@ -23,8 +22,7 @@ texture_type: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeTextureUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeTextureUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTextureUniformSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeTextureUniform>>(signal: T, method: SignalFunction<VisualShaderNodeTextureUniform[T]>): number;
 
 
 
@@ -64,8 +62,7 @@ static COLOR_DEFAULT_WHITE: any;
 */
 static COLOR_DEFAULT_BLACK: any;
 
+
+
 }
 
-declare class VisualShaderNodeTextureUniformSignals extends VisualShaderNodeUniformSignals {
-  
-}

@@ -9,7 +9,7 @@
  * **Note:** AnimatedTexture doesn't support using [AtlasTexture]s. Each frame needs to be a separate [Texture].
  *
 */
-declare class AnimatedTexture extends Texture {
+declare class AnimatedTexture extends Texture  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class AnimatedTexture extends Texture {
  * **Note:** AnimatedTexture doesn't support using [AtlasTexture]s. Each frame needs to be a separate [Texture].
  *
 */
-  "new"(): AnimatedTexture;
-  static "new"(): AnimatedTexture;
-
+  new(): AnimatedTexture; 
+  static "new"(): AnimatedTexture 
 
 
 /** Sets the currently visible frame of the texture. */
@@ -79,8 +78,7 @@ set_frame_delay(frame: int, delay: float): void;
 */
 set_frame_texture(frame: int, texture: Texture): void;
 
-  // connect<T extends SignalsOf<AnimatedTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimatedTextureSignals>>(signal: T, method: SignalFunction<AnimatedTextureSignals[T]>): number;
+  connect<T extends SignalsOf<AnimatedTexture>>(signal: T, method: SignalFunction<AnimatedTexture[T]>): number;
 
 
 
@@ -90,8 +88,7 @@ set_frame_texture(frame: int, texture: Texture): void;
 */
 static MAX_FRAMES: any;
 
+
+
 }
 
-declare class AnimatedTextureSignals extends TextureSignals {
-  
-}

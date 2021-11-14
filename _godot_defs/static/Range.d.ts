@@ -3,16 +3,15 @@
  * Range is a base class for [Control] nodes that change a floating-point **value** between a **minimum** and a **maximum**, using **step** and **page**, for example a [ScrollBar].
  *
 */
-declare class Range extends Control {
+declare class Range extends Control  {
 
   
 /**
  * Range is a base class for [Control] nodes that change a floating-point **value** between a **minimum** and a **maximum**, using **step** and **page**, for example a [ScrollBar].
  *
 */
-  "new"(): Range;
-  static "new"(): Range;
-
+  new(): Range; 
+  static "new"(): Range 
 
 
 /** If [code]true[/code], [member value] may be greater than [member max_value]. */
@@ -51,25 +50,23 @@ share(_with: Node): void;
 /** Stops range from sharing its member variables with any other. */
 unshare(): void;
 
-  // connect<T extends SignalsOf<Range>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RangeSignals>>(signal: T, method: SignalFunction<RangeSignals[T]>): number;
+  connect<T extends SignalsOf<Range>>(signal: T, method: SignalFunction<Range[T]>): number;
 
 
 
 
-}
 
-declare class RangeSignals extends ControlSignals {
-  /**
+/**
  * Emitted when [member min_value], [member max_value], [member page], or [member step] change.
  *
 */
-changed: Signal<() => void>
+$changed: Signal<() => void>
 
 /**
  * Emitted when [member value] changes.
  *
 */
-value_changed: Signal<(value: float) => void>
+$value_changed: Signal<(value: float) => void>
 
 }
+

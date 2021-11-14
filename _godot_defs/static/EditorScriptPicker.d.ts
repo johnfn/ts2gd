@@ -5,7 +5,7 @@
  * **Note:** You must set the [member script_owner] for the custom context menu items to work.
  *
 */
-declare class EditorScriptPicker extends EditorResourcePicker {
+declare class EditorScriptPicker extends EditorResourcePicker  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorScriptPicker extends EditorResourcePicker {
  * **Note:** You must set the [member script_owner] for the custom context menu items to work.
  *
 */
-  "new"(): EditorScriptPicker;
-  static "new"(): EditorScriptPicker;
-
+  new(): EditorScriptPicker; 
+  static "new"(): EditorScriptPicker 
 
 
 /** The owner [Node] of the script property that holds the edited resource. */
@@ -24,14 +23,12 @@ script_owner: Node;
 
 
 
-  // connect<T extends SignalsOf<EditorScriptPicker>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorScriptPickerSignals>>(signal: T, method: SignalFunction<EditorScriptPickerSignals[T]>): number;
+  connect<T extends SignalsOf<EditorScriptPicker>>(signal: T, method: SignalFunction<EditorScriptPicker[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorScriptPickerSignals extends EditorResourcePickerSignals {
-  
-}

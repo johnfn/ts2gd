@@ -11,7 +11,7 @@
  * RayCast calculates intersection every physics frame (see [Node]), and the result is cached so it can be used later until the next frame. If multiple queries are required between physics frames (or during the same frame), use [method force_raycast_update] after adjusting the raycast.
  *
 */
-declare class RayCast extends Spatial {
+declare class RayCast extends Spatial  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class RayCast extends Spatial {
  * RayCast calculates intersection every physics frame (see [Node]), and the result is cached so it can be used later until the next frame. If multiple queries are required between physics frames (or during the same frame), use [method force_raycast_update] after adjusting the raycast.
  *
 */
-  "new"(): RayCast;
-  static "new"(): RayCast;
-
+  new(): RayCast; 
+  static "new"(): RayCast 
 
 
 /** The ray's destination point, relative to the RayCast's [code]position[/code]. */
@@ -121,14 +120,12 @@ remove_exception_rid(rid: RID): void;
 */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  // connect<T extends SignalsOf<RayCast>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RayCastSignals>>(signal: T, method: SignalFunction<RayCastSignals[T]>): number;
+  connect<T extends SignalsOf<RayCast>>(signal: T, method: SignalFunction<RayCast[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RayCastSignals extends SpatialSignals {
-  
-}

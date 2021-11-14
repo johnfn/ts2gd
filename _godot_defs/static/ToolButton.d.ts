@@ -10,7 +10,7 @@
  * 
  *
 */
-declare class ToolButton extends Button {
+declare class ToolButton extends Button  {
 
   
 /**
@@ -24,22 +24,19 @@ declare class ToolButton extends Button {
  * 
  *
 */
-  "new"(): ToolButton;
-  static "new"(): ToolButton;
+  new(): ToolButton; 
+  static "new"(): ToolButton 
 
 
 
 
 
+  connect<T extends SignalsOf<ToolButton>>(signal: T, method: SignalFunction<ToolButton[T]>): number;
 
-  // connect<T extends SignalsOf<ToolButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ToolButtonSignals>>(signal: T, method: SignalFunction<ToolButtonSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class ToolButtonSignals extends ButtonSignals {
-  
-}

@@ -5,7 +5,7 @@
  * If there is no active [Listener2D] in the current [Viewport], center of the screen will be used as a hearing point for the audio. [Listener2D] needs to be inside [SceneTree] to function.
  *
 */
-declare class Listener2D extends Node2D {
+declare class Listener2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Listener2D extends Node2D {
  * If there is no active [Listener2D] in the current [Viewport], center of the screen will be used as a hearing point for the audio. [Listener2D] needs to be inside [SceneTree] to function.
  *
 */
-  "new"(): Listener2D;
-  static "new"(): Listener2D;
-
+  new(): Listener2D; 
+  static "new"(): Listener2D 
 
 
 
@@ -34,14 +33,12 @@ is_current(): boolean;
 */
 make_current(): void;
 
-  // connect<T extends SignalsOf<Listener2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Listener2DSignals>>(signal: T, method: SignalFunction<Listener2DSignals[T]>): number;
+  connect<T extends SignalsOf<Listener2D>>(signal: T, method: SignalFunction<Listener2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Listener2DSignals extends Node2DSignals {
-  
-}

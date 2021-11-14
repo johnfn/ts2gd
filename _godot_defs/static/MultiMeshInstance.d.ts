@@ -5,7 +5,7 @@
  * This is useful to optimize the rendering of a high amount of instances of a given mesh (for example trees in a forest or grass strands).
  *
 */
-declare class MultiMeshInstance extends GeometryInstance {
+declare class MultiMeshInstance extends GeometryInstance  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class MultiMeshInstance extends GeometryInstance {
  * This is useful to optimize the rendering of a high amount of instances of a given mesh (for example trees in a forest or grass strands).
  *
 */
-  "new"(): MultiMeshInstance;
-  static "new"(): MultiMeshInstance;
-
+  new(): MultiMeshInstance; 
+  static "new"(): MultiMeshInstance 
 
 
 /** The [MultiMesh] resource that will be used and shared among all instances of the [MultiMeshInstance]. */
@@ -24,14 +23,12 @@ multimesh: MultiMesh;
 
 
 
-  // connect<T extends SignalsOf<MultiMeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MultiMeshInstanceSignals>>(signal: T, method: SignalFunction<MultiMeshInstanceSignals[T]>): number;
+  connect<T extends SignalsOf<MultiMeshInstance>>(signal: T, method: SignalFunction<MultiMeshInstance[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MultiMeshInstanceSignals extends GeometryInstanceSignals {
-  
-}

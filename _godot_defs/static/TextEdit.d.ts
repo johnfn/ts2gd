@@ -5,7 +5,7 @@
  * **Note:** When holding down `Alt`, the vertical scroll wheel will scroll 5 times as fast as it would normally do. This also works in the Godot script editor.
  *
 */
-declare class TextEdit extends Control {
+declare class TextEdit extends Control  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TextEdit extends Control {
  * **Note:** When holding down `Alt`, the vertical scroll wheel will scroll 5 times as fast as it would normally do. This also works in the Godot script editor.
  *
 */
-  "new"(): TextEdit;
-  static "new"(): TextEdit;
-
+  new(): TextEdit; 
+  static "new"(): TextEdit 
 
 
 /** If [code]true[/code], the breakpoint gutter is visible. */
@@ -186,7 +185,12 @@ get_line(line: int): string;
 /** Returns the amount of total lines in the text. */
 get_line_count(): int;
 
-/** Returns the [PopupMenu] of this [TextEdit]. By default, this menu is displayed when right-clicking on the [TextEdit]. */
+/**
+ * Returns the [PopupMenu] of this [TextEdit]. By default, this menu is displayed when right-clicking on the [TextEdit].
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_menu(): PopupMenu;
 
 /** Returns the selection begin column. */
@@ -320,8 +324,7 @@ unfold_line(line: int): void;
 /** Unhide all lines that were previously set to hidden by [method set_line_as_hidden]. */
 unhide_all_lines(): void;
 
-  // connect<T extends SignalsOf<TextEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextEditSignals>>(signal: T, method: SignalFunction<TextEditSignals[T]>): number;
+  connect<T extends SignalsOf<TextEdit>>(signal: T, method: SignalFunction<TextEdit[T]>): number;
 
 
 
@@ -403,39 +406,38 @@ static MENU_REDO: any;
 */
 static MENU_MAX: any;
 
-}
 
-declare class TextEditSignals extends ControlSignals {
-  /**
+/**
  * Emitted when a breakpoint is placed via the breakpoint gutter.
  *
 */
-breakpoint_toggled: Signal<(row: int) => void>
+$breakpoint_toggled: Signal<(row: int) => void>
 
 /**
  * Emitted when the cursor changes.
  *
 */
-cursor_changed: Signal<() => void>
+$cursor_changed: Signal<() => void>
 
 /**
  * Emitted when the info icon is clicked.
  *
 */
-info_clicked: Signal<(row: int, info: string) => void>
+$info_clicked: Signal<(row: int, info: string) => void>
 
 /**
 */
-request_completion: Signal<() => void>
+$request_completion: Signal<() => void>
 
 /**
 */
-symbol_lookup: Signal<(symbol: string, row: int, column: int) => void>
+$symbol_lookup: Signal<(symbol: string, row: int, column: int) => void>
 
 /**
  * Emitted when the text changes.
  *
 */
-text_changed: Signal<() => void>
+$text_changed: Signal<() => void>
 
 }
+

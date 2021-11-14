@@ -1,14 +1,13 @@
 
 /**
 */
-declare class AnimationNodeStateMachineTransition extends Resource {
+declare class AnimationNodeStateMachineTransition extends Resource  {
 
   
 /**
 */
-  "new"(): AnimationNodeStateMachineTransition;
-  static "new"(): AnimationNodeStateMachineTransition;
-
+  new(): AnimationNodeStateMachineTransition; 
+  static "new"(): AnimationNodeStateMachineTransition 
 
 
 /**
@@ -40,8 +39,7 @@ xfade_time: float;
 
 
 
-  // connect<T extends SignalsOf<AnimationNodeStateMachineTransition>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeStateMachineTransitionSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachineTransitionSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachineTransition>>(signal: T, method: SignalFunction<AnimationNodeStateMachineTransition[T]>): number;
 
 
 
@@ -63,13 +61,12 @@ static SWITCH_MODE_SYNC: any;
 */
 static SWITCH_MODE_AT_END: any;
 
-}
 
-declare class AnimationNodeStateMachineTransitionSignals extends ResourceSignals {
-  /**
+/**
  * Emitted when [member advance_condition] is changed.
  *
 */
-advance_condition_changed: Signal<() => void>
+$advance_condition_changed: Signal<() => void>
 
 }
+

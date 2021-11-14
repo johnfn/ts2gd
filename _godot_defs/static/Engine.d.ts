@@ -3,16 +3,15 @@
  * The [Engine] singleton allows you to query and modify the project's run-time parameters, such as frames per second, time scale, and others.
  *
 */
-declare class EngineClass extends Object {
+declare class EngineClass extends Object  {
 
   
 /**
  * The [Engine] singleton allows you to query and modify the project's run-time parameters, such as frames per second, time scale, and others.
  *
 */
-  "new"(): EngineClass;
-  static "new"(): EngineClass;
-
+  new(): EngineClass; 
+  static "new"(): EngineClass 
 
 
 /**
@@ -187,14 +186,12 @@ has_singleton(name: string): boolean;
 /** Returns [code]true[/code] if the game is inside the fixed process and physics phase of the game loop. */
 is_in_physics_frame(): boolean;
 
-  // connect<T extends SignalsOf<EngineClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EngineClassSignals>>(signal: T, method: SignalFunction<EngineClassSignals[T]>): number;
+  connect<T extends SignalsOf<EngineClass>>(signal: T, method: SignalFunction<EngineClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EngineClassSignals extends ObjectSignals {
-  
-}

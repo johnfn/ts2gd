@@ -1,14 +1,13 @@
 
 /**
 */
-declare class SpatialVelocityTracker extends Reference {
+declare class SpatialVelocityTracker extends Reference  {
 
   
 /**
 */
-  "new"(): SpatialVelocityTracker;
-  static "new"(): SpatialVelocityTracker;
-
+  new(): SpatialVelocityTracker; 
+  static "new"(): SpatialVelocityTracker 
 
 
 
@@ -21,14 +20,12 @@ reset(position: Vector3): void;
 /** No documentation provided. */
 update_position(position: Vector3): void;
 
-  // connect<T extends SignalsOf<SpatialVelocityTracker>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpatialVelocityTrackerSignals>>(signal: T, method: SignalFunction<SpatialVelocityTrackerSignals[T]>): number;
+  connect<T extends SignalsOf<SpatialVelocityTracker>>(signal: T, method: SignalFunction<SpatialVelocityTracker[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SpatialVelocityTrackerSignals extends ReferenceSignals {
-  
-}

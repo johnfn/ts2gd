@@ -3,16 +3,15 @@
  * Plugins are used by the editor to extend functionality. The most common types of plugins are those which edit a given node or resource type, import plugins and export plugins. See also [EditorScript] to add functions to the editor.
  *
 */
-declare class EditorPlugin extends Node {
+declare class EditorPlugin extends Node  {
 
   
 /**
  * Plugins are used by the editor to extend functionality. The most common types of plugins are those which edit a given node or resource type, import plugins and export plugins. See also [EditorScript] to add functions to the editor.
  *
 */
-  "new"(): EditorPlugin;
-  static "new"(): EditorPlugin;
-
+  new(): EditorPlugin; 
+  static "new"(): EditorPlugin 
 
 
 
@@ -287,6 +286,8 @@ get_plugin_name(): string;
  *
  * **Note:** Users can configure it before use.
  *
+ * **Warning:** Removing and freeing this node will render a part of the editor useless and may cause a crash.
+ *
 */
 get_script_create_dialog(): ScriptCreateDialog;
 
@@ -373,8 +374,7 @@ set_window_layout(layout: ConfigFile): void;
 /** Updates the overlays of the 2D and 3D editor viewport. Causes methods [method forward_canvas_draw_over_viewport], [method forward_canvas_force_draw_over_viewport], [method forward_spatial_draw_over_viewport] and [method forward_spatial_force_draw_over_viewport] to be called. */
 update_overlays(): int;
 
-  // connect<T extends SignalsOf<EditorPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorPluginSignals>>(signal: T, method: SignalFunction<EditorPluginSignals[T]>): number;
+  connect<T extends SignalsOf<EditorPlugin>>(signal: T, method: SignalFunction<EditorPlugin[T]>): number;
 
 
 
@@ -444,29 +444,28 @@ static DOCK_SLOT_RIGHT_BR: any;
 */
 static DOCK_SLOT_MAX: any;
 
-}
 
-declare class EditorPluginSignals extends NodeSignals {
-  /**
+/**
  * Emitted when user changes the workspace (**2D**, **3D**, **Script**, **AssetLib**). Also works with custom screens defined by plugins.
  *
 */
-main_screen_changed: Signal<(screen_name: string) => void>
+$main_screen_changed: Signal<(screen_name: string) => void>
 
 /**
 */
-resource_saved: Signal<(resource: Resource) => void>
+$resource_saved: Signal<(resource: Resource) => void>
 
 /**
  * Emitted when the scene is changed in the editor. The argument will return the root node of the scene that has just become active. If this scene is new and empty, the argument will be `null`.
  *
 */
-scene_changed: Signal<(scene_root: Node) => void>
+$scene_changed: Signal<(scene_root: Node) => void>
 
 /**
  * Emitted when user closes a scene. The argument is file path to a closed scene.
  *
 */
-scene_closed: Signal<(filepath: string) => void>
+$scene_closed: Signal<(filepath: string) => void>
 
 }
+

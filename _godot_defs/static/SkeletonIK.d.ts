@@ -20,7 +20,7 @@
  * 
  *
 */
-declare class SkeletonIK extends Node {
+declare class SkeletonIK extends Node  {
 
   
 /**
@@ -44,9 +44,8 @@ declare class SkeletonIK extends Node {
  * 
  *
 */
-  "new"(): SkeletonIK;
-  static "new"(): SkeletonIK;
-
+  new(): SkeletonIK; 
+  static "new"(): SkeletonIK 
 
 
 /** Interpolation value for how much the IK results are applied to the current skeleton bone chain. A value of [code]1.0[/code] will overwrite all skeleton bone transforms completely while a value of [code]0.0[/code] will visually disable the SkeletonIK. A value at or below [code]0.01[/code] also calls [method Skeleton.clear_bones_global_pose_override]. */
@@ -91,14 +90,12 @@ start(one_time?: boolean): void;
 /** Stops applying IK effects on each frame to the [Skeleton] bones and also calls [method Skeleton.clear_bones_global_pose_override] to remove existing overrides on all bones. */
 stop(): void;
 
-  // connect<T extends SignalsOf<SkeletonIK>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SkeletonIKSignals>>(signal: T, method: SignalFunction<SkeletonIKSignals[T]>): number;
+  connect<T extends SignalsOf<SkeletonIK>>(signal: T, method: SignalFunction<SkeletonIK[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SkeletonIKSignals extends NodeSignals {
-  
-}

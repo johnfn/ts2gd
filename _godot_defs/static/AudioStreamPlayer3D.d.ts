@@ -9,7 +9,7 @@
  * **Note:** Hiding an [AudioStreamPlayer3D] node does not disable its audio output. To temporarily disable an [AudioStreamPlayer3D]'s audio output, set [member unit_db] to a very low value like `-100` (which isn't audible to human hearing).
  *
 */
-declare class AudioStreamPlayer3D extends Spatial {
+declare class AudioStreamPlayer3D extends Spatial  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class AudioStreamPlayer3D extends Spatial {
  * **Note:** Hiding an [AudioStreamPlayer3D] node does not disable its audio output. To temporarily disable an [AudioStreamPlayer3D]'s audio output, set [member unit_db] to a very low value like `-100` (which isn't audible to human hearing).
  *
 */
-  "new"(): AudioStreamPlayer3D;
-  static "new"(): AudioStreamPlayer3D;
-
+  new(): AudioStreamPlayer3D; 
+  static "new"(): AudioStreamPlayer3D 
 
 
 /** Areas in which this sound plays. */
@@ -104,8 +103,7 @@ seek(to_position: float): void;
 /** Stops the audio. */
 stop(): void;
 
-  // connect<T extends SignalsOf<AudioStreamPlayer3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioStreamPlayer3DSignals>>(signal: T, method: SignalFunction<AudioStreamPlayer3DSignals[T]>): number;
+  connect<T extends SignalsOf<AudioStreamPlayer3D>>(signal: T, method: SignalFunction<AudioStreamPlayer3D[T]>): number;
 
 
 
@@ -128,7 +126,7 @@ static ATTENUATION_INVERSE_SQUARE_DISTANCE: any;
 static ATTENUATION_LOGARITHMIC: any;
 
 /**
- * No dampening of loudness according to distance. The sound will still be heard positionally, unlike an [AudioStreamPlayer].
+ * No dampening of loudness according to distance. The sound will still be heard positionally, unlike an [AudioStreamPlayer]. [constant ATTENUATION_DISABLED] can be combined with a [member max_distance] value greater than `0.0` to achieve linear attenuation clamped to a sphere of a defined size.
  *
 */
 static ATTENUATION_DISABLED: any;
@@ -163,13 +161,12 @@ static DOPPLER_TRACKING_IDLE_STEP: any;
 */
 static DOPPLER_TRACKING_PHYSICS_STEP: any;
 
-}
 
-declare class AudioStreamPlayer3DSignals extends SpatialSignals {
-  /**
+/**
  * Emitted when the audio stops playing.
  *
 */
-finished: Signal<() => void>
+$finished: Signal<() => void>
 
 }
+

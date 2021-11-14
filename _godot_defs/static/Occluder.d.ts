@@ -11,7 +11,7 @@
  * Although [Occluder]s work in general use, they also become even more powerful when used in conjunction with the portal system. Occluders are placed in rooms (based on their origin), and can block portals (and thus entire rooms) as well as objects from rendering.
  *
 */
-declare class Occluder extends Spatial {
+declare class Occluder extends Spatial  {
 
   
 /**
@@ -26,23 +26,20 @@ declare class Occluder extends Spatial {
  * Although [Occluder]s work in general use, they also become even more powerful when used in conjunction with the portal system. Occluders are placed in rooms (based on their origin), and can block portals (and thus entire rooms) as well as objects from rendering.
  *
 */
-  "new"(): Occluder;
-  static "new"(): Occluder;
-
+  new(): Occluder; 
+  static "new"(): Occluder 
 
 
 
 /** No documentation provided. */
 resource_changed(resource: Resource): void;
 
-  // connect<T extends SignalsOf<Occluder>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<OccluderSignals>>(signal: T, method: SignalFunction<OccluderSignals[T]>): number;
+  connect<T extends SignalsOf<Occluder>>(signal: T, method: SignalFunction<Occluder[T]>): number;
+
+
 
 
 
 
 }
 
-declare class OccluderSignals extends SpatialSignals {
-  
-}

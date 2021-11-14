@@ -3,16 +3,15 @@
  * Allows editing a collision polygon's vertices on a selected plane. Can also set a depth perpendicular to that plane. This class is only available in the editor. It will not appear in the scene tree at run-time. Creates a [Shape] for gameplay. Properties modified during gameplay will have no effect.
  *
 */
-declare class CollisionPolygon extends Spatial {
+declare class CollisionPolygon extends Spatial  {
 
   
 /**
  * Allows editing a collision polygon's vertices on a selected plane. Can also set a depth perpendicular to that plane. This class is only available in the editor. It will not appear in the scene tree at run-time. Creates a [Shape] for gameplay. Properties modified during gameplay will have no effect.
  *
 */
-  "new"(): CollisionPolygon;
-  static "new"(): CollisionPolygon;
-
+  new(): CollisionPolygon; 
+  static "new"(): CollisionPolygon 
 
 
 /** Length that the resulting collision extends in either direction perpendicular to its polygon. */
@@ -34,14 +33,12 @@ polygon: PoolVector2Array;
 
 
 
-  // connect<T extends SignalsOf<CollisionPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CollisionPolygonSignals>>(signal: T, method: SignalFunction<CollisionPolygonSignals[T]>): number;
+  connect<T extends SignalsOf<CollisionPolygon>>(signal: T, method: SignalFunction<CollisionPolygon[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CollisionPolygonSignals extends SpatialSignals {
-  
-}

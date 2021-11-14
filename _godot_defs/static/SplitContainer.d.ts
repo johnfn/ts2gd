@@ -3,16 +3,15 @@
  * Container for splitting two [Control]s vertically or horizontally, with a grabber that allows adjusting the split offset or ratio.
  *
 */
-declare class SplitContainer extends Container {
+declare class SplitContainer extends Container  {
 
   
 /**
  * Container for splitting two [Control]s vertically or horizontally, with a grabber that allows adjusting the split offset or ratio.
  *
 */
-  "new"(): SplitContainer;
-  static "new"(): SplitContainer;
-
+  new(): SplitContainer; 
+  static "new"(): SplitContainer 
 
 
 /** If [code]true[/code], the area of the first [Control] will be collapsed and the dragger will be disabled. */
@@ -27,8 +26,7 @@ split_offset: int;
 /** Clamps the [member split_offset] value to not go outside the currently possible minimal and maximum values. */
 clamp_split_offset(): void;
 
-  // connect<T extends SignalsOf<SplitContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SplitContainerSignals>>(signal: T, method: SignalFunction<SplitContainerSignals[T]>): number;
+  connect<T extends SignalsOf<SplitContainer>>(signal: T, method: SignalFunction<SplitContainer[T]>): number;
 
 
 
@@ -50,13 +48,12 @@ static DRAGGER_HIDDEN: any;
 */
 static DRAGGER_HIDDEN_COLLAPSED: any;
 
-}
 
-declare class SplitContainerSignals extends ContainerSignals {
-  /**
+/**
  * Emitted when the dragger is dragged by user.
  *
 */
-dragged: Signal<(offset: int) => void>
+$dragged: Signal<(offset: int) => void>
 
 }
+

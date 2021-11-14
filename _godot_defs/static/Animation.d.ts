@@ -17,7 +17,7 @@
  * Animations are just data containers, and must be added to nodes such as an [AnimationPlayer] or [AnimationTreePlayer] to be played back. Animation tracks have different types, each with its own set of dedicated methods. Check [enum TrackType] to see available types.
  *
 */
-declare class Animation extends Resource {
+declare class Animation extends Resource  {
 
   
 /**
@@ -38,9 +38,8 @@ declare class Animation extends Resource {
  * Animations are just data containers, and must be added to nodes such as an [AnimationPlayer] or [AnimationTreePlayer] to be played back. Animation tracks have different types, each with its own set of dedicated methods. Check [enum TrackType] to see available types.
  *
 */
-  "new"(): Animation;
-  static "new"(): Animation;
-
+  new(): Animation; 
+  static "new"(): Animation 
 
 
 /**
@@ -259,8 +258,7 @@ value_track_interpolate(track_idx: int, time_sec: float): any;
 /** Sets the update mode (see [enum UpdateMode]) of a value track. */
 value_track_set_update_mode(track_idx: int, mode: int): void;
 
-  // connect<T extends SignalsOf<Animation>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationSignals>>(signal: T, method: SignalFunction<AnimationSignals[T]>): number;
+  connect<T extends SignalsOf<Animation>>(signal: T, method: SignalFunction<Animation[T]>): number;
 
 
 
@@ -342,13 +340,12 @@ static UPDATE_TRIGGER: any;
 */
 static UPDATE_CAPTURE: any;
 
-}
 
-declare class AnimationSignals extends ResourceSignals {
-  /**
+/**
  * Emitted when there's a change in the list of tracks, e.g. tracks are added, moved or have changed paths.
  *
 */
-tracks_changed: Signal<() => void>
+$tracks_changed: Signal<() => void>
 
 }
+

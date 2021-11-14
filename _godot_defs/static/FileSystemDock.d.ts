@@ -1,14 +1,13 @@
 
 /**
 */
-declare class FileSystemDock extends VBoxContainer {
+declare class FileSystemDock extends VBoxContainer  {
 
   
 /**
 */
-  "new"(): FileSystemDock;
-  static "new"(): FileSystemDock;
-
+  new(): FileSystemDock; 
+  static "new"(): FileSystemDock 
 
 
 
@@ -24,41 +23,39 @@ get_drag_data_fw(point: Vector2, from: Control): any;
 /** No documentation provided. */
 navigate_to_path(path: string): void;
 
-  // connect<T extends SignalsOf<FileSystemDock>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<FileSystemDockSignals>>(signal: T, method: SignalFunction<FileSystemDockSignals[T]>): number;
+  connect<T extends SignalsOf<FileSystemDock>>(signal: T, method: SignalFunction<FileSystemDock[T]>): number;
 
 
 
+
+
+/**
+*/
+$display_mode_changed: Signal<() => void>
+
+/**
+*/
+$file_removed: Signal<(file: string) => void>
+
+/**
+*/
+$files_moved: Signal<(old_file: string, new_file: string) => void>
+
+/**
+*/
+$folder_moved: Signal<(old_folder: string, new_file: string) => void>
+
+/**
+*/
+$folder_removed: Signal<(folder: string) => void>
+
+/**
+*/
+$inherit: Signal<(file: string) => void>
+
+/**
+*/
+$instance: Signal<(files: PoolStringArray) => void>
 
 }
 
-declare class FileSystemDockSignals extends VBoxContainerSignals {
-  /**
-*/
-display_mode_changed: Signal<() => void>
-
-/**
-*/
-file_removed: Signal<(file: string) => void>
-
-/**
-*/
-files_moved: Signal<(old_file: string, new_file: string) => void>
-
-/**
-*/
-folder_moved: Signal<(old_folder: string, new_file: string) => void>
-
-/**
-*/
-folder_removed: Signal<(folder: string) => void>
-
-/**
-*/
-inherit: Signal<(file: string) => void>
-
-/**
-*/
-instance: Signal<(files: PoolStringArray) => void>
-
-}

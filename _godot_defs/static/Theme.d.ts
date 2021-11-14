@@ -5,7 +5,7 @@
  * Theme resources can alternatively be loaded by writing them in a `.theme` file, see the documentation for more information.
  *
 */
-declare class Theme extends Resource {
+declare class Theme extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Theme extends Resource {
  * Theme resources can alternatively be loaded by writing them in a `.theme` file, see the documentation for more information.
  *
 */
-  "new"(): Theme;
-  static "new"(): Theme;
-
+  new(): Theme; 
+  static "new"(): Theme 
 
 
 /**
@@ -263,8 +262,7 @@ set_stylebox(name: string, node_type: string, texture: StyleBox): void;
 */
 set_theme_item(data_type: int, name: string, node_type: string, value: any): void;
 
-  // connect<T extends SignalsOf<Theme>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ThemeSignals>>(signal: T, method: SignalFunction<ThemeSignals[T]>): number;
+  connect<T extends SignalsOf<Theme>>(signal: T, method: SignalFunction<Theme[T]>): number;
 
 
 
@@ -304,8 +302,7 @@ static DATA_TYPE_STYLEBOX: any;
 */
 static DATA_TYPE_MAX: any;
 
+
+
 }
 
-declare class ThemeSignals extends ResourceSignals {
-  
-}

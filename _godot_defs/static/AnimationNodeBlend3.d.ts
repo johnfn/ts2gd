@@ -11,7 +11,7 @@
  * - A +blend animation to blend with when the blend amount is in the `[0.0, 1.0]` range
  *
 */
-declare class AnimationNodeBlend3 extends AnimationNode {
+declare class AnimationNodeBlend3 extends AnimationNode  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class AnimationNodeBlend3 extends AnimationNode {
  * - A +blend animation to blend with when the blend amount is in the `[0.0, 1.0]` range
  *
 */
-  "new"(): AnimationNodeBlend3;
-  static "new"(): AnimationNodeBlend3;
-
+  new(): AnimationNodeBlend3; 
+  static "new"(): AnimationNodeBlend3 
 
 
 /** If [code]true[/code], sets the [code]optimization[/code] to [code]false[/code] when calling [method AnimationNode.blend_input], forcing the blended animations to update every frame. */
@@ -36,14 +35,12 @@ sync: boolean;
 
 
 
-  // connect<T extends SignalsOf<AnimationNodeBlend3>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeBlend3Signals>>(signal: T, method: SignalFunction<AnimationNodeBlend3Signals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeBlend3>>(signal: T, method: SignalFunction<AnimationNodeBlend3[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AnimationNodeBlend3Signals extends AnimationNodeSignals {
-  
-}

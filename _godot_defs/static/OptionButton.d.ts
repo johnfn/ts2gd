@@ -5,7 +5,7 @@
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-declare class OptionButton extends Button {
+declare class OptionButton extends Button  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class OptionButton extends Button {
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-  "new"(): OptionButton;
-  static "new"(): OptionButton;
-
+  new(): OptionButton; 
+  static "new"(): OptionButton 
 
 
 
@@ -55,7 +54,12 @@ get_item_metadata(idx: int): any;
 /** Returns the text of the item at index [code]idx[/code]. */
 get_item_text(idx: int): string;
 
-/** Returns the [PopupMenu] contained in this button. */
+/**
+ * Returns the [PopupMenu] contained in this button.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_popup(): PopupMenu;
 
 /** Returns the ID of the selected item, or [code]0[/code] if no item is selected. */
@@ -93,25 +97,23 @@ set_item_metadata(idx: int, metadata: any): void;
 /** Sets the text of the item at index [code]idx[/code]. */
 set_item_text(idx: int, text: string): void;
 
-  // connect<T extends SignalsOf<OptionButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<OptionButtonSignals>>(signal: T, method: SignalFunction<OptionButtonSignals[T]>): number;
+  connect<T extends SignalsOf<OptionButton>>(signal: T, method: SignalFunction<OptionButton[T]>): number;
 
 
 
 
-}
 
-declare class OptionButtonSignals extends ButtonSignals {
-  /**
+/**
  * Emitted when the user navigates to an item using the `ui_up` or `ui_down` actions. The index of the item selected is passed as argument.
  *
 */
-item_focused: Signal<(index: int) => void>
+$item_focused: Signal<(index: int) => void>
 
 /**
  * Emitted when the current item has been changed by the user. The index of the item selected is passed as argument.
  *
 */
-item_selected: Signal<(index: int) => void>
+$item_selected: Signal<(index: int) => void>
 
 }
+

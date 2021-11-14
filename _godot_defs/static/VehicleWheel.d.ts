@@ -5,7 +5,7 @@
  * **Note:** This class has known issues and isn't designed to provide realistic 3D vehicle physics. If you want advanced vehicle physics, you will probably have to write your own physics integration using another [PhysicsBody] class.
  *
 */
-declare class VehicleWheel extends Spatial {
+declare class VehicleWheel extends Spatial  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class VehicleWheel extends Spatial {
  * **Note:** This class has known issues and isn't designed to provide realistic 3D vehicle physics. If you want advanced vehicle physics, you will probably have to write your own physics integration using another [PhysicsBody] class.
  *
 */
-  "new"(): VehicleWheel;
-  static "new"(): VehicleWheel;
-
+  new(): VehicleWheel; 
+  static "new"(): VehicleWheel 
 
 
 /** Slows down the wheel by applying a braking force. The wheel is only slowed down if it is in contact with a surface. The force you need to apply to adequately slow down your vehicle depends on the [member RigidBody.mass] of the vehicle. For a vehicle with a mass set to 1000, try a value in the 25 - 30 range for hard braking. */
@@ -82,14 +81,12 @@ get_skidinfo(): float;
 /** Returns [code]true[/code] if this wheel is in contact with a surface. */
 is_in_contact(): boolean;
 
-  // connect<T extends SignalsOf<VehicleWheel>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VehicleWheelSignals>>(signal: T, method: SignalFunction<VehicleWheelSignals[T]>): number;
+  connect<T extends SignalsOf<VehicleWheel>>(signal: T, method: SignalFunction<VehicleWheel[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VehicleWheelSignals extends SpatialSignals {
-  
-}

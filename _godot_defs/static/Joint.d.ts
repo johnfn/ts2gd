@@ -3,16 +3,15 @@
  * Joints are used to bind together two physics bodies. They have a solver priority and can define if the bodies of the two attached nodes should be able to collide with each other.
  *
 */
-declare class Joint extends Spatial {
+declare class Joint extends Spatial  {
 
   
 /**
  * Joints are used to bind together two physics bodies. They have a solver priority and can define if the bodies of the two attached nodes should be able to collide with each other.
  *
 */
-  "new"(): Joint;
-  static "new"(): Joint;
-
+  new(): Joint; 
+  static "new"(): Joint 
 
 
 /** If [code]true[/code], the two bodies of the nodes are not able to collide with each other. */
@@ -29,14 +28,12 @@ declare class Joint extends Spatial {
 
 
 
-  // connect<T extends SignalsOf<Joint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JointSignals>>(signal: T, method: SignalFunction<JointSignals[T]>): number;
+  connect<T extends SignalsOf<Joint>>(signal: T, method: SignalFunction<Joint[T]>): number;
+
+
 
 
 
 
 }
 
-declare class JointSignals extends SpatialSignals {
-  
-}

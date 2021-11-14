@@ -3,16 +3,15 @@
  * Operating System functions. OS wraps the most common functionality to communicate with the host operating system, such as the clipboard, video driver, date and time, timers, environment variables, execution of binaries, command line, etc.
  *
 */
-declare class OSClass extends Object {
+declare class OSClass extends Object  {
 
   
 /**
  * Operating System functions. OS wraps the most common functionality to communicate with the host operating system, such as the clipboard, video driver, date and time, timers, environment variables, execution of binaries, command line, etc.
  *
 */
-  "new"(): OSClass;
-  static "new"(): OSClass;
-
+  new(): OSClass; 
+  static "new"(): OSClass 
 
 
 /** The clipboard from the host OS. Might be unavailable on some platforms. */
@@ -284,7 +283,16 @@ get_data_dir(): string;
 get_date(utc?: boolean): Dictionary<any, any>;
 
 /** Returns current datetime as a dictionary of keys: [code]year[/code], [code]month[/code], [code]day[/code], [code]weekday[/code], [code]dst[/code] (Daylight Savings Time), [code]hour[/code], [code]minute[/code], [code]second[/code]. */
-get_datetime(utc?: boolean): Dictionary<any, any>;
+get_datetime(utc?: boolean): {
+      year: number;
+      month: number;
+      day: number;
+      weekday: number;
+      dst: boolean;
+      hour: number;
+      minute: number;
+      second: number;
+    };
 
 /**
  * Gets a dictionary of time values corresponding to the given UNIX epoch time (in seconds).
@@ -958,8 +966,7 @@ shell_open(uri: string): int;
 */
 show_virtual_keyboard(existing_text?: string, multiline?: boolean): void;
 
-  // connect<T extends SignalsOf<OSClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<OSClassSignals>>(signal: T, method: SignalFunction<OSClassSignals[T]>): number;
+  connect<T extends SignalsOf<OSClass>>(signal: T, method: SignalFunction<OSClass[T]>): number;
 
 
 
@@ -1265,8 +1272,7 @@ static POWERSTATE_CHARGING: any;
 */
 static POWERSTATE_CHARGED: any;
 
+
+
 }
 
-declare class OSClassSignals extends ObjectSignals {
-  
-}

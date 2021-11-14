@@ -3,16 +3,15 @@
  * Class that has everything pertaining to a world. A physics space, a visual scenario and a sound space. Spatial nodes register their resources into the current world.
  *
 */
-declare class World extends Resource {
+declare class World extends Resource  {
 
   
 /**
  * Class that has everything pertaining to a world. A physics space, a visual scenario and a sound space. Spatial nodes register their resources into the current world.
  *
 */
-  "new"(): World;
-  static "new"(): World;
-
+  new(): World; 
+  static "new"(): World 
 
 
 /** Direct access to the world's physics 3D space state. Used for querying current and potential collisions. */
@@ -32,14 +31,12 @@ space: RID;
 
 
 
-  // connect<T extends SignalsOf<World>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<WorldSignals>>(signal: T, method: SignalFunction<WorldSignals[T]>): number;
+  connect<T extends SignalsOf<World>>(signal: T, method: SignalFunction<World[T]>): number;
+
+
 
 
 
 
 }
 
-declare class WorldSignals extends ResourceSignals {
-  
-}

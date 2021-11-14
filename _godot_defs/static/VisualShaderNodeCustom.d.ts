@@ -13,7 +13,7 @@
  * 
  *
 */
-declare class VisualShaderNodeCustom extends VisualShaderNode {
+declare class VisualShaderNodeCustom extends VisualShaderNode  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class VisualShaderNodeCustom extends VisualShaderNode {
  * 
  *
 */
-  "new"(): VisualShaderNodeCustom;
-  static "new"(): VisualShaderNodeCustom;
-
+  new(): VisualShaderNodeCustom; 
+  static "new"(): VisualShaderNodeCustom 
 
 
 
@@ -150,14 +149,12 @@ protected _get_return_icon_type(): int;
 */
 protected _get_subcategory(): string;
 
-  // connect<T extends SignalsOf<VisualShaderNodeCustom>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeCustomSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCustomSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeCustom>>(signal: T, method: SignalFunction<VisualShaderNodeCustom[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VisualShaderNodeCustomSignals extends VisualShaderNodeSignals {
-  
-}

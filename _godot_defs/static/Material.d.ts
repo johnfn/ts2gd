@@ -3,16 +3,15 @@
  * Material is a base [Resource] used for coloring and shading geometry. All materials inherit from it and almost all [VisualInstance] derived nodes carry a Material. A few flags and parameters are shared between all material types and are configured here.
  *
 */
-declare class Material extends Resource {
+declare class Material extends Resource  {
 
   
 /**
  * Material is a base [Resource] used for coloring and shading geometry. All materials inherit from it and almost all [VisualInstance] derived nodes carry a Material. A few flags and parameters are shared between all material types and are configured here.
  *
 */
-  "new"(): Material;
-  static "new"(): Material;
-
+  new(): Material; 
+  static "new"(): Material 
 
 
 /**
@@ -33,8 +32,7 @@ render_priority: int;
 
 
 
-  // connect<T extends SignalsOf<Material>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MaterialSignals>>(signal: T, method: SignalFunction<MaterialSignals[T]>): number;
+  connect<T extends SignalsOf<Material>>(signal: T, method: SignalFunction<Material[T]>): number;
 
 
 
@@ -50,8 +48,7 @@ static RENDER_PRIORITY_MAX: any;
 */
 static RENDER_PRIORITY_MIN: any;
 
+
+
 }
 
-declare class MaterialSignals extends ResourceSignals {
-  
-}

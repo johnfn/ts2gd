@@ -3,16 +3,15 @@
  * A TCP server. Listens to connections on a port and returns a [StreamPeerTCP] when it gets an incoming connection.
  *
 */
-declare class TCP_Server extends Reference {
+declare class TCP_Server extends Reference  {
 
   
 /**
  * A TCP server. Listens to connections on a port and returns a [StreamPeerTCP] when it gets an incoming connection.
  *
 */
-  "new"(): TCP_Server;
-  static "new"(): TCP_Server;
-
+  new(): TCP_Server; 
+  static "new"(): TCP_Server 
 
 
 
@@ -40,14 +39,12 @@ stop(): void;
 /** If a connection is available, returns a StreamPeerTCP with the connection. */
 take_connection(): StreamPeerTCP;
 
-  // connect<T extends SignalsOf<TCP_Server>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TCP_ServerSignals>>(signal: T, method: SignalFunction<TCP_ServerSignals[T]>): number;
+  connect<T extends SignalsOf<TCP_Server>>(signal: T, method: SignalFunction<TCP_Server[T]>): number;
+
+
 
 
 
 
 }
 
-declare class TCP_ServerSignals extends ReferenceSignals {
-  
-}

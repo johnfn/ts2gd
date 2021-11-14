@@ -3,16 +3,15 @@
  * Renders text using `*.fnt` fonts containing texture atlases. Supports distance fields. For using vector font files like TTF directly, see [DynamicFont].
  *
 */
-declare class BitmapFont extends Font {
+declare class BitmapFont extends Font  {
 
   
 /**
  * Renders text using `*.fnt` fonts containing texture atlases. Supports distance fields. For using vector font files like TTF directly, see [DynamicFont].
  *
 */
-  "new"(): BitmapFont;
-  static "new"(): BitmapFont;
-
+  new(): BitmapFont; 
+  static "new"(): BitmapFont 
 
 
 /** Ascent (number of pixels above the baseline). */
@@ -51,14 +50,12 @@ get_texture(idx: int): Texture;
 /** Returns the number of textures in the BitmapFont atlas. */
 get_texture_count(): int;
 
-  // connect<T extends SignalsOf<BitmapFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BitmapFontSignals>>(signal: T, method: SignalFunction<BitmapFontSignals[T]>): number;
+  connect<T extends SignalsOf<BitmapFont>>(signal: T, method: SignalFunction<BitmapFont[T]>): number;
+
+
 
 
 
 
 }
 
-declare class BitmapFontSignals extends FontSignals {
-  
-}

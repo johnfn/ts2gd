@@ -3,16 +3,15 @@
  * Class representing a cylindrical [PrimitiveMesh]. This class can be used to create cones by setting either the [member top_radius] or [member bottom_radius] properties to `0.0`.
  *
 */
-declare class CylinderMesh extends PrimitiveMesh {
+declare class CylinderMesh extends PrimitiveMesh  {
 
   
 /**
  * Class representing a cylindrical [PrimitiveMesh]. This class can be used to create cones by setting either the [member top_radius] or [member bottom_radius] properties to `0.0`.
  *
 */
-  "new"(): CylinderMesh;
-  static "new"(): CylinderMesh;
-
+  new(): CylinderMesh; 
+  static "new"(): CylinderMesh 
 
 
 /** Bottom radius of the cylinder. If set to [code]0.0[/code], the bottom faces will not be generated, resulting in a conic shape. */
@@ -32,14 +31,12 @@ top_radius: float;
 
 
 
-  // connect<T extends SignalsOf<CylinderMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CylinderMeshSignals>>(signal: T, method: SignalFunction<CylinderMeshSignals[T]>): number;
+  connect<T extends SignalsOf<CylinderMesh>>(signal: T, method: SignalFunction<CylinderMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CylinderMeshSignals extends PrimitiveMeshSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Canvas drawing layer. [CanvasItem] nodes that are direct or indirect children of a [CanvasLayer] will be drawn in that layer. The layer is a numeric index that defines the draw order. The default 2D scene renders with index 0, so a [CanvasLayer] with index -1 will be drawn below, and one with index 1 will be drawn above. This is very useful for HUDs (in layer 1+ or above), or backgrounds (in layer -1 or below).
  *
 */
-declare class CanvasLayer extends Node {
+declare class CanvasLayer extends Node  {
 
   
 /**
  * Canvas drawing layer. [CanvasItem] nodes that are direct or indirect children of a [CanvasLayer] will be drawn in that layer. The layer is a numeric index that defines the draw order. The default 2D scene renders with index 0, so a [CanvasLayer] with index -1 will be drawn below, and one with index 1 will be drawn above. This is very useful for HUDs (in layer 1+ or above), or backgrounds (in layer -1 or below).
  *
 */
-  "new"(): CanvasLayer;
-  static "new"(): CanvasLayer;
-
+  new(): CanvasLayer; 
+  static "new"(): CanvasLayer 
 
 
 /** The custom [Viewport] node assigned to the [CanvasLayer]. If [code]null[/code], uses the default viewport instead. */
@@ -45,14 +44,12 @@ transform: Transform2D;
 /** Returns the RID of the canvas used by this layer. */
 get_canvas(): RID;
 
-  // connect<T extends SignalsOf<CanvasLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CanvasLayerSignals>>(signal: T, method: SignalFunction<CanvasLayerSignals[T]>): number;
+  connect<T extends SignalsOf<CanvasLayer>>(signal: T, method: SignalFunction<CanvasLayer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CanvasLayerSignals extends NodeSignals {
-  
-}

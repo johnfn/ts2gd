@@ -1,14 +1,13 @@
 
 /**
 */
-declare class StreamPeerBuffer extends StreamPeer {
+declare class StreamPeerBuffer extends StreamPeer  {
 
   
 /**
 */
-  "new"(): StreamPeerBuffer;
-  static "new"(): StreamPeerBuffer;
-
+  new(): StreamPeerBuffer; 
+  static "new"(): StreamPeerBuffer 
 
 
 
@@ -30,14 +29,12 @@ resize(size: int): void;
 /** No documentation provided. */
 seek(position: int): void;
 
-  // connect<T extends SignalsOf<StreamPeerBuffer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StreamPeerBufferSignals>>(signal: T, method: SignalFunction<StreamPeerBufferSignals[T]>): number;
+  connect<T extends SignalsOf<StreamPeerBuffer>>(signal: T, method: SignalFunction<StreamPeerBuffer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StreamPeerBufferSignals extends StreamPeerSignals {
-  
-}

@@ -3,16 +3,15 @@
  * CollisionObject2D is the base class for 2D physics objects. It can hold any number of 2D collision [Shape2D]s. Each shape must be assigned to a **shape owner**. The CollisionObject2D can have any number of shape owners. Shape owners are not nodes and do not appear in the editor, but are accessible through code using the `shape_owner_*` methods.
  *
 */
-declare class CollisionObject2D extends Node2D {
+declare class CollisionObject2D extends Node2D  {
 
   
 /**
  * CollisionObject2D is the base class for 2D physics objects. It can hold any number of 2D collision [Shape2D]s. Each shape must be assigned to a **shape owner**. The CollisionObject2D can have any number of shape owners. Shape owners are not nodes and do not appear in the editor, but are accessible through code using the `shape_owner_*` methods.
  *
 */
-  "new"(): CollisionObject2D;
-  static "new"(): CollisionObject2D;
-
+  new(): CollisionObject2D; 
+  static "new"(): CollisionObject2D 
 
 
 /**
@@ -119,31 +118,29 @@ shape_owner_set_one_way_collision_margin(owner_id: int, margin: float): void;
 /** Sets the [Transform2D] of the given shape owner. */
 shape_owner_set_transform(owner_id: int, transform: Transform2D): void;
 
-  // connect<T extends SignalsOf<CollisionObject2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CollisionObject2DSignals>>(signal: T, method: SignalFunction<CollisionObject2DSignals[T]>): number;
+  connect<T extends SignalsOf<CollisionObject2D>>(signal: T, method: SignalFunction<CollisionObject2D[T]>): number;
 
 
 
 
-}
 
-declare class CollisionObject2DSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when an input event occurs. Requires [member input_pickable] to be `true` and at least one `collision_layer` bit to be set. See [method _input_event] for details.
  *
 */
-input_event: Signal<(viewport: Node, event: InputEvent, shape_idx: int) => void>
+$input_event: Signal<(viewport: Node, event: InputEvent, shape_idx: int) => void>
 
 /**
  * Emitted when the mouse pointer enters any of this object's shapes. Requires [member input_pickable] to be `true` and at least one `collision_layer` bit to be set.
  *
 */
-mouse_entered: Signal<() => void>
+$mouse_entered: Signal<() => void>
 
 /**
  * Emitted when the mouse pointer exits all this object's shapes. Requires [member input_pickable] to be `true` and at least one `collision_layer` bit to be set.
  *
 */
-mouse_exited: Signal<() => void>
+$mouse_exited: Signal<() => void>
 
 }
+

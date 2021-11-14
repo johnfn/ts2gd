@@ -23,7 +23,7 @@
  * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/tween_cheatsheet.png]Tween easing and transition types cheatsheet[/url]
  *
 */
-declare class Tween extends Node {
+declare class Tween extends Node  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class Tween extends Node {
  * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/tween_cheatsheet.png]Tween easing and transition types cheatsheet[/url]
  *
 */
-  "new"(): Tween;
-  static "new"(): Tween;
-
+  new(): Tween; 
+  static "new"(): Tween 
 
 
 /** The tween's animation process thread. See [enum TweenProcessMode]. */
@@ -165,8 +164,7 @@ targeting_property(object: Object, property: NodePathType, initial: Object, init
 /** Returns the current time of the tween. */
 tell(): float;
 
-  // connect<T extends SignalsOf<Tween>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TweenSignals>>(signal: T, method: SignalFunction<TweenSignals[T]>): number;
+  connect<T extends SignalsOf<Tween>>(signal: T, method: SignalFunction<Tween[T]>): number;
 
 
 
@@ -272,31 +270,30 @@ static EASE_IN_OUT: any;
 */
 static EASE_OUT_IN: any;
 
-}
 
-declare class TweenSignals extends NodeSignals {
-  /**
+/**
  * Emitted when all processes in a tween end.
  *
 */
-tween_all_completed: Signal<() => void>
+$tween_all_completed: Signal<() => void>
 
 /**
  * Emitted when a tween ends.
  *
 */
-tween_completed: Signal<(object: Object, key: NodePathType) => void>
+$tween_completed: Signal<(object: Object, key: NodePathType) => void>
 
 /**
  * Emitted when a tween starts.
  *
 */
-tween_started: Signal<(object: Object, key: NodePathType) => void>
+$tween_started: Signal<(object: Object, key: NodePathType) => void>
 
 /**
  * Emitted at each step of the animation.
  *
 */
-tween_step: Signal<(object: Object, key: NodePathType, elapsed: float, value: Object) => void>
+$tween_step: Signal<(object: Object, key: NodePathType, elapsed: float, value: Object) => void>
 
 }
+

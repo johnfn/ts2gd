@@ -3,16 +3,15 @@
  * A singleton that deals with inputs. This includes key presses, mouse buttons and movement, joypads, and input actions. Actions and their events can be set in the **Input Map** tab in the **Project > Project Settings**, or with the [InputMap] class.
  *
 */
-declare class InputClass extends Object {
+declare class InputClass extends Object  {
 
   
 /**
  * A singleton that deals with inputs. This includes key presses, mouse buttons and movement, joypads, and input actions. Actions and their events can be set in the **Input Map** tab in the **Project > Project Settings**, or with the [InputMap] class.
  *
 */
-  "new"(): InputClass;
-  static "new"(): InputClass;
-
+  new(): InputClass; 
+  static "new"(): InputClass 
 
 
 
@@ -31,6 +30,14 @@ action_release(action: string): void;
 
 /** Adds a new mapping entry (in SDL2 format) to the mapping database. Optionally update already connected devices. */
 add_joy_mapping(mapping: string, update_existing?: boolean): void;
+
+/**
+ * Sends all input events which are in the current buffer to the game loop. These events may have been buffered as a result of accumulated input ([method set_use_accumulated_input]) or agile input flushing ([member ProjectSettings.input_devices/buffering/agile_event_flushing]).
+ *
+ * The engine will already do this itself at key execution points (at least once per frame). However, this can be useful in advanced cases where you want precise control over the timing of event handling.
+ *
+*/
+flush_buffered_events(): void;
 
 /**
  * Returns the acceleration of the device's accelerometer sensor, if the device has one. Otherwise, the method returns [constant Vector3.ZERO].
@@ -150,7 +157,8 @@ get_vector(negative_x: string, positive_x: string, negative_y: string, positive_
  * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
  *
 */
-is_action_just_pressed(action: string, exact?: boolean): boolean;
+is_action_just_pressed(action: Action): boolean;
+      
 
 /**
  * Returns `true` when the user stops pressing the action event, meaning it's `true` only on the frame that the user released the button.
@@ -158,7 +166,8 @@ is_action_just_pressed(action: string, exact?: boolean): boolean;
  * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
  *
 */
-is_action_just_released(action: string, exact?: boolean): boolean;
+is_action_just_released(action: Action): boolean;
+      
 
 /**
  * Returns `true` if you are pressing the action event. Note that if an action has multiple buttons assigned and more than one of them is pressed, releasing one button will release the action, even if some other button assigned to this action is still pressed.
@@ -166,7 +175,8 @@ is_action_just_released(action: string, exact?: boolean): boolean;
  * If `exact` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
  *
 */
-is_action_pressed(action: string, exact?: boolean): boolean;
+is_action_pressed(action: Action): boolean;
+      
 
 /** Returns [code]true[/code] if you are pressing the joypad button (see [enum JoystickList]). */
 is_joy_button_pressed(device: int, button: int): boolean;
@@ -209,6 +219,14 @@ parse_input_event(event: InputEvent): void;
 remove_joy_mapping(guid: string): void;
 
 /**
+ * Sets the acceleration value of the accelerometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
+ *
+ * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
+ *
+*/
+set_accelerometer(value: Vector3): void;
+
+/**
  * Sets a custom mouse cursor image, which is only visible inside the game window. The hotspot can also be specified. Passing `null` to the image parameter resets to the system cursor. See [enum CursorShape] for the list of shapes.
  *
  * `image`'s size must be lower than 256×256.
@@ -231,6 +249,30 @@ set_custom_mouse_cursor(image: Resource, shape?: int, hotspot?: Vector2): void;
  *
 */
 set_default_cursor_shape(shape?: int): void;
+
+/**
+ * Sets the gravity value of the accelerometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
+ *
+ * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
+ *
+*/
+set_gravity(value: Vector3): void;
+
+/**
+ * Sets the value of the rotation rate of the gyroscope sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
+ *
+ * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
+ *
+*/
+set_gyroscope(value: Vector3): void;
+
+/**
+ * Sets the value of the magnetic field of the magnetometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
+ *
+ * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
+ *
+*/
+set_magnetometer(value: Vector3): void;
 
 /** Sets the mouse mode. See the constants for more information. */
 set_mouse_mode(mode: int): void;
@@ -265,8 +307,7 @@ vibrate_handheld(duration_ms?: int): void;
 /** Sets the mouse position to the specified vector. */
 warp_mouse_position(to: Vector2): void;
 
-  // connect<T extends SignalsOf<InputClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputClassSignals>>(signal: T, method: SignalFunction<InputClassSignals[T]>): number;
+  connect<T extends SignalsOf<InputClass>>(signal: T, method: SignalFunction<InputClass[T]>): number;
 
 
 
@@ -398,13 +439,12 @@ static CURSOR_HSPLIT: any;
 */
 static CURSOR_HELP: any;
 
-}
 
-declare class InputClassSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when a joypad device has been connected or disconnected.
  *
 */
-joy_connection_changed: Signal<(device: int, connected: boolean) => void>
+$joy_connection_changed: Signal<(device: int, connected: boolean) => void>
 
 }
+

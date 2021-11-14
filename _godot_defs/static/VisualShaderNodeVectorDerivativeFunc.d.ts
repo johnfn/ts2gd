@@ -3,16 +3,15 @@
  * This node is only available in `Fragment` and `Light` visual shaders.
  *
 */
-declare class VisualShaderNodeVectorDerivativeFunc extends VisualShaderNode {
+declare class VisualShaderNodeVectorDerivativeFunc extends VisualShaderNode  {
 
   
 /**
  * This node is only available in `Fragment` and `Light` visual shaders.
  *
 */
-  "new"(): VisualShaderNodeVectorDerivativeFunc;
-  static "new"(): VisualShaderNodeVectorDerivativeFunc;
-
+  new(): VisualShaderNodeVectorDerivativeFunc; 
+  static "new"(): VisualShaderNodeVectorDerivativeFunc 
 
 
 /** A derivative type. See [enum Function] for options. */
@@ -20,8 +19,7 @@ function: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeVectorDerivativeFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeVectorDerivativeFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorDerivativeFuncSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorDerivativeFunc>>(signal: T, method: SignalFunction<VisualShaderNodeVectorDerivativeFunc[T]>): number;
 
 
 
@@ -43,8 +41,7 @@ static FUNC_X: any;
 */
 static FUNC_Y: any;
 
+
+
 }
 
-declare class VisualShaderNodeVectorDerivativeFuncSignals extends VisualShaderNodeSignals {
-  
-}

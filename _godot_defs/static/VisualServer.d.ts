@@ -19,7 +19,7 @@
  * In 2D, all visible objects are some form of canvas item. In order to be visible, a canvas item needs to be the child of a canvas attached to a viewport, or it needs to be the child of another canvas item that is eventually attached to the canvas.
  *
 */
-declare class VisualServerClass extends Object {
+declare class VisualServerClass extends Object  {
 
   
 /**
@@ -42,9 +42,8 @@ declare class VisualServerClass extends Object {
  * In 2D, all visible objects are some form of canvas item. In order to be visible, a canvas item needs to be the child of a canvas attached to a viewport, or it needs to be the child of another canvas item that is eventually attached to the canvas.
  *
 */
-  "new"(): VisualServerClass;
-  static "new"(): VisualServerClass;
-
+  new(): VisualServerClass; 
+  static "new"(): VisualServerClass 
 
 
 /** If [code]false[/code], disables rendering completely, but the engine logic is still being processed. You can call [method force_draw] to draw a frame even with rendering disabled. */
@@ -1415,8 +1414,7 @@ viewport_set_use_fxaa(viewport: RID, fxaa: boolean): void;
 /** If [code]true[/code], the viewport's rendering is flipped vertically. */
 viewport_set_vflip(viewport: RID, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<VisualServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualServerClassSignals>>(signal: T, method: SignalFunction<VisualServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<VisualServerClass>>(signal: T, method: SignalFunction<VisualServerClass[T]>): number;
 
 
 
@@ -2769,19 +2767,18 @@ static ENV_SSAO_BLUR_2x2: any;
 */
 static ENV_SSAO_BLUR_3x3: any;
 
-}
 
-declare class VisualServerClassSignals extends ObjectSignals {
-  /**
+/**
  * Emitted at the end of the frame, after the VisualServer has finished updating all the Viewports.
  *
 */
-frame_post_draw: Signal<() => void>
+$frame_post_draw: Signal<() => void>
 
 /**
  * Emitted at the beginning of the frame, before the VisualServer updates all the Viewports.
  *
 */
-frame_pre_draw: Signal<() => void>
+$frame_pre_draw: Signal<() => void>
 
 }
+

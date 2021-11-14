@@ -3,16 +3,15 @@
  * Texture-based nine-patch [StyleBox], in a way similar to [NinePatchRect]. This stylebox performs a 3×3 scaling of a texture, where only the center cell is fully stretched. This makes it possible to design bordered styles regardless of the stylebox's size.
  *
 */
-declare class StyleBoxTexture extends StyleBox {
+declare class StyleBoxTexture extends StyleBox  {
 
   
 /**
  * Texture-based nine-patch [StyleBox], in a way similar to [NinePatchRect]. This stylebox performs a 3×3 scaling of a texture, where only the center cell is fully stretched. This makes it possible to design bordered styles regardless of the stylebox's size.
  *
 */
-  "new"(): StyleBoxTexture;
-  static "new"(): StyleBoxTexture;
-
+  new(): StyleBoxTexture; 
+  static "new"(): StyleBoxTexture 
 
 
 /** Controls how the stylebox's texture will be stretched or tiled horizontally. See [enum AxisStretchMode] for possible values. */
@@ -116,8 +115,7 @@ set_expand_margin_size(margin: int, size: float): void;
 /** Sets the margin to [code]size[/code] pixels for the given [code]margin[/code]. See [enum Margin] for possible values. */
 set_margin_size(margin: int, size: float): void;
 
-  // connect<T extends SignalsOf<StyleBoxTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StyleBoxTextureSignals>>(signal: T, method: SignalFunction<StyleBoxTextureSignals[T]>): number;
+  connect<T extends SignalsOf<StyleBoxTexture>>(signal: T, method: SignalFunction<StyleBoxTexture[T]>): number;
 
 
 
@@ -139,13 +137,12 @@ static AXIS_STRETCH_MODE_TILE: any;
 */
 static AXIS_STRETCH_MODE_TILE_FIT: any;
 
-}
 
-declare class StyleBoxTextureSignals extends StyleBoxSignals {
-  /**
+/**
  * Emitted when the stylebox's texture is changed.
  *
 */
-texture_changed: Signal<() => void>
+$texture_changed: Signal<() => void>
 
 }
+

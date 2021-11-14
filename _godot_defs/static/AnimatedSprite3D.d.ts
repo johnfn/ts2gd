@@ -3,16 +3,15 @@
  * Animations are created using a [SpriteFrames] resource, which can be configured in the editor via the SpriteFrames panel.
  *
 */
-declare class AnimatedSprite3D extends SpriteBase3D {
+declare class AnimatedSprite3D extends SpriteBase3D  {
 
   
 /**
  * Animations are created using a [SpriteFrames] resource, which can be configured in the editor via the SpriteFrames panel.
  *
 */
-  "new"(): AnimatedSprite3D;
-  static "new"(): AnimatedSprite3D;
-
+  new(): AnimatedSprite3D; 
+  static "new"(): AnimatedSprite3D 
 
 
 /** The current animation from the [code]frames[/code] resource. If this value changes, the [code]frame[/code] counter is reset. */
@@ -36,25 +35,23 @@ play(anim?: string): void;
 /** Stops the current animation (does not reset the frame counter). */
 stop(): void;
 
-  // connect<T extends SignalsOf<AnimatedSprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimatedSprite3DSignals>>(signal: T, method: SignalFunction<AnimatedSprite3DSignals[T]>): number;
+  connect<T extends SignalsOf<AnimatedSprite3D>>(signal: T, method: SignalFunction<AnimatedSprite3D[T]>): number;
 
 
 
 
-}
 
-declare class AnimatedSprite3DSignals extends SpriteBase3DSignals {
-  /**
+/**
  * Emitted when the animation is finished (when it plays the last frame). If the animation is looping, this signal is emitted every time the last frame is drawn.
  *
 */
-animation_finished: Signal<() => void>
+$animation_finished: Signal<() => void>
 
 /**
  * Emitted when [member frame] changed.
  *
 */
-frame_changed: Signal<() => void>
+$frame_changed: Signal<() => void>
 
 }
+

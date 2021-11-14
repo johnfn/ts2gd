@@ -5,7 +5,7 @@
  * **Note:** Due to how lightmaps work, most properties only have a visible effect once lightmaps are baked again.
  *
 */
-declare class BakedLightmap extends VisualInstance {
+declare class BakedLightmap extends VisualInstance  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class BakedLightmap extends VisualInstance {
  * **Note:** Due to how lightmaps work, most properties only have a visible effect once lightmaps are baked again.
  *
 */
-  "new"(): BakedLightmap;
-  static "new"(): BakedLightmap;
-
+  new(): BakedLightmap; 
+  static "new"(): BakedLightmap 
 
 
 /** When enabled, the lightmapper will merge the textures for all meshes into a single large layered texture. Not supported in GLES2. */
@@ -98,11 +97,10 @@ use_denoiser: boolean;
 */
 use_hdr: boolean;
 
-/** Bakes the lightmap, scanning from the given [code]from_node[/code] root and saves the resulting [BakedLightmapData] in [code]data_save_path[/code]. If no save path is provided it will try to match the path from the current [member light_data]. */
+/** Bakes the lightmap, scanning from the given [code]from_node[/code] root and saves the resulting [BakedLightmapData] in [code]data_save_path[/code]. If no root node is provided, parent of this node will be used as root instead. If no save path is provided it will try to match the path from the current [member light_data]. */
 bake(from_node?: Node, data_save_path?: string): int;
 
-  // connect<T extends SignalsOf<BakedLightmap>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BakedLightmapSignals>>(signal: T, method: SignalFunction<BakedLightmapSignals[T]>): number;
+  connect<T extends SignalsOf<BakedLightmap>>(signal: T, method: SignalFunction<BakedLightmap[T]>): number;
 
 
 
@@ -172,8 +170,17 @@ static BAKE_ERROR_INVALID_MESH: any;
 */
 static BAKE_ERROR_USER_ABORTED: any;
 
-/** No documentation provided. */
+/**
+ * Returns if lightmapper can't be created. Unless you are using a custom lightmapper, please report this as bug.
+ *
+*/
 static BAKE_ERROR_NO_LIGHTMAPPER: any;
+
+/**
+ * There is no root node to start baking from. Either provide `from_node` argument or attach this node to a parent that should be used as root.
+ *
+*/
+static BAKE_ERROR_NO_ROOT: any;
 
 /**
  * No environment is used during baking.
@@ -199,8 +206,7 @@ static ENVIRONMENT_MODE_CUSTOM_SKY: any;
 */
 static ENVIRONMENT_MODE_CUSTOM_COLOR: any;
 
+
+
 }
 
-declare class BakedLightmapSignals extends VisualInstanceSignals {
-  
-}

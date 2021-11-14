@@ -9,7 +9,7 @@
  * Since instances may have any behavior, the AABB used for visibility must be provided by the user.
  *
 */
-declare class MultiMesh extends Resource {
+declare class MultiMesh extends Resource  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class MultiMesh extends Resource {
  * Since instances may have any behavior, the AABB used for visibility must be provided by the user.
  *
 */
-  "new"(): MultiMesh;
-  static "new"(): MultiMesh;
-
+  new(): MultiMesh; 
+  static "new"(): MultiMesh 
 
 
 /** Format of colors in color array that gets passed to shader. */
@@ -87,8 +86,7 @@ set_instance_transform(instance: int, transform: Transform): void;
 /** Sets the [Transform2D] for a specific instance. */
 set_instance_transform_2d(instance: int, transform: Transform2D): void;
 
-  // connect<T extends SignalsOf<MultiMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MultiMeshSignals>>(signal: T, method: SignalFunction<MultiMeshSignals[T]>): number;
+  connect<T extends SignalsOf<MultiMesh>>(signal: T, method: SignalFunction<MultiMesh[T]>): number;
 
 
 
@@ -140,8 +138,7 @@ static CUSTOM_DATA_8BIT: any;
 */
 static CUSTOM_DATA_FLOAT: any;
 
+
+
 }
 
-declare class MultiMeshSignals extends ResourceSignals {
-  
-}

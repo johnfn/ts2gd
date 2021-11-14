@@ -5,7 +5,7 @@
  * Additionally, a constant linear or angular velocity can be set for the static body, which will affect colliding bodies as if it were moving (for example, a conveyor belt).
  *
 */
-declare class StaticBody2D extends PhysicsBody2D {
+declare class StaticBody2D extends PhysicsBody2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class StaticBody2D extends PhysicsBody2D {
  * Additionally, a constant linear or angular velocity can be set for the static body, which will affect colliding bodies as if it were moving (for example, a conveyor belt).
  *
 */
-  "new"(): StaticBody2D;
-  static "new"(): StaticBody2D;
-
+  new(): StaticBody2D; 
+  static "new"(): StaticBody2D 
 
 
 /**
@@ -51,14 +50,12 @@ physics_material_override: PhysicsMaterial;
 
 
 
-  // connect<T extends SignalsOf<StaticBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StaticBody2DSignals>>(signal: T, method: SignalFunction<StaticBody2DSignals[T]>): number;
+  connect<T extends SignalsOf<StaticBody2D>>(signal: T, method: SignalFunction<StaticBody2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StaticBody2DSignals extends PhysicsBody2DSignals {
-  
-}

@@ -5,7 +5,7 @@
  * This object contains information about the collision, including the colliding object, the remaining motion, and the collision position. This information can be used to calculate a collision response.
  *
 */
-declare class KinematicCollision extends Reference {
+declare class KinematicCollision extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class KinematicCollision extends Reference {
  * This object contains information about the collision, including the colliding object, the remaining motion, and the collision position. This information can be used to calculate a collision response.
  *
 */
-  "new"(): KinematicCollision;
-  static "new"(): KinematicCollision;
-
+  new(): KinematicCollision; 
+  static "new"(): KinematicCollision 
 
 
 /** The colliding body. */
@@ -58,14 +57,12 @@ travel: Vector3;
 /** The collision angle according to [code]up_direction[/code], which is [code]Vector3.UP[/code] by default. This value is always positive. */
 get_angle(up_direction?: Vector3): float;
 
-  // connect<T extends SignalsOf<KinematicCollision>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<KinematicCollisionSignals>>(signal: T, method: SignalFunction<KinematicCollisionSignals[T]>): number;
+  connect<T extends SignalsOf<KinematicCollision>>(signal: T, method: SignalFunction<KinematicCollision[T]>): number;
+
+
 
 
 
 
 }
 
-declare class KinematicCollisionSignals extends ReferenceSignals {
-  
-}

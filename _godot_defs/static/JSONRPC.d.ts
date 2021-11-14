@@ -3,16 +3,15 @@
  * [url=https://www.jsonrpc.org/]JSON-RPC[/url] is a standard which wraps a method call in a [JSON] object. The object has a particular structure and identifies which method is called, the parameters to that function, and carries an ID to keep track of responses. This class implements that standard on top of [Dictionary]; you will have to convert between a [Dictionary] and [JSON] with other functions.
  *
 */
-declare class JSONRPC extends Object {
+declare class JSONRPC extends Object  {
 
   
 /**
  * [url=https://www.jsonrpc.org/]JSON-RPC[/url] is a standard which wraps a method call in a [JSON] object. The object has a particular structure and identifies which method is called, the parameters to that function, and carries an ID to keep track of responses. This class implements that standard on top of [Dictionary]; you will have to convert between a [Dictionary] and [JSON] with other functions.
  *
 */
-  "new"(): JSONRPC;
-  static "new"(): JSONRPC;
-
+  new(): JSONRPC; 
+  static "new"(): JSONRPC 
 
 
 
@@ -76,8 +75,7 @@ process_string(action: string): string;
 /** No documentation provided. */
 set_scope(scope: string, target: Object): void;
 
-  // connect<T extends SignalsOf<JSONRPC>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JSONRPCSignals>>(signal: T, method: SignalFunction<JSONRPCSignals[T]>): number;
+  connect<T extends SignalsOf<JSONRPC>>(signal: T, method: SignalFunction<JSONRPC[T]>): number;
 
 
 
@@ -99,8 +97,7 @@ static INVALID_PARAMS: any;
 /** No documentation provided. */
 static INTERNAL_ERROR: any;
 
+
+
 }
 
-declare class JSONRPCSignals extends ObjectSignals {
-  
-}

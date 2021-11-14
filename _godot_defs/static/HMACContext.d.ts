@@ -81,7 +81,7 @@
  * b]Note:** Not available in HTML5 exports.
  *
 */
-declare class HMACContext extends Reference {
+declare class HMACContext extends Reference  {
 
   
 /**
@@ -166,9 +166,8 @@ declare class HMACContext extends Reference {
  * b]Note:** Not available in HTML5 exports.
  *
 */
-  "new"(): HMACContext;
-  static "new"(): HMACContext;
-
+  new(): HMACContext; 
+  static "new"(): HMACContext 
 
 
 
@@ -181,14 +180,12 @@ start(hash_type: int, key: PoolByteArray): int;
 /** Updates the message to be HMACed. This can be called multiple times before [method finish] is called to append [code]data[/code] to the message, but cannot be called until [method start] has been called. */
 update(data: PoolByteArray): int;
 
-  // connect<T extends SignalsOf<HMACContext>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HMACContextSignals>>(signal: T, method: SignalFunction<HMACContextSignals[T]>): number;
+  connect<T extends SignalsOf<HMACContext>>(signal: T, method: SignalFunction<HMACContext[T]>): number;
+
+
 
 
 
 
 }
 
-declare class HMACContextSignals extends ReferenceSignals {
-  
-}

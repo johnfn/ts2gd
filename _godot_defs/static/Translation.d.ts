@@ -3,16 +3,15 @@
  * Translations are resources that can be loaded and unloaded on demand. They map a string to another string.
  *
 */
-declare class Translation extends Resource {
+declare class Translation extends Resource  {
 
   
 /**
  * Translations are resources that can be loaded and unloaded on demand. They map a string to another string.
  *
 */
-  "new"(): Translation;
-  static "new"(): Translation;
-
+  new(): Translation; 
+  static "new"(): Translation 
 
 
 /** The locale of the translation. */
@@ -36,14 +35,12 @@ get_message_count(): int;
 /** Returns all the messages (keys). */
 get_message_list(): PoolStringArray;
 
-  // connect<T extends SignalsOf<Translation>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TranslationSignals>>(signal: T, method: SignalFunction<TranslationSignals[T]>): number;
+  connect<T extends SignalsOf<Translation>>(signal: T, method: SignalFunction<Translation[T]>): number;
+
+
 
 
 
 
 }
 
-declare class TranslationSignals extends ResourceSignals {
-  
-}

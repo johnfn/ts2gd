@@ -9,7 +9,7 @@
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
 */
-declare class GIProbe extends VisualInstance {
+declare class GIProbe extends VisualInstance  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class GIProbe extends VisualInstance {
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
 */
-  "new"(): GIProbe;
-  static "new"(): GIProbe;
-
+  new(): GIProbe; 
+  static "new"(): GIProbe 
 
 
 /**
@@ -68,8 +67,7 @@ bake(from_node?: Node, create_visual_debug?: boolean): void;
 /** Calls [method bake] with [code]create_visual_debug[/code] enabled. */
 debug_bake(): void;
 
-  // connect<T extends SignalsOf<GIProbe>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GIProbeSignals>>(signal: T, method: SignalFunction<GIProbeSignals[T]>): number;
+  connect<T extends SignalsOf<GIProbe>>(signal: T, method: SignalFunction<GIProbe[T]>): number;
 
 
 
@@ -103,8 +101,7 @@ static SUBDIV_512: any;
 */
 static SUBDIV_MAX: any;
 
+
+
 }
 
-declare class GIProbeSignals extends VisualInstanceSignals {
-  
-}

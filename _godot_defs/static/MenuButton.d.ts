@@ -7,7 +7,7 @@
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-declare class MenuButton extends Button {
+declare class MenuButton extends Button  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class MenuButton extends Button {
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-  "new"(): MenuButton;
-  static "new"(): MenuButton;
-
+  new(): MenuButton; 
+  static "new"(): MenuButton 
 
 
 
@@ -30,25 +29,28 @@ declare class MenuButton extends Button {
 switch_on_hover: boolean;
 
 
-/** Returns the [PopupMenu] contained in this button. */
+/**
+ * Returns the [PopupMenu] contained in this button.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_popup(): PopupMenu;
 
 /** If [code]true[/code], shortcuts are disabled and cannot be used to trigger the button. */
 set_disable_shortcuts(disabled: boolean): void;
 
-  // connect<T extends SignalsOf<MenuButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MenuButtonSignals>>(signal: T, method: SignalFunction<MenuButtonSignals[T]>): number;
+  connect<T extends SignalsOf<MenuButton>>(signal: T, method: SignalFunction<MenuButton[T]>): number;
 
 
 
 
-}
 
-declare class MenuButtonSignals extends ButtonSignals {
-  /**
+/**
  * Emitted when [PopupMenu] of this MenuButton is about to show.
  *
 */
-about_to_show: Signal<() => void>
+$about_to_show: Signal<() => void>
 
 }
+

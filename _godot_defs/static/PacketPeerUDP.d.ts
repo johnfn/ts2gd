@@ -3,16 +3,15 @@
  * UDP packet peer. Can be used to send raw UDP packets as well as [Variant]s.
  *
 */
-declare class PacketPeerUDP extends PacketPeer {
+declare class PacketPeerUDP extends PacketPeer  {
 
   
 /**
  * UDP packet peer. Can be used to send raw UDP packets as well as [Variant]s.
  *
 */
-  "new"(): PacketPeerUDP;
-  static "new"(): PacketPeerUDP;
-
+  new(): PacketPeerUDP; 
+  static "new"(): PacketPeerUDP 
 
 
 
@@ -101,14 +100,12 @@ set_dest_address(host: string, port: int): int;
 */
 wait(): int;
 
-  // connect<T extends SignalsOf<PacketPeerUDP>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PacketPeerUDPSignals>>(signal: T, method: SignalFunction<PacketPeerUDPSignals[T]>): number;
+  connect<T extends SignalsOf<PacketPeerUDP>>(signal: T, method: SignalFunction<PacketPeerUDP[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PacketPeerUDPSignals extends PacketPeerSignals {
-  
-}

@@ -23,7 +23,7 @@
  * 
  *
 */
-declare class EditorScenePostImport extends Reference {
+declare class EditorScenePostImport extends Reference  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class EditorScenePostImport extends Reference {
  * 
  *
 */
-  "new"(): EditorScenePostImport;
-  static "new"(): EditorScenePostImport;
-
+  new(): EditorScenePostImport; 
+  static "new"(): EditorScenePostImport 
 
 
 
@@ -65,14 +64,12 @@ get_source_folder(): string;
 /** Called after the scene was imported. This method must return the modified version of the scene. */
 post_import(scene: Object): Object;
 
-  // connect<T extends SignalsOf<EditorScenePostImport>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorScenePostImportSignals>>(signal: T, method: SignalFunction<EditorScenePostImportSignals[T]>): number;
+  connect<T extends SignalsOf<EditorScenePostImport>>(signal: T, method: SignalFunction<EditorScenePostImport[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorScenePostImportSignals extends ReferenceSignals {
-  
-}

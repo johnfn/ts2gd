@@ -19,12 +19,11 @@ declare class Quat {
  *
 */
 
-  constructor(from: Basis);
-  constructor(euler: Vector3);
-  constructor(axis: Vector3, angle: float);
-  constructor(x: float, y: float, z: float, w: float);
-  static "new"(): Quat;
-
+  new(from: Basis): Quat;
+  new(euler: Vector3): Quat;
+  new(axis: Vector3, angle: float): Quat;
+  new(x: float, y: float, z: float, w: float): Quat;
+  static "new"(): Quat 
 
 
 /**
@@ -122,8 +121,7 @@ slerpni(to: Quat, weight: float): Quat;
 /** Returns a vector transformed (multiplied) by this quaternion. */
 xform(v: Vector3): Vector3;
 
-  // connect<T extends SignalsOf<Quat>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<QuatSignals>>(signal: T, method: SignalFunction<QuatSignals[T]>): number;
+  connect<T extends SignalsOf<Quat>>(signal: T, method: SignalFunction<Quat[T]>): number;
 
 
 
@@ -133,8 +131,7 @@ xform(v: Vector3): Vector3;
 */
 static IDENTITY: Quat;
 
+
+
 }
 
-declare class QuatSignals {
-  
-}

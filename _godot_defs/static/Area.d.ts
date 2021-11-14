@@ -3,16 +3,15 @@
  * 3D area that detects [CollisionObject] nodes overlapping, entering, or exiting. Can also alter or override local physics parameters (gravity, damping) and route audio to custom audio buses.
  *
 */
-declare class Area extends CollisionObject {
+declare class Area extends CollisionObject  {
 
   
 /**
  * 3D area that detects [CollisionObject] nodes overlapping, entering, or exiting. Can also alter or override local physics parameters (gravity, damping) and route audio to custom audio buses.
  *
 */
-  "new"(): Area;
-  static "new"(): Area;
-
+  new(): Area; 
+  static "new"(): Area 
 
 
 /**
@@ -73,11 +72,21 @@ reverb_bus_uniformity: float;
 /** Override mode for gravity and damping calculations within this area. See [enum SpaceOverride] for possible values. */
 space_override: int;
 
-/** Returns a list of intersecting [Area]s. For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead. */
+/**
+ * Returns a list of intersecting [Area]s. The overlapping area's [member CollisionObject.collision_layer] must be part of this area's [member CollisionObject.collision_mask] in order to be detected.
+ *
+ * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
+ *
+*/
 get_overlapping_areas(): any[];
 
-/** Returns a list of intersecting [PhysicsBody]s. For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead. */
-get_overlapping_bodies(): any[];
+/**
+ * Returns a list of intersecting [PhysicsBody]s. The overlapping body's [member CollisionObject.collision_layer] must be part of this area's [member CollisionObject.collision_mask] in order to be detected.
+ *
+ * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
+ *
+*/
+get_overlapping_bodies(): PhysicsBody2D[];
 
 /**
  * If `true`, the given area overlaps the Area.
@@ -97,8 +106,7 @@ overlaps_area(area: Node): boolean;
 */
 overlaps_body(body: Node): boolean;
 
-  // connect<T extends SignalsOf<Area>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AreaSignals>>(signal: T, method: SignalFunction<AreaSignals[T]>): number;
+  connect<T extends SignalsOf<Area>>(signal: T, method: SignalFunction<Area[T]>): number;
 
 
 
@@ -132,16 +140,14 @@ static SPACE_OVERRIDE_REPLACE: any;
 */
 static SPACE_OVERRIDE_REPLACE_COMBINE: any;
 
-}
 
-declare class AreaSignals extends CollisionObjectSignals {
-  /**
+/**
  * Emitted when another Area enters this Area. Requires [member monitoring] to be set to `true`.
  *
  * `area` the other Area.
  *
 */
-area_entered: Signal<(area: Area) => void>
+$area_entered: Signal<(area: Area) => void>
 
 /**
  * Emitted when another Area exits this Area. Requires [member monitoring] to be set to `true`.
@@ -149,35 +155,35 @@ area_entered: Signal<(area: Area) => void>
  * `area` the other Area.
  *
 */
-area_exited: Signal<(area: Area) => void>
+$area_exited: Signal<(area: Area) => void>
 
 /**
  * Emitted when one of another Area's [Shape]s enters one of this Area's [Shape]s. Requires [member monitoring] to be set to `true`.
  *
- * `area_id` the [RID] of the other Area's [CollisionObject] used by the [PhysicsServer].
+ * `area_rid` the [RID] of the other Area's [CollisionObject] used by the [PhysicsServer].
  *
  * `area` the other Area.
  *
- * `area_shape` the index of the [Shape] of the other Area used by the [PhysicsServer].
+ * `area_shape_index` the index of the [Shape] of the other Area used by the [PhysicsServer]. Get the [CollisionShape] node with `area.shape_owner_get_owner(area_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this Area used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this Area used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-area_shape_entered: Signal<(area_rid: RID, area: Area, area_shape: int, local_shape: int) => void>
+$area_shape_entered: Signal<(area_rid: RID, area: Area, area_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when one of another Area's [Shape]s enters one of this Area's [Shape]s. Requires [member monitoring] to be set to `true`.
  *
- * `area_id` the [RID] of the other Area's [CollisionObject] used by the [PhysicsServer].
+ * `area_rid` the [RID] of the other Area's [CollisionObject] used by the [PhysicsServer].
  *
  * `area` the other Area.
  *
- * `area_shape` the index of the [Shape] of the other Area used by the [PhysicsServer].
+ * `area_shape_index` the index of the [Shape] of the other Area used by the [PhysicsServer]. Get the [CollisionShape] node with `area.shape_owner_get_owner(area_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this Area used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this Area used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-area_shape_exited: Signal<(area_rid: RID, area: Area, area_shape: int, local_shape: int) => void>
+$area_shape_exited: Signal<(area_rid: RID, area: Area, area_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when a [PhysicsBody] or [GridMap] enters this Area. Requires [member monitoring] to be set to `true`. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
@@ -185,7 +191,7 @@ area_shape_exited: Signal<(area_rid: RID, area: Area, area_shape: int, local_sha
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
-body_entered: Signal<(body: Node) => void>
+$body_entered: Signal<(body: Node) => void>
 
 /**
  * Emitted when a [PhysicsBody] or [GridMap] exits this Area. Requires [member monitoring] to be set to `true`. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
@@ -193,34 +199,35 @@ body_entered: Signal<(body: Node) => void>
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
-body_exited: Signal<(body: Node) => void>
+$body_exited: Signal<(body: Node) => void>
 
 /**
  * Emitted when one of a [PhysicsBody] or [GridMap]'s [Shape]s enters one of this Area's [Shape]s. Requires [member monitoring] to be set to `true`. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * `body_id` the [RID] of the [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
+ * `body_rid` the [RID] of the [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
  *
  * `body` the [Node], if it exists in the tree, of the [PhysicsBody] or [GridMap].
  *
- * `body_shape` the index of the [Shape] of the [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ * `body_shape_index` the index of the [Shape] of the [PhysicsBody] or [GridMap] used by the [PhysicsServer]. Get the [CollisionShape] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this Area used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this Area used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when one of a [PhysicsBody] or [GridMap]'s [Shape]s enters one of this Area's [Shape]s. Requires [member monitoring] to be set to `true`. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * `body_id` the [RID] of the [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
+ * `body_rid` the [RID] of the [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
  *
  * `body` the [Node], if it exists in the tree, of the [PhysicsBody] or [GridMap].
  *
- * `body_shape` the index of the [Shape] of the [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ * `body_shape_index` the index of the [Shape] of the [PhysicsBody] or [GridMap] used by the [PhysicsServer]. Get the [CollisionShape] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this Area used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this Area used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 }
+

@@ -7,7 +7,7 @@
  * **Note:** Not available in HTML5 exports.
  *
 */
-declare class X509Certificate extends Resource {
+declare class X509Certificate extends Resource  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class X509Certificate extends Resource {
  * **Note:** Not available in HTML5 exports.
  *
 */
-  "new"(): X509Certificate;
-  static "new"(): X509Certificate;
-
+  new(): X509Certificate; 
+  static "new"(): X509Certificate 
 
 
 
@@ -30,14 +29,12 @@ load(path: string): int;
 /** Saves a certificate to the given [code]path[/code] (should be a "*.crt" file). */
 save(path: string): int;
 
-  // connect<T extends SignalsOf<X509Certificate>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<X509CertificateSignals>>(signal: T, method: SignalFunction<X509CertificateSignals[T]>): number;
+  connect<T extends SignalsOf<X509Certificate>>(signal: T, method: SignalFunction<X509Certificate[T]>): number;
+
+
 
 
 
 
 }
 
-declare class X509CertificateSignals extends ResourceSignals {
-  
-}

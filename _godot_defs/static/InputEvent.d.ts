@@ -3,16 +3,15 @@
  * Base class of all sort of input event. See [method Node._input].
  *
 */
-declare class InputEvent extends Resource {
+declare class InputEvent extends Resource  {
 
   
 /**
  * Base class of all sort of input event. See [method Node._input].
  *
 */
-  "new"(): InputEvent;
-  static "new"(): InputEvent;
-
+  new(): InputEvent; 
+  static "new"(): InputEvent 
 
 
 /**
@@ -56,7 +55,8 @@ is_action(action: string, exact_match?: boolean): boolean;
  * If `exact_match` is `false`, it ignores the input modifiers for [InputEventKey] and [InputEventMouseButton] events, and the direction for [InputEventJoypadMotion] events.
  *
 */
-is_action_pressed(action: string, allow_echo?: boolean, exact_match?: boolean): boolean;
+is_action_pressed(action: Action): boolean;
+      
 
 /**
  * Returns `true` if the given action is released (i.e. not pressed). Not relevant for events of type [InputEventMouseMotion] or [InputEventScreenDrag].
@@ -86,14 +86,12 @@ shortcut_match(event: InputEvent, exact_match?: boolean): boolean;
 /** Returns a copy of the given input event which has been offset by [code]local_ofs[/code] and transformed by [code]xform[/code]. Relevant for events of type [InputEventMouseButton], [InputEventMouseMotion], [InputEventScreenTouch], [InputEventScreenDrag], [InputEventMagnifyGesture] and [InputEventPanGesture]. */
 xformed_by(xform: Transform2D, local_ofs?: Vector2): InputEvent;
 
-  // connect<T extends SignalsOf<InputEvent>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventSignals>>(signal: T, method: SignalFunction<InputEventSignals[T]>): number;
+  connect<T extends SignalsOf<InputEvent>>(signal: T, method: SignalFunction<InputEvent[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventSignals extends ResourceSignals {
-  
-}

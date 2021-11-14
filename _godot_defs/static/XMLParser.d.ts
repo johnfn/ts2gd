@@ -3,16 +3,15 @@
  * This class can serve as base to make custom XML parsers. Since XML is a very flexible standard, this interface is low-level so it can be applied to any possible schema.
  *
 */
-declare class XMLParser extends Reference {
+declare class XMLParser extends Reference  {
 
   
 /**
  * This class can serve as base to make custom XML parsers. Since XML is a very flexible standard, this interface is low-level so it can be applied to any possible schema.
  *
 */
-  "new"(): XMLParser;
-  static "new"(): XMLParser;
-
+  new(): XMLParser; 
+  static "new"(): XMLParser 
 
 
 
@@ -67,8 +66,7 @@ seek(position: int): int;
 /** Skips the current section. If the node contains other elements, they will be ignored and the cursor will go to the closing of the current element. */
 skip_section(): void;
 
-  // connect<T extends SignalsOf<XMLParser>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<XMLParserSignals>>(signal: T, method: SignalFunction<XMLParserSignals[T]>): number;
+  connect<T extends SignalsOf<XMLParser>>(signal: T, method: SignalFunction<XMLParser[T]>): number;
 
 
 
@@ -114,8 +112,7 @@ static NODE_CDATA: any;
 */
 static NODE_UNKNOWN: any;
 
+
+
 }
 
-declare class XMLParserSignals extends ReferenceSignals {
-  
-}

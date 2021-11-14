@@ -11,7 +11,7 @@
  * RayCast2D calculates intersection every physics frame (see [Node]), and the result is cached so it can be used later until the next frame. If multiple queries are required between physics frames (or during the same frame) use [method force_raycast_update] after adjusting the raycast.
  *
 */
-declare class RayCast2D extends Node2D {
+declare class RayCast2D extends Node2D  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class RayCast2D extends Node2D {
  * RayCast2D calculates intersection every physics frame (see [Node]), and the result is cached so it can be used later until the next frame. If multiple queries are required between physics frames (or during the same frame) use [method force_raycast_update] after adjusting the raycast.
  *
 */
-  "new"(): RayCast2D;
-  static "new"(): RayCast2D;
-
+  new(): RayCast2D; 
+  static "new"(): RayCast2D 
 
 
 /** The ray's destination point, relative to the RayCast's [code]position[/code]. */
@@ -98,14 +97,12 @@ remove_exception_rid(rid: RID): void;
 /** Sets or clears individual bits on the collision mask. This makes selecting the areas scanned easier. */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  // connect<T extends SignalsOf<RayCast2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RayCast2DSignals>>(signal: T, method: SignalFunction<RayCast2DSignals[T]>): number;
+  connect<T extends SignalsOf<RayCast2D>>(signal: T, method: SignalFunction<RayCast2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RayCast2DSignals extends Node2DSignals {
-  
-}

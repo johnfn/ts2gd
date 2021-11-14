@@ -29,7 +29,7 @@
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-declare class ArrayMesh extends Mesh {
+declare class ArrayMesh extends Mesh  {
 
   
 /**
@@ -62,9 +62,8 @@ declare class ArrayMesh extends Mesh {
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-  "new"(): ArrayMesh;
-  static "new"(): ArrayMesh;
-
+  new(): ArrayMesh; 
+  static "new"(): ArrayMesh 
 
 
 /** Sets the blend shape mode to one of [enum Mesh.BlendShapeMode]. */
@@ -139,8 +138,7 @@ surface_set_name(surf_idx: int, name: string): void;
 */
 surface_update_region(surf_idx: int, offset: int, data: PoolByteArray): void;
 
-  // connect<T extends SignalsOf<ArrayMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ArrayMeshSignals>>(signal: T, method: SignalFunction<ArrayMeshSignals[T]>): number;
+  connect<T extends SignalsOf<ArrayMesh>>(signal: T, method: SignalFunction<ArrayMesh[T]>): number;
 
 
 
@@ -272,8 +270,7 @@ static ARRAY_FORMAT_WEIGHTS: any;
 */
 static ARRAY_FORMAT_INDEX: any;
 
+
+
 }
 
-declare class ArrayMeshSignals extends MeshSignals {
-  
-}

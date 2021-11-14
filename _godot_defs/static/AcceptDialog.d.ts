@@ -3,16 +3,15 @@
  * This dialog is useful for small notifications to the user about an event. It can only be accepted or closed, with the same result.
  *
 */
-declare class AcceptDialog extends WindowDialog {
+declare class AcceptDialog extends WindowDialog  {
 
   
 /**
  * This dialog is useful for small notifications to the user about an event. It can only be accepted or closed, with the same result.
  *
 */
-  "new"(): AcceptDialog;
-  static "new"(): AcceptDialog;
-
+  new(): AcceptDialog; 
+  static "new"(): AcceptDialog 
 
 
 /** Sets autowrapping for the text in the dialog. */
@@ -48,10 +47,20 @@ add_button(text: string, right?: boolean, action?: string): Button;
 */
 add_cancel(name: string): Button;
 
-/** Returns the label used for built-in text. */
+/**
+ * Returns the label used for built-in text.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_label(): Label;
 
-/** Returns the OK [Button] instance. */
+/**
+ * Returns the OK [Button] instance.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_ok(): Button;
 
 /** Registers a [LineEdit] in the dialog. When the enter key is pressed, the dialog will be accepted. */
@@ -60,25 +69,23 @@ register_text_enter(line_edit: Node): void;
 /** Removes the [code]button[/code] from the dialog. Does NOT free the [code]button[/code]. The [code]button[/code] must be a [Button] added with [method add_button] or [method add_cancel] method. After removal, pressing the [code]button[/code] will no longer emit this dialog's [signal custom_action] signal or cancel this dialog. */
 remove_button(button: Control): void;
 
-  // connect<T extends SignalsOf<AcceptDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AcceptDialogSignals>>(signal: T, method: SignalFunction<AcceptDialogSignals[T]>): number;
+  connect<T extends SignalsOf<AcceptDialog>>(signal: T, method: SignalFunction<AcceptDialog[T]>): number;
 
 
 
 
-}
 
-declare class AcceptDialogSignals extends WindowDialogSignals {
-  /**
+/**
  * Emitted when the dialog is accepted, i.e. the OK button is pressed.
  *
 */
-confirmed: Signal<() => void>
+$confirmed: Signal<() => void>
 
 /**
  * Emitted when a custom button is pressed. See [method add_button].
  *
 */
-custom_action: Signal<(action: string) => void>
+$custom_action: Signal<(action: string) => void>
 
 }
+

@@ -3,16 +3,15 @@
  * A multiplication operation on two transforms (4x4 matrices), with support for different multiplication operators.
  *
 */
-declare class VisualShaderNodeTransformMult extends VisualShaderNode {
+declare class VisualShaderNodeTransformMult extends VisualShaderNode  {
 
   
 /**
  * A multiplication operation on two transforms (4x4 matrices), with support for different multiplication operators.
  *
 */
-  "new"(): VisualShaderNodeTransformMult;
-  static "new"(): VisualShaderNodeTransformMult;
-
+  new(): VisualShaderNodeTransformMult; 
+  static "new"(): VisualShaderNodeTransformMult 
 
 
 /** The multiplication type to be performed on the transforms. See [enum Operator] for options. */
@@ -20,8 +19,7 @@ operator: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeTransformMult>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeTransformMultSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTransformMultSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeTransformMult>>(signal: T, method: SignalFunction<VisualShaderNodeTransformMult[T]>): number;
 
 
 
@@ -49,8 +47,7 @@ static OP_AxB_COMP: any;
 */
 static OP_BxA_COMP: any;
 
+
+
 }
 
-declare class VisualShaderNodeTransformMultSignals extends VisualShaderNodeSignals {
-  
-}

@@ -1,14 +1,13 @@
 
 /**
 */
-declare class EditorSceneImporter extends Reference {
+declare class EditorSceneImporter extends Reference  {
 
   
 /**
 */
-  "new"(): EditorSceneImporter;
-  static "new"(): EditorSceneImporter;
-
+  new(): EditorSceneImporter; 
+  static "new"(): EditorSceneImporter 
 
 
 
@@ -28,10 +27,9 @@ protected _import_scene(path: string, flags: int, bake_fps: int): Node;
 import_animation_from_other_importer(path: string, flags: int, bake_fps: int): Animation;
 
 /** No documentation provided. */
-import_scene_from_other_importer(path: string, flags: int, bake_fps: int): Node;
+import_scene_from_other_importer(path: string, flags: int, bake_fps: int, compress_flags: int): Node;
 
-  // connect<T extends SignalsOf<EditorSceneImporter>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorSceneImporterSignals>>(signal: T, method: SignalFunction<EditorSceneImporterSignals[T]>): number;
+  connect<T extends SignalsOf<EditorSceneImporter>>(signal: T, method: SignalFunction<EditorSceneImporter[T]>): number;
 
 
 
@@ -62,11 +60,7 @@ static IMPORT_FAIL_ON_MISSING_DEPENDENCIES: any;
 /** No documentation provided. */
 static IMPORT_MATERIALS_IN_INSTANCES: any;
 
-/** No documentation provided. */
-static IMPORT_USE_COMPRESSION: any;
+
 
 }
 
-declare class EditorSceneImporterSignals extends ReferenceSignals {
-  
-}

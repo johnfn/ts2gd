@@ -5,7 +5,7 @@
  * The `new` method of a script subclass creates a new instance. [method Object.set_script] extends an existing object, if that object's class matches one of the script's base classes.
  *
 */
-declare class Script extends Resource {
+declare class Script extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Script extends Resource {
  * The `new` method of a script subclass creates a new instance. [method Object.set_script] extends an existing object, if that object's class matches one of the script's base classes.
  *
 */
-  "new"(): Script;
-  static "new"(): Script;
-
+  new(): Script; 
+  static "new"(): Script 
 
 
 /** The script source code or an empty string if source code is not available. When set, does not reload the class implementation automatically. */
@@ -61,14 +60,12 @@ is_tool(): boolean;
 /** Reloads the script's class implementation. Returns an error code. */
 reload(keep_state?: boolean): int;
 
-  // connect<T extends SignalsOf<Script>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ScriptSignals>>(signal: T, method: SignalFunction<ScriptSignals[T]>): number;
+  connect<T extends SignalsOf<Script>>(signal: T, method: SignalFunction<Script[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ScriptSignals extends ResourceSignals {
-  
-}

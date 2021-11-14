@@ -23,7 +23,7 @@
  * 
  *
 */
-declare class Expression extends Reference {
+declare class Expression extends Reference  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class Expression extends Reference {
  * 
  *
 */
-  "new"(): Expression;
-  static "new"(): Expression;
-
+  new(): Expression; 
+  static "new"(): Expression 
 
 
 
@@ -78,14 +77,12 @@ has_execute_failed(): boolean;
 */
 parse(expression: string, input_names?: PoolStringArray): int;
 
-  // connect<T extends SignalsOf<Expression>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ExpressionSignals>>(signal: T, method: SignalFunction<ExpressionSignals[T]>): number;
+  connect<T extends SignalsOf<Expression>>(signal: T, method: SignalFunction<Expression[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ExpressionSignals extends ReferenceSignals {
-  
-}

@@ -30,7 +30,7 @@
  * 
  *
 */
-declare class StyleBoxFlat extends StyleBox {
+declare class StyleBoxFlat extends StyleBox  {
 
   
 /**
@@ -64,9 +64,8 @@ declare class StyleBoxFlat extends StyleBox {
  * 
  *
 */
-  "new"(): StyleBoxFlat;
-  static "new"(): StyleBoxFlat;
-
+  new(): StyleBoxFlat; 
+  static "new"(): StyleBoxFlat 
 
 
 /**
@@ -183,14 +182,12 @@ set_expand_margin_all(size: float): void;
 /** Sets the expand margin for each margin to [code]size_left[/code], [code]size_top[/code], [code]size_right[/code], and [code]size_bottom[/code] pixels. */
 set_expand_margin_individual(size_left: float, size_top: float, size_right: float, size_bottom: float): void;
 
-  // connect<T extends SignalsOf<StyleBoxFlat>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StyleBoxFlatSignals>>(signal: T, method: SignalFunction<StyleBoxFlatSignals[T]>): number;
+  connect<T extends SignalsOf<StyleBoxFlat>>(signal: T, method: SignalFunction<StyleBoxFlat[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StyleBoxFlatSignals extends StyleBoxSignals {
-  
-}

@@ -11,32 +11,31 @@ declare class String {
  *
 */
 
-  constructor(from: boolean);
-  constructor(from: int);
-  constructor(from: float);
-  constructor(from: Vector2);
-  constructor(from: Rect2);
-  constructor(from: Vector3);
-  constructor(from: Transform2D);
-  constructor(from: Plane);
-  constructor(from: Quat);
-  constructor(from: AABB);
-  constructor(from: Basis);
-  constructor(from: Transform);
-  constructor(from: Color);
-  constructor(from: NodePathType);
-  constructor(from: RID);
-  constructor(from: Dictionary<any, any>);
-  constructor(from: any[]);
-  constructor(from: PoolByteArray);
-  constructor(from: PoolIntArray);
-  constructor(from: PoolRealArray);
-  constructor(from: PoolStringArray);
-  constructor(from: PoolVector2Array);
-  constructor(from: PoolVector3Array);
-  constructor(from: PoolColorArray);
-  static "new"(): String;
-
+  new(from: boolean): String;
+  new(from: int): String;
+  new(from: float): String;
+  new(from: Vector2): String;
+  new(from: Rect2): String;
+  new(from: Vector3): String;
+  new(from: Transform2D): String;
+  new(from: Plane): String;
+  new(from: Quat): String;
+  new(from: AABB): String;
+  new(from: Basis): String;
+  new(from: Transform): String;
+  new(from: Color): String;
+  new(from: NodePathType): String;
+  new(from: RID): String;
+  new(from: Dictionary<any, any>): String;
+  new(from: any[]): String;
+  new(from: PoolByteArray): String;
+  new(from: PoolIntArray): String;
+  new(from: PoolRealArray): String;
+  new(from: PoolStringArray): String;
+  new(from: PoolVector2Array): String;
+  new(from: PoolVector3Array): String;
+  new(from: PoolColorArray): String;
+  static "new"(): String 
 
 
 
@@ -499,14 +498,12 @@ xml_escape(): string;
 /** Returns a copy of the string with escaped characters replaced by their meanings according to the XML standard. */
 xml_unescape(): string;
 
-  // connect<T extends SignalsOf<String>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StringSignals>>(signal: T, method: SignalFunction<StringSignals[T]>): number;
+  connect<T extends SignalsOf<String>>(signal: T, method: SignalFunction<String[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StringSignals {
-  
-}

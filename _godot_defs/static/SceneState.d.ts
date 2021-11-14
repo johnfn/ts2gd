@@ -5,7 +5,7 @@
  * This class cannot be instantiated directly, it is retrieved for a given scene as the result of [method PackedScene.get_state].
  *
 */
-declare class SceneState extends Reference {
+declare class SceneState extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class SceneState extends Reference {
  * This class cannot be instantiated directly, it is retrieved for a given scene as the result of [method PackedScene.get_state].
  *
 */
-  "new"(): SceneState;
-  static "new"(): SceneState;
-
+  new(): SceneState; 
+  static "new"(): SceneState 
 
 
 
@@ -100,8 +99,7 @@ get_node_type(idx: int): string;
 /** Returns [code]true[/code] if the node at [code]idx[/code] is an [InstancePlaceholder]. */
 is_node_instance_placeholder(idx: int): boolean;
 
-  // connect<T extends SignalsOf<SceneState>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SceneStateSignals>>(signal: T, method: SignalFunction<SceneStateSignals[T]>): number;
+  connect<T extends SignalsOf<SceneState>>(signal: T, method: SignalFunction<SceneState[T]>): number;
 
 
 
@@ -127,8 +125,7 @@ static GEN_EDIT_STATE_INSTANCE: any;
 */
 static GEN_EDIT_STATE_MAIN: any;
 
+
+
 }
 
-declare class SceneStateSignals extends ReferenceSignals {
-  
-}

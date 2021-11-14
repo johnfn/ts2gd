@@ -7,7 +7,7 @@
  * **Note:** Not available in HTML5 exports.
  *
 */
-declare class CryptoKey extends Resource {
+declare class CryptoKey extends Resource  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class CryptoKey extends Resource {
  * **Note:** Not available in HTML5 exports.
  *
 */
-  "new"(): CryptoKey;
-  static "new"(): CryptoKey;
-
+  new(): CryptoKey; 
+  static "new"(): CryptoKey 
 
 
 
@@ -49,14 +48,12 @@ save(path: string, public_only?: boolean): int;
 /** Returns a string containing the key in PEM format. If [code]public_only[/code] is [code]true[/code], only the public key will be included. */
 save_to_string(public_only?: boolean): string;
 
-  // connect<T extends SignalsOf<CryptoKey>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CryptoKeySignals>>(signal: T, method: SignalFunction<CryptoKeySignals[T]>): number;
+  connect<T extends SignalsOf<CryptoKey>>(signal: T, method: SignalFunction<CryptoKey[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CryptoKeySignals extends ResourceSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Used by the editor to display VCS extracted information in the editor. The implementation of this API is included in VCS addons, which are essentially GDNative plugins that need to be put into the project folder. These VCS addons are scripts which are attached (on demand) to the object instance of `EditorVCSInterface`. All the functions listed below, instead of performing the task themselves, they call the internally defined functions in the VCS addons to provide a plug-n-play experience.
  *
 */
-declare class EditorVCSInterface extends Object {
+declare class EditorVCSInterface extends Object  {
 
   
 /**
  * Used by the editor to display VCS extracted information in the editor. The implementation of this API is included in VCS addons, which are essentially GDNative plugins that need to be put into the project folder. These VCS addons are scripts which are attached (on demand) to the object instance of `EditorVCSInterface`. All the functions listed below, instead of performing the task themselves, they call the internally defined functions in the VCS addons to provide a plug-n-play experience.
  *
 */
-  "new"(): EditorVCSInterface;
-  static "new"(): EditorVCSInterface;
-
+  new(): EditorVCSInterface; 
+  static "new"(): EditorVCSInterface 
 
 
 
@@ -81,14 +80,12 @@ stage_file(file_path: string): void;
 /** Unstages the file which was staged previously to be committed, so that it is no longer committed when [method EditorVCSInterface.commit] is called. Argument should contain the absolute path. */
 unstage_file(file_path: string): void;
 
-  // connect<T extends SignalsOf<EditorVCSInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorVCSInterfaceSignals>>(signal: T, method: SignalFunction<EditorVCSInterfaceSignals[T]>): number;
+  connect<T extends SignalsOf<EditorVCSInterface>>(signal: T, method: SignalFunction<EditorVCSInterface[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorVCSInterfaceSignals extends ObjectSignals {
-  
-}

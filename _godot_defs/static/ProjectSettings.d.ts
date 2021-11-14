@@ -9,7 +9,7 @@
  * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary. Overriding will still take the base project settings' [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url] in account. Therefore, make sure to **also** override the setting with the desired feature tags if you want them to override base project settings on all platforms and configurations.
  *
 */
-declare class ProjectSettingsClass extends Object {
+declare class ProjectSettingsClass extends Object  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class ProjectSettingsClass extends Object {
  * **Overriding:** Any project setting can be overridden by creating a file named `override.cfg` in the project's root directory. This can also be used in exported projects by placing this file in the same directory as the project binary. Overriding will still take the base project settings' [url=https://docs.godotengine.org/en/latest/tutorials/export/feature_tags.html]feature tags[/url] in account. Therefore, make sure to **also** override the setting with the desired feature tags if you want them to override base project settings on all platforms and configurations.
  *
 */
-  "new"(): ProjectSettingsClass;
-  static "new"(): ProjectSettingsClass;
-
+  new(): ProjectSettingsClass; 
+  static "new"(): ProjectSettingsClass 
 
 
 /**
@@ -82,6 +81,18 @@ declare class ProjectSettingsClass extends Object {
 
 /** If [code]true[/code], the project will save user data to its own user directory (see [member application/config/custom_user_dir_name]). This setting is only effective on desktop platforms. A name must be set in the [member application/config/custom_user_dir_name] setting for this to take effect. If [code]false[/code], the project will save user data to [code](OS user data directory)/Godot/app_userdata/(project name)[/code]. */
 "application/config/use_custom_user_dir": boolean;
+
+/**
+ * If `true`, the project will use a hidden directory (`.import`) for storing project-specific data (metadata, shader cache, etc.).
+ *
+ * If `false`, a non-hidden directory (`import`) will be used instead.
+ *
+ * **Note:** Restart the application after changing this setting.
+ *
+ * **Note:** Changing this value can help on platforms or with third-party tools where hidden directory patterns are disallowed. Only modify this setting if you know that your environment requires it, as changing the default can impact compatibility with some external tools or plugins which expect the default `.import` folder.
+ *
+*/
+"application/config/use_hidden_project_data_directory": boolean;
 
 /** Icon set in [code].ico[/code] format used on Windows to set the game's icon. This is done automatically on start by calling [method OS.set_native_icon]. */
 "application/config/windows_native_icon": string;
@@ -1342,8 +1353,11 @@ declare class ProjectSettingsClass extends Object {
 /** The use of half-float vertex compression may be producing rendering errors on some platforms (especially iOS). These have been seen particularly in particles. Disabling half-float may resolve these problems. */
 "rendering/gles2/compatibility/disable_half_float": boolean;
 
+/** iOS specific override for [member rendering/gles2/compatibility/disable_half_float], due to poor support for half-float vertex compression on many devices. */
+"rendering/gles2/compatibility/disable_half_float_iOS": boolean;
+
 /**
- * If `true` and available on the target device, enables high floating point precision for all shader computations in GLES2.
+ * If `true` and available on the target Android device, enables high floating point precision for all shader computations in GLES2.
  *
  * **Warning:** High floating point precision can be extremely slow on older devices and is often not available at all. Use with caution.
  *
@@ -1664,7 +1678,7 @@ declare class ProjectSettingsClass extends Object {
 /**
  * If `true`, the texture importer will import VRAM-compressed textures using the BPTC algorithm. This texture compression algorithm is only supported on desktop platforms, and only when using the GLES3 renderer.
  *
- * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor (see [member application/config/use_hidden_project_data_directory]).
  *
 */
 "rendering/vram_compression/import_bptc": boolean;
@@ -1672,7 +1686,7 @@ declare class ProjectSettingsClass extends Object {
 /**
  * If `true`, the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression algorithm. This algorithm doesn't support alpha channels in textures.
  *
- * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor (see [member application/config/use_hidden_project_data_directory]).
  *
 */
 "rendering/vram_compression/import_etc": boolean;
@@ -1680,7 +1694,7 @@ declare class ProjectSettingsClass extends Object {
 /**
  * If `true`, the texture importer will import VRAM-compressed textures using the Ericsson Texture Compression 2 algorithm. This texture compression algorithm is only supported when using the GLES3 renderer.
  *
- * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor (see [member application/config/use_hidden_project_data_directory]).
  *
 */
 "rendering/vram_compression/import_etc2": boolean;
@@ -1688,7 +1702,7 @@ declare class ProjectSettingsClass extends Object {
 /**
  * If `true`, the texture importer will import VRAM-compressed textures using the PowerVR Texture Compression algorithm. This texture compression algorithm is only supported on iOS.
  *
- * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor (see [member application/config/use_hidden_project_data_directory]).
  *
 */
 "rendering/vram_compression/import_pvrtc": boolean;
@@ -1696,7 +1710,7 @@ declare class ProjectSettingsClass extends Object {
 /**
  * If `true`, the texture importer will import VRAM-compressed textures using the S3 Texture Compression algorithm. This algorithm is only supported on desktop platforms and consoles.
  *
- * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor.
+ * **Note:** Changing this setting does **not** impact textures that were already imported before. To make this setting apply to textures that were already imported, exit the editor, remove the `.import/` folder located inside the project folder then restart the editor (see [member application/config/use_hidden_project_data_directory]).
  *
 */
 "rendering/vram_compression/import_s3tc": boolean;
@@ -1828,14 +1842,12 @@ set_order(name: string, position: int): void;
 */
 set_setting(name: string, value: any): void;
 
-  // connect<T extends SignalsOf<ProjectSettingsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ProjectSettingsClassSignals>>(signal: T, method: SignalFunction<ProjectSettingsClassSignals[T]>): number;
+  connect<T extends SignalsOf<ProjectSettingsClass>>(signal: T, method: SignalFunction<ProjectSettingsClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ProjectSettingsClassSignals extends ObjectSignals {
-  
-}

@@ -1,13 +1,13 @@
 
 /**
 */
-declare class GIProbeData extends Resource {
+declare class GIProbeData extends Resource  {
 
   
 /**
 */
-  "new"(): GIProbeData;
-  static "new"(): GIProbeData;
+  new(): GIProbeData; 
+  static "new"(): GIProbeData 
 
 
 
@@ -23,15 +23,12 @@ declare class GIProbeData extends Resource {
 
 
 
+  connect<T extends SignalsOf<GIProbeData>>(signal: T, method: SignalFunction<GIProbeData[T]>): number;
 
-  // connect<T extends SignalsOf<GIProbeData>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GIProbeDataSignals>>(signal: T, method: SignalFunction<GIProbeDataSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class GIProbeDataSignals extends ResourceSignals {
-  
-}

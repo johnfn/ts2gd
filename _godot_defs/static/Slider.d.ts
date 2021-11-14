@@ -5,7 +5,7 @@
  * **Note:** The [signal Range.changed] and [signal Range.value_changed] signals are part of the [Range] class which this class inherits from.
  *
 */
-declare class Slider extends Range {
+declare class Slider extends Range  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Slider extends Range {
  * **Note:** The [signal Range.changed] and [signal Range.value_changed] signals are part of the [Range] class which this class inherits from.
  *
 */
-  "new"(): Slider;
-  static "new"(): Slider;
-
+  new(): Slider; 
+  static "new"(): Slider 
 
 
 /** If [code]true[/code], the slider can be interacted with. If [code]false[/code], the value can be changed only by code. */
@@ -35,14 +34,12 @@ ticks_on_borders: boolean;
 
 
 
-  // connect<T extends SignalsOf<Slider>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SliderSignals>>(signal: T, method: SignalFunction<SliderSignals[T]>): number;
+  connect<T extends SignalsOf<Slider>>(signal: T, method: SignalFunction<Slider[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SliderSignals extends RangeSignals {
-  
-}

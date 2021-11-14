@@ -5,7 +5,7 @@
  * Nesting of YSort nodes is possible. Children YSort nodes will be sorted in the same space as the parent YSort, allowing to better organize a scene or divide it in multiple ones, yet keep the unique sorting.
  *
 */
-declare class YSort extends Node2D {
+declare class YSort extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class YSort extends Node2D {
  * Nesting of YSort nodes is possible. Children YSort nodes will be sorted in the same space as the parent YSort, allowing to better organize a scene or divide it in multiple ones, yet keep the unique sorting.
  *
 */
-  "new"(): YSort;
-  static "new"(): YSort;
-
+  new(): YSort; 
+  static "new"(): YSort 
 
 
 /** If [code]true[/code], child nodes are sorted, otherwise sorting is disabled. */
@@ -24,14 +23,12 @@ sort_enabled: boolean;
 
 
 
-  // connect<T extends SignalsOf<YSort>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<YSortSignals>>(signal: T, method: SignalFunction<YSortSignals[T]>): number;
+  connect<T extends SignalsOf<YSort>>(signal: T, method: SignalFunction<YSort[T]>): number;
+
+
 
 
 
 
 }
 
-declare class YSortSignals extends Node2DSignals {
-  
-}

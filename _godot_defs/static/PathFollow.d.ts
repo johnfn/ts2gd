@@ -5,7 +5,7 @@
  * It is useful for making other nodes follow a path, without coding the movement pattern. For that, the nodes must be children of this node. The descendant nodes will then move accordingly when setting an offset in this node.
  *
 */
-declare class PathFollow extends Spatial {
+declare class PathFollow extends Spatial  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class PathFollow extends Spatial {
  * It is useful for making other nodes follow a path, without coding the movement pattern. For that, the nodes must be children of this node. The descendant nodes will then move accordingly when setting an offset in this node.
  *
 */
-  "new"(): PathFollow;
-  static "new"(): PathFollow;
-
+  new(): PathFollow; 
+  static "new"(): PathFollow 
 
 
 /**
@@ -49,8 +48,7 @@ v_offset: float;
 
 
 
-  // connect<T extends SignalsOf<PathFollow>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PathFollowSignals>>(signal: T, method: SignalFunction<PathFollowSignals[T]>): number;
+  connect<T extends SignalsOf<PathFollow>>(signal: T, method: SignalFunction<PathFollow[T]>): number;
 
 
 
@@ -84,8 +82,7 @@ static ROTATION_XYZ: any;
 */
 static ROTATION_ORIENTED: any;
 
+
+
 }
 
-declare class PathFollowSignals extends SpatialSignals {
-  
-}

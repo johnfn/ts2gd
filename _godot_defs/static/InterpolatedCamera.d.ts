@@ -5,7 +5,7 @@
  * If it is not [member enabled] or does not have a valid target set, InterpolatedCamera acts like a normal Camera.
  *
 */
-declare class InterpolatedCamera extends Camera {
+declare class InterpolatedCamera extends Camera  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class InterpolatedCamera extends Camera {
  * If it is not [member enabled] or does not have a valid target set, InterpolatedCamera acts like a normal Camera.
  *
 */
-  "new"(): InterpolatedCamera;
-  static "new"(): InterpolatedCamera;
-
+  new(): InterpolatedCamera; 
+  static "new"(): InterpolatedCamera 
 
 
 /** If [code]true[/code], and a target is set, the camera will move automatically. */
@@ -31,14 +30,12 @@ target: NodePathType;
 /** Sets the node to move toward and orient with. */
 set_target(target: Object): void;
 
-  // connect<T extends SignalsOf<InterpolatedCamera>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InterpolatedCameraSignals>>(signal: T, method: SignalFunction<InterpolatedCameraSignals[T]>): number;
+  connect<T extends SignalsOf<InterpolatedCamera>>(signal: T, method: SignalFunction<InterpolatedCamera[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InterpolatedCameraSignals extends CameraSignals {
-  
-}

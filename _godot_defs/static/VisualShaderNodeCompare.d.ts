@@ -3,16 +3,15 @@
  * Compares `a` and `b` of [member type] by [member function]. Returns a boolean scalar. Translates to `if` instruction in shader code.
  *
 */
-declare class VisualShaderNodeCompare extends VisualShaderNode {
+declare class VisualShaderNodeCompare extends VisualShaderNode  {
 
   
 /**
  * Compares `a` and `b` of [member type] by [member function]. Returns a boolean scalar. Translates to `if` instruction in shader code.
  *
 */
-  "new"(): VisualShaderNodeCompare;
-  static "new"(): VisualShaderNodeCompare;
-
+  new(): VisualShaderNodeCompare; 
+  static "new"(): VisualShaderNodeCompare 
 
 
 /** Extra condition which is applied if [member type] is set to [constant CTYPE_VECTOR]. */
@@ -26,8 +25,7 @@ type: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeCompare>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeCompareSignals>>(signal: T, method: SignalFunction<VisualShaderNodeCompareSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeCompare>>(signal: T, method: SignalFunction<VisualShaderNodeCompare[T]>): number;
 
 
 
@@ -103,8 +101,7 @@ static COND_ALL: any;
 */
 static COND_ANY: any;
 
+
+
 }
 
-declare class VisualShaderNodeCompareSignals extends VisualShaderNodeSignals {
-  
-}

@@ -5,7 +5,7 @@
  * **Note:** By default, Godot can only draw up to 4,096 polygon points at a time. To increase this limit, open the Project Settings and increase [member ProjectSettings.rendering/limits/buffers/canvas_polygon_buffer_size_kb] and [member ProjectSettings.rendering/limits/buffers/canvas_polygon_index_buffer_size_kb].
  *
 */
-declare class Polygon2D extends Node2D {
+declare class Polygon2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Polygon2D extends Node2D {
  * **Note:** By default, Godot can only draw up to 4,096 polygon points at a time. To increase this limit, open the Project Settings and increase [member ProjectSettings.rendering/limits/buffers/canvas_polygon_buffer_size_kb] and [member ProjectSettings.rendering/limits/buffers/canvas_polygon_index_buffer_size_kb].
  *
 */
-  "new"(): Polygon2D;
-  static "new"(): Polygon2D;
-
+  new(): Polygon2D; 
+  static "new"(): Polygon2D 
 
 
 /** If [code]true[/code], polygon edges will be anti-aliased. */
@@ -91,14 +90,12 @@ set_bone_path(index: int, path: NodePathType): void;
 /** Sets the weight values for the specified bone. */
 set_bone_weights(index: int, weights: PoolRealArray): void;
 
-  // connect<T extends SignalsOf<Polygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Polygon2DSignals>>(signal: T, method: SignalFunction<Polygon2DSignals[T]>): number;
+  connect<T extends SignalsOf<Polygon2D>>(signal: T, method: SignalFunction<Polygon2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Polygon2DSignals extends Node2DSignals {
-  
-}

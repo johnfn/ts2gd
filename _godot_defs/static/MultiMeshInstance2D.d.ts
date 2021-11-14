@@ -5,7 +5,7 @@
  * Usage is the same as [MultiMeshInstance].
  *
 */
-declare class MultiMeshInstance2D extends Node2D {
+declare class MultiMeshInstance2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class MultiMeshInstance2D extends Node2D {
  * Usage is the same as [MultiMeshInstance].
  *
 */
-  "new"(): MultiMeshInstance2D;
-  static "new"(): MultiMeshInstance2D;
-
+  new(): MultiMeshInstance2D; 
+  static "new"(): MultiMeshInstance2D 
 
 
 /** The [MultiMesh] that will be drawn by the [MultiMeshInstance2D]. */
@@ -35,19 +34,17 @@ texture: Texture;
 
 
 
-  // connect<T extends SignalsOf<MultiMeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MultiMeshInstance2DSignals>>(signal: T, method: SignalFunction<MultiMeshInstance2DSignals[T]>): number;
+  connect<T extends SignalsOf<MultiMeshInstance2D>>(signal: T, method: SignalFunction<MultiMeshInstance2D[T]>): number;
 
 
 
 
-}
 
-declare class MultiMeshInstance2DSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the [member texture] is changed.
  *
 */
-texture_changed: Signal<() => void>
+$texture_changed: Signal<() => void>
 
 }
+

@@ -3,16 +3,15 @@
  * Damped spring constraint for 2D physics. This resembles a spring joint that always wants to go back to a given length.
  *
 */
-declare class DampedSpringJoint2D extends Joint2D {
+declare class DampedSpringJoint2D extends Joint2D  {
 
   
 /**
  * Damped spring constraint for 2D physics. This resembles a spring joint that always wants to go back to a given length.
  *
 */
-  "new"(): DampedSpringJoint2D;
-  static "new"(): DampedSpringJoint2D;
-
+  new(): DampedSpringJoint2D; 
+  static "new"(): DampedSpringJoint2D 
 
 
 /** The spring joint's damping ratio. A value between [code]0[/code] and [code]1[/code]. When the two bodies move into different directions the system tries to align them to the spring axis again. A high [code]damping[/code] value forces the attached bodies to align faster. */
@@ -29,14 +28,12 @@ stiffness: float;
 
 
 
-  // connect<T extends SignalsOf<DampedSpringJoint2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DampedSpringJoint2DSignals>>(signal: T, method: SignalFunction<DampedSpringJoint2DSignals[T]>): number;
+  connect<T extends SignalsOf<DampedSpringJoint2D>>(signal: T, method: SignalFunction<DampedSpringJoint2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class DampedSpringJoint2DSignals extends Joint2DSignals {
-  
-}

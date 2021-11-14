@@ -3,16 +3,15 @@
  * Pin joint for 3D rigid bodies. It pins 2 bodies (rigid or static) together. See also [Generic6DOFJoint].
  *
 */
-declare class PinJoint extends Joint {
+declare class PinJoint extends Joint  {
 
   
 /**
  * Pin joint for 3D rigid bodies. It pins 2 bodies (rigid or static) together. See also [Generic6DOFJoint].
  *
 */
-  "new"(): PinJoint;
-  static "new"(): PinJoint;
-
+  new(): PinJoint; 
+  static "new"(): PinJoint 
 
 
 /** The force with which the pinned objects stay in positional relation to each other. The higher, the stronger. */
@@ -30,8 +29,7 @@ get_param(param: int): float;
 /** Sets the value of the specified parameter. */
 set_param(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<PinJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PinJointSignals>>(signal: T, method: SignalFunction<PinJointSignals[T]>): number;
+  connect<T extends SignalsOf<PinJoint>>(signal: T, method: SignalFunction<PinJoint[T]>): number;
 
 
 
@@ -53,8 +51,7 @@ static PARAM_DAMPING: any;
 */
 static PARAM_IMPULSE_CLAMP: any;
 
+
+
 }
 
-declare class PinJointSignals extends JointSignals {
-  
-}

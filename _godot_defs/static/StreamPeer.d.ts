@@ -3,16 +3,15 @@
  * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP). It provides an API for sending and receiving data through streams as raw data or strings.
  *
 */
-declare class StreamPeer extends Reference {
+declare class StreamPeer extends Reference  {
 
   
 /**
  * StreamPeer is an abstraction and base class for stream-based protocols (such as TCP). It provides an API for sending and receiving data through streams as raw data or strings.
  *
 */
-  "new"(): StreamPeer;
-  static "new"(): StreamPeer;
-
+  new(): StreamPeer; 
+  static "new"(): StreamPeer 
 
 
 /** If [code]true[/code], this [StreamPeer] will using big-endian format for encoding and decoding. */
@@ -138,14 +137,12 @@ put_utf8_string(value: string): void;
 /** Puts a Variant into the stream. If [code]full_objects[/code] is [code]true[/code] encoding objects is allowed (and can potentially include code). */
 put_var(value: any, full_objects?: boolean): void;
 
-  // connect<T extends SignalsOf<StreamPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StreamPeerSignals>>(signal: T, method: SignalFunction<StreamPeerSignals[T]>): number;
+  connect<T extends SignalsOf<StreamPeer>>(signal: T, method: SignalFunction<StreamPeer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StreamPeerSignals extends ReferenceSignals {
-  
-}

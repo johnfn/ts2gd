@@ -3,16 +3,15 @@
  * A node that displays 2D texture information in a 3D environment.
  *
 */
-declare class SpriteBase3D extends GeometryInstance {
+declare class SpriteBase3D extends GeometryInstance  {
 
   
 /**
  * A node that displays 2D texture information in a 3D environment.
  *
 */
-  "new"(): SpriteBase3D;
-  static "new"(): SpriteBase3D;
-
+  new(): SpriteBase3D; 
+  static "new"(): SpriteBase3D 
 
 
 
@@ -62,8 +61,7 @@ get_item_rect(): Rect2;
 /** If [code]true[/code], the specified flag will be enabled. */
 set_draw_flag(flag: int, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<SpriteBase3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpriteBase3DSignals>>(signal: T, method: SignalFunction<SpriteBase3DSignals[T]>): number;
+  connect<T extends SignalsOf<SpriteBase3D>>(signal: T, method: SignalFunction<SpriteBase3D[T]>): number;
 
 
 
@@ -100,8 +98,7 @@ static ALPHA_CUT_DISCARD: any;
 /** No documentation provided. */
 static ALPHA_CUT_OPAQUE_PREPASS: any;
 
+
+
 }
 
-declare class SpriteBase3DSignals extends GeometryInstanceSignals {
-  
-}

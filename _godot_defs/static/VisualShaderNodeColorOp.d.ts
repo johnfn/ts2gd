@@ -3,16 +3,15 @@
  * Applies [member operator] to two color inputs.
  *
 */
-declare class VisualShaderNodeColorOp extends VisualShaderNode {
+declare class VisualShaderNodeColorOp extends VisualShaderNode  {
 
   
 /**
  * Applies [member operator] to two color inputs.
  *
 */
-  "new"(): VisualShaderNodeColorOp;
-  static "new"(): VisualShaderNodeColorOp;
-
+  new(): VisualShaderNodeColorOp; 
+  static "new"(): VisualShaderNodeColorOp 
 
 
 /** An operator to be applied to the inputs. See [enum Operator] for options. */
@@ -20,8 +19,7 @@ operator: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeColorOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeColorOpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorOpSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorOp>>(signal: T, method: SignalFunction<VisualShaderNodeColorOp[T]>): number;
 
 
 
@@ -157,8 +155,7 @@ static OP_SOFT_LIGHT: any;
 */
 static OP_HARD_LIGHT: any;
 
+
+
 }
 
-declare class VisualShaderNodeColorOpSignals extends VisualShaderNodeSignals {
-  
-}

@@ -1,13 +1,13 @@
 
 /**
 */
-declare class AudioEffectStereoEnhance extends AudioEffect {
+declare class AudioEffectStereoEnhance extends AudioEffect  {
 
   
 /**
 */
-  "new"(): AudioEffectStereoEnhance;
-  static "new"(): AudioEffectStereoEnhance;
+  new(): AudioEffectStereoEnhance; 
+  static "new"(): AudioEffectStereoEnhance 
 
 
 
@@ -15,15 +15,12 @@ declare class AudioEffectStereoEnhance extends AudioEffect {
 
 
 
+  connect<T extends SignalsOf<AudioEffectStereoEnhance>>(signal: T, method: SignalFunction<AudioEffectStereoEnhance[T]>): number;
 
-  // connect<T extends SignalsOf<AudioEffectStereoEnhance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectStereoEnhanceSignals>>(signal: T, method: SignalFunction<AudioEffectStereoEnhanceSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class AudioEffectStereoEnhanceSignals extends AudioEffectSignals {
-  
-}

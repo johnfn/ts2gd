@@ -3,16 +3,15 @@
  * This is the CSG base class that provides CSG operation support to the various CSG nodes in Godot.
  *
 */
-declare class CSGShape extends GeometryInstance {
+declare class CSGShape extends GeometryInstance  {
 
   
 /**
  * This is the CSG base class that provides CSG operation support to the various CSG nodes in Godot.
  *
 */
-  "new"(): CSGShape;
-  static "new"(): CSGShape;
-
+  new(): CSGShape; 
+  static "new"(): CSGShape 
 
 
 /** Calculate tangents for the CSG shape which allows the use of normal maps. This is only applied on the root shape, this setting is ignored on any child. */
@@ -58,8 +57,7 @@ set_collision_layer_bit(bit: int, value: boolean): void;
 /** Sets individual bits on the collision mask. Use this if you only need to change one layer's value. */
 set_collision_mask_bit(bit: int, value: boolean): void;
 
-  // connect<T extends SignalsOf<CSGShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGShapeSignals>>(signal: T, method: SignalFunction<CSGShapeSignals[T]>): number;
+  connect<T extends SignalsOf<CSGShape>>(signal: T, method: SignalFunction<CSGShape[T]>): number;
 
 
 
@@ -81,8 +79,7 @@ static OPERATION_INTERSECTION: any;
 */
 static OPERATION_SUBTRACTION: any;
 
+
+
 }
 
-declare class CSGShapeSignals extends GeometryInstanceSignals {
-  
-}

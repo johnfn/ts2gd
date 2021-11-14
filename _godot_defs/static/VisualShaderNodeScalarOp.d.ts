@@ -1,21 +1,19 @@
 
 /**
 */
-declare class VisualShaderNodeScalarOp extends VisualShaderNode {
+declare class VisualShaderNodeScalarOp extends VisualShaderNode  {
 
   
 /**
 */
-  "new"(): VisualShaderNodeScalarOp;
-  static "new"(): VisualShaderNodeScalarOp;
+  new(): VisualShaderNodeScalarOp; 
+  static "new"(): VisualShaderNodeScalarOp 
 
 
 
 
 
-
-  // connect<T extends SignalsOf<VisualShaderNodeScalarOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeScalarOpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeScalarOpSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeScalarOp>>(signal: T, method: SignalFunction<VisualShaderNodeScalarOp[T]>): number;
 
 
 
@@ -49,8 +47,7 @@ static OP_ATAN2: any;
 /** No documentation provided. */
 static OP_STEP: any;
 
+
+
 }
 
-declare class VisualShaderNodeScalarOpSignals extends VisualShaderNodeSignals {
-  
-}

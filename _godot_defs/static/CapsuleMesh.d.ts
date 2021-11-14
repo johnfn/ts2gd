@@ -3,16 +3,15 @@
  * Class representing a capsule-shaped [PrimitiveMesh].
  *
 */
-declare class CapsuleMesh extends PrimitiveMesh {
+declare class CapsuleMesh extends PrimitiveMesh  {
 
   
 /**
  * Class representing a capsule-shaped [PrimitiveMesh].
  *
 */
-  "new"(): CapsuleMesh;
-  static "new"(): CapsuleMesh;
-
+  new(): CapsuleMesh; 
+  static "new"(): CapsuleMesh 
 
 
 /**
@@ -34,14 +33,12 @@ rings: int;
 
 
 
-  // connect<T extends SignalsOf<CapsuleMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CapsuleMeshSignals>>(signal: T, method: SignalFunction<CapsuleMeshSignals[T]>): number;
+  connect<T extends SignalsOf<CapsuleMesh>>(signal: T, method: SignalFunction<CapsuleMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CapsuleMeshSignals extends PrimitiveMeshSignals {
-  
-}

@@ -1,13 +1,13 @@
 
 /**
 */
-declare class InputEventMIDI extends InputEvent {
+declare class InputEventMIDI extends InputEvent  {
 
   
 /**
 */
-  "new"(): InputEventMIDI;
-  static "new"(): InputEventMIDI;
+  new(): InputEventMIDI; 
+  static "new"(): InputEventMIDI 
 
 
 
@@ -20,15 +20,12 @@ declare class InputEventMIDI extends InputEvent {
 
 
 
+  connect<T extends SignalsOf<InputEventMIDI>>(signal: T, method: SignalFunction<InputEventMIDI[T]>): number;
 
-  // connect<T extends SignalsOf<InputEventMIDI>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventMIDISignals>>(signal: T, method: SignalFunction<InputEventMIDISignals[T]>): number;
+
 
 
 
 
 }
 
-declare class InputEventMIDISignals extends InputEventSignals {
-  
-}

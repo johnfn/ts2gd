@@ -15,9 +15,8 @@ declare class PoolStringArray {
  *
 */
 
-  constructor(from: any[]);
-  static "new"(): PoolStringArray;
-
+  new(from: any[]): PoolStringArray;
+  static "new"(): PoolStringArray 
 
 
 
@@ -56,14 +55,12 @@ set(idx: int, string: string): any;
 /** Returns the size of the array. */
 size(): int;
 
-  // connect<T extends SignalsOf<PoolStringArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PoolStringArraySignals>>(signal: T, method: SignalFunction<PoolStringArraySignals[T]>): number;
+  connect<T extends SignalsOf<PoolStringArray>>(signal: T, method: SignalFunction<PoolStringArray[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PoolStringArraySignals {
-  
-}

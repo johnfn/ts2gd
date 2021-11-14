@@ -18,7 +18,7 @@
  * **Note:** The script is run in the Editor context, which means the output is visible in the console window started with the Editor (stdout) instead of the usual Godot **Output** dock.
  *
 */
-declare class EditorScript extends Reference {
+declare class EditorScript extends Reference  {
 
   
 /**
@@ -40,9 +40,8 @@ declare class EditorScript extends Reference {
  * **Note:** The script is run in the Editor context, which means the output is visible in the console window started with the Editor (stdout) instead of the usual Godot **Output** dock.
  *
 */
-  "new"(): EditorScript;
-  static "new"(): EditorScript;
-
+  new(): EditorScript; 
+  static "new"(): EditorScript 
 
 
 
@@ -63,14 +62,12 @@ get_editor_interface(): EditorInterface;
 /** Returns the Editor's currently active scene. */
 get_scene(): Node;
 
-  // connect<T extends SignalsOf<EditorScript>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorScriptSignals>>(signal: T, method: SignalFunction<EditorScriptSignals[T]>): number;
+  connect<T extends SignalsOf<EditorScript>>(signal: T, method: SignalFunction<EditorScript[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorScriptSignals extends ReferenceSignals {
-  
-}

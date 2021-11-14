@@ -3,16 +3,15 @@
  * Slides across the X axis of the pivot object. See also [Generic6DOFJoint].
  *
 */
-declare class SliderJoint extends Joint {
+declare class SliderJoint extends Joint  {
 
   
 /**
  * Slides across the X axis of the pivot object. See also [Generic6DOFJoint].
  *
 */
-  "new"(): SliderJoint;
-  static "new"(): SliderJoint;
-
+  new(): SliderJoint; 
+  static "new"(): SliderJoint 
 
 
 /**
@@ -102,8 +101,7 @@ get_param(param: int): float;
 /** No documentation provided. */
 set_param(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<SliderJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SliderJointSignals>>(signal: T, method: SignalFunction<SliderJointSignals[T]>): number;
+  connect<T extends SignalsOf<SliderJoint>>(signal: T, method: SignalFunction<SliderJoint[T]>): number;
 
 
 
@@ -245,8 +243,7 @@ static PARAM_ANGULAR_ORTHOGONAL_DAMPING: any;
 */
 static PARAM_MAX: any;
 
+
+
 }
 
-declare class SliderJointSignals extends JointSignals {
-  
-}

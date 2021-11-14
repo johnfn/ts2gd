@@ -5,7 +5,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_inspector].
  *
 */
-declare class EditorInspector extends ScrollContainer {
+declare class EditorInspector extends ScrollContainer  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorInspector extends ScrollContainer {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_inspector].
  *
 */
-  "new"(): EditorInspector;
-  static "new"(): EditorInspector;
-
+  new(): EditorInspector; 
+  static "new"(): EditorInspector 
 
 
 
@@ -28,38 +27,35 @@ declare class EditorInspector extends ScrollContainer {
 */
 refresh(): void;
 
-  // connect<T extends SignalsOf<EditorInspector>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorInspectorSignals>>(signal: T, method: SignalFunction<EditorInspectorSignals[T]>): number;
+  connect<T extends SignalsOf<EditorInspector>>(signal: T, method: SignalFunction<EditorInspector[T]>): number;
 
 
 
 
-}
 
-declare class EditorInspectorSignals extends ScrollContainerSignals {
-  /**
+/**
  * Emitted when the Edit button of an [Object] has been pressed in the inspector. This is mainly used in the remote scene tree inspector.
  *
 */
-object_id_selected: Signal<(id: int) => void>
+$object_id_selected: Signal<(id: int) => void>
 
 /**
  * Emitted when a property is edited in the inspector.
  *
 */
-property_edited: Signal<(property: string) => void>
+$property_edited: Signal<(property: string) => void>
 
 /**
  * Emitted when a property is keyed in the inspector. Properties can be keyed by clicking the "key" icon next to a property when the Animation panel is toggled.
  *
 */
-property_keyed: Signal<(property: string) => void>
+$property_keyed: Signal<(property: string) => void>
 
 /**
  * Emitted when a property is selected in the inspector.
  *
 */
-property_selected: Signal<(property: string) => void>
+$property_selected: Signal<(property: string) => void>
 
 /**
  * Emitted when a boolean property is toggled in the inspector.
@@ -67,18 +63,19 @@ property_selected: Signal<(property: string) => void>
  * **Note:** This signal is never emitted if the internal `autoclear` property enabled. Since this property is always enabled in the editor inspector, this signal is never emitted by the editor itself.
  *
 */
-property_toggled: Signal<(property: string, checked: boolean) => void>
+$property_toggled: Signal<(property: string, checked: boolean) => void>
 
 /**
  * Emitted when a resource is selected in the inspector.
  *
 */
-resource_selected: Signal<(res: Object, prop: string) => void>
+$resource_selected: Signal<(res: Object, prop: string) => void>
 
 /**
  * Emitted when a property that requires a restart to be applied is edited in the inspector. This is only used in the Project Settings and Editor Settings.
  *
 */
-restart_requested: Signal<() => void>
+$restart_requested: Signal<() => void>
 
 }
+

@@ -3,16 +3,15 @@
  * Plays input signal back after a period of time. The delayed signal may be played back multiple times to create the sound of a repeating, decaying echo. Delay effects range from a subtle echo effect to a pronounced blending of previous sounds with new sounds.
  *
 */
-declare class AudioEffectDelay extends AudioEffect {
+declare class AudioEffectDelay extends AudioEffect  {
 
   
 /**
  * Plays input signal back after a period of time. The delayed signal may be played back multiple times to create the sound of a repeating, decaying echo. Delay effects range from a subtle echo effect to a pronounced blending of previous sounds with new sounds.
  *
 */
-  "new"(): AudioEffectDelay;
-  static "new"(): AudioEffectDelay;
-
+  new(): AudioEffectDelay; 
+  static "new"(): AudioEffectDelay 
 
 
 /** Output percent of original sound. At 0, only delayed sounds are output. Value can range from 0 to 1. */
@@ -56,14 +55,12 @@ dry: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectDelay>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectDelaySignals>>(signal: T, method: SignalFunction<AudioEffectDelaySignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectDelay>>(signal: T, method: SignalFunction<AudioEffectDelay[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectDelaySignals extends AudioEffectSignals {
-  
-}

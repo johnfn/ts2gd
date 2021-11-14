@@ -3,16 +3,15 @@
  * In order to utilize the portal occlusion culling system, you must build your level using [Room]s and [Portal]s. Before these can be used at runtime, they must undergo a short conversion process to build the `room graph`, runtime data needed for portal culling. The `room graph` is controlled by the [RoomManager] node, and the [RoomManager] also contains settings that are common throughout the portal system.
  *
 */
-declare class RoomManager extends Spatial {
+declare class RoomManager extends Spatial  {
 
   
 /**
  * In order to utilize the portal occlusion culling system, you must build your level using [Room]s and [Portal]s. Before these can be used at runtime, they must undergo a short conversion process to build the `room graph`, runtime data needed for portal culling. The `room graph` is controlled by the [RoomManager] node, and the [RoomManager] also contains settings that are common throughout the portal system.
  *
 */
-  "new"(): RoomManager;
-  static "new"(): RoomManager;
-
+  new(): RoomManager; 
+  static "new"(): RoomManager 
 
 
 /**
@@ -149,8 +148,7 @@ rooms_clear(): void;
 */
 rooms_convert(): void;
 
-  // connect<T extends SignalsOf<RoomManager>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RoomManagerSignals>>(signal: T, method: SignalFunction<RoomManagerSignals[T]>): number;
+  connect<T extends SignalsOf<RoomManager>>(signal: T, method: SignalFunction<RoomManager[T]>): number;
 
 
 
@@ -172,8 +170,7 @@ static PVS_MODE_PARTIAL: any;
 */
 static PVS_MODE_FULL: any;
 
+
+
 }
 
-declare class RoomManagerSignals extends SpatialSignals {
-  
-}

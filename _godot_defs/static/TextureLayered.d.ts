@@ -3,16 +3,15 @@
  * Base class for [Texture3D] and [TextureArray]. Cannot be used directly, but contains all the functions necessary for accessing and using [Texture3D] and [TextureArray]. Data is set on a per-layer basis. For [Texture3D]s, the layer specifies the depth or Z-index, they can be treated as a bunch of 2D slices. Similarly, for [TextureArray]s, the layer specifies the array layer.
  *
 */
-declare class TextureLayered extends Resource {
+declare class TextureLayered extends Resource  {
 
   
 /**
  * Base class for [Texture3D] and [TextureArray]. Cannot be used directly, but contains all the functions necessary for accessing and using [Texture3D] and [TextureArray]. Data is set on a per-layer basis. For [Texture3D]s, the layer specifies the depth or Z-index, they can be treated as a bunch of 2D slices. Similarly, for [TextureArray]s, the layer specifies the array layer.
  *
 */
-  "new"(): TextureLayered;
-  static "new"(): TextureLayered;
-
+  new(): TextureLayered; 
+  static "new"(): TextureLayered 
 
 
 /** Returns a dictionary with all the data used by this texture. */
@@ -42,8 +41,7 @@ set_data_partial(image: Image, x_offset: int, y_offset: int, layer: int, mipmap?
 /** Sets the data for the specified layer. Data takes the form of a 2-dimensional [Image] resource. */
 set_layer_data(image: Image, layer: int): void;
 
-  // connect<T extends SignalsOf<TextureLayered>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureLayeredSignals>>(signal: T, method: SignalFunction<TextureLayeredSignals[T]>): number;
+  connect<T extends SignalsOf<TextureLayered>>(signal: T, method: SignalFunction<TextureLayered[T]>): number;
 
 
 
@@ -85,8 +83,7 @@ static FLAG_FILTER: any;
 */
 static FLAG_ANISOTROPIC_FILTER: any;
 
+
+
 }
 
-declare class TextureLayeredSignals extends ResourceSignals {
-  
-}

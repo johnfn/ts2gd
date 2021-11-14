@@ -2,7 +2,7 @@
 /**
  * EditorImportPlugins provide a way to extend the editor's resource import functionality. Use them to import resources from custom files or to provide alternatives to the editor's existing importers. Register your [EditorPlugin] with [method EditorPlugin.add_import_plugin].
  *
- * EditorImportPlugins work by associating with specific file extensions and a resource type. See [method get_recognized_extensions] and [method get_resource_type]. They may optionally specify some import presets that affect the import process. EditorImportPlugins are responsible for creating the resources and saving them in the `.import` directory.
+ * EditorImportPlugins work by associating with specific file extensions and a resource type. See [method get_recognized_extensions] and [method get_resource_type]. They may optionally specify some import presets that affect the import process. EditorImportPlugins are responsible for creating the resources and saving them in the `.import` directory (see [member ProjectSettings.application/config/use_hidden_project_data_directory]).
  *
  * Below is an example EditorImportPlugin that imports a [Mesh] from a file with the extension ".special" or ".spec":
  *
@@ -38,13 +38,13 @@
  * 
  *
 */
-declare class EditorImportPlugin extends ResourceImporter {
+declare class EditorImportPlugin extends ResourceImporter  {
 
   
 /**
  * EditorImportPlugins provide a way to extend the editor's resource import functionality. Use them to import resources from custom files or to provide alternatives to the editor's existing importers. Register your [EditorPlugin] with [method EditorPlugin.add_import_plugin].
  *
- * EditorImportPlugins work by associating with specific file extensions and a resource type. See [method get_recognized_extensions] and [method get_resource_type]. They may optionally specify some import presets that affect the import process. EditorImportPlugins are responsible for creating the resources and saving them in the `.import` directory.
+ * EditorImportPlugins work by associating with specific file extensions and a resource type. See [method get_recognized_extensions] and [method get_resource_type]. They may optionally specify some import presets that affect the import process. EditorImportPlugins are responsible for creating the resources and saving them in the `.import` directory (see [member ProjectSettings.application/config/use_hidden_project_data_directory]).
  *
  * Below is an example EditorImportPlugin that imports a [Mesh] from a file with the extension ".special" or ".spec":
  *
@@ -80,9 +80,8 @@ declare class EditorImportPlugin extends ResourceImporter {
  * 
  *
 */
-  "new"(): EditorImportPlugin;
-  static "new"(): EditorImportPlugin;
-
+  new(): EditorImportPlugin; 
+  static "new"(): EditorImportPlugin 
 
 
 
@@ -128,7 +127,7 @@ get_recognized_extensions(): any[];
 /** Gets the Godot resource type associated with this loader. e.g. [code]"Mesh"[/code] or [code]"Animation"[/code]. */
 get_resource_type(): string;
 
-/** Gets the extension used to save this resource in the [code].import[/code] directory. */
+/** Gets the extension used to save this resource in the [code].import[/code] directory (see [member ProjectSettings.application/config/use_hidden_project_data_directory]). */
 get_save_extension(): string;
 
 /** Gets the name to display in the import window. You should choose this name as a continuation to "Import as", e.g. "Import as Special Mesh". */
@@ -142,14 +141,12 @@ get_visible_name(): string;
 */
 import(source_file: string, save_path: string, options: Dictionary<any, any>, platform_variants: any[], gen_files: any[]): int;
 
-  // connect<T extends SignalsOf<EditorImportPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorImportPluginSignals>>(signal: T, method: SignalFunction<EditorImportPluginSignals[T]>): number;
+  connect<T extends SignalsOf<EditorImportPlugin>>(signal: T, method: SignalFunction<EditorImportPlugin[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorImportPluginSignals extends ResourceImporterSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Simulates rooms of different sizes. Its parameters can be adjusted to simulate the sound of a specific room.
  *
 */
-declare class AudioEffectReverb extends AudioEffect {
+declare class AudioEffectReverb extends AudioEffect  {
 
   
 /**
  * Simulates rooms of different sizes. Its parameters can be adjusted to simulate the sound of a specific room.
  *
 */
-  "new"(): AudioEffectReverb;
-  static "new"(): AudioEffectReverb;
-
+  new(): AudioEffectReverb; 
+  static "new"(): AudioEffectReverb 
 
 
 /** Defines how reflective the imaginary room's walls are. Value can range from 0 to 1. */
@@ -41,14 +40,12 @@ wet: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectReverb>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectReverbSignals>>(signal: T, method: SignalFunction<AudioEffectReverbSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectReverb>>(signal: T, method: SignalFunction<AudioEffectReverb[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectReverbSignals extends AudioEffectSignals {
-  
-}

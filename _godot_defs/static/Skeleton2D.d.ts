@@ -3,16 +3,15 @@
  * Skeleton2D parents a hierarchy of [Bone2D] objects. It is a requirement of [Bone2D]. Skeleton2D holds a reference to the rest pose of its children and acts as a single point of access to its bones.
  *
 */
-declare class Skeleton2D extends Node2D {
+declare class Skeleton2D extends Node2D  {
 
   
 /**
  * Skeleton2D parents a hierarchy of [Bone2D] objects. It is a requirement of [Bone2D]. Skeleton2D holds a reference to the rest pose of its children and acts as a single point of access to its bones.
  *
 */
-  "new"(): Skeleton2D;
-  static "new"(): Skeleton2D;
-
+  new(): Skeleton2D; 
+  static "new"(): Skeleton2D 
 
 
 
@@ -25,17 +24,15 @@ get_bone_count(): int;
 /** Returns the [RID] of a Skeleton2D instance. */
 get_skeleton(): RID;
 
-  // connect<T extends SignalsOf<Skeleton2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Skeleton2DSignals>>(signal: T, method: SignalFunction<Skeleton2DSignals[T]>): number;
+  connect<T extends SignalsOf<Skeleton2D>>(signal: T, method: SignalFunction<Skeleton2D[T]>): number;
 
 
 
 
-}
 
-declare class Skeleton2DSignals extends Node2DSignals {
-  /**
+/**
 */
-bone_setup_changed: Signal<() => void>
+$bone_setup_changed: Signal<() => void>
 
 }
+

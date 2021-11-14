@@ -5,7 +5,7 @@
  * It keeps a cache of precalculated points along the curve, to speed up further calculations.
  *
 */
-declare class Curve3D extends Resource {
+declare class Curve3D extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Curve3D extends Resource {
  * It keeps a cache of precalculated points along the curve, to speed up further calculations.
  *
 */
-  "new"(): Curve3D;
-  static "new"(): Curve3D;
-
+  new(): Curve3D; 
+  static "new"(): Curve3D 
 
 
 /** The distance in meters between two adjacent cached points. Changing it forces the cache to be recomputed the next time the [method get_baked_points] or [method get_baked_length] function is called. The smaller the distance, the more points in the cache and the more memory it will consume, so use with care. */
@@ -147,14 +146,12 @@ set_point_tilt(idx: int, tilt: float): void;
 */
 tessellate(max_stages?: int, tolerance_degrees?: float): PoolVector3Array;
 
-  // connect<T extends SignalsOf<Curve3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Curve3DSignals>>(signal: T, method: SignalFunction<Curve3DSignals[T]>): number;
+  connect<T extends SignalsOf<Curve3D>>(signal: T, method: SignalFunction<Curve3D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Curve3DSignals extends ResourceSignals {
-  
-}

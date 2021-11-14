@@ -3,29 +3,26 @@
  * Horizontal version of [ScrollBar], which goes from left (min) to right (max).
  *
 */
-declare class HScrollBar extends ScrollBar {
+declare class HScrollBar extends ScrollBar  {
 
   
 /**
  * Horizontal version of [ScrollBar], which goes from left (min) to right (max).
  *
 */
-  "new"(): HScrollBar;
-  static "new"(): HScrollBar;
+  new(): HScrollBar; 
+  static "new"(): HScrollBar 
 
 
 
 
 
+  connect<T extends SignalsOf<HScrollBar>>(signal: T, method: SignalFunction<HScrollBar[T]>): number;
 
-  // connect<T extends SignalsOf<HScrollBar>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HScrollBarSignals>>(signal: T, method: SignalFunction<HScrollBarSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class HScrollBarSignals extends ScrollBarSignals {
-  
-}

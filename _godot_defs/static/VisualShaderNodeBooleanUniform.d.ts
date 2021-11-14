@@ -3,29 +3,26 @@
  * Translated to `uniform bool` in the shader language.
  *
 */
-declare class VisualShaderNodeBooleanUniform extends VisualShaderNodeUniform {
+declare class VisualShaderNodeBooleanUniform extends VisualShaderNodeUniform  {
 
   
 /**
  * Translated to `uniform bool` in the shader language.
  *
 */
-  "new"(): VisualShaderNodeBooleanUniform;
-  static "new"(): VisualShaderNodeBooleanUniform;
+  new(): VisualShaderNodeBooleanUniform; 
+  static "new"(): VisualShaderNodeBooleanUniform 
 
 
 
 
 
+  connect<T extends SignalsOf<VisualShaderNodeBooleanUniform>>(signal: T, method: SignalFunction<VisualShaderNodeBooleanUniform[T]>): number;
 
-  // connect<T extends SignalsOf<VisualShaderNodeBooleanUniform>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeBooleanUniformSignals>>(signal: T, method: SignalFunction<VisualShaderNodeBooleanUniformSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class VisualShaderNodeBooleanUniformSignals extends VisualShaderNodeUniformSignals {
-  
-}

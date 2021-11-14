@@ -3,16 +3,15 @@
  * A resource to add to an [AnimationNodeBlendTree]. This node will execute a sub-animation and return once it finishes. Blend times for fading in and out can be customized, as well as filters.
  *
 */
-declare class AnimationNodeOneShot extends AnimationNode {
+declare class AnimationNodeOneShot extends AnimationNode  {
 
   
 /**
  * A resource to add to an [AnimationNodeBlendTree]. This node will execute a sub-animation and return once it finishes. Blend times for fading in and out can be customized, as well as filters.
  *
 */
-  "new"(): AnimationNodeOneShot;
-  static "new"(): AnimationNodeOneShot;
-
+  new(): AnimationNodeOneShot; 
+  static "new"(): AnimationNodeOneShot 
 
 
 /** If [code]true[/code], the sub-animation will restart automatically after finishing. */
@@ -33,8 +32,7 @@ get_mix_mode(): int;
 /** No documentation provided. */
 set_mix_mode(mode: int): void;
 
-  // connect<T extends SignalsOf<AnimationNodeOneShot>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeOneShotSignals>>(signal: T, method: SignalFunction<AnimationNodeOneShotSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeOneShot>>(signal: T, method: SignalFunction<AnimationNodeOneShot[T]>): number;
 
 
 
@@ -44,8 +42,7 @@ static MIX_MODE_BLEND: any;
 /** No documentation provided. */
 static MIX_MODE_ADD: any;
 
+
+
 }
 
-declare class AnimationNodeOneShotSignals extends AnimationNodeSignals {
-  
-}

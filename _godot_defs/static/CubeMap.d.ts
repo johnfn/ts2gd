@@ -3,16 +3,15 @@
  * A 6-sided 3D texture typically used for faking reflections. It can be used to make an object look as if it's reflecting its surroundings. This usually delivers much better performance than other reflection methods.
  *
 */
-declare class CubeMap extends Resource {
+declare class CubeMap extends Resource  {
 
   
 /**
  * A 6-sided 3D texture typically used for faking reflections. It can be used to make an object look as if it's reflecting its surroundings. This usually delivers much better performance than other reflection methods.
  *
 */
-  "new"(): CubeMap;
-  static "new"(): CubeMap;
-
+  new(): CubeMap; 
+  static "new"(): CubeMap 
 
 
 /** The render flags for the [CubeMap]. See the [enum Flags] constants for details. */
@@ -36,8 +35,7 @@ get_width(): int;
 /** Sets an [Image] for a side of the [CubeMap] using one of the [enum Side] constants. */
 set_side(side: int, image: Image): void;
 
-  // connect<T extends SignalsOf<CubeMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CubeMapSignals>>(signal: T, method: SignalFunction<CubeMapSignals[T]>): number;
+  connect<T extends SignalsOf<CubeMap>>(signal: T, method: SignalFunction<CubeMap[T]>): number;
 
 
 
@@ -119,8 +117,7 @@ static FLAG_FILTER: any;
 */
 static FLAGS_DEFAULT: any;
 
+
+
 }
 
-declare class CubeMapSignals extends ResourceSignals {
-  
-}

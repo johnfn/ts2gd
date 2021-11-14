@@ -16,7 +16,7 @@
  * **Note:** DynamicFont doesn't support features such as kerning, right-to-left typesetting, ligatures, text shaping, variable fonts and optional font features yet. If you wish to "bake" an optional font feature into a TTF font file, you can use [url=https://fontforge.org/]FontForge[/url] to do so. In FontForge, use **File > Generate Fonts**, click **Options**, choose the desired features then generate the font.
  *
 */
-declare class DynamicFont extends Font {
+declare class DynamicFont extends Font  {
 
   
 /**
@@ -36,9 +36,8 @@ declare class DynamicFont extends Font {
  * **Note:** DynamicFont doesn't support features such as kerning, right-to-left typesetting, ligatures, text shaping, variable fonts and optional font features yet. If you wish to "bake" an optional font feature into a TTF font file, you can use [url=https://fontforge.org/]FontForge[/url] to do so. In FontForge, use **File > Generate Fonts**, click **Options**, choose the desired features then generate the font.
  *
 */
-  "new"(): DynamicFont;
-  static "new"(): DynamicFont;
-
+  new(): DynamicFont; 
+  static "new"(): DynamicFont 
 
 
 /** Extra spacing at the bottom in pixels. */
@@ -115,8 +114,7 @@ set_fallback(idx: int, data: DynamicFontData): void;
 /** Sets the spacing for [code]type[/code] (see [enum SpacingType]) to [code]value[/code] in pixels (not relative to the font size). */
 set_spacing(type: int, value: int): void;
 
-  // connect<T extends SignalsOf<DynamicFont>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DynamicFontSignals>>(signal: T, method: SignalFunction<DynamicFontSignals[T]>): number;
+  connect<T extends SignalsOf<DynamicFont>>(signal: T, method: SignalFunction<DynamicFont[T]>): number;
 
 
 
@@ -144,8 +142,7 @@ static SPACING_CHAR: any;
 */
 static SPACING_SPACE: any;
 
+
+
 }
 
-declare class DynamicFontSignals extends FontSignals {
-  
-}

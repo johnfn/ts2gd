@@ -37,7 +37,7 @@
  * 
  *
 */
-declare class MainLoop extends Object {
+declare class MainLoop extends Object  {
 
   
 /**
@@ -78,9 +78,8 @@ declare class MainLoop extends Object {
  * 
  *
 */
-  "new"(): MainLoop;
-  static "new"(): MainLoop;
-
+  new(): MainLoop; 
+  static "new"(): MainLoop 
 
 
 
@@ -136,8 +135,7 @@ input_text(text: string): void;
 /** Should not be called manually, override [method _iteration] instead. Will be removed in Godot 4.0. */
 iteration(delta: float): boolean;
 
-  // connect<T extends SignalsOf<MainLoop>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MainLoopSignals>>(signal: T, method: SignalFunction<MainLoopSignals[T]>): number;
+  connect<T extends SignalsOf<MainLoop>>(signal: T, method: SignalFunction<MainLoop[T]>): number;
 
 
 
@@ -251,13 +249,12 @@ static NOTIFICATION_APP_RESUMED: any;
 */
 static NOTIFICATION_APP_PAUSED: any;
 
-}
 
-declare class MainLoopSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when a user responds to a permission request.
  *
 */
-on_request_permissions_result: Signal<(permission: string, granted: boolean) => void>
+$on_request_permissions_result: Signal<(permission: string, granted: boolean) => void>
 
 }
+

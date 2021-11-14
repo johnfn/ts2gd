@@ -7,7 +7,7 @@
  * Note that the [Camera2D] node's `position` doesn't represent the actual position of the screen, which may differ due to applied smoothing or limits. You can use [method get_camera_screen_center] to get the real position.
  *
 */
-declare class Camera2D extends Node2D {
+declare class Camera2D extends Node2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class Camera2D extends Node2D {
  * Note that the [Camera2D] node's `position` doesn't represent the actual position of the screen, which may differ due to applied smoothing or limits. You can use [method get_camera_screen_center] to get the real position.
  *
 */
-  "new"(): Camera2D;
-  static "new"(): Camera2D;
-
+  new(): Camera2D; 
+  static "new"(): Camera2D 
 
 
 /** The Camera2D's anchor point. See [enum AnchorMode] constants. */
@@ -153,8 +152,7 @@ set_drag_margin(margin: int, drag_margin: float): void;
 /** Sets the specified camera limit. See also [member limit_bottom], [member limit_top], [member limit_left], and [member limit_right]. */
 set_limit(margin: int, limit: int): void;
 
-  // connect<T extends SignalsOf<Camera2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Camera2DSignals>>(signal: T, method: SignalFunction<Camera2DSignals[T]>): number;
+  connect<T extends SignalsOf<Camera2D>>(signal: T, method: SignalFunction<Camera2D[T]>): number;
 
 
 
@@ -182,8 +180,7 @@ static CAMERA2D_PROCESS_PHYSICS: any;
 */
 static CAMERA2D_PROCESS_IDLE: any;
 
+
+
 }
 
-declare class Camera2DSignals extends Node2DSignals {
-  
-}

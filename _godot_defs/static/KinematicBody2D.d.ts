@@ -7,7 +7,7 @@
  * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
-declare class KinematicBody2D extends PhysicsBody2D {
+declare class KinematicBody2D extends PhysicsBody2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class KinematicBody2D extends PhysicsBody2D {
  * **Kinematic characters:** KinematicBody2D also has an API for moving objects (the [method move_and_collide] and [method move_and_slide] methods) while performing collision tests. This makes them really useful to implement characters that collide against a world, but don't require advanced physics.
  *
 */
-  "new"(): KinematicBody2D;
-  static "new"(): KinematicBody2D;
-
+  new(): KinematicBody2D; 
+  static "new"(): KinematicBody2D 
 
 
 /**
@@ -121,14 +120,12 @@ move_and_slide_with_snap(linear_velocity: Vector2, snap: Vector2, up_direction?:
 /** Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform2D], then tries to move the body along the vector [code]rel_vec[/code]. Returns [code]true[/code] if a collision would occur. */
 test_move(from: Transform2D, rel_vec: Vector2, infinite_inertia?: boolean): boolean;
 
-  // connect<T extends SignalsOf<KinematicBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<KinematicBody2DSignals>>(signal: T, method: SignalFunction<KinematicBody2DSignals[T]>): number;
+  connect<T extends SignalsOf<KinematicBody2D>>(signal: T, method: SignalFunction<KinematicBody2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class KinematicBody2DSignals extends PhysicsBody2DSignals {
-  
-}

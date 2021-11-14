@@ -5,7 +5,7 @@
  * You can dynamically add pieces ([Texture]s) to this [LargeTexture] using different offsets.
  *
 */
-declare class LargeTexture extends Texture {
+declare class LargeTexture extends Texture  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class LargeTexture extends Texture {
  * You can dynamically add pieces ([Texture]s) to this [LargeTexture] using different offsets.
  *
 */
-  "new"(): LargeTexture;
-  static "new"(): LargeTexture;
-
+  new(): LargeTexture; 
+  static "new"(): LargeTexture 
 
 
 
@@ -44,14 +43,12 @@ set_piece_texture(idx: int, texture: Texture): void;
 /** Sets the size of this [LargeTexture]. */
 set_size(size: Vector2): void;
 
-  // connect<T extends SignalsOf<LargeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<LargeTextureSignals>>(signal: T, method: SignalFunction<LargeTextureSignals[T]>): number;
+  connect<T extends SignalsOf<LargeTexture>>(signal: T, method: SignalFunction<LargeTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class LargeTextureSignals extends TextureSignals {
-  
-}

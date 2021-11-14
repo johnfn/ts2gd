@@ -1,14 +1,13 @@
 
 /**
 */
-declare class EditorNavigationMeshGenerator extends Object {
+declare class EditorNavigationMeshGenerator extends Object  {
 
   
 /**
 */
-  "new"(): EditorNavigationMeshGenerator;
-  static "new"(): EditorNavigationMeshGenerator;
-
+  new(): EditorNavigationMeshGenerator; 
+  static "new"(): EditorNavigationMeshGenerator 
 
 
 
@@ -18,14 +17,12 @@ bake(nav_mesh: NavigationMesh, root_node: Node): void;
 /** No documentation provided. */
 clear(nav_mesh: NavigationMesh): void;
 
-  // connect<T extends SignalsOf<EditorNavigationMeshGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorNavigationMeshGeneratorSignals>>(signal: T, method: SignalFunction<EditorNavigationMeshGeneratorSignals[T]>): number;
+  connect<T extends SignalsOf<EditorNavigationMeshGenerator>>(signal: T, method: SignalFunction<EditorNavigationMeshGenerator[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorNavigationMeshGeneratorSignals extends ObjectSignals {
-  
-}

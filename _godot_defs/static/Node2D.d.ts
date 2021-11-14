@@ -3,16 +3,15 @@
  * A 2D game object, with a transform (position, rotation, and scale). All 2D nodes, including physics objects and sprites, inherit from Node2D. Use Node2D as a parent node to move, scale and rotate children in a 2D project. Also gives control of the node's render order.
  *
 */
-declare class Node2D extends CanvasItem {
+declare class Node2D extends CanvasItem  {
 
   
 /**
  * A 2D game object, with a transform (position, rotation, and scale). All 2D nodes, including physics objects and sprites, inherit from Node2D. Use Node2D as a parent node to move, scale and rotate children in a 2D project. Also gives control of the node's render order.
  *
 */
-  "new"(): Node2D;
-  static "new"(): Node2D;
-
+  new(): Node2D; 
+  static "new"(): Node2D 
 
 
 /** Global position. */
@@ -89,14 +88,12 @@ to_local(global_point: Vector2): Vector2;
 /** Translates the node by the given [code]offset[/code] in local coordinates. */
 translate(offset: Vector2): void;
 
-  // connect<T extends SignalsOf<Node2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Node2DSignals>>(signal: T, method: SignalFunction<Node2DSignals[T]>): number;
+  connect<T extends SignalsOf<Node2D>>(signal: T, method: SignalFunction<Node2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Node2DSignals extends CanvasItemSignals {
-  
-}

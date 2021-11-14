@@ -3,16 +3,15 @@
  * Performs a lookup operation on the provided texture, with support for multiple texture sources to choose from.
  *
 */
-declare class VisualShaderNodeTexture extends VisualShaderNode {
+declare class VisualShaderNodeTexture extends VisualShaderNode  {
 
   
 /**
  * Performs a lookup operation on the provided texture, with support for multiple texture sources to choose from.
  *
 */
-  "new"(): VisualShaderNodeTexture;
-  static "new"(): VisualShaderNodeTexture;
-
+  new(): VisualShaderNodeTexture; 
+  static "new"(): VisualShaderNodeTexture 
 
 
 /** Determines the source for the lookup. See [enum Source] for options. */
@@ -26,8 +25,7 @@ texture_type: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeTextureSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTextureSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeTexture>>(signal: T, method: SignalFunction<VisualShaderNodeTexture[T]>): number;
 
 
 
@@ -85,8 +83,7 @@ static TYPE_COLOR: any;
 */
 static TYPE_NORMALMAP: any;
 
+
+
 }
 
-declare class VisualShaderNodeTextureSignals extends VisualShaderNodeSignals {
-  
-}

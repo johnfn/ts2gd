@@ -3,16 +3,15 @@
  * PhysicsBody2D is an abstract base class for implementing a physics body. All *Body2D types inherit from it.
  *
 */
-declare class PhysicsBody2D extends CollisionObject2D {
+declare class PhysicsBody2D extends CollisionObject2D  {
 
   
 /**
  * PhysicsBody2D is an abstract base class for implementing a physics body. All *Body2D types inherit from it.
  *
 */
-  "new"(): PhysicsBody2D;
-  static "new"(): PhysicsBody2D;
-
+  new(): PhysicsBody2D; 
+  static "new"(): PhysicsBody2D 
 
 
 
@@ -28,14 +27,12 @@ get_collision_exceptions(): any[];
 /** Removes a body from the list of bodies that this body can't collide with. */
 remove_collision_exception_with(body: Node): void;
 
-  // connect<T extends SignalsOf<PhysicsBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicsBody2DSignals>>(signal: T, method: SignalFunction<PhysicsBody2DSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicsBody2D>>(signal: T, method: SignalFunction<PhysicsBody2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PhysicsBody2DSignals extends CollisionObject2DSignals {
-  
-}

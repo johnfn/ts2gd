@@ -22,7 +22,7 @@
  * If the default [method _estimate_cost] and [method _compute_cost] methods are used, or if the supplied [method _estimate_cost] method returns a lower bound of the cost, then the paths returned by A* will be the lowest-cost paths. Here, the cost of a path equals the sum of the [method _compute_cost] results of all segments in the path multiplied by the `weight_scale`s of the endpoints of the respective segments. If the default methods are used and the `weight_scale`s of all points are set to `1.0`, then this equals the sum of Euclidean distances of all segments in the path.
  *
 */
-declare class AStar extends Reference {
+declare class AStar extends Reference  {
 
   
 /**
@@ -48,9 +48,8 @@ declare class AStar extends Reference {
  * If the default [method _estimate_cost] and [method _compute_cost] methods are used, or if the supplied [method _estimate_cost] method returns a lower bound of the cost, then the paths returned by A* will be the lowest-cost paths. Here, the cost of a path equals the sum of the [method _compute_cost] results of all segments in the path multiplied by the `weight_scale`s of the endpoints of the respective segments. If the default methods are used and the `weight_scale`s of all points are set to `1.0`, then this equals the sum of Euclidean distances of all segments in the path.
  *
 */
-  "new"(): AStar;
-  static "new"(): AStar;
-
+  new(): AStar; 
+  static "new"(): AStar 
 
 
 
@@ -226,14 +225,12 @@ set_point_position(id: int, position: Vector3): void;
 /** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. The [code]weight_scale[/code] is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. */
 set_point_weight_scale(id: int, weight_scale: float): void;
 
-  // connect<T extends SignalsOf<AStar>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AStarSignals>>(signal: T, method: SignalFunction<AStarSignals[T]>): number;
+  connect<T extends SignalsOf<AStar>>(signal: T, method: SignalFunction<AStar[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AStarSignals extends ReferenceSignals {
-  
-}

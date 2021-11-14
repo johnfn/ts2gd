@@ -3,16 +3,15 @@
  * Contains keys events information with modifiers support like `Shift` or `Alt`. See [method Node._input].
  *
 */
-declare class InputEventWithModifiers extends InputEvent {
+declare class InputEventWithModifiers extends InputEvent  {
 
   
 /**
  * Contains keys events information with modifiers support like `Shift` or `Alt`. See [method Node._input].
  *
 */
-  "new"(): InputEventWithModifiers;
-  static "new"(): InputEventWithModifiers;
-
+  new(): InputEventWithModifiers; 
+  static "new"(): InputEventWithModifiers 
 
 
 /** State of the [code]Alt[/code] modifier. */
@@ -32,14 +31,12 @@ shift: boolean;
 
 
 
-  // connect<T extends SignalsOf<InputEventWithModifiers>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventWithModifiersSignals>>(signal: T, method: SignalFunction<InputEventWithModifiersSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventWithModifiers>>(signal: T, method: SignalFunction<InputEventWithModifiers[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventWithModifiersSignals extends InputEventSignals {
-  
-}

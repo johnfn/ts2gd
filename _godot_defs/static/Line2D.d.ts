@@ -5,7 +5,7 @@
  * **Note:** By default, Godot can only draw up to 4,096 polygon points at a time. To increase this limit, open the Project Settings and increase [member ProjectSettings.rendering/limits/buffers/canvas_polygon_buffer_size_kb] and [member ProjectSettings.rendering/limits/buffers/canvas_polygon_index_buffer_size_kb].
  *
 */
-declare class Line2D extends Node2D {
+declare class Line2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Line2D extends Node2D {
  * **Note:** By default, Godot can only draw up to 4,096 polygon points at a time. To increase this limit, open the Project Settings and increase [member ProjectSettings.rendering/limits/buffers/canvas_polygon_buffer_size_kb] and [member ProjectSettings.rendering/limits/buffers/canvas_polygon_index_buffer_size_kb].
  *
 */
-  "new"(): Line2D;
-  static "new"(): Line2D;
-
+  new(): Line2D; 
+  static "new"(): Line2D 
 
 
 /**
@@ -86,8 +85,7 @@ remove_point(i: int): void;
 /** Overwrites the position in point [code]i[/code] with the supplied [code]position[/code]. */
 set_point_position(i: int, position: Vector2): void;
 
-  // connect<T extends SignalsOf<Line2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Line2DSignals>>(signal: T, method: SignalFunction<Line2DSignals[T]>): number;
+  connect<T extends SignalsOf<Line2D>>(signal: T, method: SignalFunction<Line2D[T]>): number;
 
 
 
@@ -145,8 +143,7 @@ static LINE_TEXTURE_TILE: any;
 */
 static LINE_TEXTURE_STRETCH: any;
 
+
+
 }
 
-declare class Line2DSignals extends Node2DSignals {
-  
-}

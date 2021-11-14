@@ -1,28 +1,25 @@
 
 /**
 */
-declare class PackedDataContainerRef extends Reference {
+declare class PackedDataContainerRef extends Reference  {
 
   
 /**
 */
-  "new"(): PackedDataContainerRef;
-  static "new"(): PackedDataContainerRef;
-
+  new(): PackedDataContainerRef; 
+  static "new"(): PackedDataContainerRef 
 
 
 
 /** No documentation provided. */
 size(): int;
 
-  // connect<T extends SignalsOf<PackedDataContainerRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PackedDataContainerRefSignals>>(signal: T, method: SignalFunction<PackedDataContainerRefSignals[T]>): number;
+  connect<T extends SignalsOf<PackedDataContainerRef>>(signal: T, method: SignalFunction<PackedDataContainerRef[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PackedDataContainerRefSignals extends ReferenceSignals {
-  
-}

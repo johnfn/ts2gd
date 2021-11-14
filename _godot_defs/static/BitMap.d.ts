@@ -3,16 +3,15 @@
  * A two-dimensional array of boolean values, can be used to efficiently store a binary matrix (every matrix element takes only one bit) and query the values using natural cartesian coordinates.
  *
 */
-declare class BitMap extends Resource {
+declare class BitMap extends Resource  {
 
   
 /**
  * A two-dimensional array of boolean values, can be used to efficiently store a binary matrix (every matrix element takes only one bit) and query the values using natural cartesian coordinates.
  *
 */
-  "new"(): BitMap;
-  static "new"(): BitMap;
-
+  new(): BitMap; 
+  static "new"(): BitMap 
 
 
 
@@ -31,7 +30,7 @@ get_size(): Vector2;
 /** Returns the amount of bitmap elements that are set to [code]true[/code]. */
 get_true_bit_count(): int;
 
-/** Applies morphological dilation to the bitmap. The first argument is the dilation amount, Rect2 is the area where the dilation will be applied. */
+/** Applies morphological dilation or erosion to the bitmap. If [code]pixels[/code] is positive, dilation is applied to the bitmap. If [code]pixels[/code] is negative, erosion is applied to the bitmap. [code]rect[/code] defines the area where the morphological operation is applied. Pixels located outside the [code]rect[/code] are unaffected by [method grow_mask]. */
 grow_mask(pixels: int, rect: Rect2): void;
 
 /** No documentation provided. */
@@ -43,14 +42,12 @@ set_bit(position: Vector2, bit: boolean): void;
 /** Sets a rectangular portion of the bitmap to the specified value. */
 set_bit_rect(rect: Rect2, bit: boolean): void;
 
-  // connect<T extends SignalsOf<BitMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BitMapSignals>>(signal: T, method: SignalFunction<BitMapSignals[T]>): number;
+  connect<T extends SignalsOf<BitMap>>(signal: T, method: SignalFunction<BitMap[T]>): number;
+
+
 
 
 
 
 }
 
-declare class BitMapSignals extends ResourceSignals {
-  
-}

@@ -7,7 +7,7 @@
  * When a randomness ratio is applied to a property it is used to scale that property by a random amount. The random ratio is used to interpolate between `1.0` and a random number less than one, the result is multiplied by the property to obtain the randomized property. For example a random ratio of `0.4` would scale the original property between `0.4-1.0` of its original value.
  *
 */
-declare class ParticlesMaterial extends Material {
+declare class ParticlesMaterial extends Material  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ParticlesMaterial extends Material {
  * When a randomness ratio is applied to a property it is used to scale that property by a random amount. The random ratio is used to interpolate between `1.0` and a random number less than one, the result is multiplied by the property to obtain the randomized property. For example a random ratio of `0.4` would scale the original property between `0.4-1.0` of its original value.
  *
 */
-  "new"(): ParticlesMaterial;
-  static "new"(): ParticlesMaterial;
-
+  new(): ParticlesMaterial; 
+  static "new"(): ParticlesMaterial 
 
 
 /**
@@ -239,8 +238,7 @@ set_param_randomness(param: int, randomness: float): void;
 /** Sets the [Texture] for the specified [enum Parameter]. */
 set_param_texture(param: int, texture: Texture): void;
 
-  // connect<T extends SignalsOf<ParticlesMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ParticlesMaterialSignals>>(signal: T, method: SignalFunction<ParticlesMaterialSignals[T]>): number;
+  connect<T extends SignalsOf<ParticlesMaterial>>(signal: T, method: SignalFunction<ParticlesMaterial[T]>): number;
 
 
 
@@ -388,8 +386,7 @@ static EMISSION_SHAPE_RING: any;
 */
 static EMISSION_SHAPE_MAX: any;
 
+
+
 }
 
-declare class ParticlesMaterialSignals extends MaterialSignals {
-  
-}

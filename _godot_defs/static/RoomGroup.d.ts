@@ -9,7 +9,7 @@
  * [RoomGroup]s receive **gameplay callbacks** when the `gameplay_monitor` is switched on, as `signal`s or `notification`s as they enter and exit the **gameplay area** (see [RoomManager] for details).
  *
 */
-declare class RoomGroup extends Spatial {
+declare class RoomGroup extends Spatial  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class RoomGroup extends Spatial {
  * [RoomGroup]s receive **gameplay callbacks** when the `gameplay_monitor` is switched on, as `signal`s or `notification`s as they enter and exit the **gameplay area** (see [RoomManager] for details).
  *
 */
-  "new"(): RoomGroup;
-  static "new"(): RoomGroup;
-
+  new(): RoomGroup; 
+  static "new"(): RoomGroup 
 
 
 /**
@@ -37,14 +36,12 @@ roomgroup_priority: int;
 
 
 
-  // connect<T extends SignalsOf<RoomGroup>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RoomGroupSignals>>(signal: T, method: SignalFunction<RoomGroupSignals[T]>): number;
+  connect<T extends SignalsOf<RoomGroup>>(signal: T, method: SignalFunction<RoomGroup[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RoomGroupSignals extends SpatialSignals {
-  
-}

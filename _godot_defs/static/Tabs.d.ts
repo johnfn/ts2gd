@@ -3,16 +3,15 @@
  * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interacting with children.
  *
 */
-declare class Tabs extends Control {
+declare class Tabs extends Control  {
 
   
 /**
  * Simple tabs control, similar to [TabContainer] but is only in charge of drawing tabs, not interacting with children.
  *
 */
-  "new"(): Tabs;
-  static "new"(): Tabs;
-
+  new(): Tabs; 
+  static "new"(): Tabs 
 
 
 /** Select tab at index [code]tab_idx[/code]. */
@@ -87,8 +86,7 @@ set_tab_title(tab_idx: int, title: string): void;
 /** Defines the rearrange group ID. Choose for each [Tabs] the same value to dragging tabs between [Tabs]. Enable drag with [member drag_to_rearrange_enabled]. */
 set_tabs_rearrange_group(group_id: int): void;
 
-  // connect<T extends SignalsOf<Tabs>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TabsSignals>>(signal: T, method: SignalFunction<TabsSignals[T]>): number;
+  connect<T extends SignalsOf<Tabs>>(signal: T, method: SignalFunction<Tabs[T]>): number;
 
 
 
@@ -140,43 +138,42 @@ static CLOSE_BUTTON_SHOW_ALWAYS: any;
 */
 static CLOSE_BUTTON_MAX: any;
 
-}
 
-declare class TabsSignals extends ControlSignals {
-  /**
+/**
  * Emitted when the active tab is rearranged via mouse drag. See [member drag_to_rearrange_enabled].
  *
 */
-reposition_active_tab_request: Signal<(idx_to: int) => void>
+$reposition_active_tab_request: Signal<(idx_to: int) => void>
 
 /**
  * Emitted when a tab is right-clicked.
  *
 */
-right_button_pressed: Signal<(tab: int) => void>
+$right_button_pressed: Signal<(tab: int) => void>
 
 /**
  * Emitted when switching to another tab.
  *
 */
-tab_changed: Signal<(tab: int) => void>
+$tab_changed: Signal<(tab: int) => void>
 
 /**
  * Emitted when a tab is clicked, even if it is the current tab.
  *
 */
-tab_clicked: Signal<(tab: int) => void>
+$tab_clicked: Signal<(tab: int) => void>
 
 /**
  * Emitted when a tab is closed.
  *
 */
-tab_close: Signal<(tab: int) => void>
+$tab_close: Signal<(tab: int) => void>
 
 /**
  * Emitted when a tab is hovered by the mouse.
  *
 */
-tab_hover: Signal<(tab: int) => void>
+$tab_hover: Signal<(tab: int) => void>
 
 }
+

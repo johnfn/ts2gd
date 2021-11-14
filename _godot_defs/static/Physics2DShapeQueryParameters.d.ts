@@ -3,16 +3,15 @@
  * This class contains the shape and other parameters for 2D intersection/collision queries.
  *
 */
-declare class Physics2DShapeQueryParameters extends Reference {
+declare class Physics2DShapeQueryParameters extends Reference  {
 
   
 /**
  * This class contains the shape and other parameters for 2D intersection/collision queries.
  *
 */
-  "new"(): Physics2DShapeQueryParameters;
-  static "new"(): Physics2DShapeQueryParameters;
-
+  new(): Physics2DShapeQueryParameters; 
+  static "new"(): Physics2DShapeQueryParameters 
 
 
 /** If [code]true[/code], the query will take [Area2D]s into account. */
@@ -42,14 +41,12 @@ transform: Transform2D;
 /** Sets the [Shape2D] that will be used for collision/intersection queries. */
 set_shape(shape: Resource): void;
 
-  // connect<T extends SignalsOf<Physics2DShapeQueryParameters>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Physics2DShapeQueryParametersSignals>>(signal: T, method: SignalFunction<Physics2DShapeQueryParametersSignals[T]>): number;
+  connect<T extends SignalsOf<Physics2DShapeQueryParameters>>(signal: T, method: SignalFunction<Physics2DShapeQueryParameters[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Physics2DShapeQueryParametersSignals extends ReferenceSignals {
-  
-}

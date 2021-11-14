@@ -12,7 +12,7 @@
  * 
  *
 */
-declare class AnimationNodeStateMachine extends AnimationRootNode {
+declare class AnimationNodeStateMachine extends AnimationRootNode  {
 
   
 /**
@@ -28,9 +28,8 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
  * 
  *
 */
-  "new"(): AnimationNodeStateMachine;
-  static "new"(): AnimationNodeStateMachine;
-
+  new(): AnimationNodeStateMachine; 
+  static "new"(): AnimationNodeStateMachine 
 
 
 
@@ -47,7 +46,11 @@ get_end_node(): string;
 get_graph_offset(): Vector2;
 
 /** Returns the animation node with the given name. */
-get_node(name: string): AnimationNode;
+get_node(path: NodePathType): Node;
+
+/** Returns the animation node with the given name. */
+get_node_unsafe<T extends Node>(path: NodePathType): T;
+
 
 /** Returns the given animation node's name. */
 get_node_name(node: AnimationNode): string;
@@ -103,14 +106,12 @@ set_node_position(name: string, position: Vector2): void;
 /** Sets the given node as the graph start point. */
 set_start_node(name: string): void;
 
-  // connect<T extends SignalsOf<AnimationNodeStateMachine>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeStateMachineSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachineSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachine>>(signal: T, method: SignalFunction<AnimationNodeStateMachine[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AnimationNodeStateMachineSignals extends AnimationRootNodeSignals {
-  
-}

@@ -3,16 +3,15 @@
  * A navigation mesh is a collection of polygons that define which areas of an environment are traversable to aid agents in pathfinding through complicated spaces.
  *
 */
-declare class NavigationMesh extends Resource {
+declare class NavigationMesh extends Resource  {
 
   
 /**
  * A navigation mesh is a collection of polygons that define which areas of an environment are traversable to aid agents in pathfinding through complicated spaces.
  *
 */
-  "new"(): NavigationMesh;
-  static "new"(): NavigationMesh;
-
+  new(): NavigationMesh; 
+  static "new"(): NavigationMesh 
 
 
 /**
@@ -150,8 +149,7 @@ set_collision_mask_bit(bit: int, value: boolean): void;
 /** Sets the vertices that can be then indexed to create polygons with the [method add_polygon] method. */
 set_vertices(vertices: PoolVector3Array): void;
 
-  // connect<T extends SignalsOf<NavigationMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NavigationMeshSignals>>(signal: T, method: SignalFunction<NavigationMeshSignals[T]>): number;
+  connect<T extends SignalsOf<NavigationMesh>>(signal: T, method: SignalFunction<NavigationMesh[T]>): number;
 
 
 
@@ -227,8 +225,7 @@ static SOURCE_GEOMETRY_GROUPS_EXPLICIT: any;
 */
 static SOURCE_GEOMETRY_MAX: any;
 
+
+
 }
 
-declare class NavigationMeshSignals extends ResourceSignals {
-  
-}

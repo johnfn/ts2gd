@@ -5,7 +5,7 @@
  * **Note:** When linked with an [AnimationPlayer], several properties and methods of the corresponding [AnimationPlayer] will not function as expected. Playback and transitions should be handled using only the [AnimationTree] and its constituent [AnimationNode](s). The [AnimationPlayer] node should be used solely for adding, deleting, and editing animations.
  *
 */
-declare class AnimationTree extends Node {
+declare class AnimationTree extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AnimationTree extends Node {
  * **Note:** When linked with an [AnimationPlayer], several properties and methods of the corresponding [AnimationPlayer] will not function as expected. Playback and transitions should be handled using only the [AnimationTree] and its constituent [AnimationNode](s). The [AnimationPlayer] node should be used solely for adding, deleting, and editing animations.
  *
 */
-  "new"(): AnimationTree;
-  static "new"(): AnimationTree;
-
+  new(): AnimationTree; 
+  static "new"(): AnimationTree 
 
 
 /** If [code]true[/code], the [AnimationTree] will be processing. */
@@ -48,8 +47,7 @@ get_root_motion_transform(): Transform;
 /** No documentation provided. */
 rename_parameter(old_name: string, new_name: string): void;
 
-  // connect<T extends SignalsOf<AnimationTree>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationTreeSignals>>(signal: T, method: SignalFunction<AnimationTreeSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationTree>>(signal: T, method: SignalFunction<AnimationTree[T]>): number;
 
 
 
@@ -71,8 +69,7 @@ static ANIMATION_PROCESS_IDLE: any;
 */
 static ANIMATION_PROCESS_MANUAL: any;
 
+
+
 }
 
-declare class AnimationTreeSignals extends NodeSignals {
-  
-}

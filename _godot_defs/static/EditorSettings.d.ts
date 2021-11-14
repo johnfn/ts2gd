@@ -19,7 +19,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_editor_settings].
  *
 */
-declare class EditorSettings extends Resource {
+declare class EditorSettings extends Resource  {
 
   
 /**
@@ -42,9 +42,8 @@ declare class EditorSettings extends Resource {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_editor_settings].
  *
 */
-  "new"(): EditorSettings;
-  static "new"(): EditorSettings;
-
+  new(): EditorSettings; 
+  static "new"(): EditorSettings 
 
 
 
@@ -127,8 +126,7 @@ set_recent_dirs(dirs: PoolStringArray): void;
 /** Sets the [code]value[/code] of the setting specified by [code]name[/code]. This is equivalent to using [method Object.set] on the EditorSettings instance. */
 set_setting(name: string, value: any): void;
 
-  // connect<T extends SignalsOf<EditorSettings>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorSettingsSignals>>(signal: T, method: SignalFunction<EditorSettingsSignals[T]>): number;
+  connect<T extends SignalsOf<EditorSettings>>(signal: T, method: SignalFunction<EditorSettings[T]>): number;
 
 
 
@@ -138,13 +136,12 @@ set_setting(name: string, value: any): void;
 */
 static NOTIFICATION_EDITOR_SETTINGS_CHANGED: any;
 
-}
 
-declare class EditorSettingsSignals extends ResourceSignals {
-  /**
+/**
  * Emitted after any editor setting has changed.
  *
 */
-settings_changed: Signal<() => void>
+$settings_changed: Signal<() => void>
 
 }
+

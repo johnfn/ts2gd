@@ -3,16 +3,15 @@
  * Used with [DynamicFont] to describe the location of a vector font file for dynamic rendering at runtime.
  *
 */
-declare class DynamicFontData extends Resource {
+declare class DynamicFontData extends Resource  {
 
   
 /**
  * Used with [DynamicFont] to describe the location of a vector font file for dynamic rendering at runtime.
  *
 */
-  "new"(): DynamicFontData;
-  static "new"(): DynamicFontData;
-
+  new(): DynamicFontData; 
+  static "new"(): DynamicFontData 
 
 
 /** If [code]true[/code], the font is rendered with anti-aliasing. This property applies both to the main font and its outline (if it has one). */
@@ -26,8 +25,7 @@ hinting: int;
 
 
 
-  // connect<T extends SignalsOf<DynamicFontData>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DynamicFontDataSignals>>(signal: T, method: SignalFunction<DynamicFontDataSignals[T]>): number;
+  connect<T extends SignalsOf<DynamicFontData>>(signal: T, method: SignalFunction<DynamicFontData[T]>): number;
 
 
 
@@ -49,8 +47,7 @@ static HINTING_LIGHT: any;
 */
 static HINTING_NORMAL: any;
 
+
+
 }
 
-declare class DynamicFontDataSignals extends ResourceSignals {
-  
-}

@@ -3,16 +3,15 @@
  * This control allows property editing for one or multiple properties into [EditorInspector]. It is added via [EditorInspectorPlugin].
  *
 */
-declare class EditorProperty extends Container {
+declare class EditorProperty extends Container  {
 
   
 /**
  * This control allows property editing for one or multiple properties into [EditorInspector]. It is added via [EditorInspectorPlugin].
  *
 */
-  "new"(): EditorProperty;
-  static "new"(): EditorProperty;
-
+  new(): EditorProperty; 
+  static "new"(): EditorProperty 
 
 
 /** Used by the inspector, set to [code]true[/code] when the property is checkable. */
@@ -54,61 +53,59 @@ set_bottom_editor(editor: Control): void;
 /** When this virtual function is called, you must update your editor. */
 update_property(): void;
 
-  // connect<T extends SignalsOf<EditorProperty>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorPropertySignals>>(signal: T, method: SignalFunction<EditorPropertySignals[T]>): number;
+  connect<T extends SignalsOf<EditorProperty>>(signal: T, method: SignalFunction<EditorProperty[T]>): number;
 
 
 
 
-}
 
-declare class EditorPropertySignals extends ContainerSignals {
-  /**
+/**
  * Emit it if you want multiple properties modified at the same time. Do not use if added via [method EditorInspectorPlugin.parse_property].
  *
 */
-multiple_properties_changed: Signal<(properties: PoolStringArray, value: any[]) => void>
+$multiple_properties_changed: Signal<(properties: PoolStringArray, value: any[]) => void>
 
 /**
  * Used by sub-inspectors. Emit it if what was selected was an Object ID.
  *
 */
-object_id_selected: Signal<(property: string, id: int) => void>
+$object_id_selected: Signal<(property: string, id: int) => void>
 
 /**
  * Do not emit this manually, use the [method emit_changed] method instead.
  *
 */
-property_changed: Signal<(property: string, value: any) => void>
+$property_changed: Signal<(property: string, value: any) => void>
 
 /**
  * Emitted when a property was checked. Used internally.
  *
 */
-property_checked: Signal<(property: string, bool: string) => void>
+$property_checked: Signal<(property: string, bool: string) => void>
 
 /**
  * Emit it if you want to add this value as an animation key (check for keying being enabled first).
  *
 */
-property_keyed: Signal<(property: string) => void>
+$property_keyed: Signal<(property: string) => void>
 
 /**
  * Emit it if you want to key a property with a single value.
  *
 */
-property_keyed_with_value: Signal<(property: string, value: any) => void>
+$property_keyed_with_value: Signal<(property: string, value: any) => void>
 
 /**
  * If you want a sub-resource to be edited, emit this signal with the resource.
  *
 */
-resource_selected: Signal<(path: string, resource: Resource) => void>
+$resource_selected: Signal<(path: string, resource: Resource) => void>
 
 /**
  * Emitted when selected. Used internally.
  *
 */
-selected: Signal<(path: string, focusable_idx: int) => void>
+$selected: Signal<(path: string, focusable_idx: int) => void>
 
 }
+

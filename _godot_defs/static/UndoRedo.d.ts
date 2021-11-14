@@ -29,7 +29,7 @@
  * If you don't need to register a method, you can leave [method add_do_method] and [method add_undo_method] out; the same goes for properties. You can also register more than one method/property.
  *
 */
-declare class UndoRedo extends Object {
+declare class UndoRedo extends Object  {
 
   
 /**
@@ -62,9 +62,8 @@ declare class UndoRedo extends Object {
  * If you don't need to register a method, you can leave [method add_do_method] and [method add_undo_method] out; the same goes for properties. You can also register more than one method/property.
  *
 */
-  "new"(): UndoRedo;
-  static "new"(): UndoRedo;
-
+  new(): UndoRedo; 
+  static "new"(): UndoRedo 
 
 
 
@@ -131,8 +130,7 @@ redo(): boolean;
 /** Undo the last action. */
 undo(): boolean;
 
-  // connect<T extends SignalsOf<UndoRedo>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<UndoRedoSignals>>(signal: T, method: SignalFunction<UndoRedoSignals[T]>): number;
+  connect<T extends SignalsOf<UndoRedo>>(signal: T, method: SignalFunction<UndoRedo[T]>): number;
 
 
 
@@ -154,13 +152,12 @@ static MERGE_ENDS: any;
 */
 static MERGE_ALL: any;
 
-}
 
-declare class UndoRedoSignals extends ObjectSignals {
-  /**
+/**
  * Called when [method undo] or [method redo] was called.
  *
 */
-version_changed: Signal<() => void>
+$version_changed: Signal<() => void>
 
 }
+

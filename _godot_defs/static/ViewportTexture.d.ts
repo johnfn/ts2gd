@@ -5,7 +5,7 @@
  * To create a ViewportTexture in code, use the [method Viewport.get_texture] method on the target viewport.
  *
 */
-declare class ViewportTexture extends Texture {
+declare class ViewportTexture extends Texture  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ViewportTexture extends Texture {
  * To create a ViewportTexture in code, use the [method Viewport.get_texture] method on the target viewport.
  *
 */
-  "new"(): ViewportTexture;
-  static "new"(): ViewportTexture;
-
+  new(): ViewportTexture; 
+  static "new"(): ViewportTexture 
 
 
 
@@ -26,14 +25,12 @@ viewport_path: NodePathType;
 
 
 
-  // connect<T extends SignalsOf<ViewportTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ViewportTextureSignals>>(signal: T, method: SignalFunction<ViewportTextureSignals[T]>): number;
+  connect<T extends SignalsOf<ViewportTexture>>(signal: T, method: SignalFunction<ViewportTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ViewportTextureSignals extends TextureSignals {
-  
-}

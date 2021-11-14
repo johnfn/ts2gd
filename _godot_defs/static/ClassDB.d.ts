@@ -3,16 +3,15 @@
  * Provides access to metadata stored for every available class.
  *
 */
-declare class ClassDBClass extends Object {
+declare class ClassDBClass extends Object  {
 
   
 /**
  * Provides access to metadata stored for every available class.
  *
 */
-  "new"(): ClassDBClass;
-  static "new"(): ClassDBClass;
-
+  new(): ClassDBClass; 
+  static "new"(): ClassDBClass 
 
 
 
@@ -26,7 +25,7 @@ class_exists(_class: string): boolean;
 class_get_category(_class: string): string;
 
 /** Returns an array with all the keys in [code]enum[/code] of [code]class[/code] or its ancestry. */
-class_get_enum_constants(_class: string, enum: string, no_inheritance?: boolean): PoolStringArray;
+class_get_enum_constants(_class: string, _enum: string, no_inheritance?: boolean): PoolStringArray;
 
 /** Returns an array with all the enums of [code]class[/code] or its ancestry. */
 class_get_enum_list(_class: string, no_inheritance?: boolean): PoolStringArray;
@@ -93,14 +92,12 @@ is_class_enabled(_class: string): boolean;
 /** Returns whether [code]inherits[/code] is an ancestor of [code]class[/code] or not. */
 is_parent_class(_class: string, inherits: string): boolean;
 
-  // connect<T extends SignalsOf<ClassDBClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ClassDBClassSignals>>(signal: T, method: SignalFunction<ClassDBClassSignals[T]>): number;
+  connect<T extends SignalsOf<ClassDBClass>>(signal: T, method: SignalFunction<ClassDBClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ClassDBClassSignals extends ObjectSignals {
-  
-}

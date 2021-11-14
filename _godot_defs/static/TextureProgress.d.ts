@@ -3,16 +3,15 @@
  * TextureProgress works like [ProgressBar], but uses up to 3 textures instead of Godot's [Theme] resource. It can be used to create horizontal, vertical and radial progress bars.
  *
 */
-declare class TextureProgress extends Range {
+declare class TextureProgress extends Range  {
 
   
 /**
  * TextureProgress works like [ProgressBar], but uses up to 3 textures instead of Godot's [Theme] resource. It can be used to create horizontal, vertical and radial progress bars.
  *
 */
-  "new"(): TextureProgress;
-  static "new"(): TextureProgress;
-
+  new(): TextureProgress; 
+  static "new"(): TextureProgress 
 
 
 /** The fill direction. See [enum FillMode] for possible values. */
@@ -80,8 +79,7 @@ get_stretch_margin(margin: int): int;
 /** No documentation provided. */
 set_stretch_margin(margin: int, value: int): void;
 
-  // connect<T extends SignalsOf<TextureProgress>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureProgressSignals>>(signal: T, method: SignalFunction<TextureProgressSignals[T]>): number;
+  connect<T extends SignalsOf<TextureProgress>>(signal: T, method: SignalFunction<TextureProgress[T]>): number;
 
 
 
@@ -139,8 +137,7 @@ static FILL_BILINEAR_TOP_AND_BOTTOM: any;
 */
 static FILL_CLOCKWISE_AND_COUNTER_CLOCKWISE: any;
 
+
+
 }
 
-declare class TextureProgressSignals extends RangeSignals {
-  
-}

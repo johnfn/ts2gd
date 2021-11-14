@@ -9,7 +9,7 @@
  * You can set the extents of the axis using the [member min_space] and [member max_space].
  *
 */
-declare class AnimationNodeBlendSpace1D extends AnimationRootNode {
+declare class AnimationNodeBlendSpace1D extends AnimationRootNode  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class AnimationNodeBlendSpace1D extends AnimationRootNode {
  * You can set the extents of the axis using the [member min_space] and [member max_space].
  *
 */
-  "new"(): AnimationNodeBlendSpace1D;
-  static "new"(): AnimationNodeBlendSpace1D;
-
+  new(): AnimationNodeBlendSpace1D; 
+  static "new"(): AnimationNodeBlendSpace1D 
 
 
 /** The blend space's axis's upper limit for the points' position. See [method add_blend_point]. */
@@ -60,14 +59,12 @@ set_blend_point_node(point: int, node: AnimationRootNode): void;
 /** Updates the position of the point at index [code]point[/code] on the blend axis. */
 set_blend_point_position(point: int, pos: float): void;
 
-  // connect<T extends SignalsOf<AnimationNodeBlendSpace1D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeBlendSpace1DSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace1DSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeBlendSpace1D>>(signal: T, method: SignalFunction<AnimationNodeBlendSpace1D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AnimationNodeBlendSpace1DSignals extends AnimationRootNodeSignals {
-  
-}

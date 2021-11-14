@@ -23,7 +23,7 @@
  * **Networking with nodes:** After connecting to a server (or making one, see [NetworkedMultiplayerENet]), it is possible to use the built-in RPC (remote procedure call) system to communicate over the network. By calling [method rpc] with a method name, it will be called locally and in all connected peers (peers = clients and the server that accepts connections). To identify which node receives the RPC call, Godot will use its [NodePath] (make sure node names are the same on all peers). Also, take a look at the high-level networking tutorial and corresponding demos.
  *
 */
-declare class Node extends Object {
+declare class Node extends Object  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class Node extends Object {
  * **Networking with nodes:** After connecting to a server (or making one, see [NetworkedMultiplayerENet]), it is possible to use the built-in RPC (remote procedure call) system to communicate over the network. By calling [method rpc] with a method name, it will be called locally and in all connected peers (peers = clients and the server that accepts connections). To identify which node receives the RPC call, Godot will use its [NodePath] (make sure node names are the same on all peers). Also, take a look at the high-level networking tutorial and corresponding demos.
  *
 */
-  "new"(): Node;
-  static "new"(): Node;
-
+  new(): Node; 
+  static "new"(): Node 
 
 
 /** The override to the default [MultiplayerAPI]. Set to [code]null[/code] to use the default [SceneTree] one. */
@@ -270,7 +269,7 @@ get_child(idx: int): Node;
 get_child_count(): int;
 
 /** Returns an array of references to node's children. */
-get_children(): any[];
+get_children(): Node[];
 
 /**
  * Returns an array listing the groups that the node is a member of.
@@ -319,6 +318,41 @@ get_network_master(): int;
  *
 */
 get_node(path: NodePathType): Node;
+
+/**
+ * Fetches a node. The [NodePath] can be either a relative path (from the current node) or an absolute path (in the scene tree) to a node. If the path does not exist, a `null instance` is returned and an error is logged. Attempts to access methods on the return value will result in an "Attempt to call <method> on a null instance." error.
+ *
+ * **Note:** Fetching absolute paths only works when the node is inside the scene tree (see [method is_inside_tree]).
+ *
+ * **Example:** Assume your current node is Character and the following tree:
+ *
+ * @example 
+ * 
+ * /root
+ * /root/Character
+ * /root/Character/Sword
+ * /root/Character/Backpack/Dagger
+ * /root/MyGame
+ * /root/Swamp/Alligator
+ * /root/Swamp/Mosquito
+ * /root/Swamp/Goblin
+ * @summary 
+ * 
+ *
+ * Possible paths are:
+ *
+ * @example 
+ * 
+ * get_node("Sword")
+ * get_node("Backpack/Dagger")
+ * get_node("../Swamp/Alligator")
+ * get_node("/root/MyGame")
+ * @summary 
+ * 
+ *
+*/
+get_node_unsafe<T extends Node>(path: NodePathType): T;
+
 
 /**
  * Fetches a node and one of its resources as specified by the [NodePath]'s subname (e.g. `Area2D/CollisionShape2D:shape`). If several nested resources are specified in the [NodePath], the last one will be fetched.
@@ -477,7 +511,12 @@ raise(): void;
 /** Removes a node and sets all its children as children of the parent node (if it exists). All event subscriptions that pass by the removed node will be unsubscribed. */
 remove_and_skip(): void;
 
-/** Removes a child node. The node is NOT deleted and must be deleted manually. */
+/**
+ * Removes a child node. The node is NOT deleted and must be deleted manually.
+ *
+ * **Note:** This function may set the [member owner] of the removed Node (or its descendants) to be `null`, if that [member owner] is no longer a parent or ancestor.
+ *
+*/
 remove_child(node: Node): void;
 
 /** Removes a node from a group. See notes in the description, and the group methods in [SceneTree]. */
@@ -489,19 +528,12 @@ replace_by(node: Node, keep_data?: boolean): void;
 /** Requests that [code]_ready[/code] be called again. Note that the method won't be called immediately, but is scheduled for when the node is added to the scene tree again (see [method _ready]). [code]_ready[/code] is called only for the node which requested it, which means that you need to request ready for each child if you want them to call [code]_ready[/code] too (in which case, [code]_ready[/code] will be called in the same order as it would normally). */
 request_ready(): void;
 
-/**
- * Sends a remote procedure call request for the given `method` to peers on the network (and locally), optionally sending all additional arguments as arguments to the method called by the RPC. The call request will only be received by nodes with the same [NodePath], including the exact same node name. Behaviour depends on the RPC configuration for the given method, see [method rpc_config]. Methods are not exposed to RPCs by default. See also [method rset] and [method rset_config] for properties. Returns an empty [Variant].
- *
- * **Note:** You can only safely use RPCs on clients after you received the `connected_to_server` signal from the [SceneTree]. You also need to keep track of the connection state, either by the [SceneTree] signals like `server_disconnected` or by checking `SceneTree.network_peer.get_connection_status() == CONNECTION_CONNECTED`.
- *
-*/
-rpc(...args: any[]): any;
+
 
 /** Changes the RPC mode for the given [code]method[/code] to the given [code]mode[/code]. See [enum MultiplayerAPI.RPCMode]. An alternative is annotating methods and properties with the corresponding keywords ([code]remote[/code], [code]master[/code], [code]puppet[/code], [code]remotesync[/code], [code]mastersync[/code], [code]puppetsync[/code]). By default, methods are not exposed to networking (and RPCs). See also [method rset] and [method rset_config] for properties. */
 rpc_config(method: string, mode: int): void;
 
-/** Sends a [method rpc] to a specific peer identified by [code]peer_id[/code] (see [method NetworkedMultiplayerPeer.set_target_peer]). Returns an empty [Variant]. */
-rpc_id(...args: any[]): any;
+
 
 /** Sends a [method rpc] using an unreliable protocol. Returns an empty [Variant]. */
 rpc_unreliable(...args: any[]): any;
@@ -572,8 +604,7 @@ set_scene_instance_load_placeholder(load_placeholder: boolean): void;
 */
 update_configuration_warning(): void;
 
-  // connect<T extends SignalsOf<Node>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NodeSignals>>(signal: T, method: SignalFunction<NodeSignals[T]>): number;
+  connect<T extends SignalsOf<Node>>(signal: T, method: SignalFunction<Node[T]>): number;
 
 
 
@@ -835,37 +866,36 @@ static DUPLICATE_SCRIPTS: any;
 */
 static DUPLICATE_USE_INSTANCING: any;
 
-}
 
-declare class NodeSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when the node is ready.
  *
 */
-ready: Signal<() => void>
+$ready: Signal<() => void>
 
 /**
  * Emitted when the node is renamed.
  *
 */
-renamed: Signal<() => void>
+$renamed: Signal<() => void>
 
 /**
  * Emitted when the node enters the tree.
  *
 */
-tree_entered: Signal<() => void>
+$tree_entered: Signal<() => void>
 
 /**
  * Emitted after the node exits the tree and is no longer active.
  *
 */
-tree_exited: Signal<() => void>
+$tree_exited: Signal<() => void>
 
 /**
  * Emitted when the node is still active but about to exit the tree. This is the right place for de-initialization (or a "destructor", if you will).
  *
 */
-tree_exiting: Signal<() => void>
+$tree_exiting: Signal<() => void>
 
 }
+

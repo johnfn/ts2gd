@@ -3,16 +3,15 @@
  * Editor facility that helps you draw a 2D polygon used as resource for [LightOccluder2D].
  *
 */
-declare class OccluderPolygon2D extends Resource {
+declare class OccluderPolygon2D extends Resource  {
 
   
 /**
  * Editor facility that helps you draw a 2D polygon used as resource for [LightOccluder2D].
  *
 */
-  "new"(): OccluderPolygon2D;
-  static "new"(): OccluderPolygon2D;
-
+  new(): OccluderPolygon2D; 
+  static "new"(): OccluderPolygon2D 
 
 
 /** If [code]true[/code], closes the polygon. A closed OccluderPolygon2D occludes the light coming from any direction. An opened OccluderPolygon2D occludes the light only at its outline's direction. */
@@ -31,8 +30,7 @@ polygon: PoolVector2Array;
 
 
 
-  // connect<T extends SignalsOf<OccluderPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<OccluderPolygon2DSignals>>(signal: T, method: SignalFunction<OccluderPolygon2DSignals[T]>): number;
+  connect<T extends SignalsOf<OccluderPolygon2D>>(signal: T, method: SignalFunction<OccluderPolygon2D[T]>): number;
 
 
 
@@ -54,8 +52,7 @@ static CULL_CLOCKWISE: any;
 */
 static CULL_COUNTER_CLOCKWISE: any;
 
+
+
 }
 
-declare class OccluderPolygon2DSignals extends ResourceSignals {
-  
-}

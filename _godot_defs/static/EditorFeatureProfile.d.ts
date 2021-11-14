@@ -5,7 +5,7 @@
  * To manage editor feature profiles visually, use **Editor > Manage Feature Profiles...** at the top of the editor window.
  *
 */
-declare class EditorFeatureProfile extends Reference {
+declare class EditorFeatureProfile extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorFeatureProfile extends Reference {
  * To manage editor feature profiles visually, use **Editor > Manage Feature Profiles...** at the top of the editor window.
  *
 */
-  "new"(): EditorFeatureProfile;
-  static "new"(): EditorFeatureProfile;
-
+  new(): EditorFeatureProfile; 
+  static "new"(): EditorFeatureProfile 
 
 
 
@@ -53,8 +52,7 @@ set_disable_class_property(class_name: string, property: string, disable: boolea
 /** If [code]disable[/code] is [code]true[/code], disables the editor feature specified in [code]feature[/code]. When a feature is disabled, it will disappear from the editor entirely. */
 set_disable_feature(feature: int, disable: boolean): void;
 
-  // connect<T extends SignalsOf<EditorFeatureProfile>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorFeatureProfileSignals>>(signal: T, method: SignalFunction<EditorFeatureProfileSignals[T]>): number;
+  connect<T extends SignalsOf<EditorFeatureProfile>>(signal: T, method: SignalFunction<EditorFeatureProfile[T]>): number;
 
 
 
@@ -106,8 +104,7 @@ static FEATURE_IMPORT_DOCK: any;
 */
 static FEATURE_MAX: any;
 
+
+
 }
 
-declare class EditorFeatureProfileSignals extends ReferenceSignals {
-  
-}

@@ -3,16 +3,15 @@
  * A HingeJoint normally uses the Z axis of body A as the hinge axis, another axis can be specified when adding it manually though. See also [Generic6DOFJoint].
  *
 */
-declare class HingeJoint extends Joint {
+declare class HingeJoint extends Joint  {
 
   
 /**
  * A HingeJoint normally uses the Z axis of body A as the hinge axis, another axis can be specified when adding it manually though. See also [Generic6DOFJoint].
  *
 */
-  "new"(): HingeJoint;
-  static "new"(): HingeJoint;
-
+  new(): HingeJoint; 
+  static "new"(): HingeJoint 
 
 
 /** The speed with which the rotation across the axis perpendicular to the hinge gets corrected. */
@@ -55,8 +54,7 @@ set_flag(flag: int, enabled: boolean): void;
 /** Sets the value of the specified parameter. */
 set_param(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<HingeJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HingeJointSignals>>(signal: T, method: SignalFunction<HingeJointSignals[T]>): number;
+  connect<T extends SignalsOf<HingeJoint>>(signal: T, method: SignalFunction<HingeJoint[T]>): number;
 
 
 
@@ -129,8 +127,7 @@ static FLAG_ENABLE_MOTOR: any;
 */
 static FLAG_MAX: any;
 
+
+
 }
 
-declare class HingeJointSignals extends JointSignals {
-  
-}

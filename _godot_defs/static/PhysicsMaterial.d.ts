@@ -3,16 +3,15 @@
  * Provides a means of modifying the collision properties of a [PhysicsBody].
  *
 */
-declare class PhysicsMaterial extends Resource {
+declare class PhysicsMaterial extends Resource  {
 
   
 /**
  * Provides a means of modifying the collision properties of a [PhysicsBody].
  *
 */
-  "new"(): PhysicsMaterial;
-  static "new"(): PhysicsMaterial;
-
+  new(): PhysicsMaterial; 
+  static "new"(): PhysicsMaterial 
 
 
 /** If [code]true[/code], subtracts the bounciness from the colliding object's bounciness instead of adding it. */
@@ -29,14 +28,12 @@ rough: boolean;
 
 
 
-  // connect<T extends SignalsOf<PhysicsMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicsMaterialSignals>>(signal: T, method: SignalFunction<PhysicsMaterialSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicsMaterial>>(signal: T, method: SignalFunction<PhysicsMaterial[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PhysicsMaterialSignals extends ResourceSignals {
-  
-}

@@ -5,7 +5,7 @@
  * It is useful for making other nodes follow a path, without coding the movement pattern. For that, the nodes must be children of this node. The descendant nodes will then move accordingly when setting an offset in this node.
  *
 */
-declare class PathFollow2D extends Node2D {
+declare class PathFollow2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class PathFollow2D extends Node2D {
  * It is useful for making other nodes follow a path, without coding the movement pattern. For that, the nodes must be children of this node. The descendant nodes will then move accordingly when setting an offset in this node.
  *
 */
-  "new"(): PathFollow2D;
-  static "new"(): PathFollow2D;
-
+  new(): PathFollow2D; 
+  static "new"(): PathFollow2D 
 
 
 /**
@@ -50,14 +49,12 @@ v_offset: float;
 
 
 
-  // connect<T extends SignalsOf<PathFollow2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PathFollow2DSignals>>(signal: T, method: SignalFunction<PathFollow2DSignals[T]>): number;
+  connect<T extends SignalsOf<PathFollow2D>>(signal: T, method: SignalFunction<PathFollow2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PathFollow2DSignals extends Node2DSignals {
-  
-}

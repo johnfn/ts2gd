@@ -11,11 +11,10 @@ declare class Plane {
  *
 */
 
-  constructor(a: float, b: float, c: float, d: float);
-  constructor(v1: Vector3, v2: Vector3, v3: Vector3);
-  constructor(normal: Vector3, d: float);
-  static "new"(): Plane;
-
+  new(a: float, b: float, c: float, d: float): Plane;
+  new(v1: Vector3, v2: Vector3, v3: Vector3): Plane;
+  new(normal: Vector3, d: float): Plane;
+  static "new"(): Plane 
 
 
 /**
@@ -87,8 +86,7 @@ normalized(): Plane;
 /** Returns the orthogonal projection of [code]point[/code] into a point in the plane. */
 project(point: Vector3): Vector3;
 
-  // connect<T extends SignalsOf<Plane>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PlaneSignals>>(signal: T, method: SignalFunction<PlaneSignals[T]>): number;
+  connect<T extends SignalsOf<Plane>>(signal: T, method: SignalFunction<Plane[T]>): number;
 
 
 
@@ -110,8 +108,7 @@ static PLANE_XZ: Plane;
 */
 static PLANE_XY: Plane;
 
+
+
 }
 
-declare class PlaneSignals {
-  
-}

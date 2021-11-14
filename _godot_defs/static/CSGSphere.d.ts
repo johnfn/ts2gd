@@ -3,16 +3,15 @@
  * This node allows you to create a sphere for use with the CSG system.
  *
 */
-declare class CSGSphere extends CSGPrimitive {
+declare class CSGSphere extends CSGPrimitive  {
 
   
 /**
  * This node allows you to create a sphere for use with the CSG system.
  *
 */
-  "new"(): CSGSphere;
-  static "new"(): CSGSphere;
-
+  new(): CSGSphere; 
+  static "new"(): CSGSphere 
 
 
 /** The material used to render the sphere. */
@@ -32,14 +31,12 @@ smooth_faces: boolean;
 
 
 
-  // connect<T extends SignalsOf<CSGSphere>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGSphereSignals>>(signal: T, method: SignalFunction<CSGSphereSignals[T]>): number;
+  connect<T extends SignalsOf<CSGSphere>>(signal: T, method: SignalFunction<CSGSphere[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CSGSphereSignals extends CSGPrimitiveSignals {
-  
-}

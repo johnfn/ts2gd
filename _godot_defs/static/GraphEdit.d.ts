@@ -5,7 +5,7 @@
  * It is greatly advised to enable low-processor usage mode (see [member OS.low_processor_usage_mode]) when using GraphEdits.
  *
 */
-declare class GraphEdit extends Control {
+declare class GraphEdit extends Control  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class GraphEdit extends Control {
  * It is greatly advised to enable low-processor usage mode (see [member OS.low_processor_usage_mode]) when using GraphEdits.
  *
 */
-  "new"(): GraphEdit;
-  static "new"(): GraphEdit;
-
+  new(): GraphEdit; 
+  static "new"(): GraphEdit 
 
 
 
@@ -79,9 +78,9 @@ disconnect_node(from: string, from_port: int, to: string, to_port: int): void;
 get_connection_list(): any[];
 
 /**
- * Gets the [HBoxContainer] that contains the zooming and grid snap controls in the top left of the graph.
+ * Gets the [HBoxContainer] that contains the zooming and grid snap controls in the top left of the graph. You can use this method to reposition the toolbar or to add your own custom controls to it.
  *
- * Warning: The intended usage of this function is to allow you to reposition or add your own custom controls to the container. This is an internal control and as such should not be freed. If you wish to hide this or any of its children, use their [member CanvasItem.visible] property instead.
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
  *
 */
 get_zoom_hbox(): HBoxContainer;
@@ -107,95 +106,93 @@ set_connection_activity(from: string, from_port: int, to: string, to_port: int, 
 /** Sets the specified [code]node[/code] as the one selected. */
 set_selected(node: Node): void;
 
-  // connect<T extends SignalsOf<GraphEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GraphEditSignals>>(signal: T, method: SignalFunction<GraphEditSignals[T]>): number;
+  connect<T extends SignalsOf<GraphEdit>>(signal: T, method: SignalFunction<GraphEdit[T]>): number;
 
 
 
 
-}
 
-declare class GraphEditSignals extends ControlSignals {
-  /**
+/**
  * Emitted at the beginning of a GraphNode movement.
  *
 */
-_begin_node_move: Signal<() => void>
+$_begin_node_move: Signal<() => void>
 
 /**
  * Emitted at the end of a GraphNode movement.
  *
 */
-_end_node_move: Signal<() => void>
+$_end_node_move: Signal<() => void>
 
 /**
  * Emitted when user dragging connection from input port into empty space of the graph.
  *
 */
-connection_from_empty: Signal<(to: string, to_slot: int, release_position: Vector2) => void>
+$connection_from_empty: Signal<(to: string, to_slot: int, release_position: Vector2) => void>
 
 /**
  * Emitted to the GraphEdit when the connection between the `from_slot` slot of the `from` GraphNode and the `to_slot` slot of the `to` GraphNode is attempted to be created.
  *
 */
-connection_request: Signal<(from: string, from_slot: int, to: string, to_slot: int) => void>
+$connection_request: Signal<(from: string, from_slot: int, to: string, to_slot: int) => void>
 
 /**
  * Emitted when user dragging connection from output port into empty space of the graph.
  *
 */
-connection_to_empty: Signal<(from: string, from_slot: int, release_position: Vector2) => void>
+$connection_to_empty: Signal<(from: string, from_slot: int, release_position: Vector2) => void>
 
 /**
  * Emitted when the user presses `Ctrl + C`.
  *
 */
-copy_nodes_request: Signal<() => void>
+$copy_nodes_request: Signal<() => void>
 
 /**
  * Emitted when a GraphNode is attempted to be removed from the GraphEdit.
  *
 */
-delete_nodes_request: Signal<() => void>
+$delete_nodes_request: Signal<() => void>
 
 /**
  * Emitted to the GraphEdit when the connection between `from_slot` slot of `from` GraphNode and `to_slot` slot of `to` GraphNode is attempted to be removed.
  *
 */
-disconnection_request: Signal<(from: string, from_slot: int, to: string, to_slot: int) => void>
+$disconnection_request: Signal<(from: string, from_slot: int, to: string, to_slot: int) => void>
 
 /**
  * Emitted when a GraphNode is attempted to be duplicated in the GraphEdit.
  *
 */
-duplicate_nodes_request: Signal<() => void>
+$duplicate_nodes_request: Signal<() => void>
 
 /**
  * Emitted when a GraphNode is selected.
  *
 */
-node_selected: Signal<(node: Node) => void>
+$node_selected: Signal<(node: Node) => void>
 
 /**
 */
-node_unselected: Signal<(node: Node) => void>
+$node_unselected: Signal<(node: Node) => void>
 
 /**
  * Emitted when the user presses `Ctrl + V`.
  *
 */
-paste_nodes_request: Signal<() => void>
+$paste_nodes_request: Signal<() => void>
 
 /**
  * Emitted when a popup is requested. Happens on right-clicking in the GraphEdit. `position` is the position of the mouse pointer when the signal is sent.
  *
 */
-popup_request: Signal<(position: Vector2) => void>
+$popup_request: Signal<(position: Vector2) => void>
 
 /**
  * Emitted when the scroll offset is changed by the user. It will not be emitted when changed in code.
  *
 */
-scroll_offset_changed: Signal<(ofs: Vector2) => void>
+$scroll_offset_changed: Signal<(ofs: Vector2) => void>
 
 }
+

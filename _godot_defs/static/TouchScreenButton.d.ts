@@ -7,7 +7,7 @@
  * You can configure TouchScreenButton to be visible only on touch devices, helping you develop your game both for desktop and mobile devices.
  *
 */
-declare class TouchScreenButton extends Node2D {
+declare class TouchScreenButton extends Node2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class TouchScreenButton extends Node2D {
  * You can configure TouchScreenButton to be visible only on touch devices, helping you develop your game both for desktop and mobile devices.
  *
 */
-  "new"(): TouchScreenButton;
-  static "new"(): TouchScreenButton;
-
+  new(): TouchScreenButton; 
+  static "new"(): TouchScreenButton 
 
 
 /** The button's action. Actions can be handled with [InputEventAction]. */
@@ -58,8 +57,7 @@ visibility_mode: int;
 /** Returns [code]true[/code] if this button is currently pressed. */
 is_pressed(): boolean;
 
-  // connect<T extends SignalsOf<TouchScreenButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TouchScreenButtonSignals>>(signal: T, method: SignalFunction<TouchScreenButtonSignals[T]>): number;
+  connect<T extends SignalsOf<TouchScreenButton>>(signal: T, method: SignalFunction<TouchScreenButton[T]>): number;
 
 
 
@@ -75,19 +73,18 @@ static VISIBILITY_ALWAYS: any;
 */
 static VISIBILITY_TOUCHSCREEN_ONLY: any;
 
-}
 
-declare class TouchScreenButtonSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the button is pressed (down).
  *
 */
-pressed: Signal<() => void>
+$pressed: Signal<() => void>
 
 /**
  * Emitted when the button is released (up).
  *
 */
-released: Signal<() => void>
+$released: Signal<() => void>
 
 }
+

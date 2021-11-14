@@ -11,7 +11,7 @@
  * **Note:** In case of missing points when handling large amounts of mesh data, try increasing its buffer size limit under [member ProjectSettings.rendering/limits/buffers/immediate_buffer_size_kb].
  *
 */
-declare class ImmediateGeometry extends GeometryInstance {
+declare class ImmediateGeometry extends GeometryInstance  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class ImmediateGeometry extends GeometryInstance {
  * **Note:** In case of missing points when handling large amounts of mesh data, try increasing its buffer size limit under [member ProjectSettings.rendering/limits/buffers/immediate_buffer_size_kb].
  *
 */
-  "new"(): ImmediateGeometry;
-  static "new"(): ImmediateGeometry;
-
+  new(): ImmediateGeometry; 
+  static "new"(): ImmediateGeometry 
 
 
 
@@ -67,14 +66,12 @@ set_uv(uv: Vector2): void;
 /** The next vertex's second layer UV. */
 set_uv2(uv: Vector2): void;
 
-  // connect<T extends SignalsOf<ImmediateGeometry>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ImmediateGeometrySignals>>(signal: T, method: SignalFunction<ImmediateGeometrySignals[T]>): number;
+  connect<T extends SignalsOf<ImmediateGeometry>>(signal: T, method: SignalFunction<ImmediateGeometry[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ImmediateGeometrySignals extends GeometryInstanceSignals {
-  
-}

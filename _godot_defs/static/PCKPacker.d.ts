@@ -14,7 +14,7 @@
  * The above [PCKPacker] creates package `test.pck`, then adds a file named `text.txt` at the root of the package.
  *
 */
-declare class PCKPacker extends Reference {
+declare class PCKPacker extends Reference  {
 
   
 /**
@@ -32,9 +32,8 @@ declare class PCKPacker extends Reference {
  * The above [PCKPacker] creates package `test.pck`, then adds a file named `text.txt` at the root of the package.
  *
 */
-  "new"(): PCKPacker;
-  static "new"(): PCKPacker;
-
+  new(): PCKPacker; 
+  static "new"(): PCKPacker 
 
 
 
@@ -47,14 +46,12 @@ flush(verbose?: boolean): int;
 /** Creates a new PCK file with the name [code]pck_name[/code]. The [code].pck[/code] file extension isn't added automatically, so it should be part of [code]pck_name[/code] (even though it's not required). */
 pck_start(pck_name: string, alignment?: int): int;
 
-  // connect<T extends SignalsOf<PCKPacker>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PCKPackerSignals>>(signal: T, method: SignalFunction<PCKPackerSignals[T]>): number;
+  connect<T extends SignalsOf<PCKPacker>>(signal: T, method: SignalFunction<PCKPacker[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PCKPackerSignals extends ReferenceSignals {
-  
-}

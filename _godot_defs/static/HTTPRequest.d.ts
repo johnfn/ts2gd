@@ -62,16 +62,8 @@
  * @summary 
  * 
  *
- * **Gzipped response bodies**
- *
- * HttpRequest will automatically handle decompression of response bodies.
- *
- * A "Accept-Encoding" header will be automatically added to each of your requests, unless one is already specified.
- *
- * Any response with a "Content-Encoding: gzip" header will automatically be decompressed and delivered to you as a uncompressed bytes.
- *
 */
-declare class HTTPRequest extends Node {
+declare class HTTPRequest extends Node  {
 
   
 /**
@@ -137,33 +129,12 @@ declare class HTTPRequest extends Node {
  * @summary 
  * 
  *
- * **Gzipped response bodies**
- *
- * HttpRequest will automatically handle decompression of response bodies.
- *
- * A "Accept-Encoding" header will be automatically added to each of your requests, unless one is already specified.
- *
- * Any response with a "Content-Encoding: gzip" header will automatically be decompressed and delivered to you as a uncompressed bytes.
- *
 */
-  "new"(): HTTPRequest;
-  static "new"(): HTTPRequest;
+  new(): HTTPRequest; 
+  static "new"(): HTTPRequest 
 
 
-
-/**
- * If `true`, this header will be added to each request: `Accept-Encoding: gzip, deflate` telling servers that it's okay to compress response bodies.
- *
- * Any Reponse body declaring a `Content-Encoding` of either `gzip` or `deflate` will then be automatically decompressed, and the uncompressed bytes will be delivered via `request_completed`.
- *
- * If the user has specified their own `Accept-Encoding` header, then no header will be added regaurdless of `accept_gzip`.
- *
- * If `false` no header will be added, and no decompression will be performed on response bodies. The raw bytes of the response body will be returned via `request_completed`.
- *
-*/
-accept_gzip: boolean;
-
-/** Maximum allowed size for response bodies. If the response body is compressed, this will be used as the maximum allowed size for the decompressed body. */
+/** Maximum allowed size for response bodies. */
 body_size_limit: int;
 
 /**
@@ -219,8 +190,7 @@ request(url: string, custom_headers?: PoolStringArray, ssl_validate_domain?: boo
 */
 request_raw(url: string, custom_headers?: PoolStringArray, ssl_validate_domain?: boolean, method?: int, request_data_raw?: PoolByteArray): int;
 
-  // connect<T extends SignalsOf<HTTPRequest>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HTTPRequestSignals>>(signal: T, method: SignalFunction<HTTPRequestSignals[T]>): number;
+  connect<T extends SignalsOf<HTTPRequest>>(signal: T, method: SignalFunction<HTTPRequest[T]>): number;
 
 
 
@@ -263,9 +233,6 @@ static RESULT_SSL_HANDSHAKE_ERROR: any;
 */
 static RESULT_NO_RESPONSE: any;
 
-/** No documentation provided. */
-static RESULT_BODY_DECOMPRESS_FAILED: any;
-
 /**
  * Request exceeded its maximum size limit, see [member body_size_limit].
  *
@@ -299,13 +266,12 @@ static RESULT_REDIRECT_LIMIT_REACHED: any;
 /** No documentation provided. */
 static RESULT_TIMEOUT: any;
 
-}
 
-declare class HTTPRequestSignals extends NodeSignals {
-  /**
+/**
  * Emitted when a request is completed.
  *
 */
-request_completed: Signal<(result: int, response_code: int, headers: PoolStringArray, body: PoolByteArray) => void>
+$request_completed: Signal<(result: int, response_code: int, headers: PoolStringArray, body: PoolByteArray) => void>
 
 }
+

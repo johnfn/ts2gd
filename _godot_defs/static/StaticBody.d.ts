@@ -5,7 +5,7 @@
  * Additionally, a constant linear or angular velocity can be set for the static body, so even if it doesn't move, it affects other bodies as if it was moving (this is useful for simulating conveyor belts or conveyor wheels).
  *
 */
-declare class StaticBody extends PhysicsBody {
+declare class StaticBody extends PhysicsBody  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class StaticBody extends PhysicsBody {
  * Additionally, a constant linear or angular velocity can be set for the static body, so even if it doesn't move, it affects other bodies as if it was moving (this is useful for simulating conveyor belts or conveyor wheels).
  *
 */
-  "new"(): StaticBody;
-  static "new"(): StaticBody;
-
+  new(): StaticBody; 
+  static "new"(): StaticBody 
 
 
 /**
@@ -51,14 +50,12 @@ physics_material_override: PhysicsMaterial;
 
 
 
-  // connect<T extends SignalsOf<StaticBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StaticBodySignals>>(signal: T, method: SignalFunction<StaticBodySignals[T]>): number;
+  connect<T extends SignalsOf<StaticBody>>(signal: T, method: SignalFunction<StaticBody[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StaticBodySignals extends PhysicsBodySignals {
-  
-}

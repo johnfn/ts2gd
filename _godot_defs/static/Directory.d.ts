@@ -27,7 +27,7 @@
  * 
  *
 */
-declare class Directory extends Reference {
+declare class Directory extends Reference  {
 
   
 /**
@@ -58,9 +58,8 @@ declare class Directory extends Reference {
  * 
  *
 */
-  "new"(): Directory;
-  static "new"(): Directory;
-
+  new(): Directory; 
+  static "new"(): Directory 
 
 
 
@@ -165,14 +164,12 @@ remove(path: string): int;
 */
 rename(from: string, to: string): int;
 
-  // connect<T extends SignalsOf<Directory>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DirectorySignals>>(signal: T, method: SignalFunction<DirectorySignals[T]>): number;
+  connect<T extends SignalsOf<Directory>>(signal: T, method: SignalFunction<Directory[T]>): number;
+
+
 
 
 
 
 }
 
-declare class DirectorySignals extends ReferenceSignals {
-  
-}

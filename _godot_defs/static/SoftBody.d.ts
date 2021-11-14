@@ -3,16 +3,15 @@
  * A deformable physics body. Used to create elastic or deformable objects such as cloth, rubber, or other flexible materials.
  *
 */
-declare class SoftBody extends MeshInstance {
+declare class SoftBody extends MeshInstance  {
 
   
 /**
  * A deformable physics body. Used to create elastic or deformable objects such as cloth, rubber, or other flexible materials.
  *
 */
-  "new"(): SoftBody;
-  static "new"(): SoftBody;
-
+  new(): SoftBody; 
+  static "new"(): SoftBody 
 
 
 
@@ -80,14 +79,12 @@ set_collision_mask_bit(bit: int, value: boolean): void;
 /** Sets the pinned state of a surface vertex. When set to [code]true[/code], the optional [code]attachment_path[/code] can define a [Spatial] the pinned vertex will be attached to. */
 set_point_pinned(point_index: int, pinned: boolean, attachment_path?: NodePathType): void;
 
-  // connect<T extends SignalsOf<SoftBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SoftBodySignals>>(signal: T, method: SignalFunction<SoftBodySignals[T]>): number;
+  connect<T extends SignalsOf<SoftBody>>(signal: T, method: SignalFunction<SoftBody[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SoftBodySignals extends MeshInstanceSignals {
-  
-}

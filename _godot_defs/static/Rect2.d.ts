@@ -7,7 +7,7 @@
  * The 3D counterpart to [Rect2] is [AABB].
  *
 */
-declare class Rect2 {
+declare class Rect2Constructor {
 
   
 /**
@@ -18,11 +18,6 @@ declare class Rect2 {
  * The 3D counterpart to [Rect2] is [AABB].
  *
 */
-
-  constructor(position: Vector2, size: Vector2);
-  constructor(x: float, y: float, width: float, height: float);
-  static "new"(): Rect2;
-
 
 
 /** Ending corner. This is calculated as [code]position + size[/code]. Setting this value will change the size. */
@@ -87,14 +82,22 @@ is_equal_approx(rect: Rect2): boolean;
 /** Returns a larger [Rect2] that contains this [Rect2] and [code]b[/code]. */
 merge(b: Rect2): Rect2;
 
-  // connect<T extends SignalsOf<Rect2>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Rect2Signals>>(signal: T, method: SignalFunction<Rect2Signals[T]>): number;
+  connect<T extends SignalsOf<Rect2>>(signal: T, method: SignalFunction<Rect2[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Rect2Signals {
+declare type Rect2 = Rect2Constructor;
+declare var Rect2: typeof Rect2Constructor & {
   
+  new(position: Vector2, size: Vector2): Rect2;
+  new(x: float, y: float, width: float, height: float): Rect2;
+
+  (position: Vector2, size: Vector2): Rect2;
+  (x: float, y: float, width: float, height: float): Rect2;
+
 }

@@ -5,7 +5,7 @@
  * This class can also be used to store dynamically-generated PCM audio data. See also [AudioStreamGenerator] for procedural audio generation.
  *
 */
-declare class AudioStreamSample extends AudioStream {
+declare class AudioStreamSample extends AudioStream  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioStreamSample extends AudioStream {
  * This class can also be used to store dynamically-generated PCM audio data. See also [AudioStreamGenerator] for procedural audio generation.
  *
 */
-  "new"(): AudioStreamSample;
-  static "new"(): AudioStreamSample;
-
+  new(): AudioStreamSample; 
+  static "new"(): AudioStreamSample 
 
 
 /**
@@ -60,8 +59,7 @@ stereo: boolean;
 */
 save_to_wav(path: string): int;
 
-  // connect<T extends SignalsOf<AudioStreamSample>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioStreamSampleSignals>>(signal: T, method: SignalFunction<AudioStreamSampleSignals[T]>): number;
+  connect<T extends SignalsOf<AudioStreamSample>>(signal: T, method: SignalFunction<AudioStreamSample[T]>): number;
 
 
 
@@ -107,8 +105,7 @@ static LOOP_PING_PONG: any;
 */
 static LOOP_BACKWARD: any;
 
+
+
 }
 
-declare class AudioStreamSampleSignals extends AudioStreamSignals {
-  
-}

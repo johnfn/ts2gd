@@ -3,16 +3,15 @@
  * FileDialog is a preset dialog used to choose files and directories in the filesystem. It supports filter masks. The FileDialog automatically sets its window title according to the [member mode]. If you want to use a custom title, disable this by setting [member mode_overrides_title] to `false`.
  *
 */
-declare class FileDialog extends ConfirmationDialog {
+declare class FileDialog extends ConfirmationDialog  {
 
   
 /**
  * FileDialog is a preset dialog used to choose files and directories in the filesystem. It supports filter masks. The FileDialog automatically sets its window title according to the [member mode]. If you want to use a custom title, disable this by setting [member mode_overrides_title] to `false`.
  *
 */
-  "new"(): FileDialog;
-  static "new"(): FileDialog;
-
+  new(): FileDialog; 
+  static "new"(): FileDialog 
 
 
 /**
@@ -55,17 +54,26 @@ clear_filters(): void;
 /** Clear currently selected items in the dialog. */
 deselect_items(): void;
 
-/** Returns the LineEdit for the selected file. */
+/**
+ * Returns the LineEdit for the selected file.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_line_edit(): LineEdit;
 
-/** Returns the vertical box container of the dialog, custom controls can be added to it. */
+/**
+ * Returns the vertical box container of the dialog, custom controls can be added to it.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_vbox(): VBoxContainer;
 
 /** Invalidate and update the current dialog content list. */
 invalidate(): void;
 
-  // connect<T extends SignalsOf<FileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<FileDialogSignals>>(signal: T, method: SignalFunction<FileDialogSignals[T]>): number;
+  connect<T extends SignalsOf<FileDialog>>(signal: T, method: SignalFunction<FileDialog[T]>): number;
 
 
 
@@ -117,25 +125,24 @@ static ACCESS_USERDATA: any;
 */
 static ACCESS_FILESYSTEM: any;
 
-}
 
-declare class FileDialogSignals extends ConfirmationDialogSignals {
-  /**
+/**
  * Emitted when the user selects a directory.
  *
 */
-dir_selected: Signal<(dir: string) => void>
+$dir_selected: Signal<(dir: string) => void>
 
 /**
  * Emitted when the user selects a file by double-clicking it or pressing the **OK** button.
  *
 */
-file_selected: Signal<(path: string) => void>
+$file_selected: Signal<(path: string) => void>
 
 /**
  * Emitted when the user selects multiple files.
  *
 */
-files_selected: Signal<(paths: PoolStringArray) => void>
+$files_selected: Signal<(paths: PoolStringArray) => void>
 
 }
+

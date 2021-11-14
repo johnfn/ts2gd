@@ -62,9 +62,8 @@ declare class Object {
  * **Note:** Due to a bug, you can't create a "plain" Object using `Object.new()`. Instead, use `ClassDB.instance("Object")`. This bug only applies to Object itself, not any of its descendents like [Reference].
  *
 */
-  "new"(): Object;
-  static "new"(): Object;
-
+  new(): Object; 
+  static "new"(): Object 
 
 
 
@@ -164,6 +163,17 @@ can_translate_messages(): boolean;
 */
 disconnect(signal: string, target: Object, method: string): void;
 
+/**
+ * Emits the given `signal`. The signal must exist, so it should be a built-in signal of this class or one of its parent classes, or a user-defined signal. This method supports a variable number of arguments, so parameters are passed as a comma separated list. Example:
+ *
+ * @example 
+ * 
+ * emit_signal("hit", weapon_type, damage)
+ * emit_signal("game_over")
+ * @summary 
+ * 
+ *
+*/
 emit_signal<U extends (...args: Args) => any, T extends Signal<U>, Args extends any[]>(signal: T, ...args: Args): void;
 
 /**
@@ -352,8 +362,7 @@ to_string(): string;
 */
 tr(message: string): string;
 
-  // connect<T extends SignalsOf<Object>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ObjectSignals>>(signal: T, method: SignalFunction<ObjectSignals[T]>): number;
+  connect<T extends SignalsOf<Object>>(signal: T, method: SignalFunction<Object[T]>): number;
 
 
 
@@ -393,13 +402,12 @@ static CONNECT_ONESHOT: any;
 */
 static CONNECT_REFERENCE_COUNTED: any;
 
-}
 
-declare class ObjectSignals {
-  /**
+/**
  * Emitted whenever the object's script is changed.
  *
 */
-script_changed: Signal<() => void>
+$script_changed: Signal<() => void>
 
 }
+

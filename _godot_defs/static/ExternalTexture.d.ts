@@ -5,7 +5,7 @@
  * **Note:** This is only supported for Android platforms.
  *
 */
-declare class ExternalTexture extends Texture {
+declare class ExternalTexture extends Texture  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ExternalTexture extends Texture {
  * **Note:** This is only supported for Android platforms.
  *
 */
-  "new"(): ExternalTexture;
-  static "new"(): ExternalTexture;
-
+  new(): ExternalTexture; 
+  static "new"(): ExternalTexture 
 
 
 
@@ -26,14 +25,12 @@ size: Vector2;
 /** Returns the external texture name. */
 get_external_texture_id(): int;
 
-  // connect<T extends SignalsOf<ExternalTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ExternalTextureSignals>>(signal: T, method: SignalFunction<ExternalTextureSignals[T]>): number;
+  connect<T extends SignalsOf<ExternalTexture>>(signal: T, method: SignalFunction<ExternalTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ExternalTextureSignals extends TextureSignals {
-  
-}

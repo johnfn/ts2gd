@@ -3,16 +3,15 @@
  * This provides a default material with a wide variety of rendering features and properties without the need to write shader code. See the tutorial below for details.
  *
 */
-declare class SpatialMaterial extends Material {
+declare class SpatialMaterial extends Material  {
 
   
 /**
  * This provides a default material with a wide variety of rendering features and properties without the need to write shader code. See the tutorial below for details.
  *
 */
-  "new"(): SpatialMaterial;
-  static "new"(): SpatialMaterial;
-
+  new(): SpatialMaterial; 
+  static "new"(): SpatialMaterial 
 
 
 /** The material's base color. */
@@ -393,8 +392,7 @@ set_flag(flag: int, enable: boolean): void;
 /** Sets the [Texture] to be used by the specified [enum TextureParam]. This function is called when setting members ending in [code]*_texture[/code]. */
 set_texture(param: int, texture: Texture): void;
 
-  // connect<T extends SignalsOf<SpatialMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpatialMaterialSignals>>(signal: T, method: SignalFunction<SpatialMaterialSignals[T]>): number;
+  connect<T extends SignalsOf<SpatialMaterial>>(signal: T, method: SignalFunction<SpatialMaterial[T]>): number;
 
 
 
@@ -928,8 +926,7 @@ static DISTANCE_FADE_PIXEL_DITHER: any;
 */
 static DISTANCE_FADE_OBJECT_DITHER: any;
 
+
+
 }
 
-declare class SpatialMaterialSignals extends MaterialSignals {
-  
-}

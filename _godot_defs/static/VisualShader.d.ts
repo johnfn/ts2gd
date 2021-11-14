@@ -5,7 +5,7 @@
  * The visual shader editor creates the shader.
  *
 */
-declare class VisualShader extends Shader {
+declare class VisualShader extends Shader  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class VisualShader extends Shader {
  * The visual shader editor creates the shader.
  *
 */
-  "new"(): VisualShader;
-  static "new"(): VisualShader;
-
+  new(): VisualShader; 
+  static "new"(): VisualShader 
 
 
 /** The offset vector of the whole graph. */
@@ -38,7 +37,11 @@ connect_nodes_forced(type: int, from_node: int, from_port: int, to_node: int, to
 disconnect_nodes(type: int, from_node: int, from_port: int, to_node: int, to_port: int): void;
 
 /** Returns the shader node instance with specified [code]type[/code] and [code]id[/code]. */
-get_node(type: int, id: int): VisualShaderNode;
+get_node(path: NodePathType): Node;
+
+/** Returns the shader node instance with specified [code]type[/code] and [code]id[/code]. */
+get_node_unsafe<T extends Node>(path: NodePathType): T;
+
 
 /** Returns the list of connected nodes with the specified type. */
 get_node_connections(type: int): any[];
@@ -64,8 +67,7 @@ set_mode(mode: int): void;
 /** Sets the position of the specified node. */
 set_node_position(type: int, id: int, position: Vector2): void;
 
-  // connect<T extends SignalsOf<VisualShader>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderSignals>>(signal: T, method: SignalFunction<VisualShaderSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShader>>(signal: T, method: SignalFunction<VisualShader[T]>): number;
 
 
 
@@ -99,8 +101,7 @@ static NODE_ID_INVALID: any;
 /** No documentation provided. */
 static NODE_ID_OUTPUT: any;
 
+
+
 }
 
-declare class VisualShaderSignals extends ShaderSignals {
-  
-}

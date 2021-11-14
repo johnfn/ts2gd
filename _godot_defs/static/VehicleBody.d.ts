@@ -7,7 +7,7 @@
  * **Note:** This class has known issues and isn't designed to provide realistic 3D vehicle physics. If you want advanced vehicle physics, you will probably have to write your own physics integration using another [PhysicsBody] class.
  *
 */
-declare class VehicleBody extends RigidBody {
+declare class VehicleBody extends RigidBody  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class VehicleBody extends RigidBody {
  * **Note:** This class has known issues and isn't designed to provide realistic 3D vehicle physics. If you want advanced vehicle physics, you will probably have to write your own physics integration using another [PhysicsBody] class.
  *
 */
-  "new"(): VehicleBody;
-  static "new"(): VehicleBody;
-
+  new(): VehicleBody; 
+  static "new"(): VehicleBody 
 
 
 /** Slows down the vehicle by applying a braking force. The vehicle is only slowed down if the wheels are in contact with a surface. The force you need to apply to adequately slow down your vehicle depends on the [member RigidBody.mass] of the vehicle. For a vehicle with a mass set to 1000, try a value in the 25 - 30 range for hard braking. */
@@ -43,14 +42,12 @@ steering: float;
 
 
 
-  // connect<T extends SignalsOf<VehicleBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VehicleBodySignals>>(signal: T, method: SignalFunction<VehicleBodySignals[T]>): number;
+  connect<T extends SignalsOf<VehicleBody>>(signal: T, method: SignalFunction<VehicleBody[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VehicleBodySignals extends RigidBodySignals {
-  
-}

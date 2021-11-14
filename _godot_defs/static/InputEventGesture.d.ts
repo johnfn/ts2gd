@@ -1,14 +1,13 @@
 
 /**
 */
-declare class InputEventGesture extends InputEventWithModifiers {
+declare class InputEventGesture extends InputEventWithModifiers  {
 
   
 /**
 */
-  "new"(): InputEventGesture;
-  static "new"(): InputEventGesture;
-
+  new(): InputEventGesture; 
+  static "new"(): InputEventGesture 
 
 
 /** The local gesture position relative to the [Viewport]. If used in [method Control._gui_input], the position is relative to the current [Control] that received this gesture. */
@@ -16,14 +15,12 @@ position: Vector2;
 
 
 
-  // connect<T extends SignalsOf<InputEventGesture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventGestureSignals>>(signal: T, method: SignalFunction<InputEventGestureSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventGesture>>(signal: T, method: SignalFunction<InputEventGesture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventGestureSignals extends InputEventWithModifiersSignals {
-  
-}

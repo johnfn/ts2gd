@@ -3,16 +3,15 @@
  * Custom gizmo that is used for providing custom visualization and editing (handles) for 3D Spatial objects. See [EditorSpatialGizmoPlugin] for more information.
  *
 */
-declare class EditorSpatialGizmo extends SpatialGizmo {
+declare class EditorSpatialGizmo extends SpatialGizmo  {
 
   
 /**
  * Custom gizmo that is used for providing custom visualization and editing (handles) for 3D Spatial objects. See [EditorSpatialGizmoPlugin] for more information.
  *
 */
-  "new"(): EditorSpatialGizmo;
-  static "new"(): EditorSpatialGizmo;
-
+  new(): EditorSpatialGizmo; 
+  static "new"(): EditorSpatialGizmo 
 
 
 
@@ -87,14 +86,12 @@ set_hidden(hidden: boolean): void;
 /** Sets the reference [Spatial] node for the gizmo. [code]node[/code] must inherit from [Spatial]. */
 set_spatial_node(node: Node): void;
 
-  // connect<T extends SignalsOf<EditorSpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorSpatialGizmoSignals>>(signal: T, method: SignalFunction<EditorSpatialGizmoSignals[T]>): number;
+  connect<T extends SignalsOf<EditorSpatialGizmo>>(signal: T, method: SignalFunction<EditorSpatialGizmo[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorSpatialGizmoSignals extends SpatialGizmoSignals {
-  
-}

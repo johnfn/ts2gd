@@ -13,7 +13,7 @@
  * These effects will only apply when the [Viewport]'s intended usage is "3D" or "3D Without Effects". This can be configured for the root Viewport with [member ProjectSettings.rendering/quality/intended_usage/framebuffer_allocation], or for specific Viewports via the [member Viewport.usage] property.
  *
 */
-declare class Environment extends Resource {
+declare class Environment extends Resource  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class Environment extends Resource {
  * These effects will only apply when the [Viewport]'s intended usage is "3D" or "3D Without Effects". This can be configured for the root Viewport with [member ProjectSettings.rendering/quality/intended_usage/framebuffer_allocation], or for specific Viewports via the [member Viewport.usage] property.
  *
 */
-  "new"(): Environment;
-  static "new"(): Environment;
-
+  new(): Environment; 
+  static "new"(): Environment 
 
 
 /** The global brightness value of the rendered scene. Effective only if [code]adjustment_enabled[/code] is [code]true[/code]. */
@@ -301,8 +300,7 @@ is_glow_level_enabled(idx: int): boolean;
 /** Enables or disables the glow level at index [code]idx[/code]. Each level relies on the previous level. This means that enabling higher glow levels will slow down the glow effect rendering, even if previous levels aren't enabled. */
 set_glow_level(idx: int, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<Environment>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EnvironmentSignals>>(signal: T, method: SignalFunction<EnvironmentSignals[T]>): number;
+  connect<T extends SignalsOf<Environment>>(signal: T, method: SignalFunction<Environment[T]>): number;
 
 
 
@@ -468,8 +466,7 @@ static SSAO_QUALITY_MEDIUM: any;
 */
 static SSAO_QUALITY_HIGH: any;
 
+
+
 }
 
-declare class EnvironmentSignals extends ResourceSignals {
-  
-}

@@ -5,7 +5,7 @@
  * Translated to `vec3 rgb` and `float alpha` in the shader language.
  *
 */
-declare class VisualShaderNodeColorConstant extends VisualShaderNode {
+declare class VisualShaderNodeColorConstant extends VisualShaderNode  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class VisualShaderNodeColorConstant extends VisualShaderNode {
  * Translated to `vec3 rgb` and `float alpha` in the shader language.
  *
 */
-  "new"(): VisualShaderNodeColorConstant;
-  static "new"(): VisualShaderNodeColorConstant;
-
+  new(): VisualShaderNodeColorConstant; 
+  static "new"(): VisualShaderNodeColorConstant 
 
 
 /** A [Color] constant which represents a state of this node. */
@@ -24,14 +23,12 @@ constant: Color;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeColorConstant>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeColorConstantSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorConstantSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorConstant>>(signal: T, method: SignalFunction<VisualShaderNodeColorConstant[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VisualShaderNodeColorConstantSignals extends VisualShaderNodeSignals {
-  
-}

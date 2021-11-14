@@ -3,16 +3,15 @@
  * Stores information about joystick motions. One [InputEventJoypadMotion] represents one axis at a time.
  *
 */
-declare class InputEventJoypadMotion extends InputEvent {
+declare class InputEventJoypadMotion extends InputEvent  {
 
   
 /**
  * Stores information about joystick motions. One [InputEventJoypadMotion] represents one axis at a time.
  *
 */
-  "new"(): InputEventJoypadMotion;
-  static "new"(): InputEventJoypadMotion;
-
+  new(): InputEventJoypadMotion; 
+  static "new"(): InputEventJoypadMotion 
 
 
 /** Axis identifier. Use one of the [enum JoystickList] axis constants. */
@@ -23,14 +22,12 @@ axis_value: float;
 
 
 
-  // connect<T extends SignalsOf<InputEventJoypadMotion>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventJoypadMotionSignals>>(signal: T, method: SignalFunction<InputEventJoypadMotionSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventJoypadMotion>>(signal: T, method: SignalFunction<InputEventJoypadMotion[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventJoypadMotionSignals extends InputEventSignals {
-  
-}

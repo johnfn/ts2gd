@@ -5,7 +5,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorPlugin.get_editor_interface].
  *
 */
-declare class EditorInterface extends Node {
+declare class EditorInterface extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorInterface extends Node {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorPlugin.get_editor_interface].
  *
 */
-  "new"(): EditorInterface;
-  static "new"(): EditorInterface;
-
+  new(): EditorInterface; 
+  static "new"(): EditorInterface 
 
 
 /** If [code]true[/code], enables distraction-free mode which hides side docks to increase the space available for the main view. */
@@ -28,7 +27,12 @@ edit_node(node: Node): void;
 /** Edits the given [Resource]. */
 edit_resource(resource: Resource): void;
 
-/** Returns the main container of Godot editor's window. For example, you can use it to retrieve the size of the container and place your controls accordingly. */
+/**
+ * Returns the main container of Godot editor's window. For example, you can use it to retrieve the size of the container and place your controls accordingly.
+ *
+ * **Warning:** Removing and freeing this node will render the editor useless and may cause a crash.
+ *
+*/
 get_base_control(): Control;
 
 /** Returns the current path being viewed in the [FileSystemDock]. */
@@ -53,13 +57,25 @@ get_editor_settings(): EditorSettings;
  *
  * **Note:** This returns the main editor control containing the whole editor, not the 2D or 3D viewports specifically.
  *
+ * **Warning:** Removing and freeing this node will render a part of the editor useless and may cause a crash.
+ *
 */
 get_editor_viewport(): Control;
 
-/** Returns the editor's [FileSystemDock] instance. */
+/**
+ * Returns the editor's [FileSystemDock] instance.
+ *
+ * **Warning:** Removing and freeing this node will render a part of the editor useless and may cause a crash.
+ *
+*/
 get_file_system_dock(): FileSystemDock;
 
-/** Returns the editor's [EditorInspector] instance. */
+/**
+ * Returns the editor's [EditorInspector] instance.
+ *
+ * **Warning:** Removing and freeing this node will render a part of the editor useless and may cause a crash.
+ *
+*/
 get_inspector(): EditorInspector;
 
 /** Returns an [Array] with the file paths of the currently opened scenes. */
@@ -74,7 +90,12 @@ get_resource_filesystem(): EditorFileSystem;
 /** Returns the editor's [EditorResourcePreview] instance. */
 get_resource_previewer(): EditorResourcePreview;
 
-/** Returns the editor's [ScriptEditor] instance. */
+/**
+ * Returns the editor's [ScriptEditor] instance.
+ *
+ * **Warning:** Removing and freeing this node will render a part of the editor useless and may cause a crash.
+ *
+*/
 get_script_editor(): ScriptEditor;
 
 /** Returns the path of the directory currently selected in the [FileSystemDock]. If a file is selected, its base directory will be returned using [method String.get_base_dir] instead. */
@@ -128,14 +149,12 @@ set_plugin_enabled(plugin: string, enabled: boolean): void;
 /** Stops the scene that is currently playing. */
 stop_playing_scene(): void;
 
-  // connect<T extends SignalsOf<EditorInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorInterfaceSignals>>(signal: T, method: SignalFunction<EditorInterfaceSignals[T]>): number;
+  connect<T extends SignalsOf<EditorInterface>>(signal: T, method: SignalFunction<EditorInterface[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorInterfaceSignals extends NodeSignals {
-  
-}

@@ -27,7 +27,7 @@
  * **Note:** Files are automatically closed only if the process exits "normally" (such as by clicking the window manager's close button or pressing **Alt + F4**). If you stop the project execution by pressing **F8** while the project is running, the file won't be closed as the game process will be killed. You can work around this by calling [method flush] at regular intervals.
  *
 */
-declare class File extends Reference {
+declare class File extends Reference  {
 
   
 /**
@@ -58,9 +58,8 @@ declare class File extends Reference {
  * **Note:** Files are automatically closed only if the process exits "normally" (such as by clicking the window manager's close button or pressing **Alt + F4**). If you stop the project execution by pressing **F8** while the project is running, the file won't be closed as the game process will be killed. You can work around this by calling [method flush] at regular intervals.
  *
 */
-  "new"(): File;
-  static "new"(): File;
-
+  new(): File; 
+  static "new"(): File 
 
 
 /**
@@ -342,8 +341,7 @@ store_string(string: string): void;
 */
 store_var(value: any, full_objects?: boolean): void;
 
-  // connect<T extends SignalsOf<File>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<FileSignals>>(signal: T, method: SignalFunction<FileSignals[T]>): number;
+  connect<T extends SignalsOf<File>>(signal: T, method: SignalFunction<File[T]>): number;
 
 
 
@@ -395,8 +393,7 @@ static COMPRESSION_ZSTD: any;
 */
 static COMPRESSION_GZIP: any;
 
+
+
 }
 
-declare class FileSignals extends ReferenceSignals {
-  
-}

@@ -3,23 +3,21 @@
  * This is the base class for the resource importers implemented in core. To implement your own resource importers using editor plugins, see [EditorImportPlugin].
  *
 */
-declare class ResourceImporter extends Reference {
+declare class ResourceImporter extends Reference  {
 
   
 /**
  * This is the base class for the resource importers implemented in core. To implement your own resource importers using editor plugins, see [EditorImportPlugin].
  *
 */
-  "new"(): ResourceImporter;
-  static "new"(): ResourceImporter;
+  new(): ResourceImporter; 
+  static "new"(): ResourceImporter 
 
 
 
 
 
-
-  // connect<T extends SignalsOf<ResourceImporter>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceImporterSignals>>(signal: T, method: SignalFunction<ResourceImporterSignals[T]>): number;
+  connect<T extends SignalsOf<ResourceImporter>>(signal: T, method: SignalFunction<ResourceImporter[T]>): number;
 
 
 
@@ -35,8 +33,7 @@ static IMPORT_ORDER_DEFAULT: any;
 */
 static IMPORT_ORDER_SCENE: any;
 
+
+
 }
 
-declare class ResourceImporterSignals extends ReferenceSignals {
-  
-}

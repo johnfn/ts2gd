@@ -3,16 +3,15 @@
  * This node allows you to create a torus for use with the CSG system.
  *
 */
-declare class CSGTorus extends CSGPrimitive {
+declare class CSGTorus extends CSGPrimitive  {
 
   
 /**
  * This node allows you to create a torus for use with the CSG system.
  *
 */
-  "new"(): CSGTorus;
-  static "new"(): CSGTorus;
-
+  new(): CSGTorus; 
+  static "new"(): CSGTorus 
 
 
 /** The inner radius of the torus. */
@@ -35,14 +34,12 @@ smooth_faces: boolean;
 
 
 
-  // connect<T extends SignalsOf<CSGTorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGTorusSignals>>(signal: T, method: SignalFunction<CSGTorusSignals[T]>): number;
+  connect<T extends SignalsOf<CSGTorus>>(signal: T, method: SignalFunction<CSGTorus[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CSGTorusSignals extends CSGPrimitiveSignals {
-  
-}

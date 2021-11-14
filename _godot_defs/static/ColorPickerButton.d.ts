@@ -7,7 +7,7 @@
  * **Note:** By default, the button may not be wide enough for the color preview swatch to be visible. Make sure to set [member Control.rect_min_size] to a big enough value to give the button enough space.
  *
 */
-declare class ColorPickerButton extends Button {
+declare class ColorPickerButton extends Button  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ColorPickerButton extends Button {
  * **Note:** By default, the button may not be wide enough for the color preview swatch to be visible. Make sure to set [member Control.rect_min_size] to a big enough value to give the button enough space.
  *
 */
-  "new"(): ColorPickerButton;
-  static "new"(): ColorPickerButton;
-
+  new(): ColorPickerButton; 
+  static "new"(): ColorPickerButton 
 
 
 /** The currently selected color. */
@@ -30,37 +29,45 @@ color: Color;
 edit_alpha: boolean;
 
 
-/** Returns the [ColorPicker] that this node toggles. */
+/**
+ * Returns the [ColorPicker] that this node toggles.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_picker(): ColorPicker;
 
-/** Returns the control's [PopupPanel] which allows you to connect to popup signals. This allows you to handle events when the ColorPicker is shown or hidden. */
+/**
+ * Returns the control's [PopupPanel] which allows you to connect to popup signals. This allows you to handle events when the ColorPicker is shown or hidden.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_popup(): PopupPanel;
 
-  // connect<T extends SignalsOf<ColorPickerButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ColorPickerButtonSignals>>(signal: T, method: SignalFunction<ColorPickerButtonSignals[T]>): number;
+  connect<T extends SignalsOf<ColorPickerButton>>(signal: T, method: SignalFunction<ColorPickerButton[T]>): number;
 
 
 
 
-}
 
-declare class ColorPickerButtonSignals extends ButtonSignals {
-  /**
+/**
  * Emitted when the color changes.
  *
 */
-color_changed: Signal<(color: Color) => void>
+$color_changed: Signal<(color: Color) => void>
 
 /**
  * Emitted when the [ColorPicker] is created (the button is pressed for the first time).
  *
 */
-picker_created: Signal<() => void>
+$picker_created: Signal<() => void>
 
 /**
  * Emitted when the [ColorPicker] is closed.
  *
 */
-popup_closed: Signal<() => void>
+$popup_closed: Signal<() => void>
 
 }
+

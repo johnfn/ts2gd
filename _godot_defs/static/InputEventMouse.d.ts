@@ -3,16 +3,15 @@
  * Stores general mouse events information.
  *
 */
-declare class InputEventMouse extends InputEventWithModifiers {
+declare class InputEventMouse extends InputEventWithModifiers  {
 
   
 /**
  * Stores general mouse events information.
  *
 */
-  "new"(): InputEventMouse;
-  static "new"(): InputEventMouse;
-
+  new(): InputEventMouse; 
+  static "new"(): InputEventMouse 
 
 
 /** The mouse button mask identifier, one of or a bitwise combination of the [enum ButtonList] button masks. */
@@ -26,14 +25,12 @@ position: Vector2;
 
 
 
-  // connect<T extends SignalsOf<InputEventMouse>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventMouseSignals>>(signal: T, method: SignalFunction<InputEventMouseSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventMouse>>(signal: T, method: SignalFunction<InputEventMouse[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventMouseSignals extends InputEventWithModifiersSignals {
-  
-}

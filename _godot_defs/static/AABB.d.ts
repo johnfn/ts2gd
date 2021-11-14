@@ -19,9 +19,8 @@ declare class AABB {
  *
 */
 
-  constructor(position: Vector3, size: Vector3);
-  static "new"(): AABB;
-
+  new(position: Vector3, size: Vector3): AABB;
+  static "new"(): AABB 
 
 
 /** Ending corner. This is calculated as [code]position + size[/code]. Setting this value will change the size. */
@@ -106,14 +105,12 @@ is_equal_approx(aabb: AABB): boolean;
 /** Returns a larger [AABB] that contains both this [AABB] and [code]with[/code]. */
 merge(_with: AABB): AABB;
 
-  // connect<T extends SignalsOf<AABB>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AABBSignals>>(signal: T, method: SignalFunction<AABBSignals[T]>): number;
+  connect<T extends SignalsOf<AABB>>(signal: T, method: SignalFunction<AABB[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AABBSignals {
-  
-}

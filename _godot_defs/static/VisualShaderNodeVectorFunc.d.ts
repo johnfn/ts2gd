@@ -3,16 +3,15 @@
  * A visual shader node able to perform different functions using vectors.
  *
 */
-declare class VisualShaderNodeVectorFunc extends VisualShaderNode {
+declare class VisualShaderNodeVectorFunc extends VisualShaderNode  {
 
   
 /**
  * A visual shader node able to perform different functions using vectors.
  *
 */
-  "new"(): VisualShaderNodeVectorFunc;
-  static "new"(): VisualShaderNodeVectorFunc;
-
+  new(): VisualShaderNodeVectorFunc; 
+  static "new"(): VisualShaderNodeVectorFunc 
 
 
 /** The function to be performed. See [enum Function] for options. */
@@ -20,8 +19,7 @@ function: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeVectorFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeVectorFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorFuncSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorFunc>>(signal: T, method: SignalFunction<VisualShaderNodeVectorFunc[T]>): number;
 
 
 
@@ -235,8 +233,7 @@ static FUNC_TRUNC: any;
 */
 static FUNC_ONEMINUS: any;
 
+
+
 }
 
-declare class VisualShaderNodeVectorFuncSignals extends VisualShaderNodeSignals {
-  
-}

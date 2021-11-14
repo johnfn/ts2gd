@@ -30,7 +30,7 @@
  * **Note:** Not available in HTML5 exports.
  *
 */
-declare class HashingContext extends Reference {
+declare class HashingContext extends Reference  {
 
   
 /**
@@ -64,9 +64,8 @@ declare class HashingContext extends Reference {
  * **Note:** Not available in HTML5 exports.
  *
 */
-  "new"(): HashingContext;
-  static "new"(): HashingContext;
-
+  new(): HashingContext; 
+  static "new"(): HashingContext 
 
 
 
@@ -79,8 +78,7 @@ start(type: int): int;
 /** Updates the computation with the given [code]chunk[/code] of data. */
 update(chunk: PoolByteArray): int;
 
-  // connect<T extends SignalsOf<HashingContext>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HashingContextSignals>>(signal: T, method: SignalFunction<HashingContextSignals[T]>): number;
+  connect<T extends SignalsOf<HashingContext>>(signal: T, method: SignalFunction<HashingContext[T]>): number;
 
 
 
@@ -102,8 +100,7 @@ static HASH_SHA1: any;
 */
 static HASH_SHA256: any;
 
+
+
 }
 
-declare class HashingContextSignals extends ReferenceSignals {
-  
-}

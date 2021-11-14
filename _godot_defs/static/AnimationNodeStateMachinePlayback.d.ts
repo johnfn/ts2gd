@@ -12,7 +12,7 @@
  * 
  *
 */
-declare class AnimationNodeStateMachinePlayback extends Resource {
+declare class AnimationNodeStateMachinePlayback extends Resource  {
 
   
 /**
@@ -28,9 +28,8 @@ declare class AnimationNodeStateMachinePlayback extends Resource {
  * 
  *
 */
-  "new"(): AnimationNodeStateMachinePlayback;
-  static "new"(): AnimationNodeStateMachinePlayback;
-
+  new(): AnimationNodeStateMachinePlayback; 
+  static "new"(): AnimationNodeStateMachinePlayback 
 
 
 
@@ -58,14 +57,12 @@ stop(): void;
 /** Transitions from the current state to another one, following the shortest path. */
 travel(to_node: string): void;
 
-  // connect<T extends SignalsOf<AnimationNodeStateMachinePlayback>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeStateMachinePlaybackSignals>>(signal: T, method: SignalFunction<AnimationNodeStateMachinePlaybackSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeStateMachinePlayback>>(signal: T, method: SignalFunction<AnimationNodeStateMachinePlayback[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AnimationNodeStateMachinePlaybackSignals extends ResourceSignals {
-  
-}

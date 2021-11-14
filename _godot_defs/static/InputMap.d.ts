@@ -3,16 +3,15 @@
  * Manages all [InputEventAction] which can be created/modified from the project settings menu **Project > Project Settings > Input Map** or in code with [method add_action] and [method action_add_event]. See [method Node._input].
  *
 */
-declare class InputMapClass extends Object {
+declare class InputMapClass extends Object  {
 
   
 /**
  * Manages all [InputEventAction] which can be created/modified from the project settings menu **Project > Project Settings > Input Map** or in code with [method add_action] and [method action_add_event]. See [method Node._input].
  *
 */
-  "new"(): InputMapClass;
-  static "new"(): InputMapClass;
-
+  new(): InputMapClass; 
+  static "new"(): InputMapClass 
 
 
 
@@ -65,14 +64,12 @@ has_action(action: string): boolean;
 /** Clears all [InputEventAction] in the [InputMap] and load it anew from [ProjectSettings]. */
 load_from_globals(): void;
 
-  // connect<T extends SignalsOf<InputMapClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputMapClassSignals>>(signal: T, method: SignalFunction<InputMapClassSignals[T]>): number;
+  connect<T extends SignalsOf<InputMapClass>>(signal: T, method: SignalFunction<InputMapClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputMapClassSignals extends ObjectSignals {
-  
-}

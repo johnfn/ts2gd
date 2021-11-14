@@ -20,7 +20,7 @@
  * To iterate over all the [TreeItem] objects in a [Tree] object, use [method TreeItem.get_next] and [method TreeItem.get_children] after getting the root through [method get_root]. You can use [method Object.free] on a [TreeItem] to remove it from the [Tree].
  *
 */
-declare class Tree extends Control {
+declare class Tree extends Control  {
 
   
 /**
@@ -44,9 +44,8 @@ declare class Tree extends Control {
  * To iterate over all the [TreeItem] objects in a [Tree] object, use [method TreeItem.get_next] and [method TreeItem.get_children] after getting the root through [method get_root]. You can use [method Object.free] on a [TreeItem] to remove it from the [Tree].
  *
 */
-  "new"(): Tree;
-  static "new"(): Tree;
-
+  new(): Tree; 
+  static "new"(): Tree 
 
 
 /** If [code]true[/code], the currently selected cell may be selected again. */
@@ -204,8 +203,7 @@ set_column_title(column: int, title: string): void;
 /** If [code]true[/code], column titles are visible. */
 set_column_titles_visible(visible: boolean): void;
 
-  // connect<T extends SignalsOf<Tree>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TreeSignals>>(signal: T, method: SignalFunction<TreeSignals[T]>): number;
+  connect<T extends SignalsOf<Tree>>(signal: T, method: SignalFunction<Tree[T]>): number;
 
 
 
@@ -257,103 +255,102 @@ static DROP_MODE_ON_ITEM: any;
 */
 static DROP_MODE_INBETWEEN: any;
 
-}
 
-declare class TreeSignals extends ControlSignals {
-  /**
+/**
  * Emitted when a button on the tree was pressed (see [method TreeItem.add_button]).
  *
 */
-button_pressed: Signal<(item: TreeItem, column: int, id: int) => void>
+$button_pressed: Signal<(item: TreeItem, column: int, id: int) => void>
 
 /**
  * Emitted when a cell is selected.
  *
 */
-cell_selected: Signal<() => void>
+$cell_selected: Signal<() => void>
 
 /**
  * Emitted when a column's title is pressed.
  *
 */
-column_title_pressed: Signal<(column: int) => void>
+$column_title_pressed: Signal<(column: int) => void>
 
 /**
  * Emitted when a cell with the [constant TreeItem.CELL_MODE_CUSTOM] is clicked to be edited.
  *
 */
-custom_popup_edited: Signal<(arrow_clicked: boolean) => void>
+$custom_popup_edited: Signal<(arrow_clicked: boolean) => void>
 
 /**
  * Emitted when the right mouse button is pressed in the empty space of the tree.
  *
 */
-empty_rmb: Signal<(position: Vector2) => void>
+$empty_rmb: Signal<(position: Vector2) => void>
 
 /**
  * Emitted when the right mouse button is pressed if right mouse button selection is active and the tree is empty.
  *
 */
-empty_tree_rmb_selected: Signal<(position: Vector2) => void>
+$empty_tree_rmb_selected: Signal<(position: Vector2) => void>
 
 /**
  * Emitted when an item's label is double-clicked.
  *
 */
-item_activated: Signal<() => void>
+$item_activated: Signal<() => void>
 
 /**
  * Emitted when an item is collapsed by a click on the folding arrow.
  *
 */
-item_collapsed: Signal<(item: TreeItem) => void>
+$item_collapsed: Signal<(item: TreeItem) => void>
 
 /**
  * Emitted when a custom button is pressed (i.e. in a [constant TreeItem.CELL_MODE_CUSTOM] mode cell).
  *
 */
-item_custom_button_pressed: Signal<() => void>
+$item_custom_button_pressed: Signal<() => void>
 
 /**
  * Emitted when an item's icon is double-clicked.
  *
 */
-item_double_clicked: Signal<() => void>
+$item_double_clicked: Signal<() => void>
 
 /**
  * Emitted when an item is edited.
  *
 */
-item_edited: Signal<() => void>
+$item_edited: Signal<() => void>
 
 /**
  * Emitted when an item is edited using the right mouse button.
  *
 */
-item_rmb_edited: Signal<() => void>
+$item_rmb_edited: Signal<() => void>
 
 /**
  * Emitted when an item is selected with the right mouse button.
  *
 */
-item_rmb_selected: Signal<(position: Vector2) => void>
+$item_rmb_selected: Signal<(position: Vector2) => void>
 
 /**
  * Emitted when an item is selected.
  *
 */
-item_selected: Signal<() => void>
+$item_selected: Signal<() => void>
 
 /**
  * Emitted instead of `item_selected` if `select_mode` is [constant SELECT_MULTI].
  *
 */
-multi_selected: Signal<(item: TreeItem, column: int, selected: boolean) => void>
+$multi_selected: Signal<(item: TreeItem, column: int, selected: boolean) => void>
 
 /**
  * Emitted when a left mouse button click does not select any item.
  *
 */
-nothing_selected: Signal<() => void>
+$nothing_selected: Signal<() => void>
 
 }
+

@@ -3,16 +3,15 @@
  * Mesh is a type of [Resource] that contains vertex array-based geometry, divided in **surfaces**. Each surface contains a completely separate array and a material used to draw it. Design wise, a mesh with multiple surfaces is preferred to a single surface, because objects created in 3D editing software commonly contain multiple materials.
  *
 */
-declare class Mesh extends Resource {
+declare class Mesh extends Resource  {
 
   
 /**
  * Mesh is a type of [Resource] that contains vertex array-based geometry, divided in **surfaces**. Each surface contains a completely separate array and a material used to draw it. Design wise, a mesh with multiple surfaces is preferred to a single surface, because objects created in 3D editing software commonly contain multiple materials.
  *
 */
-  "new"(): Mesh;
-  static "new"(): Mesh;
-
+  new(): Mesh; 
+  static "new"(): Mesh 
 
 
 /** Sets a hint to be used for lightmap resolution in [BakedLightmap]. Overrides [member BakedLightmap.default_texels_per_unit]. */
@@ -68,8 +67,7 @@ surface_get_material(surf_idx: int): Material;
 /** Sets a [Material] for a given surface. Surface will be rendered using this material. */
 surface_set_material(surf_idx: int, material: Material): void;
 
-  // connect<T extends SignalsOf<Mesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshSignals>>(signal: T, method: SignalFunction<MeshSignals[T]>): number;
+  connect<T extends SignalsOf<Mesh>>(signal: T, method: SignalFunction<Mesh[T]>): number;
 
 
 
@@ -325,8 +323,7 @@ static ARRAY_INDEX: any;
 */
 static ARRAY_MAX: any;
 
+
+
 }
 
-declare class MeshSignals extends ResourceSignals {
-  
-}

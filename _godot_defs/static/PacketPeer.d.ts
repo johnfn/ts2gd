@@ -3,16 +3,15 @@
  * PacketPeer is an abstraction and base class for packet-based protocols (such as UDP). It provides an API for sending and receiving packets both as raw data or variables. This makes it easy to transfer data over a protocol, without having to encode data as low-level bytes or having to worry about network ordering.
  *
 */
-declare class PacketPeer extends Reference {
+declare class PacketPeer extends Reference  {
 
   
 /**
  * PacketPeer is an abstraction and base class for packet-based protocols (such as UDP). It provides an API for sending and receiving packets both as raw data or variables. This makes it easy to transfer data over a protocol, without having to encode data as low-level bytes or having to worry about network ordering.
  *
 */
-  "new"(): PacketPeer;
-  static "new"(): PacketPeer;
-
+  new(): PacketPeer; 
+  static "new"(): PacketPeer 
 
 
 /**
@@ -56,14 +55,12 @@ put_packet(buffer: PoolByteArray): int;
 /** Sends a [Variant] as a packet. If [code]full_objects[/code] (or [member allow_object_decoding]) is [code]true[/code], encoding objects is allowed (and can potentially include code). */
 put_var(_var: any, full_objects?: boolean): int;
 
-  // connect<T extends SignalsOf<PacketPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PacketPeerSignals>>(signal: T, method: SignalFunction<PacketPeerSignals[T]>): number;
+  connect<T extends SignalsOf<PacketPeer>>(signal: T, method: SignalFunction<PacketPeer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PacketPeerSignals extends ReferenceSignals {
-  
-}

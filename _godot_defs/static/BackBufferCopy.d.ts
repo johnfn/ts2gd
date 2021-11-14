@@ -5,7 +5,7 @@
  * **Note:** Since this node inherits from [Node2D] (and not [Control]), anchors and margins won't apply to child [Control]-derived nodes. This can be problematic when resizing the window. To avoid this, add [Control]-derived nodes as **siblings** to the BackBufferCopy node instead of adding them as children.
  *
 */
-declare class BackBufferCopy extends Node2D {
+declare class BackBufferCopy extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class BackBufferCopy extends Node2D {
  * **Note:** Since this node inherits from [Node2D] (and not [Control]), anchors and margins won't apply to child [Control]-derived nodes. This can be problematic when resizing the window. To avoid this, add [Control]-derived nodes as **siblings** to the BackBufferCopy node instead of adding them as children.
  *
 */
-  "new"(): BackBufferCopy;
-  static "new"(): BackBufferCopy;
-
+  new(): BackBufferCopy; 
+  static "new"(): BackBufferCopy 
 
 
 /** Buffer mode. See [enum CopyMode] constants. */
@@ -27,8 +26,7 @@ rect: Rect2;
 
 
 
-  // connect<T extends SignalsOf<BackBufferCopy>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BackBufferCopySignals>>(signal: T, method: SignalFunction<BackBufferCopySignals[T]>): number;
+  connect<T extends SignalsOf<BackBufferCopy>>(signal: T, method: SignalFunction<BackBufferCopy[T]>): number;
 
 
 
@@ -50,8 +48,7 @@ static COPY_MODE_RECT: any;
 */
 static COPY_MODE_VIEWPORT: any;
 
+
+
 }
 
-declare class BackBufferCopySignals extends Node2DSignals {
-  
-}

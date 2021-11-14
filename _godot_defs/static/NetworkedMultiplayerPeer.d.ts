@@ -5,7 +5,7 @@
  * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
-declare class NetworkedMultiplayerPeer extends PacketPeer {
+declare class NetworkedMultiplayerPeer extends PacketPeer  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class NetworkedMultiplayerPeer extends PacketPeer {
  * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
-  "new"(): NetworkedMultiplayerPeer;
-  static "new"(): NetworkedMultiplayerPeer;
-
+  new(): NetworkedMultiplayerPeer; 
+  static "new"(): NetworkedMultiplayerPeer 
 
 
 /** If [code]true[/code], this [NetworkedMultiplayerPeer] refuses new connections. */
@@ -45,8 +44,7 @@ poll(): void;
 */
 set_target_peer(id: int): void;
 
-  // connect<T extends SignalsOf<NetworkedMultiplayerPeer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NetworkedMultiplayerPeerSignals>>(signal: T, method: SignalFunction<NetworkedMultiplayerPeerSignals[T]>): number;
+  connect<T extends SignalsOf<NetworkedMultiplayerPeer>>(signal: T, method: SignalFunction<NetworkedMultiplayerPeer[T]>): number;
 
 
 
@@ -98,37 +96,36 @@ static TARGET_PEER_BROADCAST: any;
 */
 static TARGET_PEER_SERVER: any;
 
-}
 
-declare class NetworkedMultiplayerPeerSignals extends PacketPeerSignals {
-  /**
+/**
  * Emitted when a connection attempt fails.
  *
 */
-connection_failed: Signal<() => void>
+$connection_failed: Signal<() => void>
 
 /**
  * Emitted when a connection attempt succeeds.
  *
 */
-connection_succeeded: Signal<() => void>
+$connection_succeeded: Signal<() => void>
 
 /**
  * Emitted by the server when a client connects.
  *
 */
-peer_connected: Signal<(id: int) => void>
+$peer_connected: Signal<(id: int) => void>
 
 /**
  * Emitted by the server when a client disconnects.
  *
 */
-peer_disconnected: Signal<(id: int) => void>
+$peer_disconnected: Signal<(id: int) => void>
 
 /**
  * Emitted by clients when the server disconnects.
  *
 */
-server_disconnected: Signal<() => void>
+$server_disconnected: Signal<() => void>
 
 }
+

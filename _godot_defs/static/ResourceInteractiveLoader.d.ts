@@ -3,16 +3,15 @@
  * Interactive [Resource] loader. This object is returned by [ResourceLoader] when performing an interactive load. It allows loading resources with high granularity, which makes it mainly useful for displaying loading bars or percentages.
  *
 */
-declare class ResourceInteractiveLoader extends Reference {
+declare class ResourceInteractiveLoader extends Reference  {
 
   
 /**
  * Interactive [Resource] loader. This object is returned by [ResourceLoader] when performing an interactive load. It allows loading resources with high granularity, which makes it mainly useful for displaying loading bars or percentages.
  *
 */
-  "new"(): ResourceInteractiveLoader;
-  static "new"(): ResourceInteractiveLoader;
-
+  new(): ResourceInteractiveLoader; 
+  static "new"(): ResourceInteractiveLoader 
 
 
 
@@ -47,14 +46,12 @@ poll(): int;
 */
 wait(): int;
 
-  // connect<T extends SignalsOf<ResourceInteractiveLoader>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceInteractiveLoaderSignals>>(signal: T, method: SignalFunction<ResourceInteractiveLoaderSignals[T]>): number;
+  connect<T extends SignalsOf<ResourceInteractiveLoader>>(signal: T, method: SignalFunction<ResourceInteractiveLoader[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ResourceInteractiveLoaderSignals extends ReferenceSignals {
-  
-}

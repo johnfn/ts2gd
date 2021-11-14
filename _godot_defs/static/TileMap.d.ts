@@ -5,7 +5,7 @@
  * When doing physics queries against the tilemap, the cell coordinates are encoded as `metadata` for each detected collision shape returned by methods such as [method Physics2DDirectSpaceState.intersect_shape], [method Physics2DDirectBodyState.get_contact_collider_shape_metadata], etc.
  *
 */
-declare class TileMap extends Node2D {
+declare class TileMap extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TileMap extends Node2D {
  * When doing physics queries against the tilemap, the cell coordinates are encoded as `metadata` for each detected collision shape returned by methods such as [method Physics2DDirectSpaceState.intersect_shape], [method Physics2DDirectBodyState.get_contact_collider_shape_metadata], etc.
  *
 */
-  "new"(): TileMap;
-  static "new"(): TileMap;
-
+  new(): TileMap; 
+  static "new"(): TileMap 
 
 
 /** If [code]true[/code], the cell's UVs will be clipped. */
@@ -218,8 +217,7 @@ update_dirty_quadrants(): void;
 */
 world_to_map(world_position: Vector2): Vector2;
 
-  // connect<T extends SignalsOf<TileMap>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TileMapSignals>>(signal: T, method: SignalFunction<TileMapSignals[T]>): number;
+  connect<T extends SignalsOf<TileMap>>(signal: T, method: SignalFunction<TileMap[T]>): number;
 
 
 
@@ -295,13 +293,12 @@ static TILE_ORIGIN_CENTER: any;
 */
 static TILE_ORIGIN_BOTTOM_LEFT: any;
 
-}
 
-declare class TileMapSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when a tilemap setting has changed.
  *
 */
-settings_changed: Signal<() => void>
+$settings_changed: Signal<() => void>
 
 }
+

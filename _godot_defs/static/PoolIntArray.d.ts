@@ -19,9 +19,8 @@ declare class PoolIntArray {
  *
 */
 
-  constructor(from: any[]);
-  static "new"(): PoolIntArray;
-
+  new(from: any[]): PoolIntArray;
+  static "new"(): PoolIntArray 
 
 
 
@@ -48,7 +47,12 @@ push_back(integer: int): any;
 /** Removes an element from the array by index. */
 remove(idx: int): any;
 
-/** Sets the size of the array. If the array is grown, reserves elements at the end of the array. If the array is shrunk, truncates the array to the new size. */
+/**
+ * Sets the size of the array. If the array is grown, reserves elements at the end of the array. If the array is shrunk, truncates the array to the new size.
+ *
+ * **Note:** Added elements are not automatically initialized to 0 and will contain garbage, i.e. indeterminate values.
+ *
+*/
 resize(idx: int): any;
 
 /** Changes the int at the given index. */
@@ -57,14 +61,12 @@ set(idx: int, integer: int): any;
 /** Returns the array size. */
 size(): int;
 
-  // connect<T extends SignalsOf<PoolIntArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PoolIntArraySignals>>(signal: T, method: SignalFunction<PoolIntArraySignals[T]>): number;
+  connect<T extends SignalsOf<PoolIntArray>>(signal: T, method: SignalFunction<PoolIntArray[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PoolIntArraySignals {
-  
-}

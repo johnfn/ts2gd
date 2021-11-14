@@ -3,16 +3,15 @@
  * A visual shader node for use of vector operators. Operates on vector `a` and vector `b`.
  *
 */
-declare class VisualShaderNodeVectorOp extends VisualShaderNode {
+declare class VisualShaderNodeVectorOp extends VisualShaderNode  {
 
   
 /**
  * A visual shader node for use of vector operators. Operates on vector `a` and vector `b`.
  *
 */
-  "new"(): VisualShaderNodeVectorOp;
-  static "new"(): VisualShaderNodeVectorOp;
-
+  new(): VisualShaderNodeVectorOp; 
+  static "new"(): VisualShaderNodeVectorOp 
 
 
 /** The operator to be used. See [enum Operator] for options. */
@@ -20,8 +19,7 @@ operator: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeVectorOp>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeVectorOpSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorOpSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeVectorOp>>(signal: T, method: SignalFunction<VisualShaderNodeVectorOp[T]>): number;
 
 
 
@@ -97,8 +95,7 @@ static OP_REFLECT: any;
 */
 static OP_STEP: any;
 
+
+
 }
 
-declare class VisualShaderNodeVectorOpSignals extends VisualShaderNodeSignals {
-  
-}

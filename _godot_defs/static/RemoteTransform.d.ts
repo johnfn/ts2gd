@@ -5,7 +5,7 @@
  * It can be set to update another Node's position, rotation and/or scale. It can use either global or local coordinates.
  *
 */
-declare class RemoteTransform extends Spatial {
+declare class RemoteTransform extends Spatial  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class RemoteTransform extends Spatial {
  * It can be set to update another Node's position, rotation and/or scale. It can use either global or local coordinates.
  *
 */
-  "new"(): RemoteTransform;
-  static "new"(): RemoteTransform;
-
+  new(): RemoteTransform; 
+  static "new"(): RemoteTransform 
 
 
 /** The [NodePath] to the remote node, relative to the RemoteTransform's position in the scene. */
@@ -37,14 +36,12 @@ use_global_coordinates: boolean;
 /** [RemoteTransform] caches the remote node. It may not notice if the remote node disappears; [method force_update_cache] forces it to update the cache again. */
 force_update_cache(): void;
 
-  // connect<T extends SignalsOf<RemoteTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RemoteTransformSignals>>(signal: T, method: SignalFunction<RemoteTransformSignals[T]>): number;
+  connect<T extends SignalsOf<RemoteTransform>>(signal: T, method: SignalFunction<RemoteTransform[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RemoteTransformSignals extends SpatialSignals {
-  
-}

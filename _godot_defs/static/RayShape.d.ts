@@ -3,16 +3,15 @@
  * Ray shape for 3D collisions, which can be set into a [PhysicsBody] or [Area]. A ray is not really a collision body; instead, it tries to separate itself from whatever is touching its far endpoint. It's often useful for characters.
  *
 */
-declare class RayShape extends Shape {
+declare class RayShape extends Shape  {
 
   
 /**
  * Ray shape for 3D collisions, which can be set into a [PhysicsBody] or [Area]. A ray is not really a collision body; instead, it tries to separate itself from whatever is touching its far endpoint. It's often useful for characters.
  *
 */
-  "new"(): RayShape;
-  static "new"(): RayShape;
-
+  new(): RayShape; 
+  static "new"(): RayShape 
 
 
 /** The ray's length. */
@@ -23,14 +22,12 @@ slips_on_slope: boolean;
 
 
 
-  // connect<T extends SignalsOf<RayShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RayShapeSignals>>(signal: T, method: SignalFunction<RayShapeSignals[T]>): number;
+  connect<T extends SignalsOf<RayShape>>(signal: T, method: SignalFunction<RayShape[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RayShapeSignals extends ShapeSignals {
-  
-}

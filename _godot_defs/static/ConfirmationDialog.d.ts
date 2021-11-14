@@ -11,7 +11,7 @@
  * .
  *
 */
-declare class ConfirmationDialog extends AcceptDialog {
+declare class ConfirmationDialog extends AcceptDialog  {
 
   
 /**
@@ -26,24 +26,26 @@ declare class ConfirmationDialog extends AcceptDialog {
  * .
  *
 */
-  "new"(): ConfirmationDialog;
-  static "new"(): ConfirmationDialog;
+  new(): ConfirmationDialog; 
+  static "new"(): ConfirmationDialog 
 
 
 
 
-
-/** Returns the cancel button. */
+/**
+ * Returns the cancel button.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_cancel(): Button;
 
-  // connect<T extends SignalsOf<ConfirmationDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ConfirmationDialogSignals>>(signal: T, method: SignalFunction<ConfirmationDialogSignals[T]>): number;
+  connect<T extends SignalsOf<ConfirmationDialog>>(signal: T, method: SignalFunction<ConfirmationDialog[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ConfirmationDialogSignals extends AcceptDialogSignals {
-  
-}

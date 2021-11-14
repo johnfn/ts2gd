@@ -3,16 +3,15 @@
  * Provides data transformation and encoding utility functions.
  *
 */
-declare class MarshallsClass extends Object {
+declare class MarshallsClass extends Object  {
 
   
 /**
  * Provides data transformation and encoding utility functions.
  *
 */
-  "new"(): MarshallsClass;
-  static "new"(): MarshallsClass;
-
+  new(): MarshallsClass; 
+  static "new"(): MarshallsClass 
 
 
 
@@ -39,14 +38,12 @@ utf8_to_base64(utf8_str: string): string;
 /** Returns a Base64-encoded string of the [Variant] [code]variant[/code]. If [code]full_objects[/code] is [code]true[/code], encoding objects is allowed (and can potentially include code). */
 variant_to_base64(variant: any, full_objects?: boolean): string;
 
-  // connect<T extends SignalsOf<MarshallsClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MarshallsClassSignals>>(signal: T, method: SignalFunction<MarshallsClassSignals[T]>): number;
+  connect<T extends SignalsOf<MarshallsClass>>(signal: T, method: SignalFunction<MarshallsClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MarshallsClassSignals extends ObjectSignals {
-  
-}

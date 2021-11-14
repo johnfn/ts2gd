@@ -3,16 +3,15 @@
  * Node used for displaying a [Mesh] in 2D. Can be constructed from an existing [Sprite] via a tool in the editor toolbar. Select "Sprite" then "Convert to Mesh2D", select settings in popup and press "Create Mesh2D".
  *
 */
-declare class MeshInstance2D extends Node2D {
+declare class MeshInstance2D extends Node2D  {
 
   
 /**
  * Node used for displaying a [Mesh] in 2D. Can be constructed from an existing [Sprite] via a tool in the editor toolbar. Select "Sprite" then "Convert to Mesh2D", select settings in popup and press "Create Mesh2D".
  *
 */
-  "new"(): MeshInstance2D;
-  static "new"(): MeshInstance2D;
-
+  new(): MeshInstance2D; 
+  static "new"(): MeshInstance2D 
 
 
 /** The [Mesh] that will be drawn by the [MeshInstance2D]. */
@@ -31,19 +30,17 @@ texture: Texture;
 
 
 
-  // connect<T extends SignalsOf<MeshInstance2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshInstance2DSignals>>(signal: T, method: SignalFunction<MeshInstance2DSignals[T]>): number;
+  connect<T extends SignalsOf<MeshInstance2D>>(signal: T, method: SignalFunction<MeshInstance2D[T]>): number;
 
 
 
 
-}
 
-declare class MeshInstance2DSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the [member texture] is changed.
  *
 */
-texture_changed: Signal<() => void>
+$texture_changed: Signal<() => void>
 
 }
+

@@ -58,7 +58,7 @@
  * **Note:** The file extension given to a ConfigFile does not have any impact on its formatting or behavior. By convention, the `.cfg` extension is used here, but any other extension such as `.ini` is also valid. Since neither `.cfg` nor `.ini` are standardized, Godot's ConfigFile formatting may differ from files written by other programs.
  *
 */
-declare class ConfigFile extends Reference {
+declare class ConfigFile extends Reference  {
 
   
 /**
@@ -120,9 +120,8 @@ declare class ConfigFile extends Reference {
  * **Note:** The file extension given to a ConfigFile does not have any impact on its formatting or behavior. By convention, the `.cfg` extension is used here, but any other extension such as `.ini` is also valid. Since neither `.cfg` nor `.ini` are standardized, Godot's ConfigFile formatting may differ from files written by other programs.
  *
 */
-  "new"(): ConfigFile;
-  static "new"(): ConfigFile;
-
+  new(): ConfigFile; 
+  static "new"(): ConfigFile 
 
 
 
@@ -209,14 +208,12 @@ save_encrypted_pass(path: string, password: string): int;
 /** Assigns a value to the specified key of the specified section. If either the section or the key do not exist, they are created. Passing a [code]null[/code] value deletes the specified key if it exists, and deletes the section if it ends up empty once the key has been removed. */
 set_value(section: string, key: string, value: any): void;
 
-  // connect<T extends SignalsOf<ConfigFile>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ConfigFileSignals>>(signal: T, method: SignalFunction<ConfigFileSignals[T]>): number;
+  connect<T extends SignalsOf<ConfigFile>>(signal: T, method: SignalFunction<ConfigFile[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ConfigFileSignals extends ReferenceSignals {
-  
-}

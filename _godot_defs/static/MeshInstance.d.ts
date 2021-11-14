@@ -3,16 +3,15 @@
  * MeshInstance is a node that takes a [Mesh] resource and adds it to the current scenario by creating an instance of it. This is the class most often used to get 3D geometry rendered and can be used to instance a single [Mesh] in many places. This allows to reuse geometry and save on resources. When a [Mesh] has to be instanced more than thousands of times at close proximity, consider using a [MultiMesh] in a [MultiMeshInstance] instead.
  *
 */
-declare class MeshInstance extends GeometryInstance {
+declare class MeshInstance extends GeometryInstance  {
 
   
 /**
  * MeshInstance is a node that takes a [Mesh] resource and adds it to the current scenario by creating an instance of it. This is the class most often used to get 3D geometry rendered and can be used to instance a single [Mesh] in many places. This allows to reuse geometry and save on resources. When a [Mesh] has to be instanced more than thousands of times at close proximity, consider using a [MultiMesh] in a [MultiMeshInstance] instead.
  *
 */
-  "new"(): MeshInstance;
-  static "new"(): MeshInstance;
-
+  new(): MeshInstance; 
+  static "new"(): MeshInstance 
 
 
 /** The [Mesh] resource for the instance. */
@@ -63,14 +62,12 @@ get_surface_material_count(): int;
 /** Sets the [Material] for a surface of the [Mesh] resource. */
 set_surface_material(surface: int, material: Material): void;
 
-  // connect<T extends SignalsOf<MeshInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshInstanceSignals>>(signal: T, method: SignalFunction<MeshInstanceSignals[T]>): number;
+  connect<T extends SignalsOf<MeshInstance>>(signal: T, method: SignalFunction<MeshInstance[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MeshInstanceSignals extends GeometryInstanceSignals {
-  
-}

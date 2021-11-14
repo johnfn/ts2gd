@@ -7,7 +7,7 @@
  * **Note:** Many of these monitors are not updated in real-time, so there may be a short delay between changes.
  *
 */
-declare class PerformanceClass extends Object {
+declare class PerformanceClass extends Object  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class PerformanceClass extends Object {
  * **Note:** Many of these monitors are not updated in real-time, so there may be a short delay between changes.
  *
 */
-  "new"(): PerformanceClass;
-  static "new"(): PerformanceClass;
-
+  new(): PerformanceClass; 
+  static "new"(): PerformanceClass 
 
 
 
@@ -36,8 +35,7 @@ declare class PerformanceClass extends Object {
 */
 get_monitor(monitor: int): float;
 
-  // connect<T extends SignalsOf<PerformanceClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PerformanceClassSignals>>(signal: T, method: SignalFunction<PerformanceClassSignals[T]>): number;
+  connect<T extends SignalsOf<PerformanceClass>>(signal: T, method: SignalFunction<PerformanceClass[T]>): number;
 
 
 
@@ -233,8 +231,7 @@ static AUDIO_OUTPUT_LATENCY: any;
 */
 static MONITOR_MAX: any;
 
+
+
 }
 
-declare class PerformanceClassSignals extends ObjectSignals {
-  
-}

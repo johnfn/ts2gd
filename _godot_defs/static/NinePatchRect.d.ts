@@ -3,16 +3,15 @@
  * Also known as 9-slice panels, NinePatchRect produces clean panels of any size, based on a small texture. To do so, it splits the texture in a 3×3 grid. When you scale the node, it tiles the texture's sides horizontally or vertically, the center on both axes but it doesn't scale or tile the corners.
  *
 */
-declare class NinePatchRect extends Control {
+declare class NinePatchRect extends Control  {
 
   
 /**
  * Also known as 9-slice panels, NinePatchRect produces clean panels of any size, based on a small texture. To do so, it splits the texture in a 3×3 grid. When you scale the node, it tiles the texture's sides horizontally or vertically, the center on both axes but it doesn't scale or tile the corners.
  *
 */
-  "new"(): NinePatchRect;
-  static "new"(): NinePatchRect;
-
+  new(): NinePatchRect; 
+  static "new"(): NinePatchRect 
 
 
 /** The stretch mode to use for horizontal stretching/tiling. See [enum NinePatchRect.AxisStretchMode] for possible values. */
@@ -49,8 +48,7 @@ get_patch_margin(margin: int): int;
 /** Sets the size of the margin identified by the given [enum Margin] constant to [code]value[/code] in pixels. */
 set_patch_margin(margin: int, value: int): void;
 
-  // connect<T extends SignalsOf<NinePatchRect>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NinePatchRectSignals>>(signal: T, method: SignalFunction<NinePatchRectSignals[T]>): number;
+  connect<T extends SignalsOf<NinePatchRect>>(signal: T, method: SignalFunction<NinePatchRect[T]>): number;
 
 
 
@@ -76,13 +74,12 @@ static AXIS_STRETCH_MODE_TILE: any;
 */
 static AXIS_STRETCH_MODE_TILE_FIT: any;
 
-}
 
-declare class NinePatchRectSignals extends ControlSignals {
-  /**
+/**
  * Emitted when the node's texture changes.
  *
 */
-texture_changed: Signal<() => void>
+$texture_changed: Signal<() => void>
 
 }
+

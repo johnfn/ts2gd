@@ -5,7 +5,7 @@
  * **Note:** This singleton can be disabled at build-time to improve security. By default, the JavaScript singleton is enabled. Official export templates also have the JavaScript singleton enabled. See [url=https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_web.html]Compiling for the Web[/url] in the documentation for more information.
  *
 */
-declare class JavaScriptClass extends Object {
+declare class JavaScriptClass extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class JavaScriptClass extends Object {
  * **Note:** This singleton can be disabled at build-time to improve security. By default, the JavaScript singleton is enabled. Official export templates also have the JavaScript singleton enabled. See [url=https://docs.godotengine.org/en/3.4/development/compiling/compiling_for_web.html]Compiling for the Web[/url] in the documentation for more information.
  *
 */
-  "new"(): JavaScriptClass;
-  static "new"(): JavaScriptClass;
-
+  new(): JavaScriptClass; 
+  static "new"(): JavaScriptClass 
 
 
 
@@ -49,14 +48,12 @@ eval(code: string, use_global_execution_context?: boolean): any;
 /** Returns an interface to a JavaScript object that can be used by scripts. The [code]interface[/code] must be a valid property of the JavaScript [code]window[/code]. The callback must accept a single [Array] argument, which will contain the JavaScript [code]arguments[/code]. See [JavaScriptObject] for usage. */
 get_interface(interface: string): JavaScriptObject;
 
-  // connect<T extends SignalsOf<JavaScriptClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JavaScriptClassSignals>>(signal: T, method: SignalFunction<JavaScriptClassSignals[T]>): number;
+  connect<T extends SignalsOf<JavaScriptClass>>(signal: T, method: SignalFunction<JavaScriptClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class JavaScriptClassSignals extends ObjectSignals {
-  
-}

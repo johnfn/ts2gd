@@ -7,7 +7,7 @@
  * **Note:** The maximum image size is 16384×16384 pixels due to graphics hardware limitations. Larger images may fail to import.
  *
 */
-declare class Image extends Resource {
+declare class Image extends Resource  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class Image extends Resource {
  * **Note:** The maximum image size is 16384×16384 pixels due to graphics hardware limitations. Larger images may fail to import.
  *
 */
-  "new"(): Image;
-  static "new"(): Image;
-
+  new(): Image; 
+  static "new"(): Image 
 
 
 /** Holds all the image's color data in a given format. See [enum Format] constants. */
@@ -238,8 +237,7 @@ srgb_to_linear(): void;
 /** Unlocks the data and prevents changes. */
 unlock(): void;
 
-  // connect<T extends SignalsOf<Image>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ImageSignals>>(signal: T, method: SignalFunction<ImageSignals[T]>): number;
+  connect<T extends SignalsOf<Image>>(signal: T, method: SignalFunction<Image[T]>): number;
 
 
 
@@ -269,6 +267,8 @@ static FORMAT_LA8: any;
 
 /**
  * OpenGL texture format `RED` with a single component and a bitdepth of 8.
+ *
+ * **Note:** When using the GLES2 backend, this uses the alpha channel instead of the red channel for storage.
  *
 */
 static FORMAT_R8: any;
@@ -607,8 +607,7 @@ static COMPRESS_SOURCE_SRGB: any;
 */
 static COMPRESS_SOURCE_NORMAL: any;
 
+
+
 }
 
-declare class ImageSignals extends ResourceSignals {
-  
-}

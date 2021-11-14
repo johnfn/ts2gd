@@ -11,7 +11,7 @@
  * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/color_constants.png]Color constants cheatsheet[/url]
  *
 */
-declare class Color {
+declare class ColorConstructor {
 
   
 /**
@@ -26,13 +26,6 @@ declare class Color {
  * [url=https://raw.githubusercontent.com/godotengine/godot-docs/master/img/color_constants.png]Color constants cheatsheet[/url]
  *
 */
-
-  constructor(from: string);
-  constructor(from: int);
-  constructor(r: float, g: float, b: float);
-  constructor(r: float, g: float, b: float, a: float);
-  static "new"(): Color;
-
 
 
 /** The color's alpha (transparency) component, typically on the range of 0 to 1. */
@@ -280,8 +273,7 @@ to_rgba32(): int;
 */
 to_rgba64(): int;
 
-  // connect<T extends SignalsOf<Color>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ColorSignals>>(signal: T, method: SignalFunction<ColorSignals[T]>): number;
+  connect<T extends SignalsOf<Color>>(signal: T, method: SignalFunction<Color[T]>): number;
 
 
 
@@ -1161,8 +1153,21 @@ static yellow: Color;
 */
 static yellowgreen: Color;
 
+
+
 }
 
-declare class ColorSignals {
+declare type Color = ColorConstructor;
+declare var Color: typeof ColorConstructor & {
   
+  new(from: string): Color;
+  new(from: int): Color;
+  new(r: float, g: float, b: float): Color;
+  new(r: float, g: float, b: float, a: float): Color;
+
+  (from: string): Color;
+  (from: int): Color;
+  (r: float, g: float, b: float): Color;
+  (r: float, g: float, b: float, a: float): Color;
+
 }

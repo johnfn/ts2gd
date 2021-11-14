@@ -5,7 +5,7 @@
  * **Note:** Many cameras supply YCbCr images which need to be converted in a shader.
  *
 */
-declare class CameraTexture extends Texture {
+declare class CameraTexture extends Texture  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class CameraTexture extends Texture {
  * **Note:** Many cameras supply YCbCr images which need to be converted in a shader.
  *
 */
-  "new"(): CameraTexture;
-  static "new"(): CameraTexture;
-
+  new(): CameraTexture; 
+  static "new"(): CameraTexture 
 
 
 /** The ID of the [CameraFeed] for which we want to display the image. */
@@ -31,14 +30,12 @@ which_feed: int;
 
 
 
-  // connect<T extends SignalsOf<CameraTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CameraTextureSignals>>(signal: T, method: SignalFunction<CameraTextureSignals[T]>): number;
+  connect<T extends SignalsOf<CameraTexture>>(signal: T, method: SignalFunction<CameraTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CameraTextureSignals extends TextureSignals {
-  
-}

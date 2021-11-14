@@ -5,7 +5,7 @@
  * Ignores non-[Control] children.
  *
 */
-declare class TabContainer extends Container {
+declare class TabContainer extends Container  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TabContainer extends Container {
  * Ignores non-[Control] children.
  *
 */
-  "new"(): TabContainer;
-  static "new"(): TabContainer;
-
+  new(): TabContainer; 
+  static "new"(): TabContainer 
 
 
 /** If [code]true[/code], all tabs are drawn in front of the panel. If [code]false[/code], inactive tabs are drawn behind the panel. */
@@ -40,7 +39,12 @@ use_hidden_tabs_for_min_size: boolean;
 /** Returns the child [Control] node located at the active tab index. */
 get_current_tab_control(): Control;
 
-/** Returns the [Popup] node instance if one has been set already with [method set_popup]. */
+/**
+ * Returns the [Popup] node instance if one has been set already with [method set_popup].
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_popup(): Popup;
 
 /** Returns the previously active tab index. */
@@ -88,8 +92,7 @@ set_tab_title(tab_idx: int, title: string): void;
 /** Defines rearrange group id, choose for each [TabContainer] the same value to enable tab drag between [TabContainer]. Enable drag with [member drag_to_rearrange_enabled]. */
 set_tabs_rearrange_group(group_id: int): void;
 
-  // connect<T extends SignalsOf<TabContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TabContainerSignals>>(signal: T, method: SignalFunction<TabContainerSignals[T]>): number;
+  connect<T extends SignalsOf<TabContainer>>(signal: T, method: SignalFunction<TabContainer[T]>): number;
 
 
 
@@ -111,25 +114,24 @@ static ALIGN_CENTER: any;
 */
 static ALIGN_RIGHT: any;
 
-}
 
-declare class TabContainerSignals extends ContainerSignals {
-  /**
+/**
  * Emitted when the [TabContainer]'s [Popup] button is clicked. See [method set_popup] for details.
  *
 */
-pre_popup_pressed: Signal<() => void>
+$pre_popup_pressed: Signal<() => void>
 
 /**
  * Emitted when switching to another tab.
  *
 */
-tab_changed: Signal<(tab: int) => void>
+$tab_changed: Signal<(tab: int) => void>
 
 /**
  * Emitted when a tab is selected, even if it is the current tab.
  *
 */
-tab_selected: Signal<(tab: int) => void>
+$tab_selected: Signal<(tab: int) => void>
 
 }
+

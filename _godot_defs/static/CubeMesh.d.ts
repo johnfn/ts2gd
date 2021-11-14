@@ -7,7 +7,7 @@
  * **Note:** When using a large textured [CubeMesh] (e.g. as a floor), you may stumble upon UV jittering issues depending on the camera angle. To solve this, increase [member subdivide_depth], [member subdivide_height] and [member subdivide_width] until you no longer notice UV jittering.
  *
 */
-declare class CubeMesh extends PrimitiveMesh {
+declare class CubeMesh extends PrimitiveMesh  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class CubeMesh extends PrimitiveMesh {
  * **Note:** When using a large textured [CubeMesh] (e.g. as a floor), you may stumble upon UV jittering issues depending on the camera angle. To solve this, increase [member subdivide_depth], [member subdivide_height] and [member subdivide_width] until you no longer notice UV jittering.
  *
 */
-  "new"(): CubeMesh;
-  static "new"(): CubeMesh;
-
+  new(): CubeMesh; 
+  static "new"(): CubeMesh 
 
 
 /** Size of the cuboid mesh. */
@@ -37,14 +36,12 @@ subdivide_width: int;
 
 
 
-  // connect<T extends SignalsOf<CubeMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CubeMeshSignals>>(signal: T, method: SignalFunction<CubeMeshSignals[T]>): number;
+  connect<T extends SignalsOf<CubeMesh>>(signal: T, method: SignalFunction<CubeMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CubeMeshSignals extends PrimitiveMeshSignals {
-  
-}

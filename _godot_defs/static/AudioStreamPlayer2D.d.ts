@@ -7,7 +7,7 @@
  * **Note:** Hiding an [AudioStreamPlayer2D] node does not disable its audio output. To temporarily disable an [AudioStreamPlayer2D]'s audio output, set [member volume_db] to a very low value like `-100` (which isn't audible to human hearing).
  *
 */
-declare class AudioStreamPlayer2D extends Node2D {
+declare class AudioStreamPlayer2D extends Node2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AudioStreamPlayer2D extends Node2D {
  * **Note:** Hiding an [AudioStreamPlayer2D] node does not disable its audio output. To temporarily disable an [AudioStreamPlayer2D]'s audio output, set [member volume_db] to a very low value like `-100` (which isn't audible to human hearing).
  *
 */
-  "new"(): AudioStreamPlayer2D;
-  static "new"(): AudioStreamPlayer2D;
-
+  new(): AudioStreamPlayer2D; 
+  static "new"(): AudioStreamPlayer2D 
 
 
 /** Areas in which this sound plays. */
@@ -68,19 +67,17 @@ seek(to_position: float): void;
 /** Stops the audio. */
 stop(): void;
 
-  // connect<T extends SignalsOf<AudioStreamPlayer2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioStreamPlayer2DSignals>>(signal: T, method: SignalFunction<AudioStreamPlayer2DSignals[T]>): number;
+  connect<T extends SignalsOf<AudioStreamPlayer2D>>(signal: T, method: SignalFunction<AudioStreamPlayer2D[T]>): number;
 
 
 
 
-}
 
-declare class AudioStreamPlayer2DSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the audio stops playing.
  *
 */
-finished: Signal<() => void>
+$finished: Signal<() => void>
 
 }
+

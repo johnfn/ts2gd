@@ -3,16 +3,15 @@
  * Class representing a prism-shaped [PrimitiveMesh].
  *
 */
-declare class PrismMesh extends PrimitiveMesh {
+declare class PrismMesh extends PrimitiveMesh  {
 
   
 /**
  * Class representing a prism-shaped [PrimitiveMesh].
  *
 */
-  "new"(): PrismMesh;
-  static "new"(): PrismMesh;
-
+  new(): PrismMesh; 
+  static "new"(): PrismMesh 
 
 
 /** Displacement of the upper edge along the X axis. 0.0 positions edge straight above the bottom-left edge. */
@@ -32,14 +31,12 @@ subdivide_width: int;
 
 
 
-  // connect<T extends SignalsOf<PrismMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PrismMeshSignals>>(signal: T, method: SignalFunction<PrismMeshSignals[T]>): number;
+  connect<T extends SignalsOf<PrismMesh>>(signal: T, method: SignalFunction<PrismMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PrismMeshSignals extends PrimitiveMeshSignals {
-  
-}

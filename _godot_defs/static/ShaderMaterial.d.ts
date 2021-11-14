@@ -5,7 +5,7 @@
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
 */
-declare class ShaderMaterial extends Material {
+declare class ShaderMaterial extends Material  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ShaderMaterial extends Material {
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
 */
-  "new"(): ShaderMaterial;
-  static "new"(): ShaderMaterial;
-
+  new(): ShaderMaterial; 
+  static "new"(): ShaderMaterial 
 
 
 /** The [Shader] program used to render this material. */
@@ -39,14 +38,12 @@ property_get_revert(name: string): any;
 */
 set_shader_param(param: string, value: any): void;
 
-  // connect<T extends SignalsOf<ShaderMaterial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ShaderMaterialSignals>>(signal: T, method: SignalFunction<ShaderMaterialSignals[T]>): number;
+  connect<T extends SignalsOf<ShaderMaterial>>(signal: T, method: SignalFunction<ShaderMaterial[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ShaderMaterialSignals extends MaterialSignals {
-  
-}

@@ -9,7 +9,7 @@
  * **Warning:** On HTML5, video playback **will** perform poorly due to missing architecture-specific assembly optimizations, especially for VP8/VP9.
  *
 */
-declare class VideoPlayer extends Control {
+declare class VideoPlayer extends Control  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class VideoPlayer extends Control {
  * **Warning:** On HTML5, video playback **will** perform poorly due to missing architecture-specific assembly optimizations, especially for VP8/VP9.
  *
 */
-  "new"(): VideoPlayer;
-  static "new"(): VideoPlayer;
-
+  new(): VideoPlayer; 
+  static "new"(): VideoPlayer 
 
 
 /** The embedded audio track to play. */
@@ -87,19 +86,17 @@ play(): void;
 */
 stop(): void;
 
-  // connect<T extends SignalsOf<VideoPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VideoPlayerSignals>>(signal: T, method: SignalFunction<VideoPlayerSignals[T]>): number;
+  connect<T extends SignalsOf<VideoPlayer>>(signal: T, method: SignalFunction<VideoPlayer[T]>): number;
 
 
 
 
-}
 
-declare class VideoPlayerSignals extends ControlSignals {
-  /**
+/**
  * Emitted when playback is finished.
  *
 */
-finished: Signal<() => void>
+$finished: Signal<() => void>
 
 }
+

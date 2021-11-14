@@ -11,7 +11,7 @@
  * With Bullet physics (the default), the center of mass is the RigidBody3D center. With GodotPhysics, the center of mass is the average of the [CollisionShape] centers.
  *
 */
-declare class RigidBody extends PhysicsBody {
+declare class RigidBody extends PhysicsBody  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class RigidBody extends PhysicsBody {
  * With Bullet physics (the default), the center of mass is the RigidBody3D center. With GodotPhysics, the center of mass is the average of the [CollisionShape] centers.
  *
 */
-  "new"(): RigidBody;
-  static "new"(): RigidBody;
-
+  new(): RigidBody; 
+  static "new"(): RigidBody 
 
 
 /**
@@ -196,8 +195,7 @@ set_axis_lock(axis: int, lock: boolean): void;
 /** Sets an axis velocity. The velocity in the given vector axis will be set as the given vector length. This is useful for jumping behavior. */
 set_axis_velocity(axis_velocity: Vector3): void;
 
-  // connect<T extends SignalsOf<RigidBody>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RigidBodySignals>>(signal: T, method: SignalFunction<RigidBodySignals[T]>): number;
+  connect<T extends SignalsOf<RigidBody>>(signal: T, method: SignalFunction<RigidBody[T]>): number;
 
 
 
@@ -225,16 +223,14 @@ static MODE_CHARACTER: any;
 */
 static MODE_KINEMATIC: any;
 
-}
 
-declare class RigidBodySignals extends PhysicsBodySignals {
-  /**
+/**
  * Emitted when a collision with another [PhysicsBody] or [GridMap] occurs. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
-body_entered: Signal<(body: Node) => void>
+$body_entered: Signal<(body: Node) => void>
 
 /**
  * Emitted when the collision with another [PhysicsBody] or [GridMap] ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
@@ -242,39 +238,39 @@ body_entered: Signal<(body: Node) => void>
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
 */
-body_exited: Signal<(body: Node) => void>
+$body_exited: Signal<(body: Node) => void>
 
 /**
  * Emitted when one of this RigidBody's [Shape]s collides with another [PhysicsBody] or [GridMap]'s [Shape]s. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * `body_id` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
+ * `body_rid` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer].
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
- * `body_shape` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ * `body_shape_index` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer]. Get the [CollisionShape] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this RigidBody used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this RigidBody used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
  * **Note:** Bullet physics cannot identify the shape index when using a [ConcavePolygonShape]. Don't use multiple [CollisionShape]s when using a [ConcavePolygonShape] with Bullet physics if you need shape indices.
  *
 */
-body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when the collision between one of this RigidBody's [Shape]s and another [PhysicsBody] or [GridMap]'s [Shape]s ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [GridMap]s are detected if the [MeshLibrary] has Collision [Shape]s.
  *
- * `body_id` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer]. [GridMap]s are detected if the Meshes have [Shape]s.
+ * `body_rid` the [RID] of the other [PhysicsBody] or [MeshLibrary]'s [CollisionObject] used by the [PhysicsServer]. [GridMap]s are detected if the Meshes have [Shape]s.
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody] or [GridMap].
  *
- * `body_shape` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer].
+ * `body_shape_index` the index of the [Shape] of the other [PhysicsBody] or [GridMap] used by the [PhysicsServer]. Get the [CollisionShape] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape] of this RigidBody used by the [PhysicsServer].
+ * `local_shape_index` the index of the [Shape] of this RigidBody used by the [PhysicsServer]. Get the [CollisionShape] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
  * **Note:** Bullet physics cannot identify the shape index when using a [ConcavePolygonShape]. Don't use multiple [CollisionShape]s when using a [ConcavePolygonShape] with Bullet physics if you need shape indices.
  *
 */
-body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when the physics engine changes the body's sleeping state.
@@ -282,6 +278,7 @@ body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_sha
  * **Note:** Changing the value [member sleeping] will not trigger this signal. It is only emitted if the sleeping state is changed by the physics engine or `emit_signal("sleeping_state_changed")` is used.
  *
 */
-sleeping_state_changed: Signal<() => void>
+$sleeping_state_changed: Signal<() => void>
 
 }
+

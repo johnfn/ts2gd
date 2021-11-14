@@ -7,7 +7,7 @@
  * Item text only supports single-line strings, newline characters (e.g. `\n`) in the string won't produce a newline. Text wrapping is enabled in [constant ICON_MODE_TOP] mode, but column's width is adjusted to fully fit its content by default. You need to set [member fixed_column_width] greater than zero to wrap the text.
  *
 */
-declare class ItemList extends Control {
+declare class ItemList extends Control  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ItemList extends Control {
  * Item text only supports single-line strings, newline characters (e.g. `\n`) in the string won't produce a newline. Text wrapping is enabled in [constant ICON_MODE_TOP] mode, but column's width is adjusted to fully fit its content by default. You need to set [member fixed_column_width] greater than zero to wrap the text.
  *
 */
-  "new"(): ItemList;
-  static "new"(): ItemList;
-
+  new(): ItemList; 
+  static "new"(): ItemList 
 
 
 /** If [code]true[/code], the currently selected item can be selected again. */
@@ -140,7 +139,12 @@ get_item_tooltip(idx: int): string;
 /** Returns an array with the indexes of the selected items. */
 get_selected_items(): PoolIntArray;
 
-/** Returns the [Object] ID associated with the list. */
+/**
+ * Returns the [Object] ID associated with the list.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_v_scroll(): VScrollBar;
 
 /** Returns [code]true[/code] if one or more items are selected. */
@@ -225,8 +229,7 @@ unselect(idx: int): void;
 /** Ensures there are no items selected. */
 unselect_all(): void;
 
-  // connect<T extends SignalsOf<ItemList>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ItemListSignals>>(signal: T, method: SignalFunction<ItemListSignals[T]>): number;
+  connect<T extends SignalsOf<ItemList>>(signal: T, method: SignalFunction<ItemList[T]>): number;
 
 
 
@@ -254,14 +257,12 @@ static SELECT_SINGLE: any;
 */
 static SELECT_MULTI: any;
 
-}
 
-declare class ItemListSignals extends ControlSignals {
-  /**
+/**
  * Triggered when specified list item is activated via double-clicking or by pressing Enter.
  *
 */
-item_activated: Signal<(index: int) => void>
+$item_activated: Signal<(index: int) => void>
 
 /**
  * Triggered when specified list item has been selected via right mouse clicking.
@@ -271,7 +272,7 @@ item_activated: Signal<(index: int) => void>
  * [member allow_rmb_select] must be enabled.
  *
 */
-item_rmb_selected: Signal<(index: int, at_position: Vector2) => void>
+$item_rmb_selected: Signal<(index: int, at_position: Vector2) => void>
 
 /**
  * Triggered when specified item has been selected.
@@ -279,19 +280,19 @@ item_rmb_selected: Signal<(index: int, at_position: Vector2) => void>
  * [member allow_reselect] must be enabled to reselect an item.
  *
 */
-item_selected: Signal<(index: int) => void>
+$item_selected: Signal<(index: int) => void>
 
 /**
  * Triggered when a multiple selection is altered on a list allowing multiple selection.
  *
 */
-multi_selected: Signal<(index: int, selected: boolean) => void>
+$multi_selected: Signal<(index: int, selected: boolean) => void>
 
 /**
  * Triggered when a left mouse click is issued within the rect of the list but on empty space.
  *
 */
-nothing_selected: Signal<() => void>
+$nothing_selected: Signal<() => void>
 
 /**
  * Triggered when a right mouse click is issued within the rect of the list but on empty space.
@@ -299,6 +300,7 @@ nothing_selected: Signal<() => void>
  * [member allow_rmb_select] must be enabled.
  *
 */
-rmb_clicked: Signal<(at_position: Vector2) => void>
+$rmb_clicked: Signal<(at_position: Vector2) => void>
 
 }
+

@@ -3,16 +3,15 @@
  * A node that displays a 2D texture. The texture displayed can be a region from a larger atlas texture, or a frame from a sprite sheet animation.
  *
 */
-declare class Sprite extends Node2D {
+declare class Sprite extends Node2D  {
 
   
 /**
  * A node that displays a 2D texture. The texture displayed can be a region from a larger atlas texture, or a frame from a sprite sheet animation.
  *
 */
-  "new"(): Sprite;
-  static "new"(): Sprite;
-
+  new(): Sprite; 
+  static "new"(): Sprite 
 
 
 /** If [code]true[/code], texture is centered. */
@@ -82,25 +81,23 @@ get_rect(): Rect2;
 */
 is_pixel_opaque(pos: Vector2): boolean;
 
-  // connect<T extends SignalsOf<Sprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpriteSignals>>(signal: T, method: SignalFunction<SpriteSignals[T]>): number;
+  connect<T extends SignalsOf<Sprite>>(signal: T, method: SignalFunction<Sprite[T]>): number;
 
 
 
 
-}
 
-declare class SpriteSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the [member frame] changes.
  *
 */
-frame_changed: Signal<() => void>
+$frame_changed: Signal<() => void>
 
 /**
  * Emitted when the [member texture] changes.
  *
 */
-texture_changed: Signal<() => void>
+$texture_changed: Signal<() => void>
 
 }
+

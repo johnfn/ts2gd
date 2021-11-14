@@ -7,7 +7,7 @@
  * **Note:** Any changes to this node's position and scale made after it enters the scene will be ignored.
  *
 */
-declare class ParallaxLayer extends Node2D {
+declare class ParallaxLayer extends Node2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ParallaxLayer extends Node2D {
  * **Note:** Any changes to this node's position and scale made after it enters the scene will be ignored.
  *
 */
-  "new"(): ParallaxLayer;
-  static "new"(): ParallaxLayer;
-
+  new(): ParallaxLayer; 
+  static "new"(): ParallaxLayer 
 
 
 /** The ParallaxLayer's [Texture] mirroring. Useful for creating an infinite scrolling background. If an axis is set to [code]0[/code], the [Texture] will not be mirrored. */
@@ -34,14 +33,12 @@ motion_scale: Vector2;
 
 
 
-  // connect<T extends SignalsOf<ParallaxLayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ParallaxLayerSignals>>(signal: T, method: SignalFunction<ParallaxLayerSignals[T]>): number;
+  connect<T extends SignalsOf<ParallaxLayer>>(signal: T, method: SignalFunction<ParallaxLayer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ParallaxLayerSignals extends Node2DSignals {
-  
-}

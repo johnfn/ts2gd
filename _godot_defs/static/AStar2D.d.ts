@@ -3,16 +3,15 @@
  * This is a wrapper for the [AStar] class which uses 2D vectors instead of 3D vectors.
  *
 */
-declare class AStar2D extends Reference {
+declare class AStar2D extends Reference  {
 
   
 /**
  * This is a wrapper for the [AStar] class which uses 2D vectors instead of 3D vectors.
  *
 */
-  "new"(): AStar2D;
-  static "new"(): AStar2D;
-
+  new(): AStar2D; 
+  static "new"(): AStar2D 
 
 
 
@@ -188,14 +187,12 @@ set_point_position(id: int, position: Vector2): void;
 /** Sets the [code]weight_scale[/code] for the point with the given [code]id[/code]. The [code]weight_scale[/code] is multiplied by the result of [method _compute_cost] when determining the overall cost of traveling across a segment from a neighboring point to this point. */
 set_point_weight_scale(id: int, weight_scale: float): void;
 
-  // connect<T extends SignalsOf<AStar2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AStar2DSignals>>(signal: T, method: SignalFunction<AStar2DSignals[T]>): number;
+  connect<T extends SignalsOf<AStar2D>>(signal: T, method: SignalFunction<AStar2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AStar2DSignals extends ReferenceSignals {
-  
-}

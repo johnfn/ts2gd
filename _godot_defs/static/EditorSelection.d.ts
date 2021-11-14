@@ -5,7 +5,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_selection].
  *
 */
-declare class EditorSelection extends Object {
+declare class EditorSelection extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorSelection extends Object {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_selection].
  *
 */
-  "new"(): EditorSelection;
-  static "new"(): EditorSelection;
-
+  new(): EditorSelection; 
+  static "new"(): EditorSelection 
 
 
 
@@ -40,19 +39,17 @@ get_transformable_selected_nodes(): any[];
 /** Removes a node from the selection. */
 remove_node(node: Node): void;
 
-  // connect<T extends SignalsOf<EditorSelection>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorSelectionSignals>>(signal: T, method: SignalFunction<EditorSelectionSignals[T]>): number;
+  connect<T extends SignalsOf<EditorSelection>>(signal: T, method: SignalFunction<EditorSelection[T]>): number;
 
 
 
 
-}
 
-declare class EditorSelectionSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when the selection changes.
  *
 */
-selection_changed: Signal<() => void>
+$selection_changed: Signal<() => void>
 
 }
+

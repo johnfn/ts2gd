@@ -56,7 +56,7 @@
  * 
  *
 */
-declare class DTLSServer extends Reference {
+declare class DTLSServer extends Reference  {
 
   
 /**
@@ -116,9 +116,8 @@ declare class DTLSServer extends Reference {
  * 
  *
 */
-  "new"(): DTLSServer;
-  static "new"(): DTLSServer;
-
+  new(): DTLSServer; 
+  static "new"(): DTLSServer 
 
 
 
@@ -133,14 +132,12 @@ setup(key: CryptoKey, certificate: X509Certificate, chain?: X509Certificate): in
 */
 take_connection(udp_peer: PacketPeerUDP): PacketPeerDTLS;
 
-  // connect<T extends SignalsOf<DTLSServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DTLSServerSignals>>(signal: T, method: SignalFunction<DTLSServerSignals[T]>): number;
+  connect<T extends SignalsOf<DTLSServer>>(signal: T, method: SignalFunction<DTLSServer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class DTLSServerSignals extends ReferenceSignals {
-  
-}

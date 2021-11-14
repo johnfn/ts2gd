@@ -15,7 +15,7 @@
  * On each of these calls, the "add" functions can be called.
  *
 */
-declare class EditorInspectorPlugin extends Reference {
+declare class EditorInspectorPlugin extends Reference  {
 
   
 /**
@@ -34,9 +34,8 @@ declare class EditorInspectorPlugin extends Reference {
  * On each of these calls, the "add" functions can be called.
  *
 */
-  "new"(): EditorInspectorPlugin;
-  static "new"(): EditorInspectorPlugin;
-
+  new(): EditorInspectorPlugin; 
+  static "new"(): EditorInspectorPlugin 
 
 
 
@@ -64,14 +63,12 @@ parse_end(): void;
 /** Called to allow adding property specific editors to the inspector. Usually these inherit [EditorProperty]. Returning [code]true[/code] removes the built-in editor for this property, otherwise allows to insert a custom editor before the built-in one. */
 parse_property(object: Object, type: int, path: string, hint: int, hint_text: string, usage: int): boolean;
 
-  // connect<T extends SignalsOf<EditorInspectorPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorInspectorPluginSignals>>(signal: T, method: SignalFunction<EditorInspectorPluginSignals[T]>): number;
+  connect<T extends SignalsOf<EditorInspectorPlugin>>(signal: T, method: SignalFunction<EditorInspectorPlugin[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorInspectorPluginSignals extends ReferenceSignals {
-  
-}

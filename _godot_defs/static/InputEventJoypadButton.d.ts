@@ -3,16 +3,15 @@
  * Input event type for gamepad buttons. For gamepad analog sticks and joysticks, see [InputEventJoypadMotion].
  *
 */
-declare class InputEventJoypadButton extends InputEvent {
+declare class InputEventJoypadButton extends InputEvent  {
 
   
 /**
  * Input event type for gamepad buttons. For gamepad analog sticks and joysticks, see [InputEventJoypadMotion].
  *
 */
-  "new"(): InputEventJoypadButton;
-  static "new"(): InputEventJoypadButton;
-
+  new(): InputEventJoypadButton; 
+  static "new"(): InputEventJoypadButton 
 
 
 /** Button identifier. One of the [enum JoystickList] button constants. */
@@ -26,14 +25,12 @@ pressure: float;
 
 
 
-  // connect<T extends SignalsOf<InputEventJoypadButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventJoypadButtonSignals>>(signal: T, method: SignalFunction<InputEventJoypadButtonSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventJoypadButton>>(signal: T, method: SignalFunction<InputEventJoypadButton[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventJoypadButtonSignals extends InputEventSignals {
-  
-}

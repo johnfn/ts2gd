@@ -5,7 +5,7 @@
  * Shortcuts are commonly used for interacting with a [Control] element from a [InputEvent].
  *
 */
-declare class ShortCut extends Resource {
+declare class ShortCut extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ShortCut extends Resource {
  * Shortcuts are commonly used for interacting with a [Control] element from a [InputEvent].
  *
 */
-  "new"(): ShortCut;
-  static "new"(): ShortCut;
-
+  new(): ShortCut; 
+  static "new"(): ShortCut 
 
 
 /**
@@ -36,14 +35,12 @@ is_shortcut(event: InputEvent): boolean;
 /** If [code]true[/code], this shortcut is valid. */
 is_valid(): boolean;
 
-  // connect<T extends SignalsOf<ShortCut>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ShortCutSignals>>(signal: T, method: SignalFunction<ShortCutSignals[T]>): number;
+  connect<T extends SignalsOf<ShortCut>>(signal: T, method: SignalFunction<ShortCut[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ShortCutSignals extends ResourceSignals {
-  
-}

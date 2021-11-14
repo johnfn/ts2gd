@@ -21,7 +21,7 @@
  * **Note:** [SpinBox] relies on an underlying [LineEdit] node. To theme a [SpinBox]'s background, add theme items for [LineEdit] and customize them.
  *
 */
-declare class SpinBox extends Range {
+declare class SpinBox extends Range  {
 
   
 /**
@@ -46,9 +46,8 @@ declare class SpinBox extends Range {
  * **Note:** [SpinBox] relies on an underlying [LineEdit] node. To theme a [SpinBox]'s background, add theme items for [LineEdit] and customize them.
  *
 */
-  "new"(): SpinBox;
-  static "new"(): SpinBox;
-
+  new(): SpinBox; 
+  static "new"(): SpinBox 
 
 
 /** Sets the text alignment of the [SpinBox]. */
@@ -66,17 +65,20 @@ suffix: string;
 /** Applies the current value of this [SpinBox]. */
 apply(): void;
 
-/** Returns the [LineEdit] instance from this [SpinBox]. You can use it to access properties and methods of [LineEdit]. */
+/**
+ * Returns the [LineEdit] instance from this [SpinBox]. You can use it to access properties and methods of [LineEdit].
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_line_edit(): LineEdit;
 
-  // connect<T extends SignalsOf<SpinBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpinBoxSignals>>(signal: T, method: SignalFunction<SpinBoxSignals[T]>): number;
+  connect<T extends SignalsOf<SpinBox>>(signal: T, method: SignalFunction<SpinBox[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SpinBoxSignals extends RangeSignals {
-  
-}

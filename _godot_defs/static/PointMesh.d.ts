@@ -7,7 +7,7 @@
  * When using PointMeshes, properties that normally alter vertices will be ignored, including billboard mode, grow, and cull face.
  *
 */
-declare class PointMesh extends PrimitiveMesh {
+declare class PointMesh extends PrimitiveMesh  {
 
   
 /**
@@ -18,22 +18,19 @@ declare class PointMesh extends PrimitiveMesh {
  * When using PointMeshes, properties that normally alter vertices will be ignored, including billboard mode, grow, and cull face.
  *
 */
-  "new"(): PointMesh;
-  static "new"(): PointMesh;
+  new(): PointMesh; 
+  static "new"(): PointMesh 
 
 
 
 
 
+  connect<T extends SignalsOf<PointMesh>>(signal: T, method: SignalFunction<PointMesh[T]>): number;
 
-  // connect<T extends SignalsOf<PointMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PointMeshSignals>>(signal: T, method: SignalFunction<PointMeshSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class PointMeshSignals extends PrimitiveMeshSignals {
-  
-}

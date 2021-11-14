@@ -9,7 +9,7 @@
  * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations. Larger textures may fail to import.
  *
 */
-declare class Texture extends Resource {
+declare class Texture extends Resource  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class Texture extends Resource {
  * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations. Larger textures may fail to import.
  *
 */
-  "new"(): Texture;
-  static "new"(): Texture;
-
+  new(): Texture; 
+  static "new"(): Texture 
 
 
 /** The texture's [enum Flags]. [enum Flags] are used to set various properties of the [Texture]. */
@@ -54,8 +53,7 @@ get_width(): int;
 /** Returns [code]true[/code] if this [Texture] has an alpha channel. */
 has_alpha(): boolean;
 
-  // connect<T extends SignalsOf<Texture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureSignals>>(signal: T, method: SignalFunction<TextureSignals[T]>): number;
+  connect<T extends SignalsOf<Texture>>(signal: T, method: SignalFunction<Texture[T]>): number;
 
 
 
@@ -113,8 +111,7 @@ static FLAG_MIRRORED_REPEAT: any;
 */
 static FLAG_VIDEO_SURFACE: any;
 
+
+
 }
 
-declare class TextureSignals extends ResourceSignals {
-  
-}

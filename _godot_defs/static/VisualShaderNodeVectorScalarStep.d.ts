@@ -5,7 +5,7 @@
  * Returns `0.0` if `x` is smaller than `edge` and `1.0` otherwise.
  *
 */
-declare class VisualShaderNodeVectorScalarStep extends VisualShaderNode {
+declare class VisualShaderNodeVectorScalarStep extends VisualShaderNode  {
 
   
 /**
@@ -14,22 +14,19 @@ declare class VisualShaderNodeVectorScalarStep extends VisualShaderNode {
  * Returns `0.0` if `x` is smaller than `edge` and `1.0` otherwise.
  *
 */
-  "new"(): VisualShaderNodeVectorScalarStep;
-  static "new"(): VisualShaderNodeVectorScalarStep;
+  new(): VisualShaderNodeVectorScalarStep; 
+  static "new"(): VisualShaderNodeVectorScalarStep 
 
 
 
 
 
+  connect<T extends SignalsOf<VisualShaderNodeVectorScalarStep>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarStep[T]>): number;
 
-  // connect<T extends SignalsOf<VisualShaderNodeVectorScalarStep>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeVectorScalarStepSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarStepSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class VisualShaderNodeVectorScalarStepSignals extends VisualShaderNodeSignals {
-  
-}

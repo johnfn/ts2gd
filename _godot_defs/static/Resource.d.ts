@@ -5,7 +5,7 @@
  * **Note:** In C#, resources will not be freed instantly after they are no longer in use. Instead, garbage collection will run periodically and will free resources that are no longer in use. This means that unused resources will linger on for a while before being removed.
  *
 */
-declare class Resource extends Reference {
+declare class Resource extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Resource extends Reference {
  * **Note:** In C#, resources will not be freed instantly after they are no longer in use. Instead, garbage collection will run periodically and will free resources that are no longer in use. This means that unused resources will linger on for a while before being removed.
  *
 */
-  "new"(): Resource;
-  static "new"(): Resource;
-
+  new(): Resource; 
+  static "new"(): Resource 
 
 
 /** If [code]true[/code], the resource will be made unique in each instance of its local scene. It can thus be modified in a scene instance without impacting other instances of that same scene. */
@@ -78,21 +77,19 @@ setup_local_to_scene(): void;
 /** Sets the path of the resource, potentially overriding an existing cache entry for this path. This differs from setting [member resource_path], as the latter would error out if another resource was already cached for the given path. */
 take_over_path(path: string): void;
 
-  // connect<T extends SignalsOf<Resource>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceSignals>>(signal: T, method: SignalFunction<ResourceSignals[T]>): number;
+  connect<T extends SignalsOf<Resource>>(signal: T, method: SignalFunction<Resource[T]>): number;
 
 
 
 
-}
 
-declare class ResourceSignals extends ReferenceSignals {
-  /**
+/**
  * Emitted whenever the resource changes.
  *
  * **Note:** This signal is not emitted automatically for custom resources, which means that you need to create a setter and emit the signal yourself.
  *
 */
-changed: Signal<() => void>
+$changed: Signal<() => void>
 
 }
+

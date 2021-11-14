@@ -5,7 +5,7 @@
  * **Note:** To create a one-shot timer without instantiating a node, use [method SceneTree.create_timer].
  *
 */
-declare class Timer extends Node {
+declare class Timer extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Timer extends Node {
  * **Note:** To create a one-shot timer without instantiating a node, use [method SceneTree.create_timer].
  *
 */
-  "new"(): Timer;
-  static "new"(): Timer;
-
+  new(): Timer; 
+  static "new"(): Timer 
 
 
 /**
@@ -66,8 +65,7 @@ start(time_sec?: float): void;
 /** Stops the timer. */
 stop(): void;
 
-  // connect<T extends SignalsOf<Timer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TimerSignals>>(signal: T, method: SignalFunction<TimerSignals[T]>): number;
+  connect<T extends SignalsOf<Timer>>(signal: T, method: SignalFunction<Timer[T]>): number;
 
 
 
@@ -83,13 +81,12 @@ static TIMER_PROCESS_PHYSICS: any;
 */
 static TIMER_PROCESS_IDLE: any;
 
-}
 
-declare class TimerSignals extends NodeSignals {
-  /**
+/**
  * Emitted when the timer reaches 0.
  *
 */
-timeout: Signal<() => void>
+$timeout: Signal<() => void>
 
 }
+

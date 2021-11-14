@@ -3,16 +3,15 @@
  * Stores key presses on the keyboard. Supports key presses, key releases and [member echo] events.
  *
 */
-declare class InputEventKey extends InputEventWithModifiers {
+declare class InputEventKey extends InputEventWithModifiers  {
 
   
 /**
  * Stores key presses on the keyboard. Supports key presses, key releases and [member echo] events.
  *
 */
-  "new"(): InputEventKey;
-  static "new"(): InputEventKey;
-
+  new(): InputEventKey; 
+  static "new"(): InputEventKey 
 
 
 /** If [code]true[/code], the key was already pressed before this event. It means the user is holding the key down. */
@@ -56,14 +55,12 @@ get_physical_scancode_with_modifiers(): int;
 */
 get_scancode_with_modifiers(): int;
 
-  // connect<T extends SignalsOf<InputEventKey>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventKeySignals>>(signal: T, method: SignalFunction<InputEventKeySignals[T]>): number;
+  connect<T extends SignalsOf<InputEventKey>>(signal: T, method: SignalFunction<InputEventKey[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventKeySignals extends InputEventWithModifiersSignals {
-  
-}

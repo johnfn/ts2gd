@@ -1,14 +1,13 @@
 
 /**
 */
-declare class PhysicalBone extends PhysicsBody {
+declare class PhysicalBone extends PhysicsBody  {
 
   
 /**
 */
-  "new"(): PhysicalBone;
-  static "new"(): PhysicalBone;
-
+  new(): PhysicalBone; 
+  static "new"(): PhysicalBone 
 
 
 
@@ -37,8 +36,7 @@ is_simulating_physics(): boolean;
 /** No documentation provided. */
 is_static_body(): boolean;
 
-  // connect<T extends SignalsOf<PhysicalBone>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicalBoneSignals>>(signal: T, method: SignalFunction<PhysicalBoneSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicalBone>>(signal: T, method: SignalFunction<PhysicalBone[T]>): number;
 
 
 
@@ -60,8 +58,7 @@ static JOINT_TYPE_SLIDER: any;
 /** No documentation provided. */
 static JOINT_TYPE_6DOF: any;
 
+
+
 }
 
-declare class PhysicalBoneSignals extends PhysicsBodySignals {
-  
-}

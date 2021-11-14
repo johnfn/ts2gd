@@ -13,7 +13,7 @@
  * **Note:** Unless otherwise specified, all methods that have angle parameters must have angles specified as **radians**. To convert degrees to radians, use [method @GDScript.deg2rad].
  *
 */
-declare class CanvasItem extends Node {
+declare class CanvasItem extends Node  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class CanvasItem extends Node {
  * **Note:** Unless otherwise specified, all methods that have angle parameters must have angles specified as **radians**. To convert degrees to radians, use [method @GDScript.deg2rad].
  *
 */
-  "new"(): CanvasItem;
-  static "new"(): CanvasItem;
-
+  new(): CanvasItem; 
+  static "new"(): CanvasItem 
 
 
 /** The rendering layers in which this [CanvasItem] responds to [Light2D] nodes. */
@@ -216,8 +215,7 @@ is_visible_in_tree(): boolean;
 /** Assigns [code]screen_point[/code] as this node's new local transform. */
 make_canvas_position_local(screen_point: Vector2): Vector2;
 
-/** Transformations issued by [code]event[/code]'s inputs are applied in local space instead of global space. */
-make_input_local(event: InputEvent): InputEvent;
+make_input_local<T extends InputEvent>(event: T): T
 
 /** If [code]enable[/code] is [code]true[/code], the node won't inherit its transform from parent canvas items. */
 set_as_toplevel(enable: boolean): void;
@@ -234,8 +232,7 @@ show(): void;
 /** Queue the [CanvasItem] for update. [constant NOTIFICATION_DRAW] will be called on idle time to request redraw. */
 update(): void;
 
-  // connect<T extends SignalsOf<CanvasItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CanvasItemSignals>>(signal: T, method: SignalFunction<CanvasItemSignals[T]>): number;
+  connect<T extends SignalsOf<CanvasItem>>(signal: T, method: SignalFunction<CanvasItem[T]>): number;
 
 
 
@@ -305,31 +302,30 @@ static NOTIFICATION_ENTER_CANVAS: any;
 */
 static NOTIFICATION_EXIT_CANVAS: any;
 
-}
 
-declare class CanvasItemSignals extends NodeSignals {
-  /**
+/**
  * Emitted when the [CanvasItem] must redraw. This can only be connected realtime, as deferred will not allow drawing.
  *
 */
-draw: Signal<() => void>
+$draw: Signal<() => void>
 
 /**
  * Emitted when becoming hidden.
  *
 */
-hide: Signal<() => void>
+$hide: Signal<() => void>
 
 /**
  * Emitted when the item's [Rect2] boundaries (position or size) have changed, or when an action is taking place that may have impacted these boundaries (e.g. changing [member Sprite.texture]).
  *
 */
-item_rect_changed: Signal<() => void>
+$item_rect_changed: Signal<() => void>
 
 /**
  * Emitted when the visibility (hidden/visible) changes.
  *
 */
-visibility_changed: Signal<() => void>
+$visibility_changed: Signal<() => void>
 
 }
+

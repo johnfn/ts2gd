@@ -5,7 +5,7 @@
  * Application code should consume these audio frames from this ring buffer using [method get_buffer] and process it as needed, for example to capture data from a microphone, implement application defined effects, or to transmit audio over the network.
  *
 */
-declare class AudioEffectCapture extends AudioEffect {
+declare class AudioEffectCapture extends AudioEffect  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioEffectCapture extends AudioEffect {
  * Application code should consume these audio frames from this ring buffer using [method get_buffer] and process it as needed, for example to capture data from a microphone, implement application defined effects, or to transmit audio over the network.
  *
 */
-  "new"(): AudioEffectCapture;
-  static "new"(): AudioEffectCapture;
-
+  new(): AudioEffectCapture; 
+  static "new"(): AudioEffectCapture 
 
 
 /** Length of the internal ring buffer, in seconds. Setting the buffer length will have no effect if already initialized. */
@@ -48,14 +47,12 @@ get_frames_available(): int;
 /** Returns the number of audio frames inserted from the audio bus. */
 get_pushed_frames(): int;
 
-  // connect<T extends SignalsOf<AudioEffectCapture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectCaptureSignals>>(signal: T, method: SignalFunction<AudioEffectCaptureSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectCapture>>(signal: T, method: SignalFunction<AudioEffectCapture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectCaptureSignals extends AudioEffectSignals {
-  
-}

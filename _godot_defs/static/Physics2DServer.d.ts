@@ -3,16 +3,15 @@
  * Physics2DServer is the server responsible for all 2D physics. It can create many kinds of physics objects, but does not insert them on the node tree.
  *
 */
-declare class Physics2DServerClass extends Object {
+declare class Physics2DServerClass extends Object  {
 
   
 /**
  * Physics2DServer is the server responsible for all 2D physics. It can create many kinds of physics objects, but does not insert them on the node tree.
  *
 */
-  "new"(): Physics2DServerClass;
-  static "new"(): Physics2DServerClass;
-
+  new(): Physics2DServerClass; 
+  static "new"(): Physics2DServerClass 
 
 
 
@@ -348,8 +347,7 @@ space_set_active(space: RID, active: boolean): void;
 /** Sets the value for a space parameter. See [enum SpaceParameter] for a list of available parameters. */
 space_set_param(space: RID, param: int, value: float): void;
 
-  // connect<T extends SignalsOf<Physics2DServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Physics2DServerClassSignals>>(signal: T, method: SignalFunction<Physics2DServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<Physics2DServerClass>>(signal: T, method: SignalFunction<Physics2DServerClass[T]>): number;
 
 
 
@@ -719,8 +717,7 @@ static INFO_COLLISION_PAIRS: any;
 */
 static INFO_ISLAND_COUNT: any;
 
+
+
 }
 
-declare class Physics2DServerClassSignals extends ObjectSignals {
-  
-}

@@ -5,7 +5,7 @@
  * Tiles are referenced by a unique integer ID.
  *
 */
-declare class TileSet extends Resource {
+declare class TileSet extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TileSet extends Resource {
  * Tiles are referenced by a unique integer ID.
  *
 */
-  "new"(): TileSet;
-  static "new"(): TileSet;
-
+  new(): TileSet; 
+  static "new"(): TileSet 
 
 
 
@@ -207,7 +206,7 @@ tile_get_shape_transform(id: int, shape_id: int): Transform2D;
 */
 tile_get_shapes(id: int): {
   autotile_coord: Vector2,
-  one_way: bool,
+  one_way: boolean,
   one_way_margin: int,
   shape: CollisionShape2D,
   shape_transform: Transform2D,
@@ -287,8 +286,7 @@ tile_set_tile_mode(id: int, tilemode: int): void;
 /** Sets the tile's drawing index. */
 tile_set_z_index(id: int, z_index: int): void;
 
-  // connect<T extends SignalsOf<TileSet>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TileSetSignals>>(signal: T, method: SignalFunction<TileSetSignals[T]>): number;
+  connect<T extends SignalsOf<TileSet>>(signal: T, method: SignalFunction<TileSet[T]>): number;
 
 
 
@@ -337,8 +335,7 @@ static AUTO_TILE: any;
 /** No documentation provided. */
 static ATLAS_TILE: any;
 
+
+
 }
 
-declare class TileSetSignals extends ResourceSignals {
-  
-}

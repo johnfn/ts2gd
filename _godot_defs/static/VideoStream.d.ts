@@ -3,29 +3,26 @@
  * Base resource type for all video streams. Classes that derive from [VideoStream] can all be used as resource types to play back videos in [VideoPlayer].
  *
 */
-declare class VideoStream extends Resource {
+declare class VideoStream extends Resource  {
 
   
 /**
  * Base resource type for all video streams. Classes that derive from [VideoStream] can all be used as resource types to play back videos in [VideoPlayer].
  *
 */
-  "new"(): VideoStream;
-  static "new"(): VideoStream;
+  new(): VideoStream; 
+  static "new"(): VideoStream 
 
 
 
 
 
+  connect<T extends SignalsOf<VideoStream>>(signal: T, method: SignalFunction<VideoStream[T]>): number;
 
-  // connect<T extends SignalsOf<VideoStream>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VideoStreamSignals>>(signal: T, method: SignalFunction<VideoStreamSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class VideoStreamSignals extends ResourceSignals {
-  
-}

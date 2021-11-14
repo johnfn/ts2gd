@@ -3,16 +3,15 @@
  * This node allows you to create a cylinder (or cone) for use with the CSG system.
  *
 */
-declare class CSGCylinder extends CSGPrimitive {
+declare class CSGCylinder extends CSGPrimitive  {
 
   
 /**
  * This node allows you to create a cylinder (or cone) for use with the CSG system.
  *
 */
-  "new"(): CSGCylinder;
-  static "new"(): CSGCylinder;
-
+  new(): CSGCylinder; 
+  static "new"(): CSGCylinder 
 
 
 /** If [code]true[/code] a cone is created, the [member radius] will only apply to one side. */
@@ -35,14 +34,12 @@ smooth_faces: boolean;
 
 
 
-  // connect<T extends SignalsOf<CSGCylinder>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGCylinderSignals>>(signal: T, method: SignalFunction<CSGCylinderSignals[T]>): number;
+  connect<T extends SignalsOf<CSGCylinder>>(signal: T, method: SignalFunction<CSGCylinder[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CSGCylinderSignals extends CSGPrimitiveSignals {
-  
-}

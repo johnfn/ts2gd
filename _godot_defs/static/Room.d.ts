@@ -11,7 +11,7 @@
  * In order to see from one room into an adjacent room, [Portal]s must be placed over non-occluded openings between rooms. These will often be placed over doors and windows.
  *
 */
-declare class Room extends Spatial {
+declare class Room extends Spatial  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class Room extends Spatial {
  * In order to see from one room into an adjacent room, [Portal]s must be placed over non-occluded openings between rooms. These will often be placed over doors and windows.
  *
 */
-  "new"(): Room;
-  static "new"(): Room;
-
+  new(): Room; 
+  static "new"(): Room 
 
 
 /**
@@ -48,14 +47,12 @@ use_default_simplify: boolean;
 /** Sets individual points. Primarily for use by the editor. */
 set_point(index: int, position: Vector3): void;
 
-  // connect<T extends SignalsOf<Room>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RoomSignals>>(signal: T, method: SignalFunction<RoomSignals[T]>): number;
+  connect<T extends SignalsOf<Room>>(signal: T, method: SignalFunction<Room[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RoomSignals extends SpatialSignals {
-  
-}

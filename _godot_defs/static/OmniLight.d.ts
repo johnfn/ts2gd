@@ -5,7 +5,7 @@
  * **Note:** By default, only 32 OmniLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
  *
 */
-declare class OmniLight extends Light {
+declare class OmniLight extends Light  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class OmniLight extends Light {
  * **Note:** By default, only 32 OmniLights may affect a single mesh **resource** at once. Consider splitting your level into several meshes to decrease the likelihood that more than 32 lights will affect the same mesh resource. Splitting the level mesh will also improve frustum culling effectiveness, leading to greater performance. If you need to use more lights per mesh, you can increase [member ProjectSettings.rendering/limits/rendering/max_lights_per_object] at the cost of shader compilation times.
  *
 */
-  "new"(): OmniLight;
-  static "new"(): OmniLight;
-
+  new(): OmniLight; 
+  static "new"(): OmniLight 
 
 
 /** The light's attenuation (drop-off) curve. A number of presets are available in the [b]Inspector[/b] by right-clicking the curve. */
@@ -33,8 +32,7 @@ omni_shadow_mode: int;
 
 
 
-  // connect<T extends SignalsOf<OmniLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<OmniLightSignals>>(signal: T, method: SignalFunction<OmniLightSignals[T]>): number;
+  connect<T extends SignalsOf<OmniLight>>(signal: T, method: SignalFunction<OmniLight[T]>): number;
 
 
 
@@ -62,8 +60,7 @@ static SHADOW_DETAIL_VERTICAL: any;
 */
 static SHADOW_DETAIL_HORIZONTAL: any;
 
+
+
 }
 
-declare class OmniLightSignals extends LightSignals {
-  
-}

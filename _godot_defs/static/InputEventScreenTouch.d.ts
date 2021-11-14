@@ -3,16 +3,15 @@
  * Stores multi-touch press/release information. Supports touch press, touch release and [member index] for multi-touch count and order.
  *
 */
-declare class InputEventScreenTouch extends InputEvent {
+declare class InputEventScreenTouch extends InputEvent  {
 
   
 /**
  * Stores multi-touch press/release information. Supports touch press, touch release and [member index] for multi-touch count and order.
  *
 */
-  "new"(): InputEventScreenTouch;
-  static "new"(): InputEventScreenTouch;
-
+  new(): InputEventScreenTouch; 
+  static "new"(): InputEventScreenTouch 
 
 
 /** The touch index in the case of a multi-touch event. One index = one finger. */
@@ -26,14 +25,12 @@ pressed: boolean;
 
 
 
-  // connect<T extends SignalsOf<InputEventScreenTouch>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventScreenTouchSignals>>(signal: T, method: SignalFunction<InputEventScreenTouchSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventScreenTouch>>(signal: T, method: SignalFunction<InputEventScreenTouch[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventScreenTouchSignals extends InputEventSignals {
-  
-}

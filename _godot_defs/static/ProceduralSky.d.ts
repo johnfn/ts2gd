@@ -5,7 +5,7 @@
  * The ProceduralSky is updated on the CPU after the parameters change. It is stored in a texture and then displayed as a background in the scene. This makes it relatively unsuitable for real-time updates during gameplay. However, with a small enough texture size, it can still be updated relatively frequently, as it is updated on a background thread when multi-threading is available.
  *
 */
-declare class ProceduralSky extends Sky {
+declare class ProceduralSky extends Sky  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ProceduralSky extends Sky {
  * The ProceduralSky is updated on the CPU after the parameters change. It is stored in a texture and then displayed as a background in the scene. This makes it relatively unsuitable for real-time updates during gameplay. However, with a small enough texture size, it can still be updated relatively frequently, as it is updated on a background thread when multi-threading is available.
  *
 */
-  "new"(): ProceduralSky;
-  static "new"(): ProceduralSky;
-
+  new(): ProceduralSky; 
+  static "new"(): ProceduralSky 
 
 
 /** Color of the ground at the bottom. */
@@ -69,8 +68,7 @@ texture_size: int;
 
 
 
-  // connect<T extends SignalsOf<ProceduralSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ProceduralSkySignals>>(signal: T, method: SignalFunction<ProceduralSkySignals[T]>): number;
+  connect<T extends SignalsOf<ProceduralSky>>(signal: T, method: SignalFunction<ProceduralSky[T]>): number;
 
 
 
@@ -110,8 +108,7 @@ static TEXTURE_SIZE_4096: any;
 */
 static TEXTURE_SIZE_MAX: any;
 
+
+
 }
 
-declare class ProceduralSkySignals extends SkySignals {
-  
-}

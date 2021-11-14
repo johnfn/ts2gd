@@ -1,14 +1,13 @@
 
 /**
 */
-declare class BakedLightmapData extends Resource {
+declare class BakedLightmapData extends Resource  {
 
   
 /**
 */
-  "new"(): BakedLightmapData;
-  static "new"(): BakedLightmapData;
-
+  new(): BakedLightmapData; 
+  static "new"(): BakedLightmapData 
 
 
 
@@ -44,14 +43,12 @@ get_user_lightmap(user_idx: int): Resource;
 /** No documentation provided. */
 get_user_path(user_idx: int): NodePathType;
 
-  // connect<T extends SignalsOf<BakedLightmapData>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BakedLightmapDataSignals>>(signal: T, method: SignalFunction<BakedLightmapDataSignals[T]>): number;
+  connect<T extends SignalsOf<BakedLightmapData>>(signal: T, method: SignalFunction<BakedLightmapData[T]>): number;
+
+
 
 
 
 
 }
 
-declare class BakedLightmapDataSignals extends ResourceSignals {
-  
-}

@@ -13,7 +13,7 @@
  * Finally, viewports can also behave as render targets, in which case they will not be visible unless the associated texture is used to draw.
  *
 */
-declare class Viewport extends Node {
+declare class Viewport extends Node  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class Viewport extends Node {
  * Finally, viewports can also behave as render targets, in which case they will not be visible unless the associated texture is used to draw.
  *
 */
-  "new"(): Viewport;
-  static "new"(): Viewport;
-
+  new(): Viewport; 
+  static "new"(): Viewport 
 
 
 /** If [code]true[/code], the viewport will be used in AR/VR process. */
@@ -239,8 +238,7 @@ update_worlds(): void;
 /** Warps the mouse to a position relative to the viewport. */
 warp_mouse(to_position: Vector2): void;
 
-  // connect<T extends SignalsOf<Viewport>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ViewportSignals>>(signal: T, method: SignalFunction<ViewportSignals[T]>): number;
+  connect<T extends SignalsOf<Viewport>>(signal: T, method: SignalFunction<Viewport[T]>): number;
 
 
 
@@ -466,19 +464,18 @@ static CLEAR_MODE_NEVER: any;
 */
 static CLEAR_MODE_ONLY_NEXT_FRAME: any;
 
-}
 
-declare class ViewportSignals extends NodeSignals {
-  /**
+/**
  * Emitted when a Control node grabs keyboard focus.
  *
 */
-gui_focus_changed: Signal<(node: Control) => void>
+$gui_focus_changed: Signal<(node: Control) => void>
 
 /**
  * Emitted when the size of the viewport is changed, whether by [method set_size_override], resize of window, or some other means.
  *
 */
-size_changed: Signal<() => void>
+$size_changed: Signal<() => void>
 
 }
+

@@ -5,7 +5,7 @@
  * It keeps a cache of precalculated points along the curve, to speed up further calculations.
  *
 */
-declare class Curve2D extends Resource {
+declare class Curve2D extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Curve2D extends Resource {
  * It keeps a cache of precalculated points along the curve, to speed up further calculations.
  *
 */
-  "new"(): Curve2D;
-  static "new"(): Curve2D;
-
+  new(): Curve2D; 
+  static "new"(): Curve2D 
 
 
 /** The distance in pixels between two adjacent cached points. Changing it forces the cache to be recomputed the next time the [method get_baked_points] or [method get_baked_length] function is called. The smaller the distance, the more points in the cache and the more memory it will consume, so use with care. */
@@ -112,14 +111,12 @@ set_point_position(idx: int, position: Vector2): void;
 */
 tessellate(max_stages?: int, tolerance_degrees?: float): PoolVector2Array;
 
-  // connect<T extends SignalsOf<Curve2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Curve2DSignals>>(signal: T, method: SignalFunction<Curve2DSignals[T]>): number;
+  connect<T extends SignalsOf<Curve2D>>(signal: T, method: SignalFunction<Curve2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Curve2DSignals extends ResourceSignals {
-  
-}

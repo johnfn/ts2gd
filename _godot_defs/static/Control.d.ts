@@ -17,7 +17,7 @@
  * **Note:** Theme items are **not** [Object] properties. This means you can't access their values using [method Object.get] and [method Object.set]. Instead, use [method get_color], [method get_constant], [method get_font], [method get_icon], [method get_stylebox], and the `add_*_override` methods provided by this class.
  *
 */
-declare class Control extends CanvasItem {
+declare class Control extends CanvasItem  {
 
   
 /**
@@ -38,9 +38,8 @@ declare class Control extends CanvasItem {
  * **Note:** Theme items are **not** [Object] properties. This means you can't access their values using [method Object.get] and [method Object.set]. Instead, use [method get_color], [method get_constant], [method get_font], [method get_icon], [method get_stylebox], and the `add_*_override` methods provided by this class.
  *
 */
-  "new"(): Control;
-  static "new"(): Control;
-
+  new(): Control; 
+  static "new"(): Control 
 
 
 /** Anchors the bottom edge of the node to the origin, the center, or the end of its parent control. It changes how the bottom margin updates when the node moves or changes size. You can use one of the [enum Anchor] constants for convenience. */
@@ -781,8 +780,7 @@ show_modal(exclusive?: boolean): void;
 /** Moves the mouse cursor to [code]to_position[/code], relative to [member rect_position] of this [Control]. */
 warp_mouse(to_position: Vector2): void;
 
-  // connect<T extends SignalsOf<Control>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ControlSignals>>(signal: T, method: SignalFunction<ControlSignals[T]>): number;
+  connect<T extends SignalsOf<Control>>(signal: T, method: SignalFunction<Control[T]>): number;
 
 
 
@@ -1158,38 +1156,36 @@ static ANCHOR_BEGIN: any;
 */
 static ANCHOR_END: any;
 
-}
 
-declare class ControlSignals extends CanvasItemSignals {
-  /**
+/**
  * Emitted when the node gains keyboard focus.
  *
 */
-focus_entered: Signal<() => void>
+$focus_entered: Signal<() => void>
 
 /**
  * Emitted when the node loses keyboard focus.
  *
 */
-focus_exited: Signal<() => void>
+$focus_exited: Signal<() => void>
 
 /**
  * Emitted when the node receives an [InputEvent].
  *
 */
-gui_input: Signal<(event: InputEvent) => void>
+$gui_input: Signal<(event: InputEvent) => void>
 
 /**
  * Emitted when the node's minimum size changes.
  *
 */
-minimum_size_changed: Signal<() => void>
+$minimum_size_changed: Signal<() => void>
 
 /**
  * Emitted when a modal [Control] is closed. See [method show_modal].
  *
 */
-modal_closed: Signal<() => void>
+$modal_closed: Signal<() => void>
 
 /**
  * Emitted when the mouse enters the control's `Rect` area, provided its [member mouse_filter] lets the event reach it.
@@ -1197,7 +1193,7 @@ modal_closed: Signal<() => void>
  * **Note:** [signal mouse_entered] will not be emitted if the mouse enters a child [Control] node before entering the parent's `Rect` area, at least until the mouse is moved to reach the parent's `Rect` area.
  *
 */
-mouse_entered: Signal<() => void>
+$mouse_entered: Signal<() => void>
 
 /**
  * Emitted when the mouse leaves the control's `Rect` area, provided its [member mouse_filter] lets the event reach it.
@@ -1205,18 +1201,19 @@ mouse_entered: Signal<() => void>
  * **Note:** [signal mouse_exited] will be emitted if the mouse enters a child [Control] node, even if the mouse cursor is still inside the parent's `Rect` area.
  *
 */
-mouse_exited: Signal<() => void>
+$mouse_exited: Signal<() => void>
 
 /**
  * Emitted when the control changes size.
  *
 */
-resized: Signal<() => void>
+$resized: Signal<() => void>
 
 /**
  * Emitted when one of the size flags changes. See [member size_flags_horizontal] and [member size_flags_vertical].
  *
 */
-size_flags_changed: Signal<() => void>
+$size_flags_changed: Signal<() => void>
 
 }
+

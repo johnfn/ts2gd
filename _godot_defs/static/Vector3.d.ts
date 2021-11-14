@@ -5,7 +5,7 @@
  * **Note:** In a boolean context, a Vector3 will evaluate to `false` if it's equal to `Vector3(0, 0, 0)`. Otherwise, a Vector3 will always evaluate to `true`.
  *
 */
-declare class Vector3 {
+declare class Vector3Constructor {
 
   
 /**
@@ -14,10 +14,6 @@ declare class Vector3 {
  * **Note:** In a boolean context, a Vector3 will evaluate to `false` if it's equal to `Vector3(0, 0, 0)`. Otherwise, a Vector3 will always evaluate to `true`.
  *
 */
-
-  constructor(x: float, y: float, z: float);
-  static "new"(): Vector3;
-
 
 
 /** The vector's X component. Also accessible by using the index position [code][0][/code]. */
@@ -162,8 +158,7 @@ snapped(by: Vector3): Vector3;
 */
 to_diagonal_matrix(): Basis;
 
-  // connect<T extends SignalsOf<Vector3>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Vector3Signals>>(signal: T, method: SignalFunction<Vector3Signals[T]>): number;
+  connect<T extends SignalsOf<Vector3>>(signal: T, method: SignalFunction<Vector3[T]>): number;
 
 
 add(other: number | Vector3): Vector3;
@@ -244,8 +239,15 @@ static FORWARD: Vector3;
 */
 static BACK: Vector3;
 
+
+
 }
 
-declare class Vector3Signals {
+declare type Vector3 = Vector3Constructor;
+declare var Vector3: typeof Vector3Constructor & {
   
+  new(x: float, y: float, z: float): Vector3;
+
+  (x: float, y: float, z: float): Vector3;
+
 }

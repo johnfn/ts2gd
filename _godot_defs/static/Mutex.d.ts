@@ -3,16 +3,15 @@
  * A synchronization mutex (mutual exclusion). This is used to synchronize multiple [Thread]s, and is equivalent to a binary [Semaphore]. It guarantees that only one thread can ever acquire the lock at a time. A mutex can be used to protect a critical section; however, be careful to avoid deadlocks.
  *
 */
-declare class Mutex extends Reference {
+declare class Mutex extends Reference  {
 
   
 /**
  * A synchronization mutex (mutual exclusion). This is used to synchronize multiple [Thread]s, and is equivalent to a binary [Semaphore]. It guarantees that only one thread can ever acquire the lock at a time. A mutex can be used to protect a critical section; however, be careful to avoid deadlocks.
  *
 */
-  "new"(): Mutex;
-  static "new"(): Mutex;
-
+  new(): Mutex; 
+  static "new"(): Mutex 
 
 
 
@@ -40,14 +39,12 @@ try_lock(): int;
 */
 unlock(): void;
 
-  // connect<T extends SignalsOf<Mutex>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MutexSignals>>(signal: T, method: SignalFunction<MutexSignals[T]>): number;
+  connect<T extends SignalsOf<Mutex>>(signal: T, method: SignalFunction<Mutex[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MutexSignals extends ReferenceSignals {
-  
-}

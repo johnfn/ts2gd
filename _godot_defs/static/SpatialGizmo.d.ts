@@ -1,27 +1,24 @@
 
 /**
 */
-declare class SpatialGizmo extends Reference {
+declare class SpatialGizmo extends Reference  {
 
   
 /**
 */
-  "new"(): SpatialGizmo;
-  static "new"(): SpatialGizmo;
+  new(): SpatialGizmo; 
+  static "new"(): SpatialGizmo 
 
 
 
 
 
+  connect<T extends SignalsOf<SpatialGizmo>>(signal: T, method: SignalFunction<SpatialGizmo[T]>): number;
 
-  // connect<T extends SignalsOf<SpatialGizmo>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpatialGizmoSignals>>(signal: T, method: SignalFunction<SpatialGizmoSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class SpatialGizmoSignals extends ReferenceSignals {
-  
-}

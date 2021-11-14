@@ -7,7 +7,7 @@
  * **Note:** Unlike [Particles2D], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
  *
 */
-declare class CPUParticles2D extends Node2D {
+declare class CPUParticles2D extends Node2D  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class CPUParticles2D extends Node2D {
  * **Note:** Unlike [Particles2D], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
  *
 */
-  "new"(): CPUParticles2D;
-  static "new"(): CPUParticles2D;
-
+  new(): CPUParticles2D; 
+  static "new"(): CPUParticles2D 
 
 
 /**
@@ -249,8 +248,7 @@ set_param_randomness(param: int, randomness: float): void;
 /** Enables or disables the given flag (see [enum Flags] for options). */
 set_particle_flag(flag: int, enable: boolean): void;
 
-  // connect<T extends SignalsOf<CPUParticles2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CPUParticles2DSignals>>(signal: T, method: SignalFunction<CPUParticles2DSignals[T]>): number;
+  connect<T extends SignalsOf<CPUParticles2D>>(signal: T, method: SignalFunction<CPUParticles2D[T]>): number;
 
 
 
@@ -404,8 +402,7 @@ static EMISSION_SHAPE_DIRECTED_POINTS: any;
 */
 static EMISSION_SHAPE_MAX: any;
 
+
+
 }
 
-declare class CPUParticles2DSignals extends Node2DSignals {
-  
-}

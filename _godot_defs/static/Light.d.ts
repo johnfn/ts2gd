@@ -3,16 +3,15 @@
  * Light is the **abstract** base class for light nodes. As it can't be instanced, it shouldn't be used directly. Other types of light nodes inherit from it. Light contains the common variables and parameters used for lighting.
  *
 */
-declare class Light extends VisualInstance {
+declare class Light extends VisualInstance  {
 
   
 /**
  * Light is the **abstract** base class for light nodes. As it can't be instanced, it shouldn't be used directly. Other types of light nodes inherit from it. Light contains the common variables and parameters used for lighting.
  *
 */
-  "new"(): Light;
-  static "new"(): Light;
-
+  new(): Light; 
+  static "new"(): Light 
 
 
 /** If [code]true[/code], the light only appears in the editor and will not be visible at runtime. */
@@ -63,8 +62,7 @@ get_param(param: int): float;
 /** Sets the value of the specified [enum Light.Param] parameter. */
 set_param(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<Light>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<LightSignals>>(signal: T, method: SignalFunction<LightSignals[T]>): number;
+  connect<T extends SignalsOf<Light>>(signal: T, method: SignalFunction<Light[T]>): number;
 
 
 
@@ -192,8 +190,7 @@ static BAKE_INDIRECT: any;
 */
 static BAKE_ALL: any;
 
+
+
 }
 
-declare class LightSignals extends VisualInstanceSignals {
-  
-}

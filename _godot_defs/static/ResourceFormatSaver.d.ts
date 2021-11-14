@@ -5,7 +5,7 @@
  * By default, Godot saves resources as `.tres` (text-based), `.res` (binary) or another built-in format, but you can choose to create your own format by extending this class. Be sure to respect the documented return types and values. You should give it a global class name with `class_name` for it to be registered. Like built-in ResourceFormatSavers, it will be called automatically when saving resources of its recognized type(s). You may also implement a [ResourceFormatLoader].
  *
 */
-declare class ResourceFormatSaver extends Reference {
+declare class ResourceFormatSaver extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ResourceFormatSaver extends Reference {
  * By default, Godot saves resources as `.tres` (text-based), `.res` (binary) or another built-in format, but you can choose to create your own format by extending this class. Be sure to respect the documented return types and values. You should give it a global class name with `class_name` for it to be registered. Like built-in ResourceFormatSavers, it will be called automatically when saving resources of its recognized type(s). You may also implement a [ResourceFormatLoader].
  *
 */
-  "new"(): ResourceFormatSaver;
-  static "new"(): ResourceFormatSaver;
-
+  new(): ResourceFormatSaver; 
+  static "new"(): ResourceFormatSaver 
 
 
 
@@ -34,14 +33,12 @@ recognize(resource: Resource): boolean;
 */
 save(path: string, resource: Resource, flags: int): int;
 
-  // connect<T extends SignalsOf<ResourceFormatSaver>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceFormatSaverSignals>>(signal: T, method: SignalFunction<ResourceFormatSaverSignals[T]>): number;
+  connect<T extends SignalsOf<ResourceFormatSaver>>(signal: T, method: SignalFunction<ResourceFormatSaver[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ResourceFormatSaverSignals extends ReferenceSignals {
-  
-}

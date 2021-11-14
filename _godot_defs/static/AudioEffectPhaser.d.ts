@@ -3,16 +3,15 @@
  * Combines phase-shifted signals with the original signal. The movement of the phase-shifted signals is controlled using a low-frequency oscillator.
  *
 */
-declare class AudioEffectPhaser extends AudioEffect {
+declare class AudioEffectPhaser extends AudioEffect  {
 
   
 /**
  * Combines phase-shifted signals with the original signal. The movement of the phase-shifted signals is controlled using a low-frequency oscillator.
  *
 */
-  "new"(): AudioEffectPhaser;
-  static "new"(): AudioEffectPhaser;
-
+  new(): AudioEffectPhaser; 
+  static "new"(): AudioEffectPhaser 
 
 
 /** Governs how high the filter frequencies sweep. Low value will primarily affect bass frequencies. High value can sweep high into the treble. Value can range from 0.1 to 4. */
@@ -32,14 +31,12 @@ rate_hz: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectPhaser>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectPhaserSignals>>(signal: T, method: SignalFunction<AudioEffectPhaserSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectPhaser>>(signal: T, method: SignalFunction<AudioEffectPhaser[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectPhaserSignals extends AudioEffectSignals {
-  
-}

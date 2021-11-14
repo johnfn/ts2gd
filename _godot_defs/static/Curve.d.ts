@@ -3,16 +3,15 @@
  * A curve that can be saved and re-used for other objects. By default, it ranges between `0` and `1` on the Y axis and positions points relative to the `0.5` Y position.
  *
 */
-declare class Curve extends Resource {
+declare class Curve extends Resource  {
 
   
 /**
  * A curve that can be saved and re-used for other objects. By default, it ranges between `0` and `1` on the Y axis and positions points relative to the `0.5` Y position.
  *
 */
-  "new"(): Curve;
-  static "new"(): Curve;
-
+  new(): Curve; 
+  static "new"(): Curve 
 
 
 /** The number of points to include in the baked (i.e. cached) curve data. */
@@ -81,8 +80,7 @@ set_point_right_tangent(index: int, tangent: float): void;
 /** Assigns the vertical position [code]y[/code] to the point at [code]index[/code]. */
 set_point_value(index: int, y: float): void;
 
-  // connect<T extends SignalsOf<Curve>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CurveSignals>>(signal: T, method: SignalFunction<CurveSignals[T]>): number;
+  connect<T extends SignalsOf<Curve>>(signal: T, method: SignalFunction<Curve[T]>): number;
 
 
 
@@ -104,13 +102,12 @@ static TANGENT_LINEAR: any;
 */
 static TANGENT_MODE_COUNT: any;
 
-}
 
-declare class CurveSignals extends ResourceSignals {
-  /**
+/**
  * Emitted when [member max_value] or [member min_value] is changed.
  *
 */
-range_changed: Signal<() => void>
+$range_changed: Signal<() => void>
 
 }
+

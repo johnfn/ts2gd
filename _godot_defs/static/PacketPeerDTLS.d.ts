@@ -5,7 +5,7 @@
  * **Warning:** SSL/TLS certificate revocation and certificate pinning are currently not supported. Revoked certificates are accepted as long as they are otherwise valid. If this is a concern, you may want to use automatically managed certificates with a short validity period.
  *
 */
-declare class PacketPeerDTLS extends PacketPeer {
+declare class PacketPeerDTLS extends PacketPeer  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class PacketPeerDTLS extends PacketPeer {
  * **Warning:** SSL/TLS certificate revocation and certificate pinning are currently not supported. Revoked certificates are accepted as long as they are otherwise valid. If this is a concern, you may want to use automatically managed certificates with a short validity period.
  *
 */
-  "new"(): PacketPeerDTLS;
-  static "new"(): PacketPeerDTLS;
-
+  new(): PacketPeerDTLS; 
+  static "new"(): PacketPeerDTLS 
 
 
 
@@ -32,8 +31,7 @@ get_status(): int;
 /** Poll the connection to check for incoming packets. Call this frequently to update the status and keep the connection working. */
 poll(): void;
 
-  // connect<T extends SignalsOf<PacketPeerDTLS>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PacketPeerDTLSSignals>>(signal: T, method: SignalFunction<PacketPeerDTLSSignals[T]>): number;
+  connect<T extends SignalsOf<PacketPeerDTLS>>(signal: T, method: SignalFunction<PacketPeerDTLS[T]>): number;
 
 
 
@@ -67,8 +65,7 @@ static STATUS_ERROR: any;
 */
 static STATUS_ERROR_HOSTNAME_MISMATCH: any;
 
+
+
 }
 
-declare class PacketPeerDTLSSignals extends PacketPeerSignals {
-  
-}

@@ -5,7 +5,7 @@
  * You can remove a [TreeItem] by using [method Object.free].
  *
 */
-declare class TreeItem extends Object {
+declare class TreeItem extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TreeItem extends Object {
  * You can remove a [TreeItem] by using [method Object.free].
  *
 */
-  "new"(): TreeItem;
-  static "new"(): TreeItem;
-
+  new(): TreeItem; 
+  static "new"(): TreeItem 
 
 
 /** If [code]true[/code], the TreeItem is collapsed. */
@@ -59,7 +58,7 @@ get_button_tooltip(column: int, button_idx: int): string;
 get_cell_mode(column: int): int;
 
 /** Returns the TreeItem's first child item or a null object if there is none. */
-get_children(): TreeItem;
+get_children(): Node[];
 
 /** Returns the custom background color of column [code]column[/code]. */
 get_custom_bg_color(column: int): Color;
@@ -234,8 +233,7 @@ set_text_align(column: int, text_align: int): void;
 /** Sets the given column's tooltip text. */
 set_tooltip(column: int, tooltip: string): void;
 
-  // connect<T extends SignalsOf<TreeItem>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TreeItemSignals>>(signal: T, method: SignalFunction<TreeItemSignals[T]>): number;
+  connect<T extends SignalsOf<TreeItem>>(signal: T, method: SignalFunction<TreeItem[T]>): number;
 
 
 
@@ -284,8 +282,7 @@ static ALIGN_CENTER: any;
 */
 static ALIGN_RIGHT: any;
 
+
+
 }
 
-declare class TreeItemSignals extends ObjectSignals {
-  
-}

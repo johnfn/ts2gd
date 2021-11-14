@@ -5,7 +5,7 @@
  * **Note:** Light2D can also be used as a mask.
  *
 */
-declare class Light2D extends Node2D {
+declare class Light2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Light2D extends Node2D {
  * **Note:** Light2D can also be used as a mask.
  *
 */
-  "new"(): Light2D;
-  static "new"(): Light2D;
-
+  new(): Light2D; 
+  static "new"(): Light2D 
 
 
 /** The Light2D's [Color]. */
@@ -84,8 +83,7 @@ texture_scale: float;
 
 
 
-  // connect<T extends SignalsOf<Light2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Light2DSignals>>(signal: T, method: SignalFunction<Light2DSignals[T]>): number;
+  connect<T extends SignalsOf<Light2D>>(signal: T, method: SignalFunction<Light2D[T]>): number;
 
 
 
@@ -149,8 +147,7 @@ static SHADOW_FILTER_PCF9: any;
 */
 static SHADOW_FILTER_PCF13: any;
 
+
+
 }
 
-declare class Light2DSignals extends Node2DSignals {
-  
-}

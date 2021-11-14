@@ -31,7 +31,7 @@
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-declare class MeshDataTool extends Reference {
+declare class MeshDataTool extends Reference  {
 
   
 /**
@@ -66,9 +66,8 @@ declare class MeshDataTool extends Reference {
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-  "new"(): MeshDataTool;
-  static "new"(): MeshDataTool;
-
+  new(): MeshDataTool; 
+  static "new"(): MeshDataTool 
 
 
 
@@ -211,14 +210,12 @@ set_vertex_uv2(idx: int, uv2: Vector2): void;
 /** Sets the bone weights of the given vertex. */
 set_vertex_weights(idx: int, weights: PoolRealArray): void;
 
-  // connect<T extends SignalsOf<MeshDataTool>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshDataToolSignals>>(signal: T, method: SignalFunction<MeshDataToolSignals[T]>): number;
+  connect<T extends SignalsOf<MeshDataTool>>(signal: T, method: SignalFunction<MeshDataTool[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MeshDataToolSignals extends ReferenceSignals {
-  
-}

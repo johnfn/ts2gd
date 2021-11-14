@@ -11,9 +11,8 @@ declare class RID {
  *
 */
 
-  constructor(from: Object);
-  static "new"(): RID;
-
+  new(from: Object): RID;
+  static "new"(): RID 
 
 
 
@@ -22,14 +21,12 @@ declare class RID {
 /** Returns the ID of the referenced resource. */
 get_id(): int;
 
-  // connect<T extends SignalsOf<RID>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RIDSignals>>(signal: T, method: SignalFunction<RIDSignals[T]>): number;
+  connect<T extends SignalsOf<RID>>(signal: T, method: SignalFunction<RID[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RIDSignals {
-  
-}

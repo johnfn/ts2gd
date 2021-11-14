@@ -3,16 +3,15 @@
  * Provides a 2D collision polygon to a [CollisionObject2D] parent. Polygons can be drawn in the editor or specified by a list of vertices.
  *
 */
-declare class CollisionPolygon2D extends Node2D {
+declare class CollisionPolygon2D extends Node2D  {
 
   
 /**
  * Provides a 2D collision polygon to a [CollisionObject2D] parent. Polygons can be drawn in the editor or specified by a list of vertices.
  *
 */
-  "new"(): CollisionPolygon2D;
-  static "new"(): CollisionPolygon2D;
-
+  new(): CollisionPolygon2D; 
+  static "new"(): CollisionPolygon2D 
 
 
 /** Collision build mode. Use one of the [enum BuildMode] constants. */
@@ -32,8 +31,7 @@ polygon: PoolVector2Array;
 
 
 
-  // connect<T extends SignalsOf<CollisionPolygon2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CollisionPolygon2DSignals>>(signal: T, method: SignalFunction<CollisionPolygon2DSignals[T]>): number;
+  connect<T extends SignalsOf<CollisionPolygon2D>>(signal: T, method: SignalFunction<CollisionPolygon2D[T]>): number;
 
 
 
@@ -49,8 +47,7 @@ static BUILD_SOLIDS: any;
 */
 static BUILD_SEGMENTS: any;
 
+
+
 }
 
-declare class CollisionPolygon2DSignals extends Node2DSignals {
-  
-}

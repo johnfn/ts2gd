@@ -3,16 +3,15 @@
  * [AudioServer] is a low-level server interface for audio access. It is in charge of creating sample data (playable audio) as well as its playback via a voice interface.
  *
 */
-declare class AudioServerClass extends Object {
+declare class AudioServerClass extends Object  {
 
   
 /**
  * [AudioServer] is a low-level server interface for audio access. It is in charge of creating sample data (playable audio) as well as its playback via a voice interface.
  *
 */
-  "new"(): AudioServerClass;
-  static "new"(): AudioServerClass;
-
+  new(): AudioServerClass; 
+  static "new"(): AudioServerClass 
 
 
 /** Number of available audio buses. */
@@ -149,8 +148,7 @@ swap_bus_effects(bus_idx: int, effect_idx: int, by_effect_idx: int): void;
 /** Unlocks the audio driver's main loop. (After locking it, you should always unlock it.) */
 unlock(): void;
 
-  // connect<T extends SignalsOf<AudioServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioServerClassSignals>>(signal: T, method: SignalFunction<AudioServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<AudioServerClass>>(signal: T, method: SignalFunction<AudioServerClass[T]>): number;
 
 
 
@@ -178,13 +176,12 @@ static SPEAKER_SURROUND_51: any;
 */
 static SPEAKER_SURROUND_71: any;
 
-}
 
-declare class AudioServerClassSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when the [AudioBusLayout] changes.
  *
 */
-bus_layout_changed: Signal<() => void>
+$bus_layout_changed: Signal<() => void>
 
 }
+

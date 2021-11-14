@@ -3,16 +3,15 @@
  * Height map shape resource, which can be added to a [PhysicsBody] or [Area].
  *
 */
-declare class HeightMapShape extends Shape {
+declare class HeightMapShape extends Shape  {
 
   
 /**
  * Height map shape resource, which can be added to a [PhysicsBody] or [Area].
  *
 */
-  "new"(): HeightMapShape;
-  static "new"(): HeightMapShape;
-
+  new(): HeightMapShape; 
+  static "new"(): HeightMapShape 
 
 
 /** Height map data, pool array must be of [member map_width] * [member map_depth] size. */
@@ -26,14 +25,12 @@ map_width: int;
 
 
 
-  // connect<T extends SignalsOf<HeightMapShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HeightMapShapeSignals>>(signal: T, method: SignalFunction<HeightMapShapeSignals[T]>): number;
+  connect<T extends SignalsOf<HeightMapShape>>(signal: T, method: SignalFunction<HeightMapShape[T]>): number;
+
+
 
 
 
 
 }
 
-declare class HeightMapShapeSignals extends ShapeSignals {
-  
-}

@@ -3,16 +3,15 @@
  * PhysicsServer is the server responsible for all 3D physics. It can create many kinds of physics objects, but does not insert them on the node tree.
  *
 */
-declare class PhysicsServerClass extends Object {
+declare class PhysicsServerClass extends Object  {
 
   
 /**
  * PhysicsServer is the server responsible for all 3D physics. It can create many kinds of physics objects, but does not insert them on the node tree.
  *
 */
-  "new"(): PhysicsServerClass;
-  static "new"(): PhysicsServerClass;
-
+  new(): PhysicsServerClass; 
+  static "new"(): PhysicsServerClass 
 
 
 
@@ -394,8 +393,7 @@ space_set_active(space: RID, active: boolean): void;
 /** Sets the value for a space parameter. A list of available parameters is on the [enum SpaceParameter] constants. */
 space_set_param(space: RID, param: int, value: float): void;
 
-  // connect<T extends SignalsOf<PhysicsServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicsServerClassSignals>>(signal: T, method: SignalFunction<PhysicsServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicsServerClass>>(signal: T, method: SignalFunction<PhysicsServerClass[T]>): number;
 
 
 
@@ -1133,8 +1131,7 @@ static BODY_AXIS_ANGULAR_Y: any;
 /** No documentation provided. */
 static BODY_AXIS_ANGULAR_Z: any;
 
+
+
 }
 
-declare class PhysicsServerClassSignals extends ObjectSignals {
-  
-}

@@ -5,7 +5,7 @@
  * However, by creating a [FuncRef] using the [method @GDScript.funcref] function, a reference to a function in a given object can be created, passed around and called.
  *
 */
-declare class FuncRef extends Reference {
+declare class FuncRef extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class FuncRef extends Reference {
  * However, by creating a [FuncRef] using the [method @GDScript.funcref] function, a reference to a function in a given object can be created, passed around and called.
  *
 */
-  "new"(): FuncRef;
-  static "new"(): FuncRef;
-
+  new(): FuncRef; 
+  static "new"(): FuncRef 
 
 
 /** The name of the referenced function. */
@@ -34,14 +33,12 @@ is_valid(): boolean;
 /** The object containing the referenced function. This object must be of a type actually inheriting from [Object], not a built-in type such as [int], [Vector2] or [Dictionary]. */
 set_instance(instance: Object): void;
 
-  // connect<T extends SignalsOf<FuncRef>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<FuncRefSignals>>(signal: T, method: SignalFunction<FuncRefSignals[T]>): number;
+  connect<T extends SignalsOf<FuncRef>>(signal: T, method: SignalFunction<FuncRef[T]>): number;
+
+
 
 
 
 
 }
 
-declare class FuncRefSignals extends ReferenceSignals {
-  
-}

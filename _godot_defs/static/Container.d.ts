@@ -5,7 +5,7 @@
  * A Control can inherit this to create custom container classes.
  *
 */
-declare class Container extends Control {
+declare class Container extends Control  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Container extends Control {
  * A Control can inherit this to create custom container classes.
  *
 */
-  "new"(): Container;
-  static "new"(): Container;
-
+  new(): Container; 
+  static "new"(): Container 
 
 
 
@@ -26,8 +25,7 @@ fit_child_in_rect(child: Control, rect: Rect2): void;
 /** Queue resort of the contained children. This is called automatically anyway, but can be called upon request. */
 queue_sort(): void;
 
-  // connect<T extends SignalsOf<Container>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ContainerSignals>>(signal: T, method: SignalFunction<ContainerSignals[T]>): number;
+  connect<T extends SignalsOf<Container>>(signal: T, method: SignalFunction<Container[T]>): number;
 
 
 
@@ -37,13 +35,12 @@ queue_sort(): void;
 */
 static NOTIFICATION_SORT_CHILDREN: any;
 
-}
 
-declare class ContainerSignals extends ControlSignals {
-  /**
+/**
  * Emitted when sorting the children is needed.
  *
 */
-sort_children: Signal<() => void>
+$sort_children: Signal<() => void>
 
 }
+

@@ -5,7 +5,7 @@
  * Note that the path is considered as relative to the moved nodes (children of [PathFollow]). As such, the curve should usually start with a zero vector `(0, 0, 0)`.
  *
 */
-declare class Path extends Spatial {
+declare class Path extends Spatial  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Path extends Spatial {
  * Note that the path is considered as relative to the moved nodes (children of [PathFollow]). As such, the curve should usually start with a zero vector `(0, 0, 0)`.
  *
 */
-  "new"(): Path;
-  static "new"(): Path;
-
+  new(): Path; 
+  static "new"(): Path 
 
 
 /** A [Curve3D] describing the path. */
@@ -24,19 +23,17 @@ curve: Curve3D;
 
 
 
-  // connect<T extends SignalsOf<Path>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PathSignals>>(signal: T, method: SignalFunction<PathSignals[T]>): number;
+  connect<T extends SignalsOf<Path>>(signal: T, method: SignalFunction<Path[T]>): number;
 
 
 
 
-}
 
-declare class PathSignals extends SpatialSignals {
-  /**
+/**
  * Emitted when the [member curve] changes.
  *
 */
-curve_changed: Signal<() => void>
+$curve_changed: Signal<() => void>
 
 }
+

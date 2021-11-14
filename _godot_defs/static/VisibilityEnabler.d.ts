@@ -9,7 +9,7 @@
  * **Note:** VisibilityEnabler will not affect nodes added after scene initialization.
  *
 */
-declare class VisibilityEnabler extends VisibilityNotifier {
+declare class VisibilityEnabler extends VisibilityNotifier  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class VisibilityEnabler extends VisibilityNotifier {
  * **Note:** VisibilityEnabler will not affect nodes added after scene initialization.
  *
 */
-  "new"(): VisibilityEnabler;
-  static "new"(): VisibilityEnabler;
-
+  new(): VisibilityEnabler; 
+  static "new"(): VisibilityEnabler 
 
 
 /** If [code]true[/code], [RigidBody] nodes will be paused. */
@@ -39,8 +38,7 @@ is_enabler_enabled(enabler: int): boolean;
 /** Sets active state of the enabler identified by given [enum Enabler] constant. */
 set_enabler(enabler: int, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<VisibilityEnabler>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisibilityEnablerSignals>>(signal: T, method: SignalFunction<VisibilityEnablerSignals[T]>): number;
+  connect<T extends SignalsOf<VisibilityEnabler>>(signal: T, method: SignalFunction<VisibilityEnabler[T]>): number;
 
 
 
@@ -62,8 +60,7 @@ static ENABLER_FREEZE_BODIES: any;
 */
 static ENABLER_MAX: any;
 
+
+
 }
 
-declare class VisibilityEnablerSignals extends VisibilityNotifierSignals {
-  
-}

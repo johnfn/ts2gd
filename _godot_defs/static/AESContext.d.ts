@@ -34,7 +34,7 @@
  * 
  *
 */
-declare class AESContext extends Reference {
+declare class AESContext extends Reference  {
 
   
 /**
@@ -72,9 +72,8 @@ declare class AESContext extends Reference {
  * 
  *
 */
-  "new"(): AESContext;
-  static "new"(): AESContext;
-
+  new(): AESContext; 
+  static "new"(): AESContext 
 
 
 
@@ -100,8 +99,7 @@ start(mode: int, key: PoolByteArray, iv?: PoolByteArray): int;
 */
 update(src: PoolByteArray): PoolByteArray;
 
-  // connect<T extends SignalsOf<AESContext>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AESContextSignals>>(signal: T, method: SignalFunction<AESContextSignals[T]>): number;
+  connect<T extends SignalsOf<AESContext>>(signal: T, method: SignalFunction<AESContext[T]>): number;
 
 
 
@@ -135,8 +133,7 @@ static MODE_CBC_DECRYPT: any;
 */
 static MODE_MAX: any;
 
+
+
 }
 
-declare class AESContextSignals extends ReferenceSignals {
-  
-}

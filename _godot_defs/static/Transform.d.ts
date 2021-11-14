@@ -15,13 +15,12 @@ declare class Transform {
  *
 */
 
-  constructor(x_axis: Vector3, y_axis: Vector3, z_axis: Vector3, origin: Vector3);
-  constructor(basis: Basis, origin: Vector3);
-  constructor(from: Transform2D);
-  constructor(from: Quat);
-  constructor(from: Basis);
-  static "new"(): Transform;
-
+  new(x_axis: Vector3, y_axis: Vector3, z_axis: Vector3, origin: Vector3): Transform;
+  new(basis: Basis, origin: Vector3): Transform;
+  new(from: Transform2D): Transform;
+  new(from: Quat): Transform;
+  new(from: Basis): Transform;
+  static "new"(): Transform 
 
 
 /** The basis is a matrix containing 3 [Vector3] as its columns: X axis, Y axis, and Z axis. These vectors can be interpreted as the basis vectors of local coordinate system traveling with the object. */
@@ -85,8 +84,7 @@ xform(v: any): any;
 /** Inverse-transforms the given [Vector3], [Plane], [AABB], or [PoolVector3Array] by this transform. */
 xform_inv(v: any): any;
 
-  // connect<T extends SignalsOf<Transform>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TransformSignals>>(signal: T, method: SignalFunction<TransformSignals[T]>): number;
+  connect<T extends SignalsOf<Transform>>(signal: T, method: SignalFunction<Transform[T]>): number;
 
 
 
@@ -114,8 +112,7 @@ static FLIP_Y: Transform;
 */
 static FLIP_Z: Transform;
 
+
+
 }
 
-declare class TransformSignals {
-  
-}

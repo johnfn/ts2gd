@@ -3,16 +3,15 @@
  * Returned by [method JSON.parse], [JSONParseResult] contains the decoded JSON or error information if the JSON source wasn't successfully parsed. You can check if the JSON source was successfully parsed with `if json_result.error == OK`.
  *
 */
-declare class JSONParseResult extends Reference {
+declare class JSONParseResult extends Reference  {
 
   
 /**
  * Returned by [method JSON.parse], [JSONParseResult] contains the decoded JSON or error information if the JSON source wasn't successfully parsed. You can check if the JSON source was successfully parsed with `if json_result.error == OK`.
  *
 */
-  "new"(): JSONParseResult;
-  static "new"(): JSONParseResult;
-
+  new(): JSONParseResult; 
+  static "new"(): JSONParseResult 
 
 
 /** The error type if the JSON source was not successfully parsed. See the [enum Error] constants. */
@@ -46,14 +45,12 @@ result: any;
 
 
 
-  // connect<T extends SignalsOf<JSONParseResult>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JSONParseResultSignals>>(signal: T, method: SignalFunction<JSONParseResultSignals[T]>): number;
+  connect<T extends SignalsOf<JSONParseResult>>(signal: T, method: SignalFunction<JSONParseResult[T]>): number;
+
+
 
 
 
 
 }
 
-declare class JSONParseResultSignals extends ReferenceSignals {
-  
-}

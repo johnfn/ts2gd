@@ -3,16 +3,15 @@
  * Server that manages all translations. Translations can be set to it and removed from it.
  *
 */
-declare class TranslationServerClass extends Object {
+declare class TranslationServerClass extends Object  {
 
   
 /**
  * Server that manages all translations. Translations can be set to it and removed from it.
  *
 */
-  "new"(): TranslationServerClass;
-  static "new"(): TranslationServerClass;
-
+  new(): TranslationServerClass; 
+  static "new"(): TranslationServerClass 
 
 
 
@@ -50,14 +49,12 @@ set_locale(locale: string): void;
 /** Returns the current locale's translation for the given message (key). */
 translate(message: string): string;
 
-  // connect<T extends SignalsOf<TranslationServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TranslationServerClassSignals>>(signal: T, method: SignalFunction<TranslationServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<TranslationServerClass>>(signal: T, method: SignalFunction<TranslationServerClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class TranslationServerClassSignals extends ObjectSignals {
-  
-}

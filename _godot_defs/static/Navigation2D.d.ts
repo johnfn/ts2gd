@@ -5,7 +5,7 @@
  * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
  *
 */
-declare class Navigation2D extends Node2D {
+declare class Navigation2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class Navigation2D extends Node2D {
  * **Note:** The current navigation system has many known issues and will not always return optimal paths as expected. These issues will be fixed in Godot 4.0.
  *
 */
-  "new"(): Navigation2D;
-  static "new"(): Navigation2D;
-
+  new(): Navigation2D; 
+  static "new"(): Navigation2D 
 
 
 
@@ -43,14 +42,12 @@ navpoly_remove(id: int): void;
 /** Sets the transform applied to the [NavigationPolygon] with the given ID. */
 navpoly_set_transform(id: int, xform: Transform2D): void;
 
-  // connect<T extends SignalsOf<Navigation2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Navigation2DSignals>>(signal: T, method: SignalFunction<Navigation2DSignals[T]>): number;
+  connect<T extends SignalsOf<Navigation2D>>(signal: T, method: SignalFunction<Navigation2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Navigation2DSignals extends Node2DSignals {
-  
-}

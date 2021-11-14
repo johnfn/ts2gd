@@ -39,7 +39,7 @@
  * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations.
  *
 */
-declare class ImageTexture extends Texture {
+declare class ImageTexture extends Texture  {
 
   
 /**
@@ -82,9 +82,8 @@ declare class ImageTexture extends Texture {
  * **Note:** The maximum texture size is 16384×16384 pixels due to graphics hardware limitations.
  *
 */
-  "new"(): ImageTexture;
-  static "new"(): ImageTexture;
-
+  new(): ImageTexture; 
+  static "new"(): ImageTexture 
 
 
 
@@ -129,8 +128,7 @@ set_data(image: Image): void;
 /** Resizes the texture to the specified dimensions. */
 set_size_override(size: Vector2): void;
 
-  // connect<T extends SignalsOf<ImageTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ImageTextureSignals>>(signal: T, method: SignalFunction<ImageTextureSignals[T]>): number;
+  connect<T extends SignalsOf<ImageTexture>>(signal: T, method: SignalFunction<ImageTexture[T]>): number;
 
 
 
@@ -152,8 +150,7 @@ static STORAGE_COMPRESS_LOSSY: any;
 */
 static STORAGE_COMPRESS_LOSSLESS: any;
 
+
+
 }
 
-declare class ImageTextureSignals extends TextureSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Currently, has no direct usage, use the derived classes instead.
  *
 */
-declare class VisualShaderNodeGroupBase extends VisualShaderNode {
+declare class VisualShaderNodeGroupBase extends VisualShaderNode  {
 
   
 /**
  * Currently, has no direct usage, use the derived classes instead.
  *
 */
-  "new"(): VisualShaderNodeGroupBase;
-  static "new"(): VisualShaderNodeGroupBase;
-
+  new(): VisualShaderNodeGroupBase; 
+  static "new"(): VisualShaderNodeGroupBase 
 
 
 /** The size of the node in the visual shader graph. */
@@ -81,14 +80,12 @@ set_output_port_type(id: int, type: int): void;
 /** Defines all output ports using a [String] formatted as a colon-separated list: [code]id,type,name;[/code] (see [method add_output_port]). */
 set_outputs(outputs: string): void;
 
-  // connect<T extends SignalsOf<VisualShaderNodeGroupBase>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeGroupBaseSignals>>(signal: T, method: SignalFunction<VisualShaderNodeGroupBaseSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeGroupBase>>(signal: T, method: SignalFunction<VisualShaderNodeGroupBase[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VisualShaderNodeGroupBaseSignals extends VisualShaderNodeSignals {
-  
-}

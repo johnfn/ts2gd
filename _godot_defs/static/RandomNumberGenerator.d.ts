@@ -18,7 +18,7 @@
  * **Note:** The default values of [member seed] and [member state] properties are pseudo-random, and changes when calling [method randomize]. The `0` value documented here is a placeholder, and not the actual default seed.
  *
 */
-declare class RandomNumberGenerator extends Reference {
+declare class RandomNumberGenerator extends Reference  {
 
   
 /**
@@ -40,9 +40,8 @@ declare class RandomNumberGenerator extends Reference {
  * **Note:** The default values of [member seed] and [member state] properties are pseudo-random, and changes when calling [method randomize]. The `0` value documented here is a placeholder, and not the actual default seed.
  *
 */
-  "new"(): RandomNumberGenerator;
-  static "new"(): RandomNumberGenerator;
-
+  new(): RandomNumberGenerator; 
+  static "new"(): RandomNumberGenerator 
 
 
 /**
@@ -102,14 +101,12 @@ randi_range(from: int, to: int): int;
 /** Setups a time-based seed to generator. */
 randomize(): void;
 
-  // connect<T extends SignalsOf<RandomNumberGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RandomNumberGeneratorSignals>>(signal: T, method: SignalFunction<RandomNumberGeneratorSignals[T]>): number;
+  connect<T extends SignalsOf<RandomNumberGenerator>>(signal: T, method: SignalFunction<RandomNumberGenerator[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RandomNumberGeneratorSignals extends ReferenceSignals {
-  
-}

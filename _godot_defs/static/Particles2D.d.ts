@@ -11,7 +11,7 @@
  * **Note:** Unlike [CPUParticles2D], [Particles2D] currently ignore the texture region defined in [AtlasTexture]s.
  *
 */
-declare class Particles2D extends Node2D {
+declare class Particles2D extends Node2D  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class Particles2D extends Node2D {
  * **Note:** Unlike [CPUParticles2D], [Particles2D] currently ignore the texture region defined in [AtlasTexture]s.
  *
 */
-  "new"(): Particles2D;
-  static "new"(): Particles2D;
-
+  new(): Particles2D; 
+  static "new"(): Particles2D 
 
 
 /**
@@ -100,8 +99,7 @@ capture_rect(): Rect2;
 /** Restarts all the existing particles. */
 restart(): void;
 
-  // connect<T extends SignalsOf<Particles2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Particles2DSignals>>(signal: T, method: SignalFunction<Particles2DSignals[T]>): number;
+  connect<T extends SignalsOf<Particles2D>>(signal: T, method: SignalFunction<Particles2D[T]>): number;
 
 
 
@@ -117,8 +115,7 @@ static DRAW_ORDER_INDEX: any;
 */
 static DRAW_ORDER_LIFETIME: any;
 
+
+
 }
 
-declare class Particles2DSignals extends Node2DSignals {
-  
-}

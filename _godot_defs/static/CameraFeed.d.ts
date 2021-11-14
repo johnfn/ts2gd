@@ -5,7 +5,7 @@
  * **Note:** Many cameras will return YCbCr images which are split into two textures and need to be combined in a shader. Godot does this automatically for you if you set the environment to show the camera image in the background.
  *
 */
-declare class CameraFeed extends Reference {
+declare class CameraFeed extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class CameraFeed extends Reference {
  * **Note:** Many cameras will return YCbCr images which are split into two textures and need to be combined in a shader. Godot does this automatically for you if you set the environment to show the camera image in the background.
  *
 */
-  "new"(): CameraFeed;
-  static "new"(): CameraFeed;
-
+  new(): CameraFeed; 
+  static "new"(): CameraFeed 
 
 
 /** If [code]true[/code], the feed is active. */
@@ -34,8 +33,7 @@ get_name(): string;
 /** Returns the position of camera on the device. */
 get_position(): int;
 
-  // connect<T extends SignalsOf<CameraFeed>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CameraFeedSignals>>(signal: T, method: SignalFunction<CameraFeedSignals[T]>): number;
+  connect<T extends SignalsOf<CameraFeed>>(signal: T, method: SignalFunction<CameraFeed[T]>): number;
 
 
 
@@ -81,8 +79,7 @@ static FEED_FRONT: any;
 */
 static FEED_BACK: any;
 
+
+
 }
 
-declare class CameraFeedSignals extends ReferenceSignals {
-  
-}

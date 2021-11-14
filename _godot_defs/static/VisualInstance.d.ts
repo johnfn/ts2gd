@@ -3,16 +3,15 @@
  * The [VisualInstance] is used to connect a resource to a visual representation. All visual 3D nodes inherit from the [VisualInstance]. In general, you should not access the [VisualInstance] properties directly as they are accessed and managed by the nodes that inherit from [VisualInstance]. [VisualInstance] is the node representation of the [VisualServer] instance.
  *
 */
-declare class VisualInstance extends CullInstance {
+declare class VisualInstance extends CullInstance  {
 
   
 /**
  * The [VisualInstance] is used to connect a resource to a visual representation. All visual 3D nodes inherit from the [VisualInstance]. In general, you should not access the [VisualInstance] properties directly as they are accessed and managed by the nodes that inherit from [VisualInstance]. [VisualInstance] is the node representation of the [VisualServer] instance.
  *
 */
-  "new"(): VisualInstance;
-  static "new"(): VisualInstance;
-
+  new(): VisualInstance; 
+  static "new"(): VisualInstance 
 
 
 /**
@@ -49,14 +48,12 @@ set_base(base: RID): void;
 /** Enables a particular layer in [member layers]. */
 set_layer_mask_bit(layer: int, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<VisualInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualInstanceSignals>>(signal: T, method: SignalFunction<VisualInstanceSignals[T]>): number;
+  connect<T extends SignalsOf<VisualInstance>>(signal: T, method: SignalFunction<VisualInstance[T]>): number;
+
+
 
 
 
 
 }
 
-declare class VisualInstanceSignals extends CullInstanceSignals {
-  
-}

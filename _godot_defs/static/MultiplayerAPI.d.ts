@@ -9,7 +9,7 @@
  * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
-declare class MultiplayerAPI extends Reference {
+declare class MultiplayerAPI extends Reference  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class MultiplayerAPI extends Reference {
  * **Note:** The high-level multiplayer API protocol is an implementation detail and isn't meant to be used by non-Godot servers. It may change without notice.
  *
 */
-  "new"(): MultiplayerAPI;
-  static "new"(): MultiplayerAPI;
-
+  new(): MultiplayerAPI; 
+  static "new"(): MultiplayerAPI 
 
 
 /**
@@ -83,8 +82,7 @@ poll(): void;
 /** Sends the given raw [code]bytes[/code] to a specific peer identified by [code]id[/code] (see [method NetworkedMultiplayerPeer.set_target_peer]). Default ID is [code]0[/code], i.e. broadcast to all peers. */
 send_bytes(bytes: PoolByteArray, id?: int, mode?: int): int;
 
-  // connect<T extends SignalsOf<MultiplayerAPI>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MultiplayerAPISignals>>(signal: T, method: SignalFunction<MultiplayerAPISignals[T]>): number;
+  connect<T extends SignalsOf<MultiplayerAPI>>(signal: T, method: SignalFunction<MultiplayerAPI[T]>): number;
 
 
 
@@ -142,43 +140,42 @@ static RPC_MODE_MASTERSYNC: any;
 */
 static RPC_MODE_PUPPETSYNC: any;
 
-}
 
-declare class MultiplayerAPISignals extends ReferenceSignals {
-  /**
+/**
  * Emitted when this MultiplayerAPI's [member network_peer] successfully connected to a server. Only emitted on clients.
  *
 */
-connected_to_server: Signal<() => void>
+$connected_to_server: Signal<() => void>
 
 /**
  * Emitted when this MultiplayerAPI's [member network_peer] fails to establish a connection to a server. Only emitted on clients.
  *
 */
-connection_failed: Signal<() => void>
+$connection_failed: Signal<() => void>
 
 /**
  * Emitted when this MultiplayerAPI's [member network_peer] connects with a new peer. ID is the peer ID of the new peer. Clients get notified when other clients connect to the same server. Upon connecting to a server, a client also receives this signal for the server (with ID being 1).
  *
 */
-network_peer_connected: Signal<(id: int) => void>
+$network_peer_connected: Signal<(id: int) => void>
 
 /**
  * Emitted when this MultiplayerAPI's [member network_peer] disconnects from a peer. Clients get notified when other clients disconnect from the same server.
  *
 */
-network_peer_disconnected: Signal<(id: int) => void>
+$network_peer_disconnected: Signal<(id: int) => void>
 
 /**
  * Emitted when this MultiplayerAPI's [member network_peer] receive a `packet` with custom data (see [method send_bytes]). ID is the peer ID of the peer that sent the packet.
  *
 */
-network_peer_packet: Signal<(id: int, packet: PoolByteArray) => void>
+$network_peer_packet: Signal<(id: int, packet: PoolByteArray) => void>
 
 /**
  * Emitted when this MultiplayerAPI's [member network_peer] disconnects from server. Only emitted on clients.
  *
 */
-server_disconnected: Signal<() => void>
+$server_disconnected: Signal<() => void>
 
 }
+

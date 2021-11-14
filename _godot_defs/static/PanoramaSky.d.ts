@@ -7,7 +7,7 @@
  * You can use [url=https://danilw.github.io/GLSL-howto/cubemap_to_panorama_js/cubemap_to_panorama.html]this tool[/url] to convert a cube map to an equirectangular sky map.
  *
 */
-declare class PanoramaSky extends Sky {
+declare class PanoramaSky extends Sky  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class PanoramaSky extends Sky {
  * You can use [url=https://danilw.github.io/GLSL-howto/cubemap_to_panorama_js/cubemap_to_panorama.html]this tool[/url] to convert a cube map to an equirectangular sky map.
  *
 */
-  "new"(): PanoramaSky;
-  static "new"(): PanoramaSky;
-
+  new(): PanoramaSky; 
+  static "new"(): PanoramaSky 
 
 
 /** [Texture] to be applied to the PanoramaSky. */
@@ -28,14 +27,12 @@ panorama: Texture;
 
 
 
-  // connect<T extends SignalsOf<PanoramaSky>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PanoramaSkySignals>>(signal: T, method: SignalFunction<PanoramaSkySignals[T]>): number;
+  connect<T extends SignalsOf<PanoramaSky>>(signal: T, method: SignalFunction<PanoramaSky[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PanoramaSkySignals extends SkySignals {
-  
-}

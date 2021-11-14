@@ -9,7 +9,7 @@
  * **Note:** In C#, references will not be freed instantly after they are no longer in use. Instead, garbage collection will run periodically and will free references that are no longer in use. This means that unused references will linger on for a while before being removed.
  *
 */
-declare class Reference extends Object {
+declare class Reference extends Object  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class Reference extends Object {
  * **Note:** In C#, references will not be freed instantly after they are no longer in use. Instead, garbage collection will run periodically and will free references that are no longer in use. This means that unused references will linger on for a while before being removed.
  *
 */
-  "new"(): Reference;
-  static "new"(): Reference;
-
+  new(): Reference; 
+  static "new"(): Reference 
 
 
 
@@ -52,14 +51,12 @@ reference(): boolean;
 */
 unreference(): boolean;
 
-  // connect<T extends SignalsOf<Reference>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ReferenceSignals>>(signal: T, method: SignalFunction<ReferenceSignals[T]>): number;
+  connect<T extends SignalsOf<Reference>>(signal: T, method: SignalFunction<Reference[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ReferenceSignals extends ObjectSignals {
-  
-}

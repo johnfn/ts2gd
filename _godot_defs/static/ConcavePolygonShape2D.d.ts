@@ -5,7 +5,7 @@
  * The main difference between a [ConvexPolygonShape2D] and a [ConcavePolygonShape2D] is that a concave polygon assumes it is concave and uses a more complex method of collision detection, and a convex one forces itself to be convex in order to speed up collision detection.
  *
 */
-declare class ConcavePolygonShape2D extends Shape2D {
+declare class ConcavePolygonShape2D extends Shape2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ConcavePolygonShape2D extends Shape2D {
  * The main difference between a [ConvexPolygonShape2D] and a [ConcavePolygonShape2D] is that a concave polygon assumes it is concave and uses a more complex method of collision detection, and a convex one forces itself to be convex in order to speed up collision detection.
  *
 */
-  "new"(): ConcavePolygonShape2D;
-  static "new"(): ConcavePolygonShape2D;
-
+  new(): ConcavePolygonShape2D; 
+  static "new"(): ConcavePolygonShape2D 
 
 
 /** The array of points that make up the [ConcavePolygonShape2D]'s line segments. */
@@ -24,14 +23,12 @@ segments: PoolVector2Array;
 
 
 
-  // connect<T extends SignalsOf<ConcavePolygonShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ConcavePolygonShape2DSignals>>(signal: T, method: SignalFunction<ConcavePolygonShape2DSignals[T]>): number;
+  connect<T extends SignalsOf<ConcavePolygonShape2D>>(signal: T, method: SignalFunction<ConcavePolygonShape2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ConcavePolygonShape2DSignals extends Shape2DSignals {
-  
-}

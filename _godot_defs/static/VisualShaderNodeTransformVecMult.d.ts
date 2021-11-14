@@ -3,16 +3,15 @@
  * A multiplication operation on a transform (4x4 matrix) and a vector, with support for different multiplication operators.
  *
 */
-declare class VisualShaderNodeTransformVecMult extends VisualShaderNode {
+declare class VisualShaderNodeTransformVecMult extends VisualShaderNode  {
 
   
 /**
  * A multiplication operation on a transform (4x4 matrix) and a vector, with support for different multiplication operators.
  *
 */
-  "new"(): VisualShaderNodeTransformVecMult;
-  static "new"(): VisualShaderNodeTransformVecMult;
-
+  new(): VisualShaderNodeTransformVecMult; 
+  static "new"(): VisualShaderNodeTransformVecMult 
 
 
 /** The multiplication type to be performed. See [enum Operator] for options. */
@@ -20,8 +19,7 @@ operator: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeTransformVecMult>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeTransformVecMultSignals>>(signal: T, method: SignalFunction<VisualShaderNodeTransformVecMultSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeTransformVecMult>>(signal: T, method: SignalFunction<VisualShaderNodeTransformVecMult[T]>): number;
 
 
 
@@ -49,8 +47,7 @@ static OP_3x3_AxB: any;
 */
 static OP_3x3_BxA: any;
 
+
+
 }
 
-declare class VisualShaderNodeTransformVecMultSignals extends VisualShaderNodeSignals {
-  
-}

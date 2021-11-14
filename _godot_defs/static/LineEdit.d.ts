@@ -41,7 +41,7 @@
  * - Command + Right arrow: Like the End key, move the cursor to the end of the line
  *
 */
-declare class LineEdit extends Control {
+declare class LineEdit extends Control  {
 
   
 /**
@@ -86,9 +86,8 @@ declare class LineEdit extends Control {
  * - Command + Right arrow: Like the End key, move the cursor to the end of the line
  *
 */
-  "new"(): LineEdit;
-  static "new"(): LineEdit;
-
+  new(): LineEdit; 
+  static "new"(): LineEdit 
 
 
 /** Text alignment as defined in the [enum Align] enum. */
@@ -186,7 +185,12 @@ delete_text(from_column: int, to_column: int): void;
 /** Clears the current selection. */
 deselect(): void;
 
-/** Returns the [PopupMenu] of this [LineEdit]. By default, this menu is displayed when right-clicking on the [LineEdit]. */
+/**
+ * Returns the [PopupMenu] of this [LineEdit]. By default, this menu is displayed when right-clicking on the [LineEdit].
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_menu(): PopupMenu;
 
 /** Returns the scroll offset due to [member caret_position], as a number of characters. */
@@ -213,8 +217,7 @@ select(from?: int, to?: int): void;
 /** Selects the whole [String]. */
 select_all(): void;
 
-  // connect<T extends SignalsOf<LineEdit>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<LineEditSignals>>(signal: T, method: SignalFunction<LineEditSignals[T]>): number;
+  connect<T extends SignalsOf<LineEdit>>(signal: T, method: SignalFunction<LineEdit[T]>): number;
 
 
 
@@ -292,25 +295,24 @@ static MENU_REDO: any;
 */
 static MENU_MAX: any;
 
-}
 
-declare class LineEditSignals extends ControlSignals {
-  /**
+/**
  * Emitted when appending text that overflows the [member max_length]. The appended text is truncated to fit [member max_length], and the part that couldn't fit is passed as the `rejected_substring` argument.
  *
 */
-text_change_rejected: Signal<(rejected_substring: string) => void>
+$text_change_rejected: Signal<(rejected_substring: string) => void>
 
 /**
  * Emitted when the text changes.
  *
 */
-text_changed: Signal<(new_text: string) => void>
+$text_changed: Signal<(new_text: string) => void>
 
 /**
  * Emitted when the user presses [constant KEY_ENTER] on the [LineEdit].
  *
 */
-text_entered: Signal<(new_text: string) => void>
+$text_entered: Signal<(new_text: string) => void>
 
 }
+

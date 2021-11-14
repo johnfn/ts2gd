@@ -5,7 +5,7 @@
  * It uses the many [ResourceFormatLoader] classes registered in the engine (either built-in or from a plugin) to load files into memory and convert them to a format that can be used by the engine.
  *
 */
-declare class ResourceLoaderClass extends Object {
+declare class ResourceLoaderClass extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ResourceLoaderClass extends Object {
  * It uses the many [ResourceFormatLoader] classes registered in the engine (either built-in or from a plugin) to load files into memory and convert them to a format that can be used by the engine.
  *
 */
-  "new"(): ResourceLoaderClass;
-  static "new"(): ResourceLoaderClass;
-
+  new(): ResourceLoaderClass; 
+  static "new"(): ResourceLoaderClass 
 
 
 
@@ -72,14 +71,12 @@ load_interactive(path: string, type_hint?: string): ResourceInteractiveLoader;
 /** Changes the behavior on missing sub-resources. The default behavior is to abort loading. */
 set_abort_on_missing_resources(abort: boolean): void;
 
-  // connect<T extends SignalsOf<ResourceLoaderClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceLoaderClassSignals>>(signal: T, method: SignalFunction<ResourceLoaderClassSignals[T]>): number;
+  connect<T extends SignalsOf<ResourceLoaderClass>>(signal: T, method: SignalFunction<ResourceLoaderClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ResourceLoaderClassSignals extends ObjectSignals {
-  
-}

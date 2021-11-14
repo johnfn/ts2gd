@@ -3,16 +3,15 @@
  * Accept a [Color] to the input port and transform it according to [member function].
  *
 */
-declare class VisualShaderNodeColorFunc extends VisualShaderNode {
+declare class VisualShaderNodeColorFunc extends VisualShaderNode  {
 
   
 /**
  * Accept a [Color] to the input port and transform it according to [member function].
  *
 */
-  "new"(): VisualShaderNodeColorFunc;
-  static "new"(): VisualShaderNodeColorFunc;
-
+  new(): VisualShaderNodeColorFunc; 
+  static "new"(): VisualShaderNodeColorFunc 
 
 
 /** A function to be applied to the input color. See [enum Function] for options. */
@@ -20,8 +19,7 @@ function: int;
 
 
 
-  // connect<T extends SignalsOf<VisualShaderNodeColorFunc>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeColorFuncSignals>>(signal: T, method: SignalFunction<VisualShaderNodeColorFuncSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNodeColorFunc>>(signal: T, method: SignalFunction<VisualShaderNodeColorFunc[T]>): number;
 
 
 
@@ -57,8 +55,7 @@ static FUNC_GRAYSCALE: any;
 */
 static FUNC_SEPIA: any;
 
+
+
 }
 
-declare class VisualShaderNodeColorFuncSignals extends VisualShaderNodeSignals {
-  
-}

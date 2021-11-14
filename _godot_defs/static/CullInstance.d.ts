@@ -11,7 +11,7 @@
  * Objects that are not `Static` or `Dynamic` can be freely created and deleted during the lifetime of the game level.
  *
 */
-declare class CullInstance extends Spatial {
+declare class CullInstance extends Spatial  {
 
   
 /**
@@ -26,9 +26,8 @@ declare class CullInstance extends Spatial {
  * Objects that are not `Static` or `Dynamic` can be freely created and deleted during the lifetime of the game level.
  *
 */
-  "new"(): CullInstance;
-  static "new"(): CullInstance;
-
+  new(): CullInstance; 
+  static "new"(): CullInstance 
 
 
 /**
@@ -54,8 +53,7 @@ portal_mode: int;
 
 
 
-  // connect<T extends SignalsOf<CullInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CullInstanceSignals>>(signal: T, method: SignalFunction<CullInstanceSignals[T]>): number;
+  connect<T extends SignalsOf<CullInstance>>(signal: T, method: SignalFunction<CullInstance[T]>): number;
 
 
 
@@ -93,8 +91,7 @@ static PORTAL_MODE_GLOBAL: any;
 */
 static PORTAL_MODE_IGNORE: any;
 
+
+
 }
 
-declare class CullInstanceSignals extends SpatialSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Provides direct access to a physics body in the [PhysicsServer], allowing safe changes to physics properties. This object is passed via the direct state callback of rigid/character bodies, and is intended for changing the direct state of that body. See [method RigidBody._integrate_forces].
  *
 */
-declare class PhysicsDirectBodyState extends Object {
+declare class PhysicsDirectBodyState extends Object  {
 
   
 /**
  * Provides direct access to a physics body in the [PhysicsServer], allowing safe changes to physics properties. This object is passed via the direct state callback of rigid/character bodies, and is intended for changing the direct state of that body. See [method RigidBody._integrate_forces].
  *
 */
-  "new"(): PhysicsDirectBodyState;
-  static "new"(): PhysicsDirectBodyState;
-
+  new(): PhysicsDirectBodyState; 
+  static "new"(): PhysicsDirectBodyState 
 
 
 /** The body's rotational velocity. */
@@ -122,14 +121,12 @@ get_velocity_at_local_position(local_position: Vector3): Vector3;
 /** Calls the built-in force integration code. */
 integrate_forces(): void;
 
-  // connect<T extends SignalsOf<PhysicsDirectBodyState>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PhysicsDirectBodyStateSignals>>(signal: T, method: SignalFunction<PhysicsDirectBodyStateSignals[T]>): number;
+  connect<T extends SignalsOf<PhysicsDirectBodyState>>(signal: T, method: SignalFunction<PhysicsDirectBodyState[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PhysicsDirectBodyStateSignals extends ObjectSignals {
-  
-}

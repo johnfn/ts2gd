@@ -5,7 +5,7 @@
  * By distorting the waveform the frequency content change, which will often make the sound "crunchy" or "abrasive". For games, it can simulate sound coming from some saturated device or speaker very efficiently.
  *
 */
-declare class AudioEffectDistortion extends AudioEffect {
+declare class AudioEffectDistortion extends AudioEffect  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioEffectDistortion extends AudioEffect {
  * By distorting the waveform the frequency content change, which will often make the sound "crunchy" or "abrasive". For games, it can simulate sound coming from some saturated device or speaker very efficiently.
  *
 */
-  "new"(): AudioEffectDistortion;
-  static "new"(): AudioEffectDistortion;
-
+  new(): AudioEffectDistortion; 
+  static "new"(): AudioEffectDistortion 
 
 
 /** Distortion power. Value can range from 0 to 1. */
@@ -36,8 +35,7 @@ pre_gain: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectDistortion>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectDistortionSignals>>(signal: T, method: SignalFunction<AudioEffectDistortionSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectDistortion>>(signal: T, method: SignalFunction<AudioEffectDistortion[T]>): number;
 
 
 
@@ -68,8 +66,7 @@ static MODE_OVERDRIVE: any;
 */
 static MODE_WAVESHAPE: any;
 
+
+
 }
 
-declare class AudioEffectDistortionSignals extends AudioEffectSignals {
-  
-}

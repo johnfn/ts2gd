@@ -9,7 +9,7 @@
  * **Note:** VisibilityEnabler2D will not affect nodes added after scene initialization.
  *
 */
-declare class VisibilityEnabler2D extends VisibilityNotifier2D {
+declare class VisibilityEnabler2D extends VisibilityNotifier2D  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class VisibilityEnabler2D extends VisibilityNotifier2D {
  * **Note:** VisibilityEnabler2D will not affect nodes added after scene initialization.
  *
 */
-  "new"(): VisibilityEnabler2D;
-  static "new"(): VisibilityEnabler2D;
-
+  new(): VisibilityEnabler2D; 
+  static "new"(): VisibilityEnabler2D 
 
 
 /** If [code]true[/code], [RigidBody2D] nodes will be paused. */
@@ -51,8 +50,7 @@ is_enabler_enabled(enabler: int): boolean;
 /** Sets active state of the enabler identified by given [enum Enabler] constant. */
 set_enabler(enabler: int, enabled: boolean): void;
 
-  // connect<T extends SignalsOf<VisibilityEnabler2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisibilityEnabler2DSignals>>(signal: T, method: SignalFunction<VisibilityEnabler2DSignals[T]>): number;
+  connect<T extends SignalsOf<VisibilityEnabler2D>>(signal: T, method: SignalFunction<VisibilityEnabler2D[T]>): number;
 
 
 
@@ -98,8 +96,7 @@ static ENABLER_PAUSE_ANIMATED_SPRITES: any;
 */
 static ENABLER_MAX: any;
 
+
+
 }
 
-declare class VisibilityEnabler2DSignals extends VisibilityNotifier2DSignals {
-  
-}

@@ -7,7 +7,7 @@
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-declare class Label extends Control {
+declare class Label extends Control  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class Label extends Control {
  * **Note:** Unicode characters after `0xffff` (such as most emoji) are **not** supported on Windows. They will display as unknown characters instead. This will be resolved in Godot 4.0.
  *
 */
-  "new"(): Label;
-  static "new"(): Label;
-
+  new(): Label; 
+  static "new"(): Label 
 
 
 /** Controls the text's horizontal align. Supports left, center, right, and fill, or justify. Set it to one of the [enum Align] constants. */
@@ -67,8 +66,7 @@ get_total_character_count(): int;
 /** Returns the number of lines shown. Useful if the [Label]'s height cannot currently display all lines. */
 get_visible_line_count(): int;
 
-  // connect<T extends SignalsOf<Label>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<LabelSignals>>(signal: T, method: SignalFunction<LabelSignals[T]>): number;
+  connect<T extends SignalsOf<Label>>(signal: T, method: SignalFunction<Label[T]>): number;
 
 
 
@@ -120,8 +118,7 @@ static VALIGN_BOTTOM: any;
 */
 static VALIGN_FILL: any;
 
+
+
 }
 
-declare class LabelSignals extends ControlSignals {
-  
-}

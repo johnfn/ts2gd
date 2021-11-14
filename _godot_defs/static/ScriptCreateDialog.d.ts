@@ -12,7 +12,7 @@
  * 
  *
 */
-declare class ScriptCreateDialog extends ConfirmationDialog {
+declare class ScriptCreateDialog extends ConfirmationDialog  {
 
   
 /**
@@ -28,9 +28,8 @@ declare class ScriptCreateDialog extends ConfirmationDialog {
  * 
  *
 */
-  "new"(): ScriptCreateDialog;
-  static "new"(): ScriptCreateDialog;
-
+  new(): ScriptCreateDialog; 
+  static "new"(): ScriptCreateDialog 
 
 
 
@@ -41,19 +40,17 @@ declare class ScriptCreateDialog extends ConfirmationDialog {
 /** Prefills required fields to configure the ScriptCreateDialog for use. */
 config(inherits: string, path: string, built_in_enabled?: boolean, load_enabled?: boolean): void;
 
-  // connect<T extends SignalsOf<ScriptCreateDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ScriptCreateDialogSignals>>(signal: T, method: SignalFunction<ScriptCreateDialogSignals[T]>): number;
+  connect<T extends SignalsOf<ScriptCreateDialog>>(signal: T, method: SignalFunction<ScriptCreateDialog[T]>): number;
 
 
 
 
-}
 
-declare class ScriptCreateDialogSignals extends ConfirmationDialogSignals {
-  /**
+/**
  * Emitted when the user clicks the OK button.
  *
 */
-script_created: Signal<(script: Script) => void>
+$script_created: Signal<(script: Script) => void>
 
 }
+

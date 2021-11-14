@@ -3,16 +3,15 @@
  * Helper class for parsing JSON data. For usage example and other important hints, see [JSONParseResult].
  *
 */
-declare class JSONClass extends Object {
+declare class JSONClass extends Object  {
 
   
 /**
  * Helper class for parsing JSON data. For usage example and other important hints, see [JSONParseResult].
  *
 */
-  "new"(): JSONClass;
-  static "new"(): JSONClass;
-
+  new(): JSONClass; 
+  static "new"(): JSONClass 
 
 
 
@@ -21,14 +20,12 @@ parse(json: string): JSONParseResult;
 
 
 
-  // connect<T extends SignalsOf<JSONClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<JSONClassSignals>>(signal: T, method: SignalFunction<JSONClassSignals[T]>): number;
+  connect<T extends SignalsOf<JSONClass>>(signal: T, method: SignalFunction<JSONClass[T]>): number;
+
+
 
 
 
 
 }
 
-declare class JSONClassSignals extends ObjectSignals {
-  
-}

@@ -3,16 +3,15 @@
  * Direct access object to a space in the [Physics2DServer]. It's used mainly to do queries against objects and areas residing in a given space.
  *
 */
-declare class Physics2DDirectSpaceState extends Object {
+declare class Physics2DDirectSpaceState extends Object  {
 
   
 /**
  * Direct access object to a space in the [Physics2DServer]. It's used mainly to do queries against objects and areas residing in a given space.
  *
 */
-  "new"(): Physics2DDirectSpaceState;
-  static "new"(): Physics2DDirectSpaceState;
-
+  new(): Physics2DDirectSpaceState; 
+  static "new"(): Physics2DDirectSpaceState 
 
 
 
@@ -118,14 +117,12 @@ intersect_ray(from: Vector2, to: Vector2, exclude?: any[], collision_layer?: int
 */
 intersect_shape(shape: Physics2DShapeQueryParameters, max_results?: int): any[];
 
-  // connect<T extends SignalsOf<Physics2DDirectSpaceState>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Physics2DDirectSpaceStateSignals>>(signal: T, method: SignalFunction<Physics2DDirectSpaceStateSignals[T]>): number;
+  connect<T extends SignalsOf<Physics2DDirectSpaceState>>(signal: T, method: SignalFunction<Physics2DDirectSpaceState[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Physics2DDirectSpaceStateSignals extends ObjectSignals {
-  
-}

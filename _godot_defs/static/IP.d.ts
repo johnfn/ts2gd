@@ -3,16 +3,15 @@
  * IP contains support functions for the Internet Protocol (IP). TCP/IP support is in different classes (see [StreamPeerTCP] and [TCP_Server]). IP provides DNS hostname resolution support, both blocking and threaded.
  *
 */
-declare class IPClass extends Object {
+declare class IPClass extends Object  {
 
   
 /**
  * IP contains support functions for the Internet Protocol (IP). TCP/IP support is in different classes (see [StreamPeerTCP] and [TCP_Server]). IP provides DNS hostname resolution support, both blocking and threaded.
  *
 */
-  "new"(): IPClass;
-  static "new"(): IPClass;
-
+  new(): IPClass; 
+  static "new"(): IPClass 
 
 
 
@@ -62,8 +61,7 @@ resolve_hostname_addresses(host: string, ip_type?: int): any[];
 /** Creates a queue item to resolve a hostname to an IPv4 or IPv6 address depending on the [enum Type] constant given as [code]ip_type[/code]. Returns the queue ID if successful, or [constant RESOLVER_INVALID_ID] on error. */
 resolve_hostname_queue_item(host: string, ip_type?: int): int;
 
-  // connect<T extends SignalsOf<IPClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<IPClassSignals>>(signal: T, method: SignalFunction<IPClassSignals[T]>): number;
+  connect<T extends SignalsOf<IPClass>>(signal: T, method: SignalFunction<IPClass[T]>): number;
 
 
 
@@ -127,8 +125,7 @@ static TYPE_IPV6: any;
 */
 static TYPE_ANY: any;
 
+
+
 }
 
-declare class IPClassSignals extends ObjectSignals {
-  
-}

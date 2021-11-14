@@ -3,16 +3,15 @@
  * [StyleBox] that displays a single line of a given color and thickness. It can be used to draw things like separators.
  *
 */
-declare class StyleBoxLine extends StyleBox {
+declare class StyleBoxLine extends StyleBox  {
 
   
 /**
  * [StyleBox] that displays a single line of a given color and thickness. It can be used to draw things like separators.
  *
 */
-  "new"(): StyleBoxLine;
-  static "new"(): StyleBoxLine;
-
+  new(): StyleBoxLine; 
+  static "new"(): StyleBoxLine 
 
 
 /** The line's color. */
@@ -32,14 +31,12 @@ vertical: boolean;
 
 
 
-  // connect<T extends SignalsOf<StyleBoxLine>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StyleBoxLineSignals>>(signal: T, method: SignalFunction<StyleBoxLineSignals[T]>): number;
+  connect<T extends SignalsOf<StyleBoxLine>>(signal: T, method: SignalFunction<StyleBoxLine[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StyleBoxLineSignals extends StyleBoxSignals {
-  
-}

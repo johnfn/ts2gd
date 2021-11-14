@@ -3,16 +3,15 @@
  * A node that displays a 2D texture in a 3D environment. The texture displayed can be a region from a larger atlas texture, or a frame from a sprite sheet animation.
  *
 */
-declare class Sprite3D extends SpriteBase3D {
+declare class Sprite3D extends SpriteBase3D  {
 
   
 /**
  * A node that displays a 2D texture in a 3D environment. The texture displayed can be a region from a larger atlas texture, or a frame from a sprite sheet animation.
  *
 */
-  "new"(): Sprite3D;
-  static "new"(): Sprite3D;
-
+  new(): Sprite3D; 
+  static "new"(): Sprite3D 
 
 
 /** Current frame to display from sprite sheet. [member hframes] or [member vframes] must be greater than 1. */
@@ -38,19 +37,17 @@ vframes: int;
 
 
 
-  // connect<T extends SignalsOf<Sprite3D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Sprite3DSignals>>(signal: T, method: SignalFunction<Sprite3DSignals[T]>): number;
+  connect<T extends SignalsOf<Sprite3D>>(signal: T, method: SignalFunction<Sprite3D[T]>): number;
 
 
 
 
-}
 
-declare class Sprite3DSignals extends SpriteBase3DSignals {
-  /**
+/**
  * Emitted when the [member frame] changes.
  *
 */
-frame_changed: Signal<() => void>
+$frame_changed: Signal<() => void>
 
 }
+

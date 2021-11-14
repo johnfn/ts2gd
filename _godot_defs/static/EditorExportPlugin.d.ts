@@ -3,16 +3,15 @@
  * Editor export plugins are automatically activated whenever the user exports the project. Their most common use is to determine what files are being included in the exported project. For each plugin, [method _export_begin] is called at the beginning of the export process and then [method _export_file] is called for each exported file.
  *
 */
-declare class EditorExportPlugin extends Reference {
+declare class EditorExportPlugin extends Reference  {
 
   
 /**
  * Editor export plugins are automatically activated whenever the user exports the project. Their most common use is to determine what files are being included in the exported project. For each plugin, [method _export_begin] is called at the beginning of the export process and then [method _export_file] is called for each exported file.
  *
 */
-  "new"(): EditorExportPlugin;
-  static "new"(): EditorExportPlugin;
-
+  new(): EditorExportPlugin; 
+  static "new"(): EditorExportPlugin 
 
 
 
@@ -67,14 +66,12 @@ add_shared_object(path: string, tags: PoolStringArray): void;
 /** To be called inside [method _export_file]. Skips the current file, so it's not included in the export. */
 skip(): void;
 
-  // connect<T extends SignalsOf<EditorExportPlugin>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorExportPluginSignals>>(signal: T, method: SignalFunction<EditorExportPluginSignals[T]>): number;
+  connect<T extends SignalsOf<EditorExportPlugin>>(signal: T, method: SignalFunction<EditorExportPlugin[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorExportPluginSignals extends ReferenceSignals {
-  
-}

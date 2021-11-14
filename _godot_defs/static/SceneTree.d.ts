@@ -7,7 +7,7 @@
  * [SceneTree] is the default [MainLoop] implementation used by scenes, and is thus in charge of the game loop.
  *
 */
-declare class SceneTree extends MainLoop {
+declare class SceneTree extends MainLoop  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class SceneTree extends MainLoop {
  * [SceneTree] is the default [MainLoop] implementation used by scenes, and is thus in charge of the game loop.
  *
 */
-  "new"(): SceneTree;
-  static "new"(): SceneTree;
-
+  new(): SceneTree; 
+  static "new"(): SceneTree 
 
 
 /** The current scene. */
@@ -97,6 +96,14 @@ call_group(...args: any[]): any;
 */
 call_group_flags(...args: any[]): any;
 
+/**
+ * Changes the running scene to the one at the given `path`, after loading it into a [PackedScene] and creating a new instance.
+ *
+ * Returns [constant OK] on success, [constant ERR_CANT_OPEN] if the `path` cannot be loaded into a [PackedScene], or [constant ERR_CANT_CREATE] if that scene cannot be instantiated.
+ *
+ * **Note:** The scene change is deferred, which means that the new scene node is added on the next idle frame. You won't be able to access it immediately after the [method change_scene] call.
+ *
+*/
 change_scene(path: SceneName): int
 
 /**
@@ -140,12 +147,14 @@ get_network_unique_id(): int;
 /** Returns the number of nodes in this [SceneTree]. */
 get_node_count(): int;
 
+/** Returns a list of all nodes assigned to the given group. */
 get_nodes_in_group<T extends keyof Groups>(group: T): Groups[T][]
 
 /** Returns the sender's peer ID for the most recently received RPC call. */
 get_rpc_sender_id(): int;
 
-has_group<T extends keyof Groups>(name: T): bool
+/** Returns [code]true[/code] if the given group exists. */
+has_group<T extends keyof Groups>(name: T): boolean
 
 /** Returns [code]true[/code] if there is a [member network_peer] set. */
 has_network_peer(): boolean;
@@ -209,8 +218,7 @@ set_quit_on_go_back(enabled: boolean): void;
 /** Configures screen stretching to the given [enum StretchMode], [enum StretchAspect], minimum size and [code]scale[/code]. */
 set_screen_stretch(mode: int, aspect: int, minsize: Vector2, scale?: float): void;
 
-  // connect<T extends SignalsOf<SceneTree>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SceneTreeSignals>>(signal: T, method: SignalFunction<SceneTreeSignals[T]>): number;
+  connect<T extends SignalsOf<SceneTree>>(signal: T, method: SignalFunction<SceneTree[T]>): number;
 
 
 
@@ -286,97 +294,96 @@ static STRETCH_ASPECT_KEEP_HEIGHT: any;
 */
 static STRETCH_ASPECT_EXPAND: any;
 
-}
 
-declare class SceneTreeSignals extends MainLoopSignals {
-  /**
+/**
  * Emitted whenever this [SceneTree]'s [member network_peer] successfully connected to a server. Only emitted on clients.
  *
 */
-connected_to_server: Signal<() => void>
+$connected_to_server: Signal<() => void>
 
 /**
  * Emitted whenever this [SceneTree]'s [member network_peer] fails to establish a connection to a server. Only emitted on clients.
  *
 */
-connection_failed: Signal<() => void>
+$connection_failed: Signal<() => void>
 
 /**
  * Emitted when files are dragged from the OS file manager and dropped in the game window. The arguments are a list of file paths and the identifier of the screen where the drag originated.
  *
 */
-files_dropped: Signal<(files: PoolStringArray, screen: int) => void>
+$files_dropped: Signal<(files: PoolStringArray, screen: int) => void>
 
 /**
  * Emitted whenever global menu item is clicked.
  *
 */
-global_menu_action: Signal<(id: any, meta: any) => void>
+$global_menu_action: Signal<(id: any, meta: any) => void>
 
 /**
  * Emitted immediately before [method Node._process] is called on every node in the [SceneTree].
  *
 */
-idle_frame: Signal<() => void>
+$idle_frame: Signal<() => void>
 
 /**
  * Emitted whenever this [SceneTree]'s [member network_peer] connects with a new peer. ID is the peer ID of the new peer. Clients get notified when other clients connect to the same server. Upon connecting to a server, a client also receives this signal for the server (with ID being 1).
  *
 */
-network_peer_connected: Signal<(id: int) => void>
+$network_peer_connected: Signal<(id: int) => void>
 
 /**
  * Emitted whenever this [SceneTree]'s [member network_peer] disconnects from a peer. Clients get notified when other clients disconnect from the same server.
  *
 */
-network_peer_disconnected: Signal<(id: int) => void>
+$network_peer_disconnected: Signal<(id: int) => void>
 
 /**
  * Emitted whenever a node is added to the [SceneTree].
  *
 */
-node_added: Signal<(node: Node) => void>
+$node_added: Signal<(node: Node) => void>
 
 /**
  * Emitted when a node's configuration changed. Only emitted in `tool` mode.
  *
 */
-node_configuration_warning_changed: Signal<(node: Node) => void>
+$node_configuration_warning_changed: Signal<(node: Node) => void>
 
 /**
  * Emitted whenever a node is removed from the [SceneTree].
  *
 */
-node_removed: Signal<(node: Node) => void>
+$node_removed: Signal<(node: Node) => void>
 
 /**
  * Emitted whenever a node is renamed.
  *
 */
-node_renamed: Signal<(node: Node) => void>
+$node_renamed: Signal<(node: Node) => void>
 
 /**
  * Emitted immediately before [method Node._physics_process] is called on every node in the [SceneTree].
  *
 */
-physics_frame: Signal<() => void>
+$physics_frame: Signal<() => void>
 
 /**
  * Emitted when the screen resolution (fullscreen) or window size (windowed) changes.
  *
 */
-screen_resized: Signal<() => void>
+$screen_resized: Signal<() => void>
 
 /**
  * Emitted whenever this [SceneTree]'s [member network_peer] disconnected from server. Only emitted on clients.
  *
 */
-server_disconnected: Signal<() => void>
+$server_disconnected: Signal<() => void>
 
 /**
  * Emitted whenever the [SceneTree] hierarchy changed (children being moved or renamed, etc.).
  *
 */
-tree_changed: Signal<() => void>
+$tree_changed: Signal<() => void>
 
 }
+

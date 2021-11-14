@@ -3,16 +3,15 @@
  * This node may contain a sub-tree of any other blend type nodes, such as mix, blend2, blend3, one shot, etc. This is one of the most commonly used roots.
  *
 */
-declare class AnimationNodeBlendTree extends AnimationRootNode {
+declare class AnimationNodeBlendTree extends AnimationRootNode  {
 
   
 /**
  * This node may contain a sub-tree of any other blend type nodes, such as mix, blend2, blend3, one shot, etc. This is one of the most commonly used roots.
  *
 */
-  "new"(): AnimationNodeBlendTree;
-  static "new"(): AnimationNodeBlendTree;
-
+  new(): AnimationNodeBlendTree; 
+  static "new"(): AnimationNodeBlendTree 
 
 
 /** The global offset of all sub-nodes. */
@@ -28,7 +27,11 @@ connect_node(input_node: string, input_index: int, output_node: string): void;
 disconnect_node(input_node: string, input_index: int): void;
 
 /** Returns the sub-node with the specified [code]name[/code]. */
-get_node(name: string): AnimationNode;
+get_node(path: NodePathType): Node;
+
+/** Returns the sub-node with the specified [code]name[/code]. */
+get_node_unsafe<T extends Node>(path: NodePathType): T;
+
 
 /** Returns the position of the sub-node with the specified [code]name[/code]. */
 get_node_position(name: string): Vector2;
@@ -45,8 +48,7 @@ rename_node(name: string, new_name: string): void;
 /** Modifies the position of a sub-node. */
 set_node_position(name: string, position: Vector2): void;
 
-  // connect<T extends SignalsOf<AnimationNodeBlendTree>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeBlendTreeSignals>>(signal: T, method: SignalFunction<AnimationNodeBlendTreeSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeBlendTree>>(signal: T, method: SignalFunction<AnimationNodeBlendTree[T]>): number;
 
 
 
@@ -86,8 +88,7 @@ static CONNECTION_ERROR_SAME_NODE: any;
 */
 static CONNECTION_ERROR_CONNECTION_EXISTS: any;
 
+
+
 }
 
-declare class AnimationNodeBlendTreeSignals extends AnimationRootNodeSignals {
-  
-}

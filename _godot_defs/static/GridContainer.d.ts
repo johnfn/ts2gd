@@ -7,7 +7,7 @@
  * **Note:** GridContainer only works with child nodes inheriting from Control. It won't rearrange child nodes inheriting from Node2D.
  *
 */
-declare class GridContainer extends Container {
+declare class GridContainer extends Container  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class GridContainer extends Container {
  * **Note:** GridContainer only works with child nodes inheriting from Control. It won't rearrange child nodes inheriting from Node2D.
  *
 */
-  "new"(): GridContainer;
-  static "new"(): GridContainer;
-
+  new(): GridContainer; 
+  static "new"(): GridContainer 
 
 
 /** The number of columns in the [GridContainer]. If modified, [GridContainer] reorders its Control-derived children to accommodate the new layout. */
@@ -29,14 +28,12 @@ columns: int;
 
 
 
-  // connect<T extends SignalsOf<GridContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GridContainerSignals>>(signal: T, method: SignalFunction<GridContainerSignals[T]>): number;
+  connect<T extends SignalsOf<GridContainer>>(signal: T, method: SignalFunction<GridContainer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class GridContainerSignals extends ContainerSignals {
-  
-}

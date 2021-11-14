@@ -5,7 +5,7 @@
  * **Note:** When using a large textured [PlaneMesh] (e.g. as a floor), you may stumble upon UV jittering issues depending on the camera angle. To solve this, increase [member subdivide_depth] and [member subdivide_width] until you no longer notice UV jittering.
  *
 */
-declare class PlaneMesh extends PrimitiveMesh {
+declare class PlaneMesh extends PrimitiveMesh  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class PlaneMesh extends PrimitiveMesh {
  * **Note:** When using a large textured [PlaneMesh] (e.g. as a floor), you may stumble upon UV jittering issues depending on the camera angle. To solve this, increase [member subdivide_depth] and [member subdivide_width] until you no longer notice UV jittering.
  *
 */
-  "new"(): PlaneMesh;
-  static "new"(): PlaneMesh;
-
+  new(): PlaneMesh; 
+  static "new"(): PlaneMesh 
 
 
 /** Offset from the origin of the generated plane. Useful for particles. */
@@ -33,14 +32,12 @@ subdivide_width: int;
 
 
 
-  // connect<T extends SignalsOf<PlaneMesh>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PlaneMeshSignals>>(signal: T, method: SignalFunction<PlaneMeshSignals[T]>): number;
+  connect<T extends SignalsOf<PlaneMesh>>(signal: T, method: SignalFunction<PlaneMesh[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PlaneMeshSignals extends PrimitiveMeshSignals {
-  
-}

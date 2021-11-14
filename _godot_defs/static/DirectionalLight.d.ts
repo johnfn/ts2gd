@@ -3,16 +3,15 @@
  * A directional light is a type of [Light] node that models an infinite number of parallel rays covering the entire scene. It is used for lights with strong intensity that are located far away from the scene to model sunlight or moonlight. The worldspace location of the DirectionalLight transform (origin) is ignored. Only the basis is used to determine light direction.
  *
 */
-declare class DirectionalLight extends Light {
+declare class DirectionalLight extends Light  {
 
   
 /**
  * A directional light is a type of [Light] node that models an infinite number of parallel rays covering the entire scene. It is used for lights with strong intensity that are located far away from the scene to model sunlight or moonlight. The worldspace location of the DirectionalLight transform (origin) is ignored. Only the basis is used to determine light direction.
  *
 */
-  "new"(): DirectionalLight;
-  static "new"(): DirectionalLight;
-
+  new(): DirectionalLight; 
+  static "new"(): DirectionalLight 
 
 
 /** Amount of extra bias for shadow splits that are far away. If self-shadowing occurs only on the splits far away, increasing this value can fix them. */
@@ -45,8 +44,7 @@ directional_shadow_split_3: float;
 
 
 
-  // connect<T extends SignalsOf<DirectionalLight>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<DirectionalLightSignals>>(signal: T, method: SignalFunction<DirectionalLightSignals[T]>): number;
+  connect<T extends SignalsOf<DirectionalLight>>(signal: T, method: SignalFunction<DirectionalLight[T]>): number;
 
 
 
@@ -80,8 +78,7 @@ static SHADOW_DEPTH_RANGE_STABLE: any;
 */
 static SHADOW_DEPTH_RANGE_OPTIMIZED: any;
 
+
+
 }
 
-declare class DirectionalLightSignals extends LightSignals {
-  
-}

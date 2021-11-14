@@ -5,7 +5,7 @@
  * It uses the many [ResourceFormatSaver] classes registered in the engine (either built-in or from a plugin) to save engine-specific resource data to text-based (e.g. `.tres` or `.tscn`) or binary files (e.g. `.res` or `.scn`).
  *
 */
-declare class ResourceSaverClass extends Object {
+declare class ResourceSaverClass extends Object  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ResourceSaverClass extends Object {
  * It uses the many [ResourceFormatSaver] classes registered in the engine (either built-in or from a plugin) to save engine-specific resource data to text-based (e.g. `.tres` or `.tscn`) or binary files (e.g. `.res` or `.scn`).
  *
 */
-  "new"(): ResourceSaverClass;
-  static "new"(): ResourceSaverClass;
-
+  new(): ResourceSaverClass; 
+  static "new"(): ResourceSaverClass 
 
 
 
@@ -33,8 +32,7 @@ get_recognized_extensions(type: Resource): PoolStringArray;
 */
 save(path: string, resource: Resource, flags?: int): int;
 
-  // connect<T extends SignalsOf<ResourceSaverClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourceSaverClassSignals>>(signal: T, method: SignalFunction<ResourceSaverClassSignals[T]>): number;
+  connect<T extends SignalsOf<ResourceSaverClass>>(signal: T, method: SignalFunction<ResourceSaverClass[T]>): number;
 
 
 
@@ -80,8 +78,7 @@ static FLAG_COMPRESS: any;
 */
 static FLAG_REPLACE_SUBRESOURCE_PATHS: any;
 
+
+
 }
 
-declare class ResourceSaverClassSignals extends ObjectSignals {
-  
-}

@@ -7,7 +7,7 @@
  * **Note:** Unlike [Particles], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
  *
 */
-declare class CPUParticles extends GeometryInstance {
+declare class CPUParticles extends GeometryInstance  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class CPUParticles extends GeometryInstance {
  * **Note:** Unlike [Particles], the visibility rect is generated on-the-fly and doesn't need to be configured by the user.
  *
 */
-  "new"(): CPUParticles;
-  static "new"(): CPUParticles;
-
+  new(): CPUParticles; 
+  static "new"(): CPUParticles 
 
 
 /**
@@ -267,8 +266,7 @@ set_param_randomness(param: int, randomness: float): void;
 /** Enables or disables the given flag (see [enum Flags] for options). */
 set_particle_flag(flag: int, enable: boolean): void;
 
-  // connect<T extends SignalsOf<CPUParticles>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CPUParticlesSignals>>(signal: T, method: SignalFunction<CPUParticlesSignals[T]>): number;
+  connect<T extends SignalsOf<CPUParticles>>(signal: T, method: SignalFunction<CPUParticles[T]>): number;
 
 
 
@@ -434,8 +432,7 @@ static EMISSION_SHAPE_RING: any;
 */
 static EMISSION_SHAPE_MAX: any;
 
+
+
 }
 
-declare class CPUParticlesSignals extends GeometryInstanceSignals {
-  
-}

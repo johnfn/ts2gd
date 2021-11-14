@@ -3,16 +3,15 @@
  * This class allows you to define a custom shader program that can be used by a [ShaderMaterial]. Shaders allow you to write your own custom behavior for rendering objects or updating particle information. For a detailed explanation and usage, please see the tutorials linked below.
  *
 */
-declare class Shader extends Resource {
+declare class Shader extends Resource  {
 
   
 /**
  * This class allows you to define a custom shader program that can be used by a [ShaderMaterial]. Shaders allow you to write your own custom behavior for rendering objects or updating particle information. For a detailed explanation and usage, please see the tutorials linked below.
  *
 */
-  "new"(): Shader;
-  static "new"(): Shader;
-
+  new(): Shader; 
+  static "new"(): Shader 
 
 
 /** Returns the shader's code as the user has written it, not the full generated code used internally. */
@@ -53,8 +52,7 @@ has_param(name: string): boolean;
 */
 set_default_texture_param(param: string, texture: Texture): void;
 
-  // connect<T extends SignalsOf<Shader>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ShaderSignals>>(signal: T, method: SignalFunction<ShaderSignals[T]>): number;
+  connect<T extends SignalsOf<Shader>>(signal: T, method: SignalFunction<Shader[T]>): number;
 
 
 
@@ -76,8 +74,7 @@ static MODE_CANVAS_ITEM: any;
 */
 static MODE_PARTICLES: any;
 
+
+
 }
 
-declare class ShaderSignals extends ResourceSignals {
-  
-}

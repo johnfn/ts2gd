@@ -3,16 +3,15 @@
  * Simple texture that uses a mesh to draw itself. It's limited because flags can't be changed and region drawing is not supported.
  *
 */
-declare class MeshTexture extends Texture {
+declare class MeshTexture extends Texture  {
 
   
 /**
  * Simple texture that uses a mesh to draw itself. It's limited because flags can't be changed and region drawing is not supported.
  *
 */
-  "new"(): MeshTexture;
-  static "new"(): MeshTexture;
-
+  new(): MeshTexture; 
+  static "new"(): MeshTexture 
 
 
 /** Sets the base texture that the Mesh will use to draw. */
@@ -27,14 +26,12 @@ mesh: Mesh;
 
 
 
-  // connect<T extends SignalsOf<MeshTexture>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshTextureSignals>>(signal: T, method: SignalFunction<MeshTextureSignals[T]>): number;
+  connect<T extends SignalsOf<MeshTexture>>(signal: T, method: SignalFunction<MeshTexture[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MeshTextureSignals extends TextureSignals {
-  
-}

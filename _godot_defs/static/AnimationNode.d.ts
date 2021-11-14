@@ -5,7 +5,7 @@
  * nherit this when creating nodes mainly for use in [AnimationNodeBlendTree], otherwise [AnimationRootNode] should be used instead.
  *
 */
-declare class AnimationNode extends Resource {
+declare class AnimationNode extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AnimationNode extends Resource {
  * nherit this when creating nodes mainly for use in [AnimationNodeBlendTree], otherwise [AnimationRootNode] should be used instead.
  *
 */
-  "new"(): AnimationNode;
-  static "new"(): AnimationNode;
-
+  new(): AnimationNode; 
+  static "new"(): AnimationNode 
 
 
 /** If [code]true[/code], filtering is enabled. */
@@ -83,8 +82,7 @@ set_filter_path(path: NodePathType, enable: boolean): void;
 /** Sets a custom parameter. These are used as local storage, because resources can be reused across the tree or scenes. */
 set_parameter(name: string, value: any): void;
 
-  // connect<T extends SignalsOf<AnimationNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeSignals>>(signal: T, method: SignalFunction<AnimationNodeSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNode>>(signal: T, method: SignalFunction<AnimationNode[T]>): number;
 
 
 
@@ -112,19 +110,18 @@ static FILTER_STOP: any;
 */
 static FILTER_BLEND: any;
 
-}
 
-declare class AnimationNodeSignals extends ResourceSignals {
-  /**
+/**
  * Called when the node was removed from the graph.
  *
 */
-removed_from_graph: Signal<() => void>
+$removed_from_graph: Signal<() => void>
 
 /**
  * Emitted by nodes that inherit from this class and that have an internal tree when one of their nodes changes. The nodes that emit this signal are [AnimationNodeBlendSpace1D], [AnimationNodeBlendSpace2D], [AnimationNodeStateMachine], and [AnimationNodeBlendTree].
  *
 */
-tree_changed: Signal<() => void>
+$tree_changed: Signal<() => void>
 
 }
+

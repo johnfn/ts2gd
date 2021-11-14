@@ -18,7 +18,7 @@
  * Set the integer uniform "index" to show a particular part of the texture as defined by the Horizontal and Vertical Slices in the importer.
  *
 */
-declare class TextureArray extends TextureLayered {
+declare class TextureArray extends TextureLayered  {
 
   
 /**
@@ -40,23 +40,20 @@ declare class TextureArray extends TextureLayered {
  * Set the integer uniform "index" to show a particular part of the texture as defined by the Horizontal and Vertical Slices in the importer.
  *
 */
-  "new"(): TextureArray;
-  static "new"(): TextureArray;
-
+  new(): TextureArray; 
+  static "new"(): TextureArray 
 
 
 
 /** Creates the TextureArray with specified [code]width[/code], [code]height[/code], and [code]depth[/code]. See [enum Image.Format] for [code]format[/code] options. See [enum TextureLayered.Flags] enumerator for [code]flags[/code] options. */
 create(width: int, height: int, depth: int, format: int, flags?: int): void;
 
-  // connect<T extends SignalsOf<TextureArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureArraySignals>>(signal: T, method: SignalFunction<TextureArraySignals[T]>): number;
+  connect<T extends SignalsOf<TextureArray>>(signal: T, method: SignalFunction<TextureArray[T]>): number;
+
+
 
 
 
 
 }
 
-declare class TextureArraySignals extends TextureLayeredSignals {
-  
-}

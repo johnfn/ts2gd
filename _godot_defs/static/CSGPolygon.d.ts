@@ -3,16 +3,15 @@
  * An array of 2D points is extruded to quickly and easily create a variety of 3D meshes.
  *
 */
-declare class CSGPolygon extends CSGPrimitive {
+declare class CSGPolygon extends CSGPrimitive  {
 
   
 /**
  * An array of 2D points is extruded to quickly and easily create a variety of 3D meshes.
  *
 */
-  "new"(): CSGPolygon;
-  static "new"(): CSGPolygon;
-
+  new(): CSGPolygon; 
+  static "new"(): CSGPolygon 
 
 
 /** When [member mode] is [constant MODE_DEPTH], the depth of the extrusion. */
@@ -65,8 +64,7 @@ spin_sides: int;
 
 
 
-  // connect<T extends SignalsOf<CSGPolygon>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CSGPolygonSignals>>(signal: T, method: SignalFunction<CSGPolygonSignals[T]>): number;
+  connect<T extends SignalsOf<CSGPolygon>>(signal: T, method: SignalFunction<CSGPolygon[T]>): number;
 
 
 
@@ -122,8 +120,7 @@ static PATH_INTERVAL_DISTANCE: any;
 */
 static PATH_INTERVAL_SUBDIVIDE: any;
 
+
+
 }
 
-declare class CSGPolygonSignals extends CSGPrimitiveSignals {
-  
-}

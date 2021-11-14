@@ -13,7 +13,7 @@
  * - Accentuates transients by using a wider attack, making effects sound more punchy.
  *
 */
-declare class AudioEffectCompressor extends AudioEffect {
+declare class AudioEffectCompressor extends AudioEffect  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class AudioEffectCompressor extends AudioEffect {
  * - Accentuates transients by using a wider attack, making effects sound more punchy.
  *
 */
-  "new"(): AudioEffectCompressor;
-  static "new"(): AudioEffectCompressor;
-
+  new(): AudioEffectCompressor; 
+  static "new"(): AudioEffectCompressor 
 
 
 /** Compressor's reaction time when the signal exceeds the threshold, in microseconds. Value can range from 20 to 2000. */
@@ -58,14 +57,12 @@ threshold: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectCompressor>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectCompressorSignals>>(signal: T, method: SignalFunction<AudioEffectCompressorSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectCompressor>>(signal: T, method: SignalFunction<AudioEffectCompressor[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectCompressorSignals extends AudioEffectSignals {
-  
-}

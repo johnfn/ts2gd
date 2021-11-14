@@ -3,16 +3,15 @@
  * Editor facility for creating and editing collision shapes in 2D space. You can use this node to represent all sorts of collision shapes, for example, add this to an [Area2D] to give it a detection shape, or add it to a [PhysicsBody2D] to create a solid object. **IMPORTANT**: this is an Editor-only helper to create shapes, use [method CollisionObject2D.shape_owner_get_shape] to get the actual shape.
  *
 */
-declare class CollisionShape2D extends Node2D {
+declare class CollisionShape2D extends Node2D  {
 
   
 /**
  * Editor facility for creating and editing collision shapes in 2D space. You can use this node to represent all sorts of collision shapes, for example, add this to an [Area2D] to give it a detection shape, or add it to a [PhysicsBody2D] to create a solid object. **IMPORTANT**: this is an Editor-only helper to create shapes, use [method CollisionObject2D.shape_owner_get_shape] to get the actual shape.
  *
 */
-  "new"(): CollisionShape2D;
-  static "new"(): CollisionShape2D;
-
+  new(): CollisionShape2D; 
+  static "new"(): CollisionShape2D 
 
 
 /** A disabled collision shape has no effect in the world. This property should be changed with [method Object.set_deferred]. */
@@ -29,14 +28,12 @@ shape: Shape2D;
 
 
 
-  // connect<T extends SignalsOf<CollisionShape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CollisionShape2DSignals>>(signal: T, method: SignalFunction<CollisionShape2DSignals[T]>): number;
+  connect<T extends SignalsOf<CollisionShape2D>>(signal: T, method: SignalFunction<CollisionShape2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CollisionShape2DSignals extends Node2DSignals {
-  
-}

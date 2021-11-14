@@ -95,7 +95,7 @@ declare const asin: (s: float) => float
  * 
  *
 */
-declare const assert: (condition: boolean, message?: string) => void
+declare const assert: (condition: boolean, message?: string) => asserts condition
     
     
 /**

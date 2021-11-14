@@ -5,7 +5,7 @@
  * **Note:** You can associate a set of normal maps by creating additional [SpriteFrames] resources with a `_normal` suffix. For example, having 2 [SpriteFrames] resources `run` and `run_normal` will make it so the `run` animation uses the normal map.
  *
 */
-declare class SpriteFrames extends Resource {
+declare class SpriteFrames extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class SpriteFrames extends Resource {
  * **Note:** You can associate a set of normal maps by creating additional [SpriteFrames] resources with a `_normal` suffix. For example, having 2 [SpriteFrames] resources `run` and `run_normal` will make it so the `run` animation uses the normal map.
  *
 */
-  "new"(): SpriteFrames;
-  static "new"(): SpriteFrames;
-
+  new(): SpriteFrames; 
+  static "new"(): SpriteFrames 
 
 
 /** Compatibility property, always equals to an empty array. */
@@ -70,14 +69,12 @@ set_animation_speed(anim: string, speed: float): void;
 /** Sets the texture of the given frame. */
 set_frame(anim: string, idx: int, txt: Texture): void;
 
-  // connect<T extends SignalsOf<SpriteFrames>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpriteFramesSignals>>(signal: T, method: SignalFunction<SpriteFramesSignals[T]>): number;
+  connect<T extends SignalsOf<SpriteFrames>>(signal: T, method: SignalFunction<SpriteFrames[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SpriteFramesSignals extends ResourceSignals {
-  
-}

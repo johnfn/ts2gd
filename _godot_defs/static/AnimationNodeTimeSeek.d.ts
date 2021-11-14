@@ -16,7 +16,7 @@
  * 
  *
 */
-declare class AnimationNodeTimeSeek extends AnimationNode {
+declare class AnimationNodeTimeSeek extends AnimationNode  {
 
   
 /**
@@ -36,22 +36,19 @@ declare class AnimationNodeTimeSeek extends AnimationNode {
  * 
  *
 */
-  "new"(): AnimationNodeTimeSeek;
-  static "new"(): AnimationNodeTimeSeek;
+  new(): AnimationNodeTimeSeek; 
+  static "new"(): AnimationNodeTimeSeek 
 
 
 
 
 
+  connect<T extends SignalsOf<AnimationNodeTimeSeek>>(signal: T, method: SignalFunction<AnimationNodeTimeSeek[T]>): number;
 
-  // connect<T extends SignalsOf<AnimationNodeTimeSeek>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeTimeSeekSignals>>(signal: T, method: SignalFunction<AnimationNodeTimeSeekSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class AnimationNodeTimeSeekSignals extends AnimationNodeSignals {
-  
-}

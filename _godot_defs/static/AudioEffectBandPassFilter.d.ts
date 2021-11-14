@@ -3,29 +3,26 @@
  * Attenuates the frequencies inside of a range around the [member AudioEffectFilter.cutoff_hz] and cuts frequencies outside of this band.
  *
 */
-declare class AudioEffectBandPassFilter extends AudioEffectFilter {
+declare class AudioEffectBandPassFilter extends AudioEffectFilter  {
 
   
 /**
  * Attenuates the frequencies inside of a range around the [member AudioEffectFilter.cutoff_hz] and cuts frequencies outside of this band.
  *
 */
-  "new"(): AudioEffectBandPassFilter;
-  static "new"(): AudioEffectBandPassFilter;
+  new(): AudioEffectBandPassFilter; 
+  static "new"(): AudioEffectBandPassFilter 
 
 
 
 
 
+  connect<T extends SignalsOf<AudioEffectBandPassFilter>>(signal: T, method: SignalFunction<AudioEffectBandPassFilter[T]>): number;
 
-  // connect<T extends SignalsOf<AudioEffectBandPassFilter>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectBandPassFilterSignals>>(signal: T, method: SignalFunction<AudioEffectBandPassFilterSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class AudioEffectBandPassFilterSignals extends AudioEffectFilterSignals {
-  
-}

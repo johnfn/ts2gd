@@ -5,7 +5,7 @@
  * **Note:** When used for collision, [ConcavePolygonShape] is intended to work with static [PhysicsBody] nodes like [StaticBody] and will not work with [KinematicBody] or [RigidBody] with a mode other than Static.
  *
 */
-declare class ConcavePolygonShape extends Shape {
+declare class ConcavePolygonShape extends Shape  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ConcavePolygonShape extends Shape {
  * **Note:** When used for collision, [ConcavePolygonShape] is intended to work with static [PhysicsBody] nodes like [StaticBody] and will not work with [KinematicBody] or [RigidBody] with a mode other than Static.
  *
 */
-  "new"(): ConcavePolygonShape;
-  static "new"(): ConcavePolygonShape;
-
+  new(): ConcavePolygonShape; 
+  static "new"(): ConcavePolygonShape 
 
 
 
@@ -26,14 +25,12 @@ get_faces(): PoolVector3Array;
 /** Sets the faces (an array of triangles). */
 set_faces(faces: PoolVector3Array): void;
 
-  // connect<T extends SignalsOf<ConcavePolygonShape>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ConcavePolygonShapeSignals>>(signal: T, method: SignalFunction<ConcavePolygonShapeSignals[T]>): number;
+  connect<T extends SignalsOf<ConcavePolygonShape>>(signal: T, method: SignalFunction<ConcavePolygonShape[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ConcavePolygonShapeSignals extends ShapeSignals {
-  
-}

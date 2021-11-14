@@ -6,8 +6,10 @@
  *
  * **Note:** By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
  *
+ * **Note:** The GLES2 backend will only display two reflection probes at the same time for a single mesh. If possible, split up large meshes that span over multiple reflection probes into smaller ones.
+ *
 */
-declare class ReflectionProbe extends VisualInstance {
+declare class ReflectionProbe extends VisualInstance  {
 
   
 /**
@@ -17,10 +19,11 @@ declare class ReflectionProbe extends VisualInstance {
  *
  * **Note:** By default Godot will only render 16 reflection probes. If you need more, increase the number of atlas subdivisions. This setting can be found in [member ProjectSettings.rendering/quality/reflections/atlas_subdiv].
  *
+ * **Note:** The GLES2 backend will only display two reflection probes at the same time for a single mesh. If possible, split up large meshes that span over multiple reflection probes into smaller ones.
+ *
 */
-  "new"(): ReflectionProbe;
-  static "new"(): ReflectionProbe;
-
+  new(): ReflectionProbe; 
+  static "new"(): ReflectionProbe 
 
 
 /** If [code]true[/code], enables box projection. This makes reflections look more correct in rectangle-shaped rooms by offsetting the reflection center depending on the camera's location. */
@@ -61,8 +64,7 @@ update_mode: int;
 
 
 
-  // connect<T extends SignalsOf<ReflectionProbe>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ReflectionProbeSignals>>(signal: T, method: SignalFunction<ReflectionProbeSignals[T]>): number;
+  connect<T extends SignalsOf<ReflectionProbe>>(signal: T, method: SignalFunction<ReflectionProbe[T]>): number;
 
 
 
@@ -78,8 +80,7 @@ static UPDATE_ONCE: any;
 */
 static UPDATE_ALWAYS: any;
 
+
+
 }
 
-declare class ReflectionProbeSignals extends VisualInstanceSignals {
-  
-}

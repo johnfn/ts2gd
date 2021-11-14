@@ -3,16 +3,15 @@
  * A resource to add to an [AnimationNodeBlendTree]. Only features one output set using the [member animation] property. Use it as an input for [AnimationNode] that blend animations together.
  *
 */
-declare class AnimationNodeAnimation extends AnimationRootNode {
+declare class AnimationNodeAnimation extends AnimationRootNode  {
 
   
 /**
  * A resource to add to an [AnimationNodeBlendTree]. Only features one output set using the [member animation] property. Use it as an input for [AnimationNode] that blend animations together.
  *
 */
-  "new"(): AnimationNodeAnimation;
-  static "new"(): AnimationNodeAnimation;
-
+  new(): AnimationNodeAnimation; 
+  static "new"(): AnimationNodeAnimation 
 
 
 /** Animation to use as an output. It is one of the animations provided by [member AnimationTree.anim_player]. */
@@ -20,14 +19,12 @@ animation: string;
 
 
 
-  // connect<T extends SignalsOf<AnimationNodeAnimation>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationNodeAnimationSignals>>(signal: T, method: SignalFunction<AnimationNodeAnimationSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationNodeAnimation>>(signal: T, method: SignalFunction<AnimationNodeAnimation[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AnimationNodeAnimationSignals extends AnimationRootNodeSignals {
-  
-}

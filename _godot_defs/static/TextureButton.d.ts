@@ -7,7 +7,7 @@
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-declare class TextureButton extends BaseButton {
+declare class TextureButton extends BaseButton  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class TextureButton extends BaseButton {
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-  "new"(): TextureButton;
-  static "new"(): TextureButton;
-
+  new(): TextureButton; 
+  static "new"(): TextureButton 
 
 
 /** If [code]true[/code], the texture stretches to the edges of the node's bounding rectangle using the [member stretch_mode]. If [code]false[/code], the texture will not scale with the node. */
@@ -55,8 +54,7 @@ texture_pressed: Texture;
 
 
 
-  // connect<T extends SignalsOf<TextureButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureButtonSignals>>(signal: T, method: SignalFunction<TextureButtonSignals[T]>): number;
+  connect<T extends SignalsOf<TextureButton>>(signal: T, method: SignalFunction<TextureButton[T]>): number;
 
 
 
@@ -102,8 +100,7 @@ static STRETCH_KEEP_ASPECT_CENTERED: any;
 */
 static STRETCH_KEEP_ASPECT_COVERED: any;
 
+
+
 }
 
-declare class TextureButtonSignals extends BaseButtonSignals {
-  
-}

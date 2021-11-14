@@ -5,7 +5,7 @@
  * **Note:** You should enable [member flip_v] when using a TextureRect to display a [ViewportTexture]. Alternatively, you can enable [member Viewport.render_target_v_flip] on the Viewport. Otherwise, the image will appear upside down.
  *
 */
-declare class TextureRect extends Control {
+declare class TextureRect extends Control  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class TextureRect extends Control {
  * **Note:** You should enable [member flip_v] when using a TextureRect to display a [ViewportTexture]. Alternatively, you can enable [member Viewport.render_target_v_flip] on the Viewport. Otherwise, the image will appear upside down.
  *
 */
-  "new"(): TextureRect;
-  static "new"(): TextureRect;
-
+  new(): TextureRect; 
+  static "new"(): TextureRect 
 
 
 /** If [code]true[/code], the texture scales to fit its bounding rectangle. */
@@ -37,8 +36,7 @@ texture: Texture;
 
 
 
-  // connect<T extends SignalsOf<TextureRect>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<TextureRectSignals>>(signal: T, method: SignalFunction<TextureRectSignals[T]>): number;
+  connect<T extends SignalsOf<TextureRect>>(signal: T, method: SignalFunction<TextureRect[T]>): number;
 
 
 
@@ -90,8 +88,7 @@ static STRETCH_KEEP_ASPECT_CENTERED: any;
 */
 static STRETCH_KEEP_ASPECT_COVERED: any;
 
+
+
 }
 
-declare class TextureRectSignals extends ControlSignals {
-  
-}

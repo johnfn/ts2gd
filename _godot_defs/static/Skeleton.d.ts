@@ -7,7 +7,7 @@
  * Note that "global pose" below refers to the overall transform of the bone with respect to skeleton, so it not the actual global/world transform of the bone.
  *
 */
-declare class Skeleton extends Spatial {
+declare class Skeleton extends Spatial  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class Skeleton extends Spatial {
  * Note that "global pose" below refers to the overall transform of the bone with respect to skeleton, so it not the actual global/world transform of the bone.
  *
 */
-  "new"(): Skeleton;
-  static "new"(): Skeleton;
-
+  new(): Skeleton; 
+  static "new"(): Skeleton 
 
 
 
@@ -124,19 +123,17 @@ unbind_child_node_from_bone(bone_idx: int, node: Node): void;
 /** No documentation provided. */
 unparent_bone_and_rest(bone_idx: int): void;
 
-  // connect<T extends SignalsOf<Skeleton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SkeletonSignals>>(signal: T, method: SignalFunction<SkeletonSignals[T]>): number;
+  connect<T extends SignalsOf<Skeleton>>(signal: T, method: SignalFunction<Skeleton[T]>): number;
 
 
 
 /** No documentation provided. */
 static NOTIFICATION_UPDATE_SKELETON: any;
 
-}
 
-declare class SkeletonSignals extends SpatialSignals {
-  /**
+/**
 */
-skeleton_updated: Signal<() => void>
+$skeleton_updated: Signal<() => void>
 
 }
+

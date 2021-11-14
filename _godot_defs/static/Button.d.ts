@@ -23,7 +23,7 @@
  * **Note:** Buttons do not interpret touch input and therefore don't support multitouch, since mouse emulation can only press one button at a given time. Use [TouchScreenButton] for buttons that trigger gameplay movement or actions, as [TouchScreenButton] supports multitouch.
  *
 */
-declare class Button extends BaseButton {
+declare class Button extends BaseButton  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class Button extends BaseButton {
  * **Note:** Buttons do not interpret touch input and therefore don't support multitouch, since mouse emulation can only press one button at a given time. Use [TouchScreenButton] for buttons that trigger gameplay movement or actions, as [TouchScreenButton] supports multitouch.
  *
 */
-  "new"(): Button;
-  static "new"(): Button;
-
+  new(): Button; 
+  static "new"(): Button 
 
 
 /** Text alignment policy for the button's text, use one of the [enum TextAlign] constants. */
@@ -75,8 +74,7 @@ text: string;
 
 
 
-  // connect<T extends SignalsOf<Button>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ButtonSignals>>(signal: T, method: SignalFunction<ButtonSignals[T]>): number;
+  connect<T extends SignalsOf<Button>>(signal: T, method: SignalFunction<Button[T]>): number;
 
 
 
@@ -98,8 +96,7 @@ static ALIGN_CENTER: any;
 */
 static ALIGN_RIGHT: any;
 
+
+
 }
 
-declare class ButtonSignals extends BaseButtonSignals {
-  
-}

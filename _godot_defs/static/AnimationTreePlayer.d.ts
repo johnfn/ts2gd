@@ -7,7 +7,7 @@
  * See [AnimationTree] for a more full-featured replacement of this node.
  *
 */
-declare class AnimationTreePlayer extends Node {
+declare class AnimationTreePlayer extends Node  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AnimationTreePlayer extends Node {
  * See [AnimationTree] for a more full-featured replacement of this node.
  *
 */
-  "new"(): AnimationTreePlayer;
-  static "new"(): AnimationTreePlayer;
-
+  new(): AnimationTreePlayer; 
+  static "new"(): AnimationTreePlayer 
 
 
 /** If [code]true[/code], the [AnimationTreePlayer] is able to play animations. */
@@ -254,8 +253,7 @@ transition_node_set_input_count(id: string, count: int): void;
 /** The transition node with name [code]id[/code] sets its cross fade time to [code]time_sec[/code]. */
 transition_node_set_xfade_time(id: string, time_sec: float): void;
 
-  // connect<T extends SignalsOf<AnimationTreePlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationTreePlayerSignals>>(signal: T, method: SignalFunction<AnimationTreePlayerSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationTreePlayer>>(signal: T, method: SignalFunction<AnimationTreePlayer[T]>): number;
 
 
 
@@ -331,8 +329,7 @@ static ANIMATION_PROCESS_PHYSICS: any;
 */
 static ANIMATION_PROCESS_IDLE: any;
 
+
+
 }
 
-declare class AnimationTreePlayerSignals extends NodeSignals {
-  
-}

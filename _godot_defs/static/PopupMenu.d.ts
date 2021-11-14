@@ -3,16 +3,15 @@
  * [PopupMenu] is a [Control] that displays a list of options. They are popular in toolbars or context menus.
  *
 */
-declare class PopupMenu extends Popup {
+declare class PopupMenu extends Popup  {
 
   
 /**
  * [PopupMenu] is a [Control] that displays a list of options. They are popular in toolbars or context menus.
  *
 */
-  "new"(): PopupMenu;
-  static "new"(): PopupMenu;
-
+  new(): PopupMenu; 
+  static "new"(): PopupMenu 
 
 
 /** If [code]true[/code], allows navigating [PopupMenu] with letter keys. */
@@ -294,31 +293,29 @@ toggle_item_checked(idx: int): void;
 /** Cycle to the next state of a multistate item. See [method add_multistate_item] for details. */
 toggle_item_multistate(idx: int): void;
 
-  // connect<T extends SignalsOf<PopupMenu>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PopupMenuSignals>>(signal: T, method: SignalFunction<PopupMenuSignals[T]>): number;
+  connect<T extends SignalsOf<PopupMenu>>(signal: T, method: SignalFunction<PopupMenu[T]>): number;
 
 
 
 
-}
 
-declare class PopupMenuSignals extends PopupSignals {
-  /**
+/**
  * Emitted when user navigated to an item of some `id` using `ui_up` or `ui_down` action.
  *
 */
-id_focused: Signal<(id: int) => void>
+$id_focused: Signal<(id: int) => void>
 
 /**
  * Emitted when an item of some `id` is pressed or its accelerator is activated.
  *
 */
-id_pressed: Signal<(id: int) => void>
+$id_pressed: Signal<(id: int) => void>
 
 /**
  * Emitted when an item of some `index` is pressed or its accelerator is activated.
  *
 */
-index_pressed: Signal<(index: int) => void>
+$index_pressed: Signal<(index: int) => void>
 
 }
+

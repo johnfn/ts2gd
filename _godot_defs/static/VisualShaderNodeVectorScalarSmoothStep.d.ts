@@ -5,7 +5,7 @@
  * Returns `0.0` if `x` is smaller than `edge0` and `1.0` if `x` is larger than `edge1`. Otherwise the return value is interpolated between `0.0` and `1.0` using Hermite polynomials.
  *
 */
-declare class VisualShaderNodeVectorScalarSmoothStep extends VisualShaderNode {
+declare class VisualShaderNodeVectorScalarSmoothStep extends VisualShaderNode  {
 
   
 /**
@@ -14,22 +14,19 @@ declare class VisualShaderNodeVectorScalarSmoothStep extends VisualShaderNode {
  * Returns `0.0` if `x` is smaller than `edge0` and `1.0` if `x` is larger than `edge1`. Otherwise the return value is interpolated between `0.0` and `1.0` using Hermite polynomials.
  *
 */
-  "new"(): VisualShaderNodeVectorScalarSmoothStep;
-  static "new"(): VisualShaderNodeVectorScalarSmoothStep;
+  new(): VisualShaderNodeVectorScalarSmoothStep; 
+  static "new"(): VisualShaderNodeVectorScalarSmoothStep 
 
 
 
 
 
+  connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStep>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarSmoothStep[T]>): number;
 
-  // connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStep>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeVectorScalarSmoothStepSignals>>(signal: T, method: SignalFunction<VisualShaderNodeVectorScalarSmoothStepSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class VisualShaderNodeVectorScalarSmoothStepSignals extends VisualShaderNodeSignals {
-  
-}

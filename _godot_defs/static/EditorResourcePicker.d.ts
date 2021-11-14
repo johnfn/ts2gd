@@ -5,7 +5,7 @@
  * **Note:** This [Control] does not include any editor for the resource, as editing is controlled by the Inspector dock itself or sub-Inspectors.
  *
 */
-declare class EditorResourcePicker extends HBoxContainer {
+declare class EditorResourcePicker extends HBoxContainer  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorResourcePicker extends HBoxContainer {
  * **Note:** This [Control] does not include any editor for the resource, as editing is controlled by the Inspector dock itself or sub-Inspectors.
  *
 */
-  "new"(): EditorResourcePicker;
-  static "new"(): EditorResourcePicker;
-
+  new(): EditorResourcePicker; 
+  static "new"(): EditorResourcePicker 
 
 
 /** The base type of allowed resource types. Can be a comma-separated list of several options. */
@@ -57,25 +56,23 @@ set_create_options(menu_node: Object): void;
 /** Sets the toggle mode state for the main button. Works only if [member toggle_mode] is set to [code]true[/code]. */
 set_toggle_pressed(pressed: boolean): void;
 
-  // connect<T extends SignalsOf<EditorResourcePicker>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorResourcePickerSignals>>(signal: T, method: SignalFunction<EditorResourcePickerSignals[T]>): number;
+  connect<T extends SignalsOf<EditorResourcePicker>>(signal: T, method: SignalFunction<EditorResourcePicker[T]>): number;
 
 
 
 
-}
 
-declare class EditorResourcePickerSignals extends HBoxContainerSignals {
-  /**
+/**
  * Emitted when the value of the edited resource was changed.
  *
 */
-resource_changed: Signal<(resource: Resource) => void>
+$resource_changed: Signal<(resource: Resource) => void>
 
 /**
- * Emitted when the resource value was set and user clicked to edit it.
+ * Emitted when the resource value was set and user clicked to edit it. When `edit` is `true`, the signal was caused by the context menu "Edit" option.
  *
 */
-resource_selected: Signal<(resource: Resource) => void>
+$resource_selected: Signal<(resource: Resource, edit: boolean) => void>
 
 }
+

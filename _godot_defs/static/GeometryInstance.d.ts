@@ -3,16 +3,15 @@
  * Base node for geometry-based visual instances. Shares some common functionality like visibility and custom materials.
  *
 */
-declare class GeometryInstance extends VisualInstance {
+declare class GeometryInstance extends VisualInstance  {
 
   
 /**
  * Base node for geometry-based visual instances. Shares some common functionality like visibility and custom materials.
  *
 */
-  "new"(): GeometryInstance;
-  static "new"(): GeometryInstance;
-
+  new(): GeometryInstance; 
+  static "new"(): GeometryInstance 
 
 
 /** The selected shadow casting flag. See [enum ShadowCastingSetting] for possible values. */
@@ -79,8 +78,7 @@ set_custom_aabb(aabb: AABB): void;
 /** Sets the [enum GeometryInstance.Flags] specified. See [enum GeometryInstance.Flags] for options. */
 set_flag(flag: int, value: boolean): void;
 
-  // connect<T extends SignalsOf<GeometryInstance>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GeometryInstanceSignals>>(signal: T, method: SignalFunction<GeometryInstanceSignals[T]>): number;
+  connect<T extends SignalsOf<GeometryInstance>>(signal: T, method: SignalFunction<GeometryInstance[T]>): number;
 
 
 
@@ -159,8 +157,7 @@ static FLAG_DRAW_NEXT_FRAME_IF_VISIBLE: any;
 */
 static FLAG_MAX: any;
 
+
+
 }
 
-declare class GeometryInstanceSignals extends VisualInstanceSignals {
-  
-}

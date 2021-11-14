@@ -5,7 +5,7 @@
  * Soft clipping starts to reduce the peaks a little below the threshold level and progressively increases its effect as the input level increases such that the threshold is never exceeded.
  *
 */
-declare class AudioEffectLimiter extends AudioEffect {
+declare class AudioEffectLimiter extends AudioEffect  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioEffectLimiter extends AudioEffect {
  * Soft clipping starts to reduce the peaks a little below the threshold level and progressively increases its effect as the input level increases such that the threshold is never exceeded.
  *
 */
-  "new"(): AudioEffectLimiter;
-  static "new"(): AudioEffectLimiter;
-
+  new(): AudioEffectLimiter; 
+  static "new"(): AudioEffectLimiter 
 
 
 /** The waveform's maximum allowed value, in decibels. Value can range from -20 to -0.1. */
@@ -31,14 +30,12 @@ threshold_db: float;
 
 
 
-  // connect<T extends SignalsOf<AudioEffectLimiter>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectLimiterSignals>>(signal: T, method: SignalFunction<AudioEffectLimiterSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectLimiter>>(signal: T, method: SignalFunction<AudioEffectLimiter[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectLimiterSignals extends AudioEffectSignals {
-  
-}

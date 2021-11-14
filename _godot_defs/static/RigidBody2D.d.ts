@@ -13,7 +13,7 @@
  * The center of mass is always located at the node's origin without taking into account the [CollisionShape2D] centroid offsets.
  *
 */
-declare class RigidBody2D extends PhysicsBody2D {
+declare class RigidBody2D extends PhysicsBody2D  {
 
   
 /**
@@ -30,9 +30,8 @@ declare class RigidBody2D extends PhysicsBody2D {
  * The center of mass is always located at the node's origin without taking into account the [CollisionShape2D] centroid offsets.
  *
 */
-  "new"(): RigidBody2D;
-  static "new"(): RigidBody2D;
-
+  new(): RigidBody2D; 
+  static "new"(): RigidBody2D 
 
 
 /**
@@ -170,8 +169,7 @@ set_axis_velocity(axis_velocity: Vector2): void;
 /** Returns [code]true[/code] if a collision would result from moving in the given vector. [code]margin[/code] increases the size of the shapes involved in the collision detection, and [code]result[/code] is an object of type [Physics2DTestMotionResult], which contains additional information about the collision (should there be one). */
 test_motion(motion: Vector2, infinite_inertia?: boolean, margin?: float, result?: Physics2DTestMotionResult): boolean;
 
-  // connect<T extends SignalsOf<RigidBody2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RigidBody2DSignals>>(signal: T, method: SignalFunction<RigidBody2DSignals[T]>): number;
+  connect<T extends SignalsOf<RigidBody2D>>(signal: T, method: SignalFunction<RigidBody2D[T]>): number;
 
 
 
@@ -217,16 +215,14 @@ static CCD_MODE_CAST_RAY: any;
 */
 static CCD_MODE_CAST_SHAPE: any;
 
-}
 
-declare class RigidBody2DSignals extends PhysicsBody2DSignals {
-  /**
+/**
  * Emitted when a collision with another [PhysicsBody2D] or [TileMap] occurs. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
 */
-body_entered: Signal<(body: Node) => void>
+$body_entered: Signal<(body: Node) => void>
 
 /**
  * Emitted when the collision with another [PhysicsBody2D] or [TileMap] ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
@@ -234,35 +230,35 @@ body_entered: Signal<(body: Node) => void>
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
 */
-body_exited: Signal<(body: Node) => void>
+$body_exited: Signal<(body: Node) => void>
 
 /**
  * Emitted when one of this RigidBody2D's [Shape2D]s collides with another [PhysicsBody2D] or [TileMap]'s [Shape2D]s. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
  *
- * `body_id` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
+ * `body_rid` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
- * `body_shape` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer].
+ * `body_shape_index` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer]. Get the [CollisionShape2D] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer].
+ * `local_shape_index` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer]. Get the [CollisionShape2D] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_entered: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when the collision between one of this RigidBody2D's [Shape2D]s and another [PhysicsBody2D] or [TileMap]'s [Shape2D]s ends. Requires [member contact_monitor] to be set to `true` and [member contacts_reported] to be set high enough to detect all the collisions. [TileMap]s are detected if the [TileSet] has Collision [Shape2D]s.
  *
- * `body_id` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
+ * `body_rid` the [RID] of the other [PhysicsBody2D] or [TileSet]'s [CollisionObject2D] used by the [Physics2DServer].
  *
  * `body` the [Node], if it exists in the tree, of the other [PhysicsBody2D] or [TileMap].
  *
- * `body_shape` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer].
+ * `body_shape_index` the index of the [Shape2D] of the other [PhysicsBody2D] or [TileMap] used by the [Physics2DServer]. Get the [CollisionShape2D] node with `body.shape_owner_get_owner(body_shape_index)`.
  *
- * `local_shape` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer].
+ * `local_shape_index` the index of the [Shape2D] of this RigidBody2D used by the [Physics2DServer]. Get the [CollisionShape2D] node with `self.shape_owner_get_owner(local_shape_index)`.
  *
 */
-body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_shape: int) => void>
+$body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape_index: int, local_shape_index: int) => void>
 
 /**
  * Emitted when the physics engine changes the body's sleeping state.
@@ -270,6 +266,7 @@ body_shape_exited: Signal<(body_rid: RID, body: Node, body_shape: int, local_sha
  * **Note:** Changing the value [member sleeping] will not trigger this signal. It is only emitted if the sleeping state is changed by the physics engine or `emit_signal("sleeping_state_changed")` is used.
  *
 */
-sleeping_state_changed: Signal<() => void>
+$sleeping_state_changed: Signal<() => void>
 
 }
+

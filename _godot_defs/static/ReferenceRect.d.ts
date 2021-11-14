@@ -3,16 +3,15 @@
  * A rectangle box that displays only a [member border_color] border color around its rectangle. [ReferenceRect] has no fill [Color]. If you need to display a rectangle filled with a solid color, consider using [ColorRect] instead.
  *
 */
-declare class ReferenceRect extends Control {
+declare class ReferenceRect extends Control  {
 
   
 /**
  * A rectangle box that displays only a [member border_color] border color around its rectangle. [ReferenceRect] has no fill [Color]. If you need to display a rectangle filled with a solid color, consider using [ColorRect] instead.
  *
 */
-  "new"(): ReferenceRect;
-  static "new"(): ReferenceRect;
-
+  new(): ReferenceRect; 
+  static "new"(): ReferenceRect 
 
 
 /** Sets the border [Color] of the [ReferenceRect]. */
@@ -26,14 +25,12 @@ editor_only: boolean;
 
 
 
-  // connect<T extends SignalsOf<ReferenceRect>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ReferenceRectSignals>>(signal: T, method: SignalFunction<ReferenceRectSignals[T]>): number;
+  connect<T extends SignalsOf<ReferenceRect>>(signal: T, method: SignalFunction<ReferenceRect[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ReferenceRectSignals extends ControlSignals {
-  
-}

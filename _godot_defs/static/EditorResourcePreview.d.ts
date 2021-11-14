@@ -5,7 +5,7 @@
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_resource_previewer].
  *
 */
-declare class EditorResourcePreview extends Node {
+declare class EditorResourcePreview extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class EditorResourcePreview extends Node {
  * **Note:** This class shouldn't be instantiated directly. Instead, access the singleton using [method EditorInterface.get_resource_previewer].
  *
 */
-  "new"(): EditorResourcePreview;
-  static "new"(): EditorResourcePreview;
-
+  new(): EditorResourcePreview; 
+  static "new"(): EditorResourcePreview 
 
 
 
@@ -45,19 +44,17 @@ queue_resource_preview(path: string, receiver: Object, receiver_func: string, us
 /** Removes a custom preview generator. */
 remove_preview_generator(generator: EditorResourcePreviewGenerator): void;
 
-  // connect<T extends SignalsOf<EditorResourcePreview>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorResourcePreviewSignals>>(signal: T, method: SignalFunction<EditorResourcePreviewSignals[T]>): number;
+  connect<T extends SignalsOf<EditorResourcePreview>>(signal: T, method: SignalFunction<EditorResourcePreview[T]>): number;
 
 
 
 
-}
 
-declare class EditorResourcePreviewSignals extends NodeSignals {
-  /**
+/**
  * Emitted if a preview was invalidated (changed). `path` corresponds to the path of the preview.
  *
 */
-preview_invalidated: Signal<(path: string) => void>
+$preview_invalidated: Signal<(path: string) => void>
 
 }
+

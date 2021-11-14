@@ -5,7 +5,7 @@
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-declare class LinkButton extends BaseButton {
+declare class LinkButton extends BaseButton  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class LinkButton extends BaseButton {
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-  "new"(): LinkButton;
-  static "new"(): LinkButton;
-
+  new(): LinkButton; 
+  static "new"(): LinkButton 
 
 
 
@@ -29,8 +28,7 @@ underline: int;
 
 
 
-  // connect<T extends SignalsOf<LinkButton>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<LinkButtonSignals>>(signal: T, method: SignalFunction<LinkButtonSignals[T]>): number;
+  connect<T extends SignalsOf<LinkButton>>(signal: T, method: SignalFunction<LinkButton[T]>): number;
 
 
 
@@ -52,8 +50,7 @@ static UNDERLINE_MODE_ON_HOVER: any;
 */
 static UNDERLINE_MODE_NEVER: any;
 
+
+
 }
 
-declare class LinkButtonSignals extends BaseButtonSignals {
-  
-}

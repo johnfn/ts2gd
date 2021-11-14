@@ -3,16 +3,15 @@
  * TCP stream peer. This object can be used to connect to TCP servers, or also is returned by a TCP server.
  *
 */
-declare class StreamPeerTCP extends StreamPeer {
+declare class StreamPeerTCP extends StreamPeer  {
 
   
 /**
  * TCP stream peer. This object can be used to connect to TCP servers, or also is returned by a TCP server.
  *
 */
-  "new"(): StreamPeerTCP;
-  static "new"(): StreamPeerTCP;
-
+  new(): StreamPeerTCP; 
+  static "new"(): StreamPeerTCP 
 
 
 
@@ -42,8 +41,7 @@ is_connected_to_host(): boolean;
 */
 set_no_delay(enabled: boolean): void;
 
-  // connect<T extends SignalsOf<StreamPeerTCP>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StreamPeerTCPSignals>>(signal: T, method: SignalFunction<StreamPeerTCPSignals[T]>): number;
+  connect<T extends SignalsOf<StreamPeerTCP>>(signal: T, method: SignalFunction<StreamPeerTCP[T]>): number;
 
 
 
@@ -71,8 +69,7 @@ static STATUS_CONNECTED: any;
 */
 static STATUS_ERROR: any;
 
+
+
 }
 
-declare class StreamPeerTCPSignals extends StreamPeerSignals {
-  
-}

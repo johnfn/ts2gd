@@ -7,7 +7,7 @@
  * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies. See also [Generic6DOFJoint].
  *
 */
-declare class ConeTwistJoint extends Joint {
+declare class ConeTwistJoint extends Joint  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ConeTwistJoint extends Joint {
  * Once the Bodies swing, the twist axis is calculated as the middle of the x-axes of the Joint in the local space of the two Bodies. See also [Generic6DOFJoint].
  *
 */
-  "new"(): ConeTwistJoint;
-  static "new"(): ConeTwistJoint;
-
+  new(): ConeTwistJoint; 
+  static "new"(): ConeTwistJoint 
 
 
 /**
@@ -63,8 +62,7 @@ get_param(param: int): float;
 /** No documentation provided. */
 set_param(param: int, value: float): void;
 
-  // connect<T extends SignalsOf<ConeTwistJoint>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ConeTwistJointSignals>>(signal: T, method: SignalFunction<ConeTwistJointSignals[T]>): number;
+  connect<T extends SignalsOf<ConeTwistJoint>>(signal: T, method: SignalFunction<ConeTwistJoint[T]>): number;
 
 
 
@@ -114,8 +112,7 @@ static PARAM_RELAXATION: any;
 */
 static PARAM_MAX: any;
 
+
+
 }
 
-declare class ConeTwistJointSignals extends JointSignals {
-  
-}

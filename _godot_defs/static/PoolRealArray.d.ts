@@ -19,9 +19,8 @@ declare class PoolRealArray {
  *
 */
 
-  constructor(from: any[]);
-  static "new"(): PoolRealArray;
-
+  new(from: any[]): PoolRealArray;
+  static "new"(): PoolRealArray 
 
 
 
@@ -48,7 +47,12 @@ push_back(value: float): any;
 /** Removes an element from the array by index. */
 remove(idx: int): any;
 
-/** Sets the size of the array. If the array is grown, reserves elements at the end of the array. If the array is shrunk, truncates the array to the new size. */
+/**
+ * Sets the size of the array. If the array is grown, reserves elements at the end of the array. If the array is shrunk, truncates the array to the new size.
+ *
+ * **Note:** Added elements are not automatically initialized to 0 and will contain garbage, i.e. indeterminate values.
+ *
+*/
 resize(idx: int): any;
 
 /** Changes the float at the given index. */
@@ -57,14 +61,12 @@ set(idx: int, value: float): any;
 /** Returns the size of the array. */
 size(): int;
 
-  // connect<T extends SignalsOf<PoolRealArray>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PoolRealArraySignals>>(signal: T, method: SignalFunction<PoolRealArraySignals[T]>): number;
+  connect<T extends SignalsOf<PoolRealArray>>(signal: T, method: SignalFunction<PoolRealArray[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PoolRealArraySignals {
-  
-}

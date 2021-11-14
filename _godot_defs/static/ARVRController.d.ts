@@ -7,7 +7,7 @@
  * The position of the controller node is automatically updated by the [ARVRServer]. This makes this node ideal to add child nodes to visualize the controller.
  *
 */
-declare class ARVRController extends Spatial {
+declare class ARVRController extends Spatial  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class ARVRController extends Spatial {
  * The position of the controller node is automatically updated by the [ARVRServer]. This makes this node ideal to add child nodes to visualize the controller.
  *
 */
-  "new"(): ARVRController;
-  static "new"(): ARVRController;
-
+  new(): ARVRController; 
+  static "new"(): ARVRController 
 
 
 /**
@@ -64,31 +63,29 @@ get_mesh(): Mesh;
 /** Returns [code]true[/code] if the button at index [code]button[/code] is pressed. See [enum JoystickList], in particular the [code]JOY_VR_*[/code] constants. */
 is_button_pressed(button: int): int;
 
-  // connect<T extends SignalsOf<ARVRController>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ARVRControllerSignals>>(signal: T, method: SignalFunction<ARVRControllerSignals[T]>): number;
+  connect<T extends SignalsOf<ARVRController>>(signal: T, method: SignalFunction<ARVRController[T]>): number;
 
 
 
 
-}
 
-declare class ARVRControllerSignals extends SpatialSignals {
-  /**
+/**
  * Emitted when a button on this controller is pressed.
  *
 */
-button_pressed: Signal<(button: int) => void>
+$button_pressed: Signal<(button: int) => void>
 
 /**
  * Emitted when a button on this controller is released.
  *
 */
-button_release: Signal<(button: int) => void>
+$button_release: Signal<(button: int) => void>
 
 /**
  * Emitted when the mesh associated with the controller changes or when one becomes available. Generally speaking this will be a static mesh after becoming available.
  *
 */
-mesh_updated: Signal<(mesh: Mesh) => void>
+$mesh_updated: Signal<(mesh: Mesh) => void>
 
 }
+

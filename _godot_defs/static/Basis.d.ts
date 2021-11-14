@@ -23,12 +23,11 @@ declare class Basis {
  *
 */
 
-  constructor(from: Quat);
-  constructor(from: Vector3);
-  constructor(axis: Vector3, phi: float);
-  constructor(x_axis: Vector3, y_axis: Vector3, z_axis: Vector3);
-  static "new"(): Basis;
-
+  new(from: Quat): Basis;
+  new(from: Vector3): Basis;
+  new(axis: Vector3, phi: float): Basis;
+  new(x_axis: Vector3, y_axis: Vector3, z_axis: Vector3): Basis;
+  static "new"(): Basis 
 
 
 /** The basis matrix's X vector (column 0). Equivalent to array index [code]0[/code]. */
@@ -119,8 +118,7 @@ xform(v: Vector3): Vector3;
 */
 xform_inv(v: Vector3): Vector3;
 
-  // connect<T extends SignalsOf<Basis>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<BasisSignals>>(signal: T, method: SignalFunction<BasisSignals[T]>): number;
+  connect<T extends SignalsOf<Basis>>(signal: T, method: SignalFunction<Basis[T]>): number;
 
 
 
@@ -150,8 +148,7 @@ static FLIP_Y: Basis;
 */
 static FLIP_Z: Basis;
 
+
+
 }
 
-declare class BasisSignals {
-  
-}

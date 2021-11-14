@@ -3,16 +3,15 @@
  * Contains a generic action which can be targeted from several types of inputs. Actions can be created from the **Input Map** tab in the **Project > Project Settings** menu. See [method Node._input].
  *
 */
-declare class InputEventAction extends InputEvent {
+declare class InputEventAction extends InputEvent  {
 
   
 /**
  * Contains a generic action which can be targeted from several types of inputs. Actions can be created from the **Input Map** tab in the **Project > Project Settings** menu. See [method Node._input].
  *
 */
-  "new"(): InputEventAction;
-  static "new"(): InputEventAction;
-
+  new(): InputEventAction; 
+  static "new"(): InputEventAction 
 
 
 /** The action's name. Actions are accessed via this [String]. */
@@ -26,14 +25,12 @@ strength: float;
 
 
 
-  // connect<T extends SignalsOf<InputEventAction>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<InputEventActionSignals>>(signal: T, method: SignalFunction<InputEventActionSignals[T]>): number;
+  connect<T extends SignalsOf<InputEventAction>>(signal: T, method: SignalFunction<InputEventAction[T]>): number;
+
+
 
 
 
 
 }
 
-declare class InputEventActionSignals extends InputEventSignals {
-  
-}

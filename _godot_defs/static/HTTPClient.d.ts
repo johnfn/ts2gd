@@ -15,7 +15,7 @@
  * **Warning:** SSL/TLS certificate revocation and certificate pinning are currently not supported. Revoked certificates are accepted as long as they are otherwise valid. If this is a concern, you may want to use automatically managed certificates with a short validity period.
  *
 */
-declare class HTTPClient extends Reference {
+declare class HTTPClient extends Reference  {
 
   
 /**
@@ -34,9 +34,8 @@ declare class HTTPClient extends Reference {
  * **Warning:** SSL/TLS certificate revocation and certificate pinning are currently not supported. Revoked certificates are accepted as long as they are otherwise valid. If this is a concern, you may want to use automatically managed certificates with a short validity period.
  *
 */
-  "new"(): HTTPClient;
-  static "new"(): HTTPClient;
-
+  new(): HTTPClient; 
+  static "new"(): HTTPClient 
 
 
 /** If [code]true[/code], execution will block until all data is read from the response. */
@@ -168,8 +167,7 @@ request(method: int, url: string, headers: PoolStringArray, body?: string): int;
 */
 request_raw(method: int, url: string, headers: PoolStringArray, body: PoolByteArray): int;
 
-  // connect<T extends SignalsOf<HTTPClient>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<HTTPClientSignals>>(signal: T, method: SignalFunction<HTTPClientSignals[T]>): number;
+  connect<T extends SignalsOf<HTTPClient>>(signal: T, method: SignalFunction<HTTPClient[T]>): number;
 
 
 
@@ -659,8 +657,7 @@ static RESPONSE_NOT_EXTENDED: any;
 */
 static RESPONSE_NETWORK_AUTH_REQUIRED: any;
 
+
+
 }
 
-declare class HTTPClientSignals extends ReferenceSignals {
-  
-}

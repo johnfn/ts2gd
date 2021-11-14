@@ -3,16 +3,15 @@
  * A ParallaxBackground uses one or more [ParallaxLayer] child nodes to create a parallax effect. Each [ParallaxLayer] can move at a different speed using [member ParallaxLayer.motion_offset]. This creates an illusion of depth in a 2D game. If not used with a [Camera2D], you must manually calculate the [member scroll_offset].
  *
 */
-declare class ParallaxBackground extends CanvasLayer {
+declare class ParallaxBackground extends CanvasLayer  {
 
   
 /**
  * A ParallaxBackground uses one or more [ParallaxLayer] child nodes to create a parallax effect. Each [ParallaxLayer] can move at a different speed using [member ParallaxLayer.motion_offset]. This creates an illusion of depth in a 2D game. If not used with a [Camera2D], you must manually calculate the [member scroll_offset].
  *
 */
-  "new"(): ParallaxBackground;
-  static "new"(): ParallaxBackground;
-
+  new(): ParallaxBackground; 
+  static "new"(): ParallaxBackground 
 
 
 
@@ -36,14 +35,12 @@ scroll_offset: Vector2;
 
 
 
-  // connect<T extends SignalsOf<ParallaxBackground>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ParallaxBackgroundSignals>>(signal: T, method: SignalFunction<ParallaxBackgroundSignals[T]>): number;
+  connect<T extends SignalsOf<ParallaxBackground>>(signal: T, method: SignalFunction<ParallaxBackground[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ParallaxBackgroundSignals extends CanvasLayerSignals {
-  
-}

@@ -5,7 +5,7 @@
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-declare class CheckBox extends Button {
+declare class CheckBox extends Button  {
 
   
 /**
@@ -14,23 +14,20 @@ declare class CheckBox extends Button {
  * See also [BaseButton] which contains common properties and methods associated with this node.
  *
 */
-  "new"(): CheckBox;
-  static "new"(): CheckBox;
+  new(): CheckBox; 
+  static "new"(): CheckBox 
 
 
 
 
 
 
+  connect<T extends SignalsOf<CheckBox>>(signal: T, method: SignalFunction<CheckBox[T]>): number;
 
-  // connect<T extends SignalsOf<CheckBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CheckBoxSignals>>(signal: T, method: SignalFunction<CheckBoxSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class CheckBoxSignals extends ButtonSignals {
-  
-}

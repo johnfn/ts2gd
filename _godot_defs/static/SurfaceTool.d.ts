@@ -23,7 +23,7 @@
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-declare class SurfaceTool extends Reference {
+declare class SurfaceTool extends Reference  {
 
   
 /**
@@ -50,9 +50,8 @@ declare class SurfaceTool extends Reference {
  * **Note:** Godot uses clockwise [url=https://learnopengl.com/Advanced-OpenGL/Face-culling]winding order[/url] for front faces of triangle primitive modes.
  *
 */
-  "new"(): SurfaceTool;
-  static "new"(): SurfaceTool;
-
+  new(): SurfaceTool; 
+  static "new"(): SurfaceTool 
 
 
 
@@ -145,14 +144,12 @@ index(): void;
 /** Sets [Material] to be used by the [Mesh] you are constructing. */
 set_material(material: Material): void;
 
-  // connect<T extends SignalsOf<SurfaceTool>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SurfaceToolSignals>>(signal: T, method: SignalFunction<SurfaceToolSignals[T]>): number;
+  connect<T extends SignalsOf<SurfaceTool>>(signal: T, method: SignalFunction<SurfaceTool[T]>): number;
+
+
 
 
 
 
 }
 
-declare class SurfaceToolSignals extends ReferenceSignals {
-  
-}

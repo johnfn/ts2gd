@@ -3,16 +3,15 @@
  * The base class for [PanoramaSky] and [ProceduralSky].
  *
 */
-declare class Sky extends Resource {
+declare class Sky extends Resource  {
 
   
 /**
  * The base class for [PanoramaSky] and [ProceduralSky].
  *
 */
-  "new"(): Sky;
-  static "new"(): Sky;
-
+  new(): Sky; 
+  static "new"(): Sky 
 
 
 /**
@@ -27,8 +26,7 @@ radiance_size: int;
 
 
 
-  // connect<T extends SignalsOf<Sky>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SkySignals>>(signal: T, method: SignalFunction<SkySignals[T]>): number;
+  connect<T extends SignalsOf<Sky>>(signal: T, method: SignalFunction<Sky[T]>): number;
 
 
 
@@ -84,8 +82,7 @@ static RADIANCE_SIZE_2048: any;
 */
 static RADIANCE_SIZE_MAX: any;
 
+
+
 }
 
-declare class SkySignals extends ResourceSignals {
-  
-}

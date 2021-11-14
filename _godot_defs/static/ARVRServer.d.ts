@@ -3,16 +3,15 @@
  * The AR/VR server is the heart of our Advanced and Virtual Reality solution and handles all the processing.
  *
 */
-declare class ARVRServerClass extends Object {
+declare class ARVRServerClass extends Object  {
 
   
 /**
  * The AR/VR server is the heart of our Advanced and Virtual Reality solution and handles all the processing.
  *
 */
-  "new"(): ARVRServerClass;
-  static "new"(): ARVRServerClass;
-
+  new(): ARVRServerClass; 
+  static "new"(): ARVRServerClass 
 
 
 /** The primary [ARVRInterface] currently bound to the [ARVRServer]. */
@@ -85,8 +84,7 @@ remove_interface(interface: ARVRInterface): void;
 /** Removes this positional tracker. */
 remove_tracker(tracker: ARVRPositionalTracker): void;
 
-  // connect<T extends SignalsOf<ARVRServerClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ARVRServerClassSignals>>(signal: T, method: SignalFunction<ARVRServerClassSignals[T]>): number;
+  connect<T extends SignalsOf<ARVRServerClass>>(signal: T, method: SignalFunction<ARVRServerClass[T]>): number;
 
 
 
@@ -144,31 +142,30 @@ static RESET_BUT_KEEP_TILT: any;
 */
 static DONT_RESET_ROTATION: any;
 
-}
 
-declare class ARVRServerClassSignals extends ObjectSignals {
-  /**
+/**
  * Emitted when a new interface has been added.
  *
 */
-interface_added: Signal<(interface_name: string) => void>
+$interface_added: Signal<(interface_name: string) => void>
 
 /**
  * Emitted when an interface is removed.
  *
 */
-interface_removed: Signal<(interface_name: string) => void>
+$interface_removed: Signal<(interface_name: string) => void>
 
 /**
  * Emitted when a new tracker has been added. If you don't use a fixed number of controllers or if you're using [ARVRAnchor]s for an AR solution, it is important to react to this signal to add the appropriate [ARVRController] or [ARVRAnchor] nodes related to this new tracker.
  *
 */
-tracker_added: Signal<(tracker_name: string, type: int, id: int) => void>
+$tracker_added: Signal<(tracker_name: string, type: int, id: int) => void>
 
 /**
  * Emitted when a tracker is removed. You should remove any [ARVRController] or [ARVRAnchor] points if applicable. This is not mandatory, the nodes simply become inactive and will be made active again when a new tracker becomes available (i.e. a new controller is switched on that takes the place of the previous one).
  *
 */
-tracker_removed: Signal<(tracker_name: string, type: int, id: int) => void>
+$tracker_removed: Signal<(tracker_name: string, type: int, id: int) => void>
 
 }
+

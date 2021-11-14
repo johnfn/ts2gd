@@ -1,14 +1,13 @@
 
 /**
 */
-declare class EditorFileDialog extends ConfirmationDialog {
+declare class EditorFileDialog extends ConfirmationDialog  {
 
   
 /**
 */
-  "new"(): EditorFileDialog;
-  static "new"(): EditorFileDialog;
-
+  new(): EditorFileDialog; 
+  static "new"(): EditorFileDialog 
 
 
 /** The location from which the user may select a file, including [code]res://[/code], [code]user://[/code], and the local file system. */
@@ -49,14 +48,18 @@ add_filter(filter: string): void;
 /** Removes all filters except for "All Files (*)". */
 clear_filters(): void;
 
-/** Returns the [code]VBoxContainer[/code] used to display the file system. */
+/**
+ * Returns the `VBoxContainer` used to display the file system.
+ *
+ * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their [member CanvasItem.visible] property.
+ *
+*/
 get_vbox(): VBoxContainer;
 
 /** Notify the [EditorFileDialog] that its view of the data is no longer accurate. Updates the view contents on next view update. */
 invalidate(): void;
 
-  // connect<T extends SignalsOf<EditorFileDialog>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorFileDialogSignals>>(signal: T, method: SignalFunction<EditorFileDialogSignals[T]>): number;
+  connect<T extends SignalsOf<EditorFileDialog>>(signal: T, method: SignalFunction<EditorFileDialog[T]>): number;
 
 
 
@@ -120,25 +123,24 @@ static DISPLAY_THUMBNAILS: any;
 */
 static DISPLAY_LIST: any;
 
-}
 
-declare class EditorFileDialogSignals extends ConfirmationDialogSignals {
-  /**
+/**
  * Emitted when a directory is selected.
  *
 */
-dir_selected: Signal<(dir: string) => void>
+$dir_selected: Signal<(dir: string) => void>
 
 /**
  * Emitted when a file is selected.
  *
 */
-file_selected: Signal<(path: string) => void>
+$file_selected: Signal<(path: string) => void>
 
 /**
  * Emitted when multiple files are selected.
  *
 */
-files_selected: Signal<(paths: PoolStringArray) => void>
+$files_selected: Signal<(paths: PoolStringArray) => void>
 
 }
+

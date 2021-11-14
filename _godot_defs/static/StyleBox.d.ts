@@ -5,7 +5,7 @@
  * **Note:** For children of [Control] that have **Theme Properties**, the `focus` [StyleBox] is displayed over the `normal`, `hover` or `pressed` [StyleBox]. This makes the `focus` [StyleBox] more reusable across different nodes.
  *
 */
-declare class StyleBox extends Resource {
+declare class StyleBox extends Resource  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class StyleBox extends Resource {
  * **Note:** For children of [Control] that have **Theme Properties**, the `focus` [StyleBox] is displayed over the `normal`, `hover` or `pressed` [StyleBox]. This makes the `focus` [StyleBox] more reusable across different nodes.
  *
 */
-  "new"(): StyleBox;
-  static "new"(): StyleBox;
-
+  new(): StyleBox; 
+  static "new"(): StyleBox 
 
 
 /**
@@ -92,14 +91,12 @@ set_default_margin(margin: int, offset: float): void;
 /** Test a position in a rectangle, return whether it passes the mask test. */
 test_mask(point: Vector2, rect: Rect2): boolean;
 
-  // connect<T extends SignalsOf<StyleBox>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<StyleBoxSignals>>(signal: T, method: SignalFunction<StyleBoxSignals[T]>): number;
+  connect<T extends SignalsOf<StyleBox>>(signal: T, method: SignalFunction<StyleBox[T]>): number;
+
+
 
 
 
 
 }
 
-declare class StyleBoxSignals extends ResourceSignals {
-  
-}

@@ -9,7 +9,7 @@
  * There is no need to place an opposite portal in an adjacent room, links are made two-way automatically.
  *
 */
-declare class Portal extends Spatial {
+declare class Portal extends Spatial  {
 
   
 /**
@@ -22,9 +22,8 @@ declare class Portal extends Spatial {
  * There is no need to place an opposite portal in an adjacent room, links are made two-way automatically.
  *
 */
-  "new"(): Portal;
-  static "new"(): Portal;
-
+  new(): Portal; 
+  static "new"(): Portal 
 
 
 /** This is a shortcut for setting the linked [Room] in the name of the [Portal] (the name is used during conversion). */
@@ -60,14 +59,12 @@ use_default_margin: boolean;
 /** Sets individual points. Primarily for use by the editor. */
 set_point(index: int, position: Vector2): void;
 
-  // connect<T extends SignalsOf<Portal>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<PortalSignals>>(signal: T, method: SignalFunction<PortalSignals[T]>): number;
+  connect<T extends SignalsOf<Portal>>(signal: T, method: SignalFunction<Portal[T]>): number;
+
+
 
 
 
 
 }
 
-declare class PortalSignals extends SpatialSignals {
-  
-}

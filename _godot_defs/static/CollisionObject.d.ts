@@ -3,16 +3,15 @@
  * CollisionObject is the base class for physics objects. It can hold any number of collision [Shape]s. Each shape must be assigned to a **shape owner**. The CollisionObject can have any number of shape owners. Shape owners are not nodes and do not appear in the editor, but are accessible through code using the `shape_owner_*` methods.
  *
 */
-declare class CollisionObject extends Spatial {
+declare class CollisionObject extends Spatial  {
 
   
 /**
  * CollisionObject is the base class for physics objects. It can hold any number of collision [Shape]s. Each shape must be assigned to a **shape owner**. The CollisionObject can have any number of shape owners. Shape owners are not nodes and do not appear in the editor, but are accessible through code using the `shape_owner_*` methods.
  *
 */
-  "new"(): CollisionObject;
-  static "new"(): CollisionObject;
-
+  new(): CollisionObject; 
+  static "new"(): CollisionObject 
 
 
 /**
@@ -110,31 +109,29 @@ shape_owner_set_disabled(owner_id: int, disabled: boolean): void;
 /** Sets the [Transform] of the given shape owner. */
 shape_owner_set_transform(owner_id: int, transform: Transform): void;
 
-  // connect<T extends SignalsOf<CollisionObject>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CollisionObjectSignals>>(signal: T, method: SignalFunction<CollisionObjectSignals[T]>): number;
+  connect<T extends SignalsOf<CollisionObject>>(signal: T, method: SignalFunction<CollisionObject[T]>): number;
 
 
 
 
-}
 
-declare class CollisionObjectSignals extends SpatialSignals {
-  /**
+/**
  * Emitted when the object receives an unhandled [InputEvent]. `position` is the location in world space of the mouse pointer on the surface of the shape with index `shape_idx` and `normal` is the normal vector of the surface at that point.
  *
 */
-input_event: Signal<(camera: Node, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int) => void>
+$input_event: Signal<(camera: Node, event: InputEvent, position: Vector3, normal: Vector3, shape_idx: int) => void>
 
 /**
  * Emitted when the mouse pointer enters any of this object's shapes.
  *
 */
-mouse_entered: Signal<() => void>
+$mouse_entered: Signal<() => void>
 
 /**
  * Emitted when the mouse pointer exits all this object's shapes.
  *
 */
-mouse_exited: Signal<() => void>
+$mouse_exited: Signal<() => void>
 
 }
+

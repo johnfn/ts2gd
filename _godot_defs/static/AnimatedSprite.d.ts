@@ -5,7 +5,7 @@
  * **Note:** You can associate a set of normal maps by creating additional [SpriteFrames] resources with a `_normal` suffix. For example, having 2 [SpriteFrames] resources `run` and `run_normal` will make it so the `run` animation uses the normal map.
  *
 */
-declare class AnimatedSprite extends Node2D {
+declare class AnimatedSprite extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AnimatedSprite extends Node2D {
  * **Note:** You can associate a set of normal maps by creating additional [SpriteFrames] resources with a `_normal` suffix. For example, having 2 [SpriteFrames] resources `run` and `run_normal` will make it so the `run` animation uses the normal map.
  *
 */
-  "new"(): AnimatedSprite;
-  static "new"(): AnimatedSprite;
-
+  new(): AnimatedSprite; 
+  static "new"(): AnimatedSprite 
 
 
 /** The current animation from the [code]frames[/code] resource. If this value changes, the [code]frame[/code] counter is reset. */
@@ -55,25 +54,23 @@ play(anim?: string, backwards?: boolean): void;
 /** Stops the current animation (does not reset the frame counter). */
 stop(): void;
 
-  // connect<T extends SignalsOf<AnimatedSprite>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimatedSpriteSignals>>(signal: T, method: SignalFunction<AnimatedSpriteSignals[T]>): number;
+  connect<T extends SignalsOf<AnimatedSprite>>(signal: T, method: SignalFunction<AnimatedSprite[T]>): number;
 
 
 
 
-}
 
-declare class AnimatedSpriteSignals extends Node2DSignals {
-  /**
+/**
  * Emitted when the animation is finished (when it plays the last frame). If the animation is looping, this signal is emitted every time the last frame is drawn.
  *
 */
-animation_finished: Signal<() => void>
+$animation_finished: Signal<() => void>
 
 /**
  * Emitted when [member frame] changed.
  *
 */
-frame_changed: Signal<() => void>
+$frame_changed: Signal<() => void>
 
 }
+

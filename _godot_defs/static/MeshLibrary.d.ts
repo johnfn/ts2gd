@@ -3,16 +3,15 @@
  * A library of meshes. Contains a list of [Mesh] resources, each with a name and ID. Each item can also include collision and navigation shapes. This resource is used in [GridMap].
  *
 */
-declare class MeshLibrary extends Resource {
+declare class MeshLibrary extends Resource  {
 
   
 /**
  * A library of meshes. Contains a list of [Mesh] resources, each with a name and ID. Each item can also include collision and navigation shapes. This resource is used in [GridMap].
  *
 */
-  "new"(): MeshLibrary;
-  static "new"(): MeshLibrary;
-
+  new(): MeshLibrary; 
+  static "new"(): MeshLibrary 
 
 
 
@@ -96,14 +95,12 @@ set_item_preview(id: int, texture: Texture): void;
 */
 set_item_shapes(id: int, shapes: any[]): void;
 
-  // connect<T extends SignalsOf<MeshLibrary>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MeshLibrarySignals>>(signal: T, method: SignalFunction<MeshLibrarySignals[T]>): number;
+  connect<T extends SignalsOf<MeshLibrary>>(signal: T, method: SignalFunction<MeshLibrary[T]>): number;
+
+
 
 
 
 
 }
 
-declare class MeshLibrarySignals extends ResourceSignals {
-  
-}

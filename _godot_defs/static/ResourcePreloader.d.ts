@@ -5,7 +5,7 @@
  * GDScript has a simplified [method @GDScript.preload] built-in method which can be used in most situations, leaving the use of [ResourcePreloader] for more advanced scenarios.
  *
 */
-declare class ResourcePreloader extends Node {
+declare class ResourcePreloader extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ResourcePreloader extends Node {
  * GDScript has a simplified [method @GDScript.preload] built-in method which can be used in most situations, leaving the use of [ResourcePreloader] for more advanced scenarios.
  *
 */
-  "new"(): ResourcePreloader;
-  static "new"(): ResourcePreloader;
-
+  new(): ResourcePreloader; 
+  static "new"(): ResourcePreloader 
 
 
 
@@ -38,14 +37,12 @@ remove_resource(name: string): void;
 /** Renames a resource inside the preloader from [code]name[/code] to [code]newname[/code]. */
 rename_resource(name: string, newname: string): void;
 
-  // connect<T extends SignalsOf<ResourcePreloader>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ResourcePreloaderSignals>>(signal: T, method: SignalFunction<ResourcePreloaderSignals[T]>): number;
+  connect<T extends SignalsOf<ResourcePreloader>>(signal: T, method: SignalFunction<ResourcePreloader[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ResourcePreloaderSignals extends NodeSignals {
-  
-}

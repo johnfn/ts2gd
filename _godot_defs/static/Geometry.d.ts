@@ -3,16 +3,15 @@
  * Geometry provides users with a set of helper functions to create geometric shapes, compute intersections between shapes, and process various other geometric operations.
  *
 */
-declare class GeometryClass extends Object {
+declare class GeometryClass extends Object  {
 
   
 /**
  * Geometry provides users with a set of helper functions to create geometric shapes, compute intersections between shapes, and process various other geometric operations.
  *
 */
-  "new"(): GeometryClass;
-  static "new"(): GeometryClass;
-
+  new(): GeometryClass; 
+  static "new"(): GeometryClass 
 
 
 
@@ -173,8 +172,7 @@ triangulate_delaunay_2d(points: PoolVector2Array): PoolIntArray;
 /** Triangulates the polygon specified by the points in [code]polygon[/code]. Returns a [PoolIntArray] where each triangle consists of three consecutive point indices into [code]polygon[/code] (i.e. the returned array will have [code]n * 3[/code] elements, with [code]n[/code] being the number of found triangles). If the triangulation did not succeed, an empty [PoolIntArray] is returned. */
 triangulate_polygon(polygon: PoolVector2Array): PoolIntArray;
 
-  // connect<T extends SignalsOf<GeometryClass>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<GeometryClassSignals>>(signal: T, method: SignalFunction<GeometryClassSignals[T]>): number;
+  connect<T extends SignalsOf<GeometryClass>>(signal: T, method: SignalFunction<GeometryClass[T]>): number;
 
 
 
@@ -250,8 +248,7 @@ static END_SQUARE: any;
 */
 static END_ROUND: any;
 
+
+
 }
 
-declare class GeometryClassSignals extends ObjectSignals {
-  
-}

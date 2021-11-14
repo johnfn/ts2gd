@@ -3,16 +3,15 @@
  * Base class for all 2D shapes. All 2D shape types inherit from this.
  *
 */
-declare class Shape2D extends Resource {
+declare class Shape2D extends Resource  {
 
   
 /**
  * Base class for all 2D shapes. All 2D shape types inherit from this.
  *
 */
-  "new"(): Shape2D;
-  static "new"(): Shape2D;
-
+  new(): Shape2D; 
+  static "new"(): Shape2D 
 
 
 /** The shape's custom solver bias. */
@@ -53,14 +52,12 @@ collide_with_motion_and_get_contacts(local_xform: Transform2D, local_motion: Vec
 /** Draws a solid shape onto a [CanvasItem] with the [VisualServer] API filled with the specified [code]color[/code]. The exact drawing method is specific for each shape and cannot be configured. */
 draw(canvas_item: RID, color: Color): void;
 
-  // connect<T extends SignalsOf<Shape2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Shape2DSignals>>(signal: T, method: SignalFunction<Shape2DSignals[T]>): number;
+  connect<T extends SignalsOf<Shape2D>>(signal: T, method: SignalFunction<Shape2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class Shape2DSignals extends ResourceSignals {
-  
-}

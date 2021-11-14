@@ -5,7 +5,7 @@
  * To play audio positionally, use [AudioStreamPlayer2D] or [AudioStreamPlayer3D] instead of [AudioStreamPlayer].
  *
 */
-declare class AudioStreamPlayer extends Node {
+declare class AudioStreamPlayer extends Node  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class AudioStreamPlayer extends Node {
  * To play audio positionally, use [AudioStreamPlayer2D] or [AudioStreamPlayer3D] instead of [AudioStreamPlayer].
  *
 */
-  "new"(): AudioStreamPlayer;
-  static "new"(): AudioStreamPlayer;
-
+  new(): AudioStreamPlayer; 
+  static "new"(): AudioStreamPlayer 
 
 
 /** If [code]true[/code], audio plays when added to scene tree. */
@@ -58,8 +57,7 @@ seek(to_position: float): void;
 /** Stops the audio. */
 stop(): void;
 
-  // connect<T extends SignalsOf<AudioStreamPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioStreamPlayerSignals>>(signal: T, method: SignalFunction<AudioStreamPlayerSignals[T]>): number;
+  connect<T extends SignalsOf<AudioStreamPlayer>>(signal: T, method: SignalFunction<AudioStreamPlayer[T]>): number;
 
 
 
@@ -81,13 +79,12 @@ static MIX_TARGET_SURROUND: any;
 */
 static MIX_TARGET_CENTER: any;
 
-}
 
-declare class AudioStreamPlayerSignals extends NodeSignals {
-  /**
+/**
  * Emitted when the audio stops playing.
  *
 */
-finished: Signal<() => void>
+$finished: Signal<() => void>
 
 }
+

@@ -49,7 +49,7 @@
  * 
  *
 */
-declare class UDPServer extends Reference {
+declare class UDPServer extends Reference  {
 
   
 /**
@@ -102,9 +102,8 @@ declare class UDPServer extends Reference {
  * 
  *
 */
-  "new"(): UDPServer;
-  static "new"(): UDPServer;
-
+  new(): UDPServer; 
+  static "new"(): UDPServer 
 
 
 /** Define the maximum number of pending connections, during [method poll], any new pending connection exceeding that value will be automatically dropped. Setting this value to [code]0[/code] effectively prevents any new pending connection to be accepted (e.g. when all your players have connected). */
@@ -128,14 +127,12 @@ stop(): void;
 /** Returns the first pending connection (connected to the appropriate address/port). Will return [code]null[/code] if no new connection is available. See also [method is_connection_available], [method PacketPeerUDP.connect_to_host]. */
 take_connection(): PacketPeerUDP;
 
-  // connect<T extends SignalsOf<UDPServer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<UDPServerSignals>>(signal: T, method: SignalFunction<UDPServerSignals[T]>): number;
+  connect<T extends SignalsOf<UDPServer>>(signal: T, method: SignalFunction<UDPServer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class UDPServerSignals extends ReferenceSignals {
-  
-}

@@ -5,7 +5,7 @@
  * Interfaces should be written in such a way that simply enabling them will give us a working setup. You can query the available interfaces through [ARVRServer].
  *
 */
-declare class ARVRInterface extends Reference {
+declare class ARVRInterface extends Reference  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ARVRInterface extends Reference {
  * Interfaces should be written in such a way that simply enabling them will give us a working setup. You can query the available interfaces through [ARVRServer].
  *
 */
-  "new"(): ARVRInterface;
-  static "new"(): ARVRInterface;
-
+  new(): ARVRInterface; 
+  static "new"(): ARVRInterface 
 
 
 /** On an AR interface, [code]true[/code] if anchor detection is enabled. */
@@ -63,8 +62,7 @@ is_stereo(): boolean;
 /** Turns the interface off. */
 uninitialize(): void;
 
-  // connect<T extends SignalsOf<ARVRInterface>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ARVRInterfaceSignals>>(signal: T, method: SignalFunction<ARVRInterfaceSignals[T]>): number;
+  connect<T extends SignalsOf<ARVRInterface>>(signal: T, method: SignalFunction<ARVRInterface[T]>): number;
 
 
 
@@ -146,8 +144,7 @@ static ARVR_UNKNOWN_TRACKING: any;
 */
 static ARVR_NOT_TRACKING: any;
 
+
+
 }
 
-declare class ARVRInterfaceSignals extends ReferenceSignals {
-  
-}

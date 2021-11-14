@@ -7,7 +7,7 @@
  * Updating the target properties of animations occurs at process time.
  *
 */
-declare class AnimationPlayer extends Node {
+declare class AnimationPlayer extends Node  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class AnimationPlayer extends Node {
  * Updating the target properties of animations occurs at process time.
  *
 */
-  "new"(): AnimationPlayer;
-  static "new"(): AnimationPlayer;
-
+  new(): AnimationPlayer; 
+  static "new"(): AnimationPlayer 
 
 
 /** If playing, the current animation; otherwise, the animation last played. When set, would change the animation, but would not play it unless currently playing. See also [member current_animation]. */
@@ -157,8 +156,7 @@ set_blend_time(anim_from: string, anim_to: string, sec: float): void;
 */
 stop(reset?: boolean): void;
 
-  // connect<T extends SignalsOf<AnimationPlayer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AnimationPlayerSignals>>(signal: T, method: SignalFunction<AnimationPlayerSignals[T]>): number;
+  connect<T extends SignalsOf<AnimationPlayer>>(signal: T, method: SignalFunction<AnimationPlayer[T]>): number;
 
 
 
@@ -192,33 +190,32 @@ static ANIMATION_METHOD_CALL_DEFERRED: any;
 */
 static ANIMATION_METHOD_CALL_IMMEDIATE: any;
 
-}
 
-declare class AnimationPlayerSignals extends NodeSignals {
-  /**
+/**
  * Emitted when a queued animation plays after the previous animation was finished. See [method queue].
  *
  * **Note:** The signal is not emitted when the animation is changed via [method play] or from [AnimationTree].
  *
 */
-animation_changed: Signal<(old_name: string, new_name: string) => void>
+$animation_changed: Signal<(old_name: string, new_name: string) => void>
 
 /**
  * Notifies when an animation finished playing.
  *
 */
-animation_finished: Signal<(anim_name: string) => void>
+$animation_finished: Signal<(anim_name: string) => void>
 
 /**
  * Notifies when an animation starts playing.
  *
 */
-animation_started: Signal<(anim_name: string) => void>
+$animation_started: Signal<(anim_name: string) => void>
 
 /**
  * Notifies when the caches have been cleared, either automatically, or manually via [method clear_caches].
  *
 */
-caches_cleared: Signal<() => void>
+$caches_cleared: Signal<() => void>
 
 }
+

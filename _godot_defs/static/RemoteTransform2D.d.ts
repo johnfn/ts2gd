@@ -5,7 +5,7 @@
  * It can be set to update another Node's position, rotation and/or scale. It can use either global or local coordinates.
  *
 */
-declare class RemoteTransform2D extends Node2D {
+declare class RemoteTransform2D extends Node2D  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class RemoteTransform2D extends Node2D {
  * It can be set to update another Node's position, rotation and/or scale. It can use either global or local coordinates.
  *
 */
-  "new"(): RemoteTransform2D;
-  static "new"(): RemoteTransform2D;
-
+  new(): RemoteTransform2D; 
+  static "new"(): RemoteTransform2D 
 
 
 /** The [NodePath] to the remote node, relative to the RemoteTransform2D's position in the scene. */
@@ -37,14 +36,12 @@ use_global_coordinates: boolean;
 /** [RemoteTransform2D] caches the remote node. It may not notice if the remote node disappears; [method force_update_cache] forces it to update the cache again. */
 force_update_cache(): void;
 
-  // connect<T extends SignalsOf<RemoteTransform2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<RemoteTransform2DSignals>>(signal: T, method: SignalFunction<RemoteTransform2DSignals[T]>): number;
+  connect<T extends SignalsOf<RemoteTransform2D>>(signal: T, method: SignalFunction<RemoteTransform2D[T]>): number;
+
+
 
 
 
 
 }
 
-declare class RemoteTransform2DSignals extends Node2DSignals {
-  
-}

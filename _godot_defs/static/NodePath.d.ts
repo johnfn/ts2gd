@@ -57,9 +57,8 @@ declare class NodePath {
  *
 */
 
-  constructor(from: string);
-  static "new"(): NodePath;
-
+  new(from: string): NodePath;
+  static "new"(): NodePath 
 
 
 
@@ -145,14 +144,12 @@ is_absolute(): boolean;
 /** Returns [code]true[/code] if the node path is empty. */
 is_empty(): boolean;
 
-  // connect<T extends SignalsOf<NodePath>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<NodePathSignals>>(signal: T, method: SignalFunction<NodePathSignals[T]>): number;
+  connect<T extends SignalsOf<NodePath>>(signal: T, method: SignalFunction<NodePath[T]>): number;
+
+
 
 
 
 
 }
 
-declare class NodePathSignals {
-  
-}

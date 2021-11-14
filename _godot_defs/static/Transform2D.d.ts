@@ -15,11 +15,10 @@ declare class Transform2D {
  *
 */
 
-  constructor(from: Transform);
-  constructor(x_axis: Vector2, y_axis: Vector2, origin: Vector2);
-  constructor(rotation: float, position: Vector2);
-  static "new"(): Transform2D;
-
+  new(from: Transform): Transform2D;
+  new(x_axis: Vector2, y_axis: Vector2, origin: Vector2): Transform2D;
+  new(rotation: float, position: Vector2): Transform2D;
+  static "new"(): Transform2D 
 
 
 /** The origin vector (column 2, the third column). Equivalent to array index [code]2[/code]. The origin vector represents translation. */
@@ -97,8 +96,7 @@ xform(v: any): any;
 /** Inverse-transforms the given [Vector2], [Rect2], or [PoolVector2Array] by this transform. */
 xform_inv(v: any): any;
 
-  // connect<T extends SignalsOf<Transform2D>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<Transform2DSignals>>(signal: T, method: SignalFunction<Transform2DSignals[T]>): number;
+  connect<T extends SignalsOf<Transform2D>>(signal: T, method: SignalFunction<Transform2D[T]>): number;
 
 
 
@@ -120,8 +118,7 @@ static FLIP_X: Transform2D;
 */
 static FLIP_Y: Transform2D;
 
+
+
 }
 
-declare class Transform2DSignals {
-  
-}

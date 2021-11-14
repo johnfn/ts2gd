@@ -3,16 +3,15 @@
  * Visual shader graphs consist of various nodes. Each node in the graph is a separate object and they are represented as a rectangular boxes with title and a set of properties. Each node has also connection ports that allow to connect it to another nodes and control the flow of the shader.
  *
 */
-declare class VisualShaderNode extends Resource {
+declare class VisualShaderNode extends Resource  {
 
   
 /**
  * Visual shader graphs consist of various nodes. Each node in the graph is a separate object and they are represented as a rectangular boxes with title and a set of properties. Each node has also connection ports that allow to connect it to another nodes and control the flow of the shader.
  *
 */
-  "new"(): VisualShaderNode;
-  static "new"(): VisualShaderNode;
-
+  new(): VisualShaderNode; 
+  static "new"(): VisualShaderNode 
 
 
 /** Sets the output port index which will be showed for preview. If set to [code]-1[/code] no port will be open for preview. */
@@ -30,8 +29,7 @@ set_default_input_values(values: any[]): void;
 /** Sets the default value for the selected input [code]port[/code]. */
 set_input_port_default_value(port: int, value: any): void;
 
-  // connect<T extends SignalsOf<VisualShaderNode>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<VisualShaderNodeSignals>>(signal: T, method: SignalFunction<VisualShaderNodeSignals[T]>): number;
+  connect<T extends SignalsOf<VisualShaderNode>>(signal: T, method: SignalFunction<VisualShaderNode[T]>): number;
 
 
 
@@ -71,13 +69,12 @@ static PORT_TYPE_SAMPLER: any;
 */
 static PORT_TYPE_MAX: any;
 
-}
 
-declare class VisualShaderNodeSignals extends ResourceSignals {
-  /**
+/**
  * Emitted when the node requests an editor refresh. Currently called only in setter of [member VisualShaderNodeTexture.source], [VisualShaderNodeTexture], and [VisualShaderNodeCubeMap] (and their derivatives).
  *
 */
-editor_refresh_request: Signal<() => void>
+$editor_refresh_request: Signal<() => void>
 
 }
+

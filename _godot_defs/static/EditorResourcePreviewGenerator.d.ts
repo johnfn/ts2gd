@@ -3,16 +3,15 @@
  * Custom code to generate previews. Please check `file_dialog/thumbnail_size` in [EditorSettings] to find out the right size to do previews at.
  *
 */
-declare class EditorResourcePreviewGenerator extends Reference {
+declare class EditorResourcePreviewGenerator extends Reference  {
 
   
 /**
  * Custom code to generate previews. Please check `file_dialog/thumbnail_size` in [EditorSettings] to find out the right size to do previews at.
  *
 */
-  "new"(): EditorResourcePreviewGenerator;
-  static "new"(): EditorResourcePreviewGenerator;
-
+  new(): EditorResourcePreviewGenerator; 
+  static "new"(): EditorResourcePreviewGenerator 
 
 
 
@@ -55,14 +54,12 @@ generate_small_preview_automatically(): boolean;
 /** Returns [code]true[/code] if your generator supports the resource of type [code]type[/code]. */
 handles(type: string): boolean;
 
-  // connect<T extends SignalsOf<EditorResourcePreviewGenerator>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<EditorResourcePreviewGeneratorSignals>>(signal: T, method: SignalFunction<EditorResourcePreviewGeneratorSignals[T]>): number;
+  connect<T extends SignalsOf<EditorResourcePreviewGenerator>>(signal: T, method: SignalFunction<EditorResourcePreviewGenerator[T]>): number;
+
+
 
 
 
 
 }
 
-declare class EditorResourcePreviewGeneratorSignals extends ReferenceSignals {
-  
-}

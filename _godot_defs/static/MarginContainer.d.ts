@@ -16,7 +16,7 @@
  * 
  *
 */
-declare class MarginContainer extends Container {
+declare class MarginContainer extends Container  {
 
   
 /**
@@ -36,22 +36,19 @@ declare class MarginContainer extends Container {
  * 
  *
 */
-  "new"(): MarginContainer;
-  static "new"(): MarginContainer;
+  new(): MarginContainer; 
+  static "new"(): MarginContainer 
 
 
 
 
 
+  connect<T extends SignalsOf<MarginContainer>>(signal: T, method: SignalFunction<MarginContainer[T]>): number;
 
-  // connect<T extends SignalsOf<MarginContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<MarginContainerSignals>>(signal: T, method: SignalFunction<MarginContainerSignals[T]>): number;
+
 
 
 
 
 }
 
-declare class MarginContainerSignals extends ContainerSignals {
-  
-}

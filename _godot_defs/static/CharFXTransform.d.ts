@@ -3,16 +3,15 @@
  * By setting various properties on this object, you can control how individual characters will be displayed in a [RichTextEffect].
  *
 */
-declare class CharFXTransform extends Reference {
+declare class CharFXTransform extends Reference  {
 
   
 /**
  * By setting various properties on this object, you can control how individual characters will be displayed in a [RichTextEffect].
  *
 */
-  "new"(): CharFXTransform;
-  static "new"(): CharFXTransform;
-
+  new(): CharFXTransform; 
+  static "new"(): CharFXTransform 
 
 
 /** The index of the current character (starting from 0). Setting this property won't affect drawing. */
@@ -36,7 +35,7 @@ character: int;
 color: Color;
 
 /**
- * The time elapsed since the [RichTextLabel] was added to the scene tree (in seconds). Time stops when the project is paused, unless the [RichTextLabel]'s [member Node.pause_mode] is set to [constant Node.PAUSE_MODE_PROCESS].
+ * The time elapsed since the [RichTextLabel] was added to the scene tree (in seconds). Time stops when the [RichTextLabel] is paused (see [member Node.pause_mode]). Resets when the text in the [RichTextLabel] is changed.
  *
  * **Note:** Time still passes while the [RichTextLabel] is hidden.
  *
@@ -68,14 +67,12 @@ visible: boolean;
 
 
 
-  // connect<T extends SignalsOf<CharFXTransform>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<CharFXTransformSignals>>(signal: T, method: SignalFunction<CharFXTransformSignals[T]>): number;
+  connect<T extends SignalsOf<CharFXTransform>>(signal: T, method: SignalFunction<CharFXTransform[T]>): number;
+
+
 
 
 
 
 }
 
-declare class CharFXTransformSignals extends ReferenceSignals {
-  
-}

@@ -5,7 +5,7 @@
  * **Note:** This control is the color picker widget itself. You can use a [ColorPickerButton] instead if you need a button that brings up a [ColorPicker] in a pop-up.
  *
 */
-declare class ColorPicker extends BoxContainer {
+declare class ColorPicker extends BoxContainer  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ColorPicker extends BoxContainer {
  * **Note:** This control is the color picker widget itself. You can use a [ColorPickerButton] instead if you need a button that brings up a [ColorPicker] in a pop-up.
  *
 */
-  "new"(): ColorPicker;
-  static "new"(): ColorPicker;
-
+  new(): ColorPicker; 
+  static "new"(): ColorPicker 
 
 
 /** The currently selected color. */
@@ -64,31 +63,29 @@ erase_preset(color: Color): void;
 /** Returns the list of colors in the presets of the color picker. */
 get_presets(): PoolColorArray;
 
-  // connect<T extends SignalsOf<ColorPicker>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ColorPickerSignals>>(signal: T, method: SignalFunction<ColorPickerSignals[T]>): number;
+  connect<T extends SignalsOf<ColorPicker>>(signal: T, method: SignalFunction<ColorPicker[T]>): number;
 
 
 
 
-}
 
-declare class ColorPickerSignals extends BoxContainerSignals {
-  /**
+/**
  * Emitted when the color is changed.
  *
 */
-color_changed: Signal<(color: Color) => void>
+$color_changed: Signal<(color: Color) => void>
 
 /**
  * Emitted when a preset is added.
  *
 */
-preset_added: Signal<(color: Color) => void>
+$preset_added: Signal<(color: Color) => void>
 
 /**
  * Emitted when a preset is removed.
  *
 */
-preset_removed: Signal<(color: Color) => void>
+$preset_removed: Signal<(color: Color) => void>
 
 }
+

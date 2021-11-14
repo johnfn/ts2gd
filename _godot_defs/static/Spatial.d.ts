@@ -7,7 +7,7 @@
  * **Note:** Unless otherwise specified, all methods that have angle parameters must have angles specified as **radians**. To convert degrees to radians, use [method @GDScript.deg2rad].
  *
 */
-declare class Spatial extends Node {
+declare class Spatial extends Node  {
 
   
 /**
@@ -18,9 +18,8 @@ declare class Spatial extends Node {
  * **Note:** Unless otherwise specified, all methods that have angle parameters must have angles specified as **radians**. To convert degrees to radians, use [method @GDScript.deg2rad].
  *
 */
-  "new"(): Spatial;
-  static "new"(): Spatial;
-
+  new(): Spatial; 
+  static "new"(): Spatial 
 
 
 /** The [SpatialGizmo] for this node. Used for example in [EditorSpatialGizmo] as custom visualization and editing handles in Editor. */
@@ -163,8 +162,7 @@ translate_object_local(offset: Vector3): void;
 /** Updates the [SpatialGizmo] of this node. */
 update_gizmo(): void;
 
-  // connect<T extends SignalsOf<Spatial>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<SpatialSignals>>(signal: T, method: SignalFunction<SpatialSignals[T]>): number;
+  connect<T extends SignalsOf<Spatial>>(signal: T, method: SignalFunction<Spatial[T]>): number;
 
 
 
@@ -206,25 +204,24 @@ static NOTIFICATION_ENTER_GAMEPLAY: any;
 */
 static NOTIFICATION_EXIT_GAMEPLAY: any;
 
-}
 
-declare class SpatialSignals extends NodeSignals {
-  /**
+/**
  * Emitted by portal system gameplay monitor when a node enters the gameplay area.
  *
 */
-gameplay_entered: Signal<() => void>
+$gameplay_entered: Signal<() => void>
 
 /**
  * Emitted by portal system gameplay monitor when a node exits the gameplay area.
  *
 */
-gameplay_exited: Signal<() => void>
+$gameplay_exited: Signal<() => void>
 
 /**
  * Emitted when node visibility changes.
  *
 */
-visibility_changed: Signal<() => void>
+$visibility_changed: Signal<() => void>
 
 }
+

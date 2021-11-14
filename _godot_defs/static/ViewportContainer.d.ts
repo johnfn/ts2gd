@@ -5,7 +5,7 @@
  * **Note:** Changing a ViewportContainer's [member Control.rect_scale] will cause its contents to appear distorted. To change its visual size without causing distortion, adjust the node's margins instead (if it's not already in a container).
  *
 */
-declare class ViewportContainer extends Container {
+declare class ViewportContainer extends Container  {
 
   
 /**
@@ -14,9 +14,8 @@ declare class ViewportContainer extends Container {
  * **Note:** Changing a ViewportContainer's [member Control.rect_scale] will cause its contents to appear distorted. To change its visual size without causing distortion, adjust the node's margins instead (if it's not already in a container).
  *
 */
-  "new"(): ViewportContainer;
-  static "new"(): ViewportContainer;
-
+  new(): ViewportContainer; 
+  static "new"(): ViewportContainer 
 
 
 /** If [code]true[/code], the viewport will be scaled to the control's size. */
@@ -34,14 +33,12 @@ stretch_shrink: int;
 
 
 
-  // connect<T extends SignalsOf<ViewportContainer>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<ViewportContainerSignals>>(signal: T, method: SignalFunction<ViewportContainerSignals[T]>): number;
+  connect<T extends SignalsOf<ViewportContainer>>(signal: T, method: SignalFunction<ViewportContainer[T]>): number;
+
+
 
 
 
 
 }
 
-declare class ViewportContainerSignals extends ContainerSignals {
-  
-}

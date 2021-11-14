@@ -3,16 +3,15 @@
  * Adds a chorus audio effect. The effect applies a filter with voices to duplicate the audio source and manipulate it through the filter.
  *
 */
-declare class AudioEffectChorus extends AudioEffect {
+declare class AudioEffectChorus extends AudioEffect  {
 
   
 /**
  * Adds a chorus audio effect. The effect applies a filter with voices to duplicate the audio source and manipulate it through the filter.
  *
 */
-  "new"(): AudioEffectChorus;
-  static "new"(): AudioEffectChorus;
-
+  new(): AudioEffectChorus; 
+  static "new"(): AudioEffectChorus 
 
 
 /** The effect's raw signal. */
@@ -132,14 +131,12 @@ set_voice_pan(voice_idx: int, pan: float): void;
 /** No documentation provided. */
 set_voice_rate_hz(voice_idx: int, rate_hz: float): void;
 
-  // connect<T extends SignalsOf<AudioEffectChorus>, U extends Node>(signal: T, node: U, method: keyof U): number;
-  connect<T extends SignalsOf<AudioEffectChorusSignals>>(signal: T, method: SignalFunction<AudioEffectChorusSignals[T]>): number;
+  connect<T extends SignalsOf<AudioEffectChorus>>(signal: T, method: SignalFunction<AudioEffectChorus[T]>): number;
+
+
 
 
 
 
 }
 
-declare class AudioEffectChorusSignals extends AudioEffectSignals {
-  
-}
