@@ -278,3 +278,21 @@ class_name Test
 export(Dictionary) var foo
 `,
 }
+
+export const testNotSoNormalExportedVariable10: Test = {
+  ts: `
+export enum MyEnum {
+
+}
+
+export class Test {
+  @exports
+  foo: MyEnum
+}
+  `,
+  expected: `
+class_name Test
+const MyEnum = preload("_MyEnum.gd").MyEnum
+export(MyEnum) var foo
+`,
+}

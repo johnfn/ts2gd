@@ -1,5 +1,7 @@
 # ts2gd: Compile TypeScript to GDScript
 
+Need help? Contact me on Discord: johnfn#0001.
+
 Why use ts2gd?
 
 - Incrementally compiles to GDScript in under a tenth of a second.

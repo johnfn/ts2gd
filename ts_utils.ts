@@ -331,8 +331,6 @@ ${chalk.yellow(props.getNodeText(node))}
       }
 
       if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
-        console.log(nonNullTypes.length, nonNullTypeNodes.length)
-
         return {
           result: null,
           errors: [
@@ -372,12 +370,9 @@ ${chalk.yellow(props.getNodeText(node))}
   //   return "PackedScene"
   // }
 
-  // Enum type names are actually not imported!
-  // TODO: They are now!
-
-  // if (isEnumType(typecheckerInferredType)) {
-  //   return tsTypeName;
-  // }
+  if (isEnumType(typecheckerInferredType)) {
+    return { result: tsTypeName }
+  }
 
   return { result: null }
 }
