@@ -332,6 +332,14 @@ const parseNode = (genericNode, props) => {
             return { content: "null" };
         case typescript_1.SyntaxKind.NullKeyword:
             return { content: "null" };
+        case typescript_1.SyntaxKind.AmpersandToken:
+            return { content: "&" };
+        case typescript_1.SyntaxKind.BarToken:
+            return { content: "|" };
+        case typescript_1.SyntaxKind.CaretToken:
+            return { content: "!=" };
+        case typescript_1.SyntaxKind.TildeToken:
+            return { content: "!" };
         default:
             console.error(ts_utils_1.syntaxKindToString(genericNode.kind));
             props.addError({

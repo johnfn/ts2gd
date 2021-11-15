@@ -502,6 +502,14 @@ export const parseNode = (
       return { content: "null" }
     case SyntaxKind.NullKeyword:
       return { content: "null" }
+    case SyntaxKind.AmpersandToken:
+      return {content: "&"}
+    case SyntaxKind.BarToken:
+      return { content: "|" }
+    case SyntaxKind.CaretToken:
+      return {content: "!="}
+    case SyntaxKind.TildeToken:
+      return {content: "!"}
 
     default:
       console.error("Name of token:", syntaxKindToString(genericNode.kind))
