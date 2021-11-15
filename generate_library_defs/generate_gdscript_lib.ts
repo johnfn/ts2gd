@@ -221,10 +221,12 @@ export const generateGdscriptLib = async (path: string) => {
 
   let result = ""
 
-  const globalMethods: GodotXMLMethod[] = json["class"].methods[0].method
+  const globalMethods: GodotXMLMethod[] = json.class.methods[0].method
+  const constants = (json.class.constants ?? [])[0]?.constant ?? []
   const parsedMethods = globalMethods.map((m) =>
     parseMethod(m, { generateAsGlobals: true })
   )
+  // console.log(constants)
 
   for (const parsedMethod of parsedMethods) {
     if (parsedMethod.name === "load") {
