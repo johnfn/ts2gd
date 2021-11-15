@@ -440,6 +440,12 @@ export const parseNode = (
     // Only used in BinaryExpression, I think
     case SyntaxKind.QuestionQuestionToken:
       return { content: "??" }
+    case SyntaxKind.AmpersandToken:
+      return { content: "&" }
+    case SyntaxKind.CaretToken:
+      return { content: "^" }
+    case SyntaxKind.BarToken:
+      return { content: "|" }
     case SyntaxKind.PlusEqualsToken:
       return { content: "+=" }
     case SyntaxKind.AsteriskEqualsToken:
@@ -498,7 +504,7 @@ export const parseNode = (
       return { content: "null" }
 
     default:
-      console.error(syntaxKindToString(genericNode.kind))
+      console.error("Name of token:", syntaxKindToString(genericNode.kind))
       props.addError({
         error: ErrorName.UnknownTsSyntax,
         location: genericNode,

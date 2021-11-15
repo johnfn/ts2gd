@@ -172,8 +172,6 @@ export class TsGdProjectClass {
     // Do this first because some assets expect themselves to exist - e.g.
     // an enum inside a source file expects that source file to exist.
     if (newAsset instanceof BaseAsset) {
-      console.log("add", newAsset)
-
       this.assets.push(newAsset)
     }
 
@@ -300,8 +298,6 @@ export class TsGdProjectClass {
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {
-    console.log(flags)
-
     if (flags.buildLibraries) {
       return true
     }

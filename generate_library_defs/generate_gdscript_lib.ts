@@ -226,7 +226,6 @@ export const generateGdscriptLib = async (path: string) => {
   const parsedMethods = globalMethods.map((m) =>
     parseMethod(m, { generateAsGlobals: true })
   )
-  // console.log(constants)
 
   for (const parsedMethod of parsedMethods) {
     if (parsedMethod.name === "load") {
