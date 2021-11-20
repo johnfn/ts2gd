@@ -205,6 +205,14 @@ If you'd like ts2gd to generate the latest TS definitions from Godot, clone the 
 
 This shouldn't be necessary unless you want some really recent features from Godot, or you're developing the ts2gd compiler.
 
+# Common Issues
+
+## Godot Editor Formatting
+
+ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd files when opening/saving them, change the settings:
+ * Goto Editor -> Editor Settings -> Text Editor -> Indent 
+ * And switch to Type: Spaces and Size: 2
+
 # Roadmap
 
 ## Road to usability
