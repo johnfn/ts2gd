@@ -10,6 +10,15 @@ const project_1 = require("../project");
 const asset_source_file_1 = require("./asset_source_file");
 const godot_parser_1 = require("../godot_parser");
 class GodotNode {
+    name;
+    _type;
+    isRoot;
+    groups;
+    parent;
+    $section;
+    scene;
+    project;
+    scriptExtResourceId;
     constructor(props, scene, project) {
         this.name = props.$section.name;
         this.project = project;
@@ -99,6 +108,16 @@ class GodotNode {
 }
 exports.GodotNode = GodotNode;
 class AssetGodotScene extends base_asset_1.BaseAsset {
+    /** e.g. /Users/johnfn/GodotProject/Scenes/my_scene.tscn */
+    fsPath;
+    /** e.g. res://Scenes/my_scene.tscn */
+    resPath;
+    nodes;
+    resources;
+    /** e.g. my_scene.tscn */
+    name;
+    rootNode;
+    project;
     constructor(fsPath, project) {
         super();
         const sceneFile = godot_parser_1.parseGodotConfigFile(fsPath, {

@@ -3,8 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Scope = void 0;
 const typescript_1 = require("typescript");
 class Scope {
+    namesInScope = [[]];
+    program;
     constructor(program) {
-        this.namesInScope = [[]];
         this.program = program;
     }
     enterScope() {
