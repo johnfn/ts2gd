@@ -11,6 +11,22 @@ const main_1 = require("../main");
 const generate_tsconfig_1 = require("../generate_library_defs/generate_tsconfig");
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 class Paths {
+    /** Where the .ts files live, e.g. ./src */
+    sourceTsPath;
+    /** Where the compiled .gd files go, e.g. ./compiled */
+    destGdPath;
+    /** The root path of the project */
+    rootPath;
+    /** The full path to the tsconfig file. e.g. /Users/johnfn/GodotProject/tsconfig.json */
+    tsconfigPath;
+    /** The path to the Godot definitions folder for unchanging library definitions.
+     * e.g. /Users/johnfn/GodotProject/_godot_defs/static */
+    staticGodotDefsPath;
+    /** The path to the Godot definitions folder for definitions based off user files.
+     * e.g. /Users/johnfn/GodotProject/_godot_defs/dynamic */
+    dynamicGodotDefsPath;
+    /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
+    godotSourceRepoPath;
     constructor(args) {
         if (args.init) {
             this.init();

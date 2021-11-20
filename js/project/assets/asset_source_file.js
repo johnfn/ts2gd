@@ -38,6 +38,18 @@ const utils = __importStar(require("tsutils"));
 // dont make them on edit).
 // Can we just create them on edit as well (if it doesn't exist but is valid)?
 class AssetSourceFile extends base_asset_1.BaseAsset {
+    /** Like "res://src/main.gd" */
+    resPath;
+    /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
+    gdPath;
+    /** Like "/Users/johnfn/GodotProject/compiled/ " */
+    gdContainingDirectory;
+    /** Like "/Users/johnfn/GodotProject/src/main.ts" */
+    fsPath;
+    /** Like "src/main.ts" */
+    tsRelativePath;
+    project;
+    _isAutoload;
     constructor(sourceFilePath, project) {
         super();
         let gdPath = path_1.default.join(project_1.TsGdProjectClass.Paths.destGdPath, sourceFilePath.slice(project_1.TsGdProjectClass.Paths.sourceTsPath.length, -path_1.default.extname(sourceFilePath).length) + ".gd");

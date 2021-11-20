@@ -155,7 +155,8 @@ const generateGdscriptLib = async (path) => {
     const content = fs_1.default.readFileSync(path, "utf-8");
     const json = await xml2js_1.parseStringPromise(content);
     let result = "";
-    const globalMethods = json["class"].methods[0].method;
+    const globalMethods = json.class.methods[0].method;
+    const constants = (json.class.constants ?? [])[0]?.constant ?? [];
     const parsedMethods = globalMethods.map((m) => exports.parseMethod(m, { generateAsGlobals: true }));
     for (const parsedMethod of parsedMethods) {
         if (parsedMethod.name === "load") {
