@@ -53,7 +53,7 @@ For instance, ${chalk.green(`@export_flags("A", "B", "C")`)}`,
     parsedStrings: (...args) => args.join(", "),
   })
 
-  return `@export_flags(${result.content})\n`
+  return `export(int, FLAGS, ${result.content}) `
 }
 
 const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
@@ -425,7 +425,6 @@ export class Test {
   `,
   expected: `
 class_name Test
-@export_flags("A", "B", "C") 
-var exportFlagsTest
+export(int, FLAGS, "A", "B", "C") var exportFlagsTest
 `,
 }
