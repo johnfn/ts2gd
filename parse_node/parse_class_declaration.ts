@@ -1,20 +1,42 @@
 import ts, { SyntaxKind } from "typescript"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
+import { getGodotType } from "../ts_utils"
+import { isDecoratedAsExports } from "./parse_property_declaration"
 
-const getSettersAndGetters = (members: readonly ts.ClassElement[]) => {
+const getSettersAndGetters = (
+  members: readonly ts.ClassElement[],
+  props: ParseState
+) => {
   const setOrGetters = members.filter(
     (member) =>
       member.kind === SyntaxKind.SetAccessor ||
       member.kind === SyntaxKind.GetAccessor
-  )
+  ) as (ts.SetAccessorDeclaration | ts.GetAccessorDeclaration)[]
+
   const pairings: {
     setter?: ts.SetAccessorDeclaration
     getter?: ts.GetAccessorDeclaration
+    exportText: string | null
     name: string
   }[] = []
 
   for (const setGet of setOrGetters) {
+    let exportText: string | null = null
+
+    if (isDecoratedAsExports(setGet)) {
+      const typeGodotName = getGodotType(
+        setGet,
+        props.program.getTypeChecker().getTypeAtLocation(setGet),
+        props,
+        true, // isExported
+        undefined,
+        setGet.type
+      )
+
+      exportText = `@export(${typeGodotName.result ?? "null"})\n`
+    }
+
     if (setGet.kind === SyntaxKind.SetAccessor) {
       const setter = setGet as ts.SetAccessorDeclaration
       const name = setter.name.getText()
@@ -22,8 +44,9 @@ const getSettersAndGetters = (members: readonly ts.ClassElement[]) => {
 
       if (existingObj) {
         existingObj.setter = setter
+        existingObj.exportText ??= exportText
       } else {
-        pairings.push({ setter, name })
+        pairings.push({ setter, name, exportText })
       }
     }
 
@@ -34,8 +57,9 @@ const getSettersAndGetters = (members: readonly ts.ClassElement[]) => {
 
       if (existingObj) {
         existingObj.getter = getter
+        existingObj.exportText ??= exportText
       } else {
-        pairings.push({ getter, name })
+        pairings.push({ getter, name, exportText })
       }
     }
   }
@@ -60,12 +84,12 @@ export const parseClassDeclaration = (
   }
 
   // Preprocess set/get to make setget declarations
-  const settersAndGetters = getSettersAndGetters(node.members)
+  const settersAndGetters = getSettersAndGetters(node.members, props)
   const parsedSetterGetters = settersAndGetters
-    .map(({ setter, getter, name }) => {
-      return `var ${name} setget ${setter ? name + "_set" : ""}, ${
-        getter ? name + "_get" : ""
-      }`
+    .map(({ setter, getter, name, exportText }) => {
+      return `${exportText ?? ""}var ${name} setget ${
+        setter ? name + "_set" : ""
+      }, ${getter ? name + "_get" : ""}`
     })
     .join("\n")
 

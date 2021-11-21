@@ -6,7 +6,12 @@ import { ErrorName } from "../errors"
 import { Test } from "../tests/test"
 import chalk from "chalk"
 
-const isDecoratedAsExports = (node: ts.PropertyDeclaration) => {
+export const isDecoratedAsExports = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration
+) => {
   return !!node.decorators?.find(
     (dec) => dec.expression.getText() === "exports"
   )
