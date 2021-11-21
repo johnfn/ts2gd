@@ -53,8 +53,7 @@ export class Test {
   `,
   expected: `
 class_name Test
-@export(String)
-var label setget label_set, label_get
+export(String) var label setget label_set, label_get
 func label_set(text: String):
   if self.LI:
     self.LI.text = text
@@ -78,12 +77,12 @@ export class Test {
   `,
   expected: `
 class_name Test
-@export(String)
-var label setget label_set, label_get
+export(String) var label setget label_set, label_get
 func label_set(_text: String):
   pass
 func label_get():
   return ""
+
 `,
 }
 
@@ -103,8 +102,7 @@ export class Test {
   `,
   expected: `
 class_name Test
-@export(String)
-var label setget label_set, label_get
+export(String) var label setget label_set, label_get
 func label_set(_text: String):
   pass
 func label_get():
