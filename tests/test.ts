@@ -306,7 +306,7 @@ const getAllFiles = async (): Promise<{
 }> => {
   // __dirname allows this to either run via ts-node in developer mode or on CI with normal node
   // then __dirname will be within the js folder
-  const basePath = path.join(__dirname, '..', 'parse_node')
+  const basePath = path.join(__dirname, "..", "parse_node")
   const files = fs.readdirSync(basePath)
   const results: { [key: string]: any } = {}
 
@@ -452,7 +452,7 @@ export const runTests = async () => {
 
     console.info("\n")
     console.info("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
-    process.exit(failureCount>0?-1:0)
+    process.exit(failureCount > 0 ? -1 : 0)
   }
 }
 
