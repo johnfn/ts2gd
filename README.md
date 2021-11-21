@@ -65,7 +65,7 @@ feel this isn't the case.
 
 `preload` and `load` work as normal - plus they have good autocomplete support, and they return the proper type of the thing you're loading.
 
-![](preload.png =250x250)
+<img src="https://raw.githubusercontent.com/johnfn/ts2gd/main/preload.png" width="250">
 
 ### Enums
 
