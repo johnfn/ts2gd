@@ -41,17 +41,31 @@ To compile all source files once:
 
 ## Details and Differences
 
-### load/preload
+### `get_node`
 
-Sure, you _could_ do preload("YourScriptFile.tscn)... but why would you? ts2gd automatically creates globals for your scenes that you can
-import directly. e.g. if you want to instance, "YourScriptFile.tscn", just type YourScriptFileTscn and allow TS to auto-import it. You can
-then instance() it as normal. e.g., this:
+`get_node` has been supercharged - it will now autocomplete the names of all
+child nodes. And yes, this means that if you arrange your nodes later, you'll
+get type errors if you break any `get_node` calls!!
 
-`const new_obj = preload("res://MyScene.tscn).instance()`
+|     Godot hierarchy     |       ts2gd autocomplete       |
+| :---------------------: | :----------------------------: |
+| ![](get_node_godot.png) | ![](get_node_autocomplete.png) |
 
-is equivalent to this:
+ts2gd also provides a way to get any node by name, even the ones it can't verify exist:
 
-`const new_obj = MySceneTscn.instance()`
+```
+this.get_node<Label>("MyLabel")
+```
+
+N.B. It _should_ be possible to use ts2gd without _ever_ having to revert to the
+second get_node call with the type parameter. Please open a GitHub issue if you
+feel this isn't the case.
+
+### `load` / `preload`
+
+`preload` and `load` work as normal - plus they have good autocomplete support, and they return the proper type of the thing you're loading.
+
+![](preload.png =250x250)
 
 ### Enums
 
