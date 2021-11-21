@@ -1,18 +1,54 @@
-import ts, { nodeModuleNameResolver } from "typescript"
+import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
 import { ErrorName } from "../errors"
 import { Test } from "../tests/test"
+import chalk from "chalk"
 
-const isExported = (node: ts.PropertyDeclaration) => {
-  for (const dec of node.decorators ?? []) {
-    if (dec.expression.getText() === "exports") {
-      return true
-    }
+const isDecoratedAsExports = (node: ts.PropertyDeclaration) => {
+  return !!node.decorators?.find(
+    (dec) => dec.expression.getText() === "exports"
+  )
+}
+
+const isDecoratedAsExportFlags = (node: ts.PropertyDeclaration): boolean => {
+  return !!node.decorators?.find((dec) =>
+    dec.expression.getText().startsWith("export_flags")
+  )
+}
+
+const parseExportFlags = (
+  node: ts.PropertyDeclaration,
+  props: ParseState
+): string => {
+  const decoration = node.decorators?.find((dec) =>
+    dec.expression.getText().startsWith("export_flags")
+  )!
+
+  if (decoration.expression.kind !== SyntaxKind.CallExpression) {
+    props.addError({
+      description: `
+I'm confused by export_flags here. It should be a function call. 
+
+For instance, ${chalk.green(`@export_flags("A", "B", "C")`)}`,
+      error: ErrorName.ExportedVariableError,
+      location: node,
+    })
+
+    return ""
   }
 
-  return false
+  const fn = decoration.expression as ts.CallExpression
+
+  const result = combine({
+    parent: decoration,
+    nodes: [...fn.arguments],
+    props,
+    parsedStrings: (...args) => args.join(", "),
+  })
+
+  return `@export_flags(${result.content})\n`
 }
 
 const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
@@ -124,7 +160,7 @@ export const parsePropertyDeclaration = (
 
   let exportText = ""
 
-  if (isExported(node)) {
+  if (isDecoratedAsExports(node)) {
     let typeGodotName = getGodotType(
       node,
       props.program.getTypeChecker().getTypeAtLocation(node),
@@ -136,9 +172,13 @@ export const parsePropertyDeclaration = (
 
     // TODO: Have a fallback
 
-    exportText = isExported(node)
+    exportText = isDecoratedAsExports(node)
       ? `export(${typeGodotName.result ?? "null"}) `
       : ""
+  }
+
+  if (isDecoratedAsExportFlags(node)) {
+    exportText = parseExportFlags(node, props)
   }
 
   const onReady = isOnReady(node, props)
@@ -368,5 +408,19 @@ export class Test {
   expected: `
 class_name Test
 var x: float = 1.0
+`,
+}
+
+export const testExportFlags: Test = {
+  ts: `
+export class Test {
+  @export_flags("A", "B", "C")
+  exportFlagsTest
+}
+  `,
+  expected: `
+class_name Test
+@export_flags("A", "B", "C") 
+var exportFlagsTest
 `,
 }
