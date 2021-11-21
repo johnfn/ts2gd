@@ -374,7 +374,11 @@ ${chalk.yellow(props.getNodeText(node))}
     return { result: tsTypeName }
   }
 
-  return { result: null }
+  return {
+    result: props.program
+      .getTypeChecker()
+      .typeToString(typecheckerInferredType),
+  }
 }
 
 export function notEmpty<TValue>(

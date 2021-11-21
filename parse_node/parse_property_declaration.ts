@@ -296,3 +296,29 @@ const MyEnum = preload("_MyEnum.gd").MyEnum
 export(MyEnum) var foo
 `,
 }
+
+export const testExportObj: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: Vector2
+}
+  `,
+  expected: `
+class_name Test
+export(Vector2) var foo
+`,
+}
+
+export const testExportObj2: Test = {
+  ts: `
+export class Test {
+  @exports
+  foo: Vector2 | null
+}
+  `,
+  expected: `
+class_name Test
+export(Vector2) var foo
+`,
+}
