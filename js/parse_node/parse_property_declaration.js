@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testNotSoNormalExportedVariable10 = exports.testNotSoNormalExportedVariable9 = exports.testNotSoNormalExportedVariable8 = exports.testNotSoNormalExportedVariable7 = exports.testNotSoNormalExportedVariable6 = exports.testNormalExportedVariable5 = exports.testNormalExportedVariable4 = exports.testNormalExportedVariable3 = exports.testNormalExportedVariable2 = exports.testNormalExportedVariable = exports.parsePropertyDeclaration = void 0;
+exports.testNumberTypeByNoAnnotation2 = exports.testNumberTypeByNoAnnotation = exports.testNumberTypeByAnnotation2 = exports.testNumberTypeByAnnotation = exports.testExportObj2 = exports.testExportObj = exports.testNotSoNormalExportedVariable10 = exports.testNotSoNormalExportedVariable9 = exports.testNotSoNormalExportedVariable8 = exports.testNotSoNormalExportedVariable7 = exports.testNotSoNormalExportedVariable6 = exports.testNormalExportedVariable5 = exports.testNormalExportedVariable4 = exports.testNormalExportedVariable3 = exports.testNormalExportedVariable2 = exports.testNormalExportedVariable = exports.parsePropertyDeclaration = void 0;
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
 const errors_1 = require("../errors");
@@ -228,6 +228,74 @@ export class Test {
 class_name Test
 const MyEnum = preload("_MyEnum.gd").MyEnum
 export(MyEnum) var foo
+`,
+};
+exports.testExportObj = {
+    ts: `
+export class Test {
+  @exports
+  foo: Vector2
+}
+  `,
+    expected: `
+class_name Test
+export(Vector2) var foo
+`,
+};
+exports.testExportObj2 = {
+    ts: `
+export class Test {
+  @exports
+  foo: Vector2 | null
+}
+  `,
+    expected: `
+class_name Test
+export(Vector2) var foo
+`,
+};
+exports.testNumberTypeByAnnotation = {
+    ts: `
+export class Test {
+  x: int = 1
+}
+  `,
+    expected: `
+class_name Test
+var x: int = 1
+`,
+};
+exports.testNumberTypeByAnnotation2 = {
+    ts: `
+export class Test {
+  x: float = 1
+}
+  `,
+    expected: `
+class_name Test
+var x: float = 1
+`,
+};
+exports.testNumberTypeByNoAnnotation = {
+    ts: `
+export class Test {
+  x = 1
+}
+  `,
+    expected: `
+class_name Test
+var x: int = 1
+`,
+};
+exports.testNumberTypeByNoAnnotation2 = {
+    ts: `
+export class Test {
+  x = 1.0
+}
+  `,
+    expected: `
+class_name Test
+var x: float = 1.0
 `,
 };
 //# sourceMappingURL=parse_property_declaration.js.map
