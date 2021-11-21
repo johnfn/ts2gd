@@ -171,12 +171,6 @@ exports.syntaxKindToString = syntaxKindToString;
  */
 function getGodotType(node, typecheckerInferredType, props, isExport, initializer, actualType) {
     // If we have a precise initializer, use that first
-    if (initializer) {
-        let preciseInitializerType = getPreciseInitializerType(initializer, props.getNodeText(initializer));
-        if (preciseInitializerType) {
-            return { result: preciseInitializerType };
-        }
-    }
     // If we have an explicitly written type e.g. x: string, use that.
     // Otherwise, use the type that TS inferred.
     let tsTypeName = null;
@@ -189,6 +183,12 @@ function getGodotType(node, typecheckerInferredType, props, isExport, initialize
             .typeToString(typecheckerInferredType);
     }
     if (tsTypeName === "number") {
+        if (initializer) {
+            let preciseInitializerType = getPreciseInitializerType(initializer, props.getNodeText(initializer));
+            if (preciseInitializerType) {
+                return { result: preciseInitializerType };
+            }
+        }
         let errorString = "";
         let nodeText = props.getNodeText(node);
         if (nodeText.includes("\n")) {
@@ -307,7 +307,11 @@ ${chalk_1.default.yellow(props.getNodeText(node))}
     if (isEnumType(typecheckerInferredType)) {
         return { result: tsTypeName };
     }
-    return { result: null };
+    return {
+        result: props.program
+            .getTypeChecker()
+            .typeToString(typecheckerInferredType),
+    };
 }
 exports.getGodotType = getGodotType;
 function notEmpty(value) {

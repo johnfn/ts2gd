@@ -251,18 +251,22 @@ const test = (props, name, testFileName, path) => {
     };
 };
 const getAllFiles = async () => {
-    const files = fs_1.default.readdirSync("./parse_node");
+    // __dirname allows this to either run via ts-node in developer mode or on CI with normal node
+    // then __dirname will be within the js folder
+    const basePath = path_1.default.join(__dirname, '..', 'parse_node');
+    const files = fs_1.default.readdirSync(basePath);
     const results = {};
     for (const fts of files) {
         const f = path_1.default.basename(fts);
-        if (f === "index") {
+        const ext = path_1.default.extname(fts);
+        if (f === "index" || ext === ".map") {
             continue;
         }
-        let relativePath = "./parse_node/" + f;
-        const obj = await Promise.resolve().then(() => __importStar(require("./../parse_node/" + f)));
+        let filePath = path_1.default.join(basePath, f);
+        const obj = await Promise.resolve().then(() => __importStar(require(filePath)));
         results[f] = {
             content: obj,
-            path: path_1.default.resolve(relativePath),
+            path: filePath,
         };
     }
     return results;
@@ -354,6 +358,7 @@ const runTests = async () => {
         const failureCount = failures.filter((x) => !x.expectFail).length;
         console.info("\n");
         console.info("Failed", failureCount, failureCount > 1 ? "tests." : "test.");
+        process.exit(failureCount > 0 ? -1 : 0);
     }
 };
 exports.runTests = runTests;
