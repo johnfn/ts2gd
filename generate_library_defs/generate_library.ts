@@ -519,8 +519,8 @@ ${Object.keys(enums)
   }
 
   async function main() {
-    writeBaseDefinitions()
     await writeLibraryDefinitions()
+    writeBaseDefinitions()
   }
 
   // async function debug() {

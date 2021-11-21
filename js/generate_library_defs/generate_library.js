@@ -395,8 +395,8 @@ ${Object.keys(enums)
         }
     }
     async function main() {
-        generate_base_1.buildBase();
         await writeLibraryDefinitions();
+        generate_base_1.buildBase();
     }
     // async function debug() {
     //   let fileName = 'KinematicBody2D.xml';
