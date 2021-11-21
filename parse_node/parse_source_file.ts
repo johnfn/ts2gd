@@ -4,6 +4,7 @@ import {
   ParseNodeType,
   ParseState,
 } from "../parse_node"
+import { Test } from "../tests/test"
 import { LibraryFunctions } from "./parse_call_expression"
 
 /**
@@ -22,7 +23,13 @@ const preprocessClassDecl = (node: ts.ClassDeclaration, props: ParseState) => {
     extendsFrom = type.getText()
   }
 
-  return `${extendsFrom ? `extends ${extendsFrom}` : ""}
+  const isTool = !!node.decorators?.find(
+    (dec) => props.getNodeText(dec.expression) === "tool"
+  )
+
+  return `${isTool ? "tool\n" : ""}${
+    extendsFrom ? `extends ${extendsFrom}` : ""
+  }
 ${props.isAutoload ? "" : `class_name ${node.name?.getText()}\n`}`
 }
 
@@ -77,4 +84,16 @@ export const parseSourceFile = (
 `.trim(),
     enums: parsedStatements.flatMap((x) => x.enums ?? []),
   }
+}
+
+export const testToolAnnotation: Test = {
+  ts: `
+@tool
+export class Test {
+}
+  `,
+  expected: `
+tool
+class_name Test
+`,
 }

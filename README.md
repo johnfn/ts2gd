@@ -155,6 +155,17 @@ class ExportExample extends Node2D {
 }
 ```
 
+### `tool`
+
+In order to mark a script as `tool`, use `@tool`.
+
+```
+@tool
+class MyToolScript extends Node2D {
+  // ... do some tool script work here
+}
+```
+
 ### remotesync, remote
 
 To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respectively.
@@ -210,8 +221,9 @@ This shouldn't be necessary unless you want some really recent features from God
 ## Godot Editor Formatting
 
 ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd files when opening/saving them, change the settings:
- * Goto Editor -> Editor Settings -> Text Editor -> Indent 
- * And switch to Type: Spaces and Size: 2
+
+- Goto Editor -> Editor Settings -> Text Editor -> Indent
+- And switch to Type: Spaces and Size: 2
 
 # Roadmap
 
@@ -237,7 +249,7 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 - [ ] Either allow the user to point their ts2gd at a godot source download, or more likely, just grab it from online? Idk.
 - [ ] Fallthrough cases in switch are currently not supported.
 - [ ] generate Godot without warnings (as much as possible)
-- [ ] `tool`
+- [x] `tool`
 - [ ] it would be very nice to be able to pass in anonymous functions in place of callables, and have the compiler sort that out.
 
 ## Road to superior development
