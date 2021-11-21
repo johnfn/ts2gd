@@ -256,7 +256,17 @@ export const buildBase = () => {
 
 export const baseContentForTests = `
 ${baseFileContent}
-interface Vector2 {}
+
+declare class Vector2Constructor {
+  static ZERO: Vector2;
+  static ONE: Vector2;
+}
+declare type Vector2 = Vector2Constructor;
+declare var Vector2: typeof Vector2Constructor & {
+  new(x: float, y: float): Vector2;
+  (x: float, y: float): Vector2;
+}
+
 interface Vector3 {}
 interface Vector2i {}
 interface Vector3i {}

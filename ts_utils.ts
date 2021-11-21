@@ -375,9 +375,7 @@ ${chalk.yellow(props.getNodeText(node))}
   }
 
   return {
-    result: props.program
-      .getTypeChecker()
-      .typeToString(typecheckerInferredType),
+    result: props.getNodeText(actualType),
   }
 }
 
