@@ -34,7 +34,7 @@ const getSettersAndGetters = (
         setGet.type
       )
 
-      exportText = `@export(${typeGodotName.result ?? "null"})\n`
+      exportText = `export(${typeGodotName.result ?? "null"}) `
     }
 
     if (setGet.kind === SyntaxKind.SetAccessor) {
