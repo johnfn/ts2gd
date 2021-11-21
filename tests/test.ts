@@ -304,23 +304,25 @@ const test = (
 const getAllFiles = async (): Promise<{
   [key: string]: { path: string; content: any }
 }> => {
-  const files = fs.readdirSync("./parse_node")
+  // __dirname allows this to either run via ts-node in developer mode or on CI with normal node
+  // then __dirname will be within the js folder
+  const basePath = path.join(__dirname, '..', 'parse_node')
+  const files = fs.readdirSync(basePath)
   const results: { [key: string]: any } = {}
 
   for (const fts of files) {
     const f = path.basename(fts)
-
-    if (f === "index") {
+    const ext = path.extname(fts)
+    if (f === "index" || ext === ".map") {
       continue
     }
 
-    let relativePath = "./parse_node/" + f
-
-    const obj = await import("./../parse_node/" + f)
+    let filePath = path.join(basePath, f)
+    const obj = await import(filePath)
 
     results[f] = {
       content: obj,
-      path: path.resolve(relativePath),
+      path: filePath,
     }
   }
 
@@ -450,6 +452,7 @@ export const runTests = async () => {
 
     console.info("\n")
     console.info("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
+    process.exit(failureCount>0?-1:0)
   }
 }
 
