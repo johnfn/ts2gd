@@ -140,11 +140,7 @@ class MyAutoloadClass extends Node2D {
 export const MyAutoload = new MyAutoloadClass()
 ```
 
-#### Autoload node resolution
-
-`get_node()` on an autoloaded class will autocomplete to nodes found in the main scene (the scene that Godot launches at the start of the game). This is generally accurate... unless you start a different scene in Godot.
-
-### Exports
+### `@export`
 
 In order to mark an instance variable as `export`, use `@exports`, e.g.:
 
@@ -166,23 +162,13 @@ class MyToolScript extends Node2D {
 }
 ```
 
-### remotesync, remote
+### `@remotesync`, `@remote`
 
 To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respectively.
 
-### Vector2 / Vector3 operator overloading
+### `Vector2` / `Vector3` operator overloading
 
 TypeScript sadly has no support for operator overloading.
-
-There are two alternatives:
-
-#### Use my forked TypeScript compiler
-
-I forked TS and added support for Vectors, so you can do `Vector2(1, 1) + Vector(2, 2)` like normal.
-
-#### Use replacement methods
-
-I realize that using a forked TS compiler might not be the best option for everyone, so I provide an alternative solution.
 
 ```
 const v1 = Vector(1, 2)
@@ -254,7 +240,7 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 
 ## Road to superior development
 
-- [ ] Autoload classes should have an @annotation and then get automatically added to the project
+- [x] Autoload classes should have an @annotation and then get automatically added to the project
 - [x] get_nodes_in_group should parse scene to determine a more accurate return type
 - [x] Mark unused variables with \_ to avoid warnings
 - [x] parse the bbcode in the XML into markdown that TS can read.
@@ -284,7 +270,3 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 - [x] Is there a better way to do Dictionary, with strongly typed k/v?
 - [ ] Sourcemaps / debugging???
 - [ ] use LSP to handle operator overloading, sourcemap issues...?!?
-
-# How?!
-
-Compiling GDScript to TypeScript is actually pretty straightforward. Almost every keyword and control structure in GDScript compiles directly to a corresponding keyword or control structure in TypeScript.
