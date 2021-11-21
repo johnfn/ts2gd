@@ -337,11 +337,11 @@ const parseNode = (genericNode, props) => {
         case typescript_1.SyntaxKind.BarToken:
             return { content: "|" };
         case typescript_1.SyntaxKind.CaretToken:
-            return { content: "!=" };
+            return { content: "^" };
         case typescript_1.SyntaxKind.TildeToken:
-            return { content: "!" };
+            return { content: "~" };
         default:
-            console.error(ts_utils_1.syntaxKindToString(genericNode.kind));
+            console.error("Unknown token:", ts_utils_1.syntaxKindToString(genericNode.kind));
             props.addError({
                 error: errors_1.ErrorName.UnknownTsSyntax,
                 location: genericNode,

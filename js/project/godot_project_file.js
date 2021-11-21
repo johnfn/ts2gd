@@ -8,6 +8,11 @@ const godot_parser_1 = require("./godot_parser");
 const project_1 = require("./project");
 const fs_1 = __importDefault(require("fs"));
 class GodotProjectFile {
+    rawConfig;
+    autoloads;
+    fsPath;
+    actionNames;
+    project;
     constructor(path, project) {
         this.rawConfig = godot_parser_1.parseGodotConfigFile(path, {
             autoload: [],

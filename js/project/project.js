@@ -27,10 +27,37 @@ const ts_utils_1 = require("../ts_utils");
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
 class TsGdProjectClass {
+    /** Parsed tsgd.json file. */
+    static Paths;
+    /** Master list of all Godot assets */
+    assets = [];
+    /** Parsed project.godot file. */
+    godotProject;
+    /** Each source file. */
+    sourceFiles() {
+        return this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
+    }
+    /** Each Godot scene. */
+    godotScenes() {
+        return this.assets.filter((a) => a instanceof asset_godot_scene_1.AssetGodotScene);
+    }
+    /** Each Godot font. */
+    godotFonts() {
+        return this.assets.filter((a) => a instanceof asset_font_1.AssetFont);
+    }
+    /** Each .glb file. */
+    godotGlbs() {
+        return this.assets.filter((a) => a instanceof asset_glb_1.AssetGlb);
+    }
+    /** Each Godot image. */
+    godotImages() {
+        return this.assets.filter((a) => a instanceof asset_image_1.AssetImage);
+    }
+    mainScene;
+    program;
+    args;
     constructor(watcher, initialFilePaths, program, ts2gdJson, args) {
         // Initial set up
-        /** Master list of all Godot assets */
-        this.assets = [];
         this.args = args;
         TsGdProjectClass.Paths = ts2gdJson;
         this.program = program;
@@ -51,26 +78,6 @@ class TsGdProjectClass {
         }
         this.mainScene = this.godotScenes().find((scene) => scene.resPath === this.godotProject.mainScene().resPath);
         this.monitor(watcher);
-    }
-    /** Each source file. */
-    sourceFiles() {
-        return this.assets.filter((a) => a instanceof asset_source_file_1.AssetSourceFile);
-    }
-    /** Each Godot scene. */
-    godotScenes() {
-        return this.assets.filter((a) => a instanceof asset_godot_scene_1.AssetGodotScene);
-    }
-    /** Each Godot font. */
-    godotFonts() {
-        return this.assets.filter((a) => a instanceof asset_font_1.AssetFont);
-    }
-    /** Each .glb file. */
-    godotGlbs() {
-        return this.assets.filter((a) => a instanceof asset_glb_1.AssetGlb);
-    }
-    /** Each Godot image. */
-    godotImages() {
-        return this.assets.filter((a) => a instanceof asset_image_1.AssetImage);
     }
     createAsset(path) {
         if (path.endsWith(".ts")) {
@@ -115,7 +122,6 @@ class TsGdProjectClass {
         // Do this first because some assets expect themselves to exist - e.g.
         // an enum inside a source file expects that source file to exist.
         if (newAsset instanceof base_asset_1.BaseAsset) {
-            console.log("add", newAsset);
             this.assets.push(newAsset);
         }
         if (newAsset instanceof asset_source_file_1.AssetSourceFile) {
@@ -210,7 +216,6 @@ class TsGdProjectClass {
         }
     }
     shouldBuildLibraryDefinitions(flags) {
-        console.log(flags);
         if (flags.buildLibraries) {
             return true;
         }
