@@ -322,3 +322,51 @@ class_name Test
 export(Vector2) var foo
 `,
 }
+
+export const testNumberTypeByAnnotation: Test = {
+  ts: `
+export class Test {
+  x: int = 1
+}
+  `,
+  expected: `
+class_name Test
+var x: int = 1
+`,
+}
+
+export const testNumberTypeByAnnotation2: Test = {
+  ts: `
+export class Test {
+  x: float = 1
+}
+  `,
+  expected: `
+class_name Test
+var x: float = 1
+`,
+}
+
+export const testNumberTypeByNoAnnotation: Test = {
+  ts: `
+export class Test {
+  x = 1
+}
+  `,
+  expected: `
+class_name Test
+var x: int = 1
+`,
+}
+
+export const testNumberTypeByNoAnnotation2: Test = {
+  ts: `
+export class Test {
+  x = 1.0
+}
+  `,
+  expected: `
+class_name Test
+var x: float = 1.0
+`,
+}
