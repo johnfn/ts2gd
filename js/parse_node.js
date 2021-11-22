@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseNode = exports.combine = void 0;
+exports.parseNode = exports.combine = exports.ExtraLineType = void 0;
 const typescript_1 = require("typescript");
 const parse_import_declaration_1 = require("./parse_node/parse_import_declaration");
 const parse_binary_expression_1 = require("./parse_node/parse_binary_expression");
@@ -52,6 +52,13 @@ const parse_typeof_expression_1 = require("./parse_node/parse_typeof_expression"
 const errors_1 = require("./errors");
 const parse_template_expression_1 = require("./parse_node/parse_template_expression");
 const parse_no_substitution_template_expression_1 = require("./parse_node/parse_no_substitution_template_expression");
+var ExtraLineType;
+(function (ExtraLineType) {
+    ExtraLineType[ExtraLineType["Increment"] = 0] = "Increment";
+    ExtraLineType[ExtraLineType["Decrement"] = 1] = "Decrement";
+    ExtraLineType[ExtraLineType["DefaultInitialization"] = 2] = "DefaultInitialization";
+    ExtraLineType[ExtraLineType["NullableIntermediateExpression"] = 3] = "NullableIntermediateExpression";
+})(ExtraLineType = exports.ExtraLineType || (exports.ExtraLineType = {}));
 const isTsNodeArray = (x) => {
     // Poor man's hack
     return x && "pos" in x && "find" in x;
@@ -71,29 +78,16 @@ function combine(args) {
         nodes = [nodes];
     }
     const parsedNodes = nodes.map((node) => {
-        if (!node) {
-            // We need to preserve the order of the array, incl. undefined, when we call content().
-            let res = {
-                node: undefined,
-                content: "",
-                enums: [],
-                extraLines: [],
-                hoistedEnumImports: [],
-                hoistedArrowFunctions: [],
-                hoistedLibraryFunctions: new Set(),
-            };
-            return res;
-        }
-        const parsed = exports.parseNode(node, props);
+        const parsed = node ? exports.parseNode(node, props) : undefined;
         return {
             node,
             errors: [],
-            content: parsed.content,
-            enums: parsed.enums ?? [],
-            extraLines: parsed.extraLines ?? [],
-            hoistedEnumImports: parsed.hoistedEnumImports ?? [],
-            hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
-            hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? new Set(),
+            content: parsed?.content ?? "",
+            enums: parsed?.enums ?? [],
+            extraLines: parsed?.extraLines ?? [],
+            hoistedEnumImports: parsed?.hoistedEnumImports ?? [],
+            hoistedArrowFunctions: parsed?.hoistedArrowFunctions ?? [],
+            hoistedLibraryFunctions: parsed?.hoistedLibraryFunctions ?? new Set(),
         };
     });
     for (const parsedNode of parsedNodes) {

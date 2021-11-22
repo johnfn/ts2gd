@@ -10,7 +10,7 @@ const parseSetAccessor = (node, props) => {
         addIndent: true,
         parsedStrings: (name, body, ...params) => `
 func ${name}_set(${params.join(", ")}):
-  ${body}
+  ${body || "pass"}
 `,
     });
 };

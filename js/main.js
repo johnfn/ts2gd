@@ -24,9 +24,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.main = exports.showLoadingMessage = void 0;
-// [ ]: pass in methods as first class objects to other functions.
+// [x]: pass in methods as first class objects to other functions.
 // [x]: Can't import two Tscn from same file
-// [ ]: Color and ColorConstructor are backwards lol
+// [x]: Color and ColorConstructor are backwards lol
+// [ ]: improve on default value for parameters hack
 // [ ]: We don't clean up old generated .d.ts files when we rename a file.
 // [ ]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
 // [ ]: "Can't find the autoload instance variable" error is displayed on empty classes

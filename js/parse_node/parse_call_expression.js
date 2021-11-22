@@ -400,6 +400,7 @@ const parseCallExpression = (node, props) => {
                             {
                                 type: "before",
                                 line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+                                lineType: parse_node_1.ExtraLineType.NullableIntermediateExpression,
                             },
                         ]);
                 return `${newName}`;

@@ -101,7 +101,7 @@ class TsGdProjectClass {
             path.endsWith(".jpg")) {
             return new asset_image_1.AssetImage(path, this);
         }
-        console.log(`unhandled asset type ${path}`);
+        console.error(`unhandled asset type ${path}`);
         return null;
     }
     monitor(watcher) {
@@ -209,7 +209,7 @@ class TsGdProjectClass {
         const result = await Promise.all(assetsToCompile.map((asset) => asset.compile(this.program)));
         const errors = result.flatMap((compiledSourceFile) => compiledSourceFile.errors ?? []);
         if (errors.length === 0) {
-            console.log("No errors in project.");
+            console.info("No errors in project.");
         }
         else {
             errors_1.displayErrors(errors);

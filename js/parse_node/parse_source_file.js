@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseSourceFile = void 0;
+exports.testToolAnnotation = exports.parseSourceFile = void 0;
 const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const parse_call_expression_1 = require("./parse_call_expression");
@@ -16,7 +16,8 @@ const preprocessClassDecl = (node, props) => {
         const type = clause.types[0];
         extendsFrom = type.getText();
     }
-    return `${extendsFrom ? `extends ${extendsFrom}` : ""}
+    const isTool = !!node.decorators?.find((dec) => props.getNodeText(dec.expression) === "tool");
+    return `${isTool ? "tool\n" : ""}${extendsFrom ? `extends ${extendsFrom}` : ""}
 ${props.isAutoload ? "" : `class_name ${node.name?.getText()}\n`}`;
 };
 const parseSourceFile = (node, props) => {
@@ -55,4 +56,15 @@ const parseSourceFile = (node, props) => {
     };
 };
 exports.parseSourceFile = parseSourceFile;
+exports.testToolAnnotation = {
+    ts: `
+@tool
+export class Test {
+}
+  `,
+    expected: `
+tool
+class_name Test
+`,
+};
 //# sourceMappingURL=parse_source_file.js.map

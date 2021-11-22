@@ -23,6 +23,7 @@ var ErrorName;
     ErrorName[ErrorName["AutoloadNotExported"] = 13] = "AutoloadNotExported";
     ErrorName[ErrorName["NoComplicatedConnect"] = 14] = "NoComplicatedConnect";
     ErrorName[ErrorName["SignalsMustBePrefixedWith$"] = 15] = "SignalsMustBePrefixedWith$";
+    ErrorName[ErrorName["DeclarationNotGiven"] = 16] = "DeclarationNotGiven";
 })(ErrorName = exports.ErrorName || (exports.ErrorName = {}));
 const displayErrors = (errors) => {
     for (const error of errors) {
