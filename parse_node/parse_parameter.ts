@@ -40,8 +40,11 @@ export const parseParameter = (
         // initializers, but there's a subtle bug: TS supports myFunction(a, b =
         // a) { } but Godot does not. So we need to compile that out.
 
+        // `magic` is a giant hack but it's the only way to get things to work
+        // without rewriting callsites.
+
         initializers.push({
-          line: `${name} = (${initializer} if ${name} == ${magic} else ${name})`,
+          line: `${name} = (${initializer} if (typeof(${name}) == TYPE_STRING and ${name} == ${magic}) else ${name})`,
           type: "after",
           lineType: ExtraLineType.DefaultInitialization,
         })

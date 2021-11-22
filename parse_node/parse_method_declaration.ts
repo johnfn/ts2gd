@@ -118,8 +118,8 @@ class Foo extends Node2D {
 extends Node2D
 class_name Foo
 func testDefault(a = "[no value passed in]"):
-  a = (1 if a == "[no value passed in]" else a)
-  `,
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+`,
 }
 
 export const testDefaultValues: Test = {
@@ -135,11 +135,11 @@ class Foo extends Node2D {
 extends Node2D
 class_name Foo
 func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
-  a = (1 if a == "[no value passed in]" else a)
-  b = (2 if b == "[no value passed in]" else b)
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+  b = (2 if (typeof(b) == TYPE_STRING and b == "[no value passed in]") else b)
   print("OK")
   print("OK")
-  `,
+`,
 }
 
 export const testDefaultValuesSelfReference: Test = {
@@ -153,7 +153,7 @@ class Foo extends Node2D {
 extends Node2D
 class_name Foo
 func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
-  a = (1 if a == "[no value passed in]" else a)
-  b = (a if b == "[no value passed in]" else b)
-  `,
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+  b = (a if (typeof(b) == TYPE_STRING and b == "[no value passed in]") else b)
+`,
 }
