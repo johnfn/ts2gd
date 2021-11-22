@@ -19,6 +19,11 @@
   },
   "author": "johnfn",
   "license": "MIT",
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": false
+  },
   "dependencies": {
     "chalk": "^4.1.0",
     "chokidar": "^3.4.3",
