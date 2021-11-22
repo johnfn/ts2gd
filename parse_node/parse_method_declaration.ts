@@ -31,13 +31,21 @@ export const parseMethodDeclaration = (
     }
   }
 
+  // Need to grab extra lines for default parameters
+  const compiledParameters = combine({
+    parent: node,
+    nodes: node.parameters,
+    props,
+    parsedStrings: (...params) => params.join(", "),
+  })
+
   let result = combine({
     parent: node,
-    nodes: [node.body, ...node.parameters],
-    props: props,
+    nodes: [node.body],
+    props,
     addIndent: true,
-    parsedStrings: (body, ...params) => {
-      let joinedParams = params.join(", ")
+    parsedStrings: (body) => {
+      let joinedParams = compiledParameters.content
 
       const specialMethod = specialMethods.find(
         (method) => method.name === funcName
@@ -47,11 +55,22 @@ export const parseMethodDeclaration = (
         joinedParams = specialMethod.args
       }
 
+      let bodyLines = [
+        ...(compiledParameters.extraLines?.map((param) => param.line) ?? []),
+        ...(body.trim() === "" ? [] : [body]),
+      ]
+
+      if (bodyLines.length === 0) {
+        bodyLines = ["pass"]
+      }
+
+      body = bodyLines.map((line) => "  " + line + "\n").join("")
+
       return `
 ${isRemote ? "remote " : ""}${
         isRemoteSync ? "remotesync " : ""
       }func ${funcName}(${joinedParams}):
-  ${body || " pass"}
+${body.trim() === "" ? "pass" : body}
 `
     },
   })
@@ -86,5 +105,55 @@ extends Node2D
 class_name Foo
 func _process(_d: float):
   pass
+  `,
+}
+
+export const testDefaultValue: Test = {
+  ts: `
+class Foo extends Node2D {
+  testDefault(a = 1) { }
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+func testDefault(a: int):
+  a = 1
+  `,
+}
+
+export const testDefaultValues: Test = {
+  ts: `
+class Foo extends Node2D {
+  testDefault(a = 1, b = 2) { 
+    print("OK")
+    print("OK")
+  }
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+func testDefault(a: int, b: int):
+  a = 1
+  b = 2
+  print("OK")
+  print("OK")
+  `,
+}
+
+export const testDefaultValuesSelfReference: Test = {
+  ts: `
+class Foo extends Node2D {
+  testDefault(a = 1, b: int = a) { 
+  }
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+func testDefault(a: int, b: int):
+  a = 1
+  b = a
   `,
 }

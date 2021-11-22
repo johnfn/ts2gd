@@ -1,6 +1,12 @@
 import ts from "typescript"
 const { SyntaxKind } = ts
-import { ParseState, parseNode, combine, ExtraLine } from "../parse_node"
+import {
+  ParseState,
+  parseNode,
+  combine,
+  ExtraLine,
+  ExtraLineType,
+} from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
@@ -21,7 +27,7 @@ export const parsePrefixUnaryExpression = (
           newIncrements = {
             type: "before",
             line: `${operand} += 1`,
-            isIncrement: true,
+            lineType: ExtraLineType.Increment,
           }
 
           return `${operand}`
@@ -30,7 +36,7 @@ export const parsePrefixUnaryExpression = (
           newIncrements = {
             type: "before",
             line: `${operand} -= 1`,
-            isDecrement: true,
+            lineType: ExtraLineType.Decrement,
           }
 
           return `${operand}`

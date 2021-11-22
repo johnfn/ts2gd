@@ -15,7 +15,7 @@ export const parseSetAccessor = (
     parsedStrings: (name, body, ...params) =>
       `
 func ${name}_set(${params.join(", ")}):
-  ${body}
+  ${body || "pass"}
 `,
   })
 }

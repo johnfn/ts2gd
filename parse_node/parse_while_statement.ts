@@ -69,6 +69,18 @@ while x < 10:
 `,
 }
 
+export const testWhileConditionPass: Test = {
+  ts: `
+let x = 0
+while (x++ < 10) { }
+  `,
+  expected: `
+var x: int = 0
+while x < 10:
+  x += 1
+`,
+}
+
 export const testWhileConditionPreIncrement: Test = {
   ts: `
 let x = 0

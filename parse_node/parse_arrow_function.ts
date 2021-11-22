@@ -154,7 +154,7 @@ export const parseArrowFunction = (
         return `
 func ${name}(${[...args, "captures"].join(", ")}):
 ${unwrapCapturedScope}
-  ${body}
+  ${body.trim() === "" ? "pass" : body}
         `
       } else {
         // Single line arrow function, with implicit return.
@@ -184,7 +184,7 @@ ${unwrapCapturedScope}
     hoistedArrowFunctions: [
       {
         name,
-        node: node,
+        node,
         content: parsed.content,
       },
       ...(parsed.hoistedArrowFunctions ?? []),

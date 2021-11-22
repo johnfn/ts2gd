@@ -14,7 +14,7 @@ export const parseGetAccessor = (
     addIndent: true,
     props,
     parsedStrings: (name, body, ...params) => `
-func ${name}_get(${params}):
+func ${name}_get(${params.join(", ")}):
   ${body || "pass"}
 `,
   })

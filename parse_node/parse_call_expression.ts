@@ -1,6 +1,12 @@
 import ts, { SyntaxKind } from "typescript"
 import { ErrorName } from "../errors"
-import { combine, ExtraLine, parseNode, ParseState } from "../parse_node"
+import {
+  combine,
+  ExtraLine,
+  ExtraLineType,
+  parseNode,
+  ParseState,
+} from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 import {
@@ -485,6 +491,7 @@ export const parseCallExpression = (
               {
                 type: "before",
                 line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+                lineType: ExtraLineType.NullableIntermediateExpression,
               },
             ])
 

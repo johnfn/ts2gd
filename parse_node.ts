@@ -87,10 +87,16 @@ export type ParseState = {
   getNodeText: (node: ts.Node) => string
 }
 
+export enum ExtraLineType {
+  Increment,
+  Decrement,
+  DefaultInitialization,
+  NullableIntermediateExpression,
+}
+
 export type ExtraLine = {
   type: "before" | "after"
-  isIncrement?: boolean
-  isDecrement?: boolean
+  lineType: ExtraLineType
   line: string
 }
 

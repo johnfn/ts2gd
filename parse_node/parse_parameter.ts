@@ -1,5 +1,5 @@
 import ts from "typescript"
-import { combine, ParseState } from "../parse_node"
+import { combine, ExtraLine, ExtraLineType, ParseState } from "../parse_node"
 import { getGodotType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
@@ -17,7 +17,7 @@ export const parseParameter = (
     node.type
   )
   const usages = props.usages.get(node.name as ts.Identifier)
-  const unusedPrefix = usages?.uses.length === 0 ? "_" : ""
+  const unusedPrefix = usages?.uses.length === 0 && !node.initializer ? "_" : ""
   const typeString = type.result ? `: ${type.result}` : ""
 
   if (type.errors) {
@@ -26,13 +26,33 @@ export const parseParameter = (
 
   props.scope.addName(node.name)
 
-  return combine({
+  const initializers: ExtraLine[] = []
+
+  const result = combine({
     parent: node,
     nodes: [node.name, node.initializer],
     props,
-    parsedStrings: (name, initializer) =>
-      `${unusedPrefix}${name}${typeString}${initializer && `= ${initializer}`}`,
+    parsedStrings: (name, initializer) => {
+      if (initializer) {
+        // It's tempting to just initialize it with godot default parameter
+        // initializers, but there's a subtle bug: TS supports myFunction(a, b =
+        // a) { } but Godot does not. So we need to compile that out.
+
+        console.log("add el")
+        initializers.push({
+          line: `${name} = ${initializer}`,
+          type: "after",
+          lineType: ExtraLineType.DefaultInitialization,
+        })
+      }
+
+      return `${unusedPrefix}${name}${typeString}`
+    },
   })
+
+  result.extraLines = initializers
+
+  return result
 }
 
 export const testParameter: Test = {

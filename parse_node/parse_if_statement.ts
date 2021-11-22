@@ -20,17 +20,34 @@ export const parseIfStatement = (
       const afterLines =
         expression.extraLines?.filter((line) => line.type === "after") ?? []
 
+      let thenBody =
+        afterLines.map(({ line }) => "  " + line + "\n") +
+        (thenStatement.content.trim() === ""
+          ? ""
+          : "  " + thenStatement.content)
+      let elseBody =
+        afterLines.map(({ line }) => "  " + line + "\n") +
+        (elseStatement.content.trim() === ""
+          ? ""
+          : "  " + elseStatement.content)
+
+      console.log(">" + elseBody + "<")
+
+      if (thenBody.trim() === "") {
+        thenBody = "  pass"
+      }
+
       return `
 ${beforeLines.map((line) => line.line).join("\n")}
 if ${expression.content}:
-  ${afterLines.map((line) => line.line).join("\n")}
-  ${thenStatement.content}${
-        elseStatement.content
-          ? `else:
-  ${afterLines.map((line) => line.line).join("\n")}
-  ${elseStatement.content}`
-          : ""
-      }`
+${thenBody}
+${
+  elseBody.trim() === ""
+    ? ""
+    : `else:
+${elseBody}
+`
+}`
     },
   })
 
@@ -146,5 +163,33 @@ if x:
 else:
   print(x)
   x += 1
+  `,
+}
+
+export const testIfPass: Test = {
+  ts: `
+if (true) {
+} else {
+  print(0)
+}
+  `,
+  expected: `
+if true:
+  pass
+else:
+  print(0)
+  `,
+}
+
+export const testIfPass2: Test = {
+  ts: `
+if (true) {
+  print(1)
+} else {
+}
+  `,
+  expected: `
+if true:
+  print(1)
   `,
 }

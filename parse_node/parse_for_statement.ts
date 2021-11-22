@@ -1,5 +1,5 @@
 import ts from "typescript"
-import { ParseState, combine } from "../parse_node"
+import { ParseState, combine, ExtraLineType } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 
@@ -29,7 +29,11 @@ export const parseForStatement = (
 
   let incrementText =
     increment.extraLines
-      ?.filter((line) => line.isDecrement || line.isIncrement)
+      ?.filter(
+        (line) =>
+          line.lineType === ExtraLineType.Decrement ||
+          line.lineType === ExtraLineType.Increment
+      )
       .map((line) => line.line) ?? []
 
   props.mostRecentForStatement = {

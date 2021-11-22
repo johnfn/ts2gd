@@ -2,6 +2,7 @@ import ts, { SymbolFlags, SyntaxKind } from "typescript"
 import {
   combine,
   ExtraLine,
+  ExtraLineType,
   parseNode,
   ParseNodeType,
   ParseState,
@@ -75,6 +76,7 @@ export const parsePropertyAccessExpression = (
           nullCoalesce = {
             type: "before",
             line: `var ${newName} = funcref(${lhs}, "${rhs}") if ${lhs} != null else null`,
+            lineType: ExtraLineType.NullableIntermediateExpression,
           }
 
           return newName
@@ -83,6 +85,7 @@ export const parsePropertyAccessExpression = (
         nullCoalesce = {
           type: "before",
           line: `var ${newName} = ${lhs}`,
+          lineType: ExtraLineType.NullableIntermediateExpression,
         }
 
         return `(${newName}.${rhs} if ${newName} != null else null)`
