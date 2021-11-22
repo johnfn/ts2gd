@@ -158,32 +158,17 @@ export function combine(args: {
   const parsedNodes: (Required<ParseNodeType> & {
     node: ts.Node | undefined
   })[] = nodes.map((node) => {
-    if (!node) {
-      // We need to preserve the order of the array, incl. undefined, when we call content().
-      let res: Required<ParseNodeType> & { node: ts.Node | undefined } = {
-        node: undefined,
-        content: "",
-        enums: [],
-        extraLines: [],
-        hoistedEnumImports: [],
-        hoistedArrowFunctions: [],
-        hoistedLibraryFunctions: new Set(),
-      }
-
-      return res
-    }
-
-    const parsed = parseNode(node, props)
+    const parsed = node ? parseNode(node, props) : undefined
 
     return {
       node,
       errors: [],
-      content: parsed.content,
-      enums: parsed.enums ?? [],
-      extraLines: parsed.extraLines ?? [],
-      hoistedEnumImports: parsed.hoistedEnumImports ?? [],
-      hoistedArrowFunctions: parsed.hoistedArrowFunctions ?? [],
-      hoistedLibraryFunctions: parsed.hoistedLibraryFunctions ?? new Set(),
+      content: parsed?.content ?? "",
+      enums: parsed?.enums ?? [],
+      extraLines: parsed?.extraLines ?? [],
+      hoistedEnumImports: parsed?.hoistedEnumImports ?? [],
+      hoistedArrowFunctions: parsed?.hoistedArrowFunctions ?? [],
+      hoistedLibraryFunctions: parsed?.hoistedLibraryFunctions ?? new Set(),
     }
   })
 

@@ -133,8 +133,8 @@ export class Paths {
     // TODO: Put in a separate file.
     if (!fs.existsSync(launch))
       fs.writeFileSync(
-      launch,
-      `{
+        launch,
+        `{
       "version": "0.2.0",
       "configurations": [
         {
@@ -149,7 +149,7 @@ export class Paths {
         }
       ]
     }`
-    )
+      )
 
     console.info("ts2gd.json created.")
     console.info("compiled/ created.")
