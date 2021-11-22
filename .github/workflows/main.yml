@@ -17,7 +17,29 @@ jobs:
       # as we don't need to manually add 16
       - uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: "16"
       - run: npm install
       - run: npm run build-ci
       - run: npm run test-ci
+      - run: npm pack
+      - name: Upload build
+        uses: actions/upload-artifact@v1
+        with:
+          name: package
+          path: "*.tgz"
+
+  publish:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v1
+        with:
+          name: package
+          path: package.tgz
+      - run: tar zxvf package.tgz
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          package: package/package.json
+          token: ${{ secrets.NPM_TOKEN }}
