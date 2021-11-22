@@ -4,6 +4,8 @@ import { getGodotType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 
+const magic = `"[no value passed in]"`
+
 export const parseParameter = (
   node: ts.ParameterDeclaration,
   props: ParseState
@@ -38,15 +40,18 @@ export const parseParameter = (
         // initializers, but there's a subtle bug: TS supports myFunction(a, b =
         // a) { } but Godot does not. So we need to compile that out.
 
-        console.log("add el")
         initializers.push({
-          line: `${name} = ${initializer}`,
+          line: `${name} = (${initializer} if ${name} == ${magic} else ${name})`,
           type: "after",
           lineType: ExtraLineType.DefaultInitialization,
         })
+
+        return `${name}${initializer ? ` = ${magic}` : ""}`
       }
 
-      return `${unusedPrefix}${name}${typeString}`
+      return `${unusedPrefix}${name}${typeString}${
+        initializer ? " = null" : ""
+      }`
     },
   })
 

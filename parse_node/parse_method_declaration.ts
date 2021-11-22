@@ -117,8 +117,8 @@ class Foo extends Node2D {
   expected: `
 extends Node2D
 class_name Foo
-func testDefault(a: int):
-  a = 1
+func testDefault(a = "[no value passed in]"):
+  a = (1 if a == "[no value passed in]" else a)
   `,
 }
 
@@ -134,9 +134,9 @@ class Foo extends Node2D {
   expected: `
 extends Node2D
 class_name Foo
-func testDefault(a: int, b: int):
-  a = 1
-  b = 2
+func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
+  a = (1 if a == "[no value passed in]" else a)
+  b = (2 if b == "[no value passed in]" else b)
   print("OK")
   print("OK")
   `,
@@ -152,8 +152,8 @@ class Foo extends Node2D {
   expected: `
 extends Node2D
 class_name Foo
-func testDefault(a: int, b: int):
-  a = 1
-  b = a
+func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
+  a = (1 if a == "[no value passed in]" else a)
+  b = (a if b == "[no value passed in]" else b)
   `,
 }
