@@ -144,7 +144,7 @@ export class TsGdProjectClass {
       return new AssetImage(path, this)
     }
 
-    console.log(`unhandled asset type ${path}`)
+    console.error(`unhandled asset type ${path}`)
 
     return null
   }
@@ -291,7 +291,7 @@ export class TsGdProjectClass {
     )
 
     if (errors.length === 0) {
-      console.log("No errors in project.")
+      console.info("No errors in project.")
     } else {
       displayErrors(errors)
     }

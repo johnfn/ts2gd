@@ -31,8 +31,6 @@ export const parseIfStatement = (
           ? ""
           : "  " + elseStatement.content)
 
-      console.log(">" + elseBody + "<")
-
       if (thenBody.trim() === "") {
         thenBody = "  pass"
       }

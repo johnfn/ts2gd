@@ -64,7 +64,7 @@ const getFreeVariables = (
       if (node.kind === SyntaxKind.Identifier) {
         // Expressions like this.get_node("HBoxContainer/BuildButton").visible give
         // "no symbol" logs. I don't understand why
-        console.log(props.getNodeText(node), "no symbol")
+        console.error(props.getNodeText(node), "no symbol")
       }
     }
 
