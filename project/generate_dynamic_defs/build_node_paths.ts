@@ -41,13 +41,21 @@ export const buildNodePathsTypeForScript = (
     for (const node of scene.nodes) {
       const nodeScript = node.getScript()
 
-      if (
-        nodeScript &&
-        nodeScript.resPath === script.resPath &&
-        // Skip instances. Their children are not stored in their scene.
-        !node.instance()
-      ) {
-        nodesWithScript.push(node)
+      if (nodeScript && nodeScript.resPath === script.resPath) {
+        const instance = node.instance()
+        let isValid = false
+
+        if (!instance) {
+          isValid = true
+        } else {
+          // We want to skip instances of this scene, because instances are not
+          // stored with their children in .tscn files.
+          isValid = instance.resPath === nodeScript.resPath
+        }
+
+        if (isValid) {
+          nodesWithScript.push(node)
+        }
       }
     }
   }
@@ -234,7 +242,9 @@ export const buildNodePathsTypeForScript = (
     .join("\n")
 
   let result = `${
-    references.length > 0 ? `// Uses of "${script.resPath}": \n` : ""
+    references.length > 0
+      ? `// Uses of "${script.resPath}": \n`
+      : `// No uses of "${script.resPath}" found.\n`
   }
 ${references
   .map((ref) => {

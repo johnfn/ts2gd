@@ -108,6 +108,9 @@ export class GodotNode {
     return this.scene.nodes.filter((node) => node.parent === path)
   }
 
+  /**
+   * If this node is an instance of a scene, return that scene.
+   */
   instance(): AssetGodotScene | AssetGlb | undefined {
     let instanceId = this.$section.instance?.args[0]
 
