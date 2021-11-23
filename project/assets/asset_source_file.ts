@@ -71,6 +71,7 @@ export class AssetSourceFile extends BaseAsset {
 Referenced file ${this.fsPath} does not exist.
 This is a ts2gd bug. Please create an issue on GitHub for it.`,
         location: this.fsPath,
+        stack: new Error().stack ?? "",
       }
     }
 
@@ -97,6 +98,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
         error: ErrorName.ClassNameNotFound,
         location: ast,
         description: "Every file must have a class.",
+        stack: new Error().stack ?? "",
       }
     }
 
@@ -104,7 +106,9 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       return {
         error: ErrorName.TooManyClassesFound,
         location: topLevelClasses[1],
-        description: "Every file must have a class.",
+        description:
+          "Every file must have exactly one class. Consider moving this class into a new file.",
+        stack: new Error().stack ?? "",
       }
     }
 
@@ -126,6 +130,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
         error: ErrorName.ClassCannotBeAnonymous,
         location: node ?? this.tsRelativePath,
         description: "This class cannot be anonymous",
+        stack: new Error().stack ?? "",
       }
     }
 
@@ -159,6 +164,7 @@ Hint: try ${chalk.blueBright(
       )}
       `,
       location: node,
+      stack: new Error().stack ?? "",
     }
   }
 
@@ -188,6 +194,7 @@ Hint: try ${chalk.blueBright(
     return {
       error: ErrorName.CantFindAutoloadInstance,
       location: ast ?? this.tsRelativePath,
+      stack: new Error().stack ?? "",
       description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
         
 @autoload
@@ -242,6 +249,7 @@ ${chalk.green(
     if (this.isProjectAutoload() && !this.isDecoratedAutoload()) {
       return {
         error: ErrorName.AutoloadProjectButNotDecorated,
+        stack: new Error().stack ?? "",
         description: `Godot thinks this is an AutoLoad, but it doesn't have an ${chalk.white(
           "@autoload"
         )} decorator. Either add the decorator or remove it from the Godot AutoLoad list.`,
@@ -252,6 +260,7 @@ ${chalk.green(
     if (!this.isProjectAutoload() && this.isDecoratedAutoload()) {
       return {
         error: ErrorName.AutoloadProjectButNotDecorated,
+        stack: new Error().stack ?? "",
         description: `This has an ${chalk.white(
           "@autoload"
         )} decorator, but Godot doesn't have it on the AutoLoad list. Either add it to the Godot AutoLoad list, or remove the decorator.`,
@@ -266,51 +275,51 @@ ${chalk.green(
     return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
-  static transformSourceFile(sourceFile: ts.SourceFile): ts.SourceFile {
-    const transformer =
-      <T extends ts.Node>(context: ts.TransformationContext) =>
-      (rootNode: T) => {
-        function visit(node: ts.Node): ts.Node {
-          if (node.kind === ts.SyntaxKind.CallExpression) {
-            const call = node as ts.CallExpression
+  // static transformSourceFile(sourceFile: ts.SourceFile): ts.SourceFile {
+  //   const transformer =
+  //     <T extends ts.Node>(context: ts.TransformationContext) =>
+  //     (rootNode: T) => {
+  //       function visit(node: ts.Node): ts.Node {
+  //         if (node.kind === ts.SyntaxKind.CallExpression) {
+  //           const call = node as ts.CallExpression
 
-            if (
-              call.expression.kind === ts.SyntaxKind.PropertyAccessExpression
-            ) {
-              const pae = call.expression as ts.PropertyAccessExpression
-              // TODO: Could have null and non-null coalescing lib functions.
+  //           if (
+  //             call.expression.kind === ts.SyntaxKind.PropertyAccessExpression
+  //           ) {
+  //             const pae = call.expression as ts.PropertyAccessExpression
+  //             // TODO: Could have null and non-null coalescing lib functions.
 
-              if (
-                pae.name.text === "add" ||
-                pae.name.text === "sub" ||
-                pae.name.text === "mul" ||
-                pae.name.text === "div"
-              ) {
-                return context.factory.createCallExpression(
-                  context.factory.createIdentifier(`${pae.name.text}_vec_lib`),
-                  [],
-                  [
-                    ts.visitNode(pae.expression, visit),
-                    ts.visitNode(call.arguments[0], visit),
-                  ]
-                )
-              }
-            }
-          }
+  //             if (
+  //               pae.name.text === "add" ||
+  //               pae.name.text === "sub" ||
+  //               pae.name.text === "mul" ||
+  //               pae.name.text === "div"
+  //             ) {
+  //               return context.factory.createCallExpression(
+  //                 context.factory.createIdentifier(`${pae.name.text}_vec_lib`),
+  //                 [],
+  //                 [
+  //                   ts.visitNode(pae.expression, visit),
+  //                   ts.visitNode(call.arguments[0], visit),
+  //                 ]
+  //               )
+  //             }
+  //           }
+  //         }
 
-          return ts.visitEachChild(node, visit, context)
-        }
+  //         return ts.visitEachChild(node, visit, context)
+  //       }
 
-        return ts.visitNode(rootNode, visit)
-      }
+  //       return ts.visitNode(rootNode, visit)
+  //     }
 
-    const transformResult = ts.transform(sourceFile, [transformer], {})
-    const transformedSourceFile = transformResult
-      .transformed[0] as ts.SourceFile
-    // TODO: Error if >1 file results
+  //   const transformResult = ts.transform(sourceFile, [transformer], {})
+  //   const transformedSourceFile = transformResult
+  //     .transformed[0] as ts.SourceFile
+  //   // TODO: Error if >1 file results
 
-    return transformedSourceFile
-  }
+  //   return transformedSourceFile
+  // }
 
   async compile(
     watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
@@ -333,6 +342,7 @@ ${chalk.green(
             description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
             error: ErrorName.PathNotFound,
             location: this.fsPath,
+            stack: new Error().stack ?? "",
           },
         ],
         result: null,
@@ -349,24 +359,16 @@ ${chalk.green(
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
-    const transformedSourceFile =
-      AssetSourceFile.transformSourceFile(sourceFileAst)
-    const printer: ts.Printer = ts.createPrinter()
-
-    const getNodeText = (node: ts.Node) => {
-      return printer.printNode(
-        ts.EmitHint.Unspecified,
-        node,
-        transformedSourceFile
-      )
-    }
+    // const transformedSourceFile =
+    //   AssetSourceFile.transformSourceFile(sourceFileAst)
+    // const printer: ts.Printer = ts.createPrinter()
 
     const result: {
       result: null
       errors: TsGdError[]
     } = { result: null, errors: [] }
 
-    const parsedNode = parseNode(transformedSourceFile, {
+    const parsedNode = parseNode(sourceFileAst, {
       indent: "",
       isConstructor: false,
       scope: new Scope(watchProgram.getProgram().getProgram()),
@@ -374,12 +376,9 @@ ${chalk.green(
       mostRecentControlStructureIsSwitch: false,
       isAutoload: this.isProjectAutoload(),
       program: watchProgram.getProgram().getProgram(),
-      // NOTE: We use thie OLD sourceFileAst because tsutils can't process our
-      // new one after we used TS to transform it - it will crash if we do so.
       usages: utils.collectVariableUsage(sourceFileAst),
       addError: (newError) => result.errors.push(newError),
       sourceFile: sourceFileAst,
-      getNodeText,
     })
 
     // TODO: Only do this once per program run max!
@@ -447,6 +446,7 @@ ${chalk.white(
 )}        
         `,
         location: classNode ?? this.fsPath,
+        stack: new Error().stack ?? "",
       }
     }
 
@@ -502,6 +502,7 @@ ${chalk.white(
             "@autoload"
           )} the line before the class declaration.`,
           location: "error" in classNode ? this.fsPath : classNode,
+          stack: new Error().stack ?? "",
         }
       }
     }
@@ -522,6 +523,7 @@ ${chalk.white(
             "@autoload"
           )}.`,
           location: "error" in classNode ? this.fsPath : classNode,
+          stack: new Error().stack ?? "",
         }
       }
     }

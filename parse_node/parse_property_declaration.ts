@@ -39,6 +39,7 @@ I'm confused by export_flags here. It should be a function call.
 For instance, ${chalk.green(`@export_flags("A", "B", "C")`)}`,
       error: ErrorName.ExportedVariableError,
       location: node,
+      stack: new Error().stack ?? "",
     })
 
     return ""
@@ -62,7 +63,7 @@ const isOnReady = (node: ts.PropertyDeclaration, props: ParseState) => {
     // then have the type checker re-analyze them, so the get_node() calls have a habit
     // of coming back as 'any' when we use the typechecker on them.
 
-    const initializerText = props.getNodeText(node.initializer)
+    const initializerText = node.initializer.getText()
 
     if (
       initializerText.includes("get_node(") ||
@@ -152,6 +153,7 @@ export const parsePropertyDeclaration = (
         description: "Signals must be prefixed with $.",
         error: ErrorName.SignalsMustBePrefixedWith$,
         location: node,
+        stack: new Error().stack ?? "",
       })
     }
 

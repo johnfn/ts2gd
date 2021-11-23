@@ -47,9 +47,7 @@ export const getImportResPathForEnum = (
   const enumDeclarations = enumSymbol.declarations
 
   if (!enumDeclarations) {
-    throw new Error(
-      `No Enum declartion given`
-    )
+    throw new Error(`No Enum declartion given`)
   }
 
   if (enumDeclarations.length === 0 || enumDeclarations.length > 1) {
@@ -156,6 +154,7 @@ export const parseImportDeclaration = (
             error: ErrorName.InvalidNumber,
             location: node,
             description: `Import ${pathToImportedTs} not found.`,
+            stack: new Error().stack ?? "",
           })
 
           continue

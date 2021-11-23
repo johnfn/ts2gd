@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import ts from "typescript"
+import { syntaxKindToString } from "./ts_utils"
 
 export enum ErrorName {
   InvalidNumber,
@@ -13,12 +14,14 @@ export enum ErrorName {
   UnknownTsSyntax,
   PathNotFound,
   ExportedVariableError,
+  InvalidFile,
 
   Ts2GdError,
 
   AutoloadProjectButNotDecorated,
   AutoloadDecoratedButNotProject,
   AutoloadNotExported,
+
   NoComplicatedConnect,
 
   SignalsMustBePrefixedWith$,
@@ -34,6 +37,7 @@ export type TsGdReturn<T> = {
 export type TsGdError = {
   error: ErrorName
   location: ts.Node | string
+  stack: string
   description: string
 }
 
@@ -42,9 +46,18 @@ export const displayErrors = (errors: TsGdError[]) => {
     if (typeof error.location === "string") {
       console.warn("Error at", `${chalk.blueBright(error.location)}`)
     } else {
-      const { line, character } = error.location
+      const lineAndChar = error.location
         .getSourceFile()
         ?.getLineAndCharacterOfPosition(error.location.getStart())
+
+      if (!lineAndChar) {
+        console.log(lineAndChar)
+        console.log(error.location)
+        console.log(error.stack)
+      }
+
+      const { line, character } = lineAndChar
+
       console.warn()
       console.warn(
         "Error at",

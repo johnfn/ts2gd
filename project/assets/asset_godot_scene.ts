@@ -5,6 +5,8 @@ import { TsGdProjectClass } from "../project"
 import { AssetSourceFile } from "./asset_source_file"
 import { AssetGlb } from "./asset_glb"
 import { parseGodotConfigFile } from "../godot_parser"
+import { ErrorName, TsGdReturn } from "../../errors"
+import chalk from "chalk"
 
 interface IGodotSceneFile {
   gd_scene: {
@@ -140,18 +142,32 @@ export class GodotNode {
     return undefined
   }
 
-  tsType(): string {
+  tsType(): TsGdReturn<string> {
     if (this._type) {
-      return this._type
+      return { result: this._type }
     }
 
     const instancedSceneType = this.instance()?.tsType()
 
     if (instancedSceneType) {
-      return instancedSceneType
+      return { result: instancedSceneType }
     }
 
-    throw new Error("I dont know the type of that thing.")
+    return {
+      result: "any",
+      errors: [
+        {
+          description: `Error: Your Godot scene ${chalk.blue(
+            this.name
+          )} refers to ${chalk.red(
+            this.scenePath()
+          )}, but it doesn't exist. It may have been deleted from the project.`,
+          error: ErrorName.InvalidFile,
+          location: this.name,
+          stack: new Error().stack ?? "",
+        },
+      ],
+    }
   }
 
   getScript(): AssetSourceFile | undefined {

@@ -41,6 +41,7 @@ const getFreeVariables = (
         props.addError({
           error: ErrorName.DeclarationNotGiven,
           location: node,
+          stack: new Error().stack ?? "",
           description: `
 Declaration not provided for free variables. This is an internal ts2gd bug. Please report it. 
         `,
@@ -75,7 +76,7 @@ Declaration not provided for free variables. This is an internal ts2gd bug. Plea
       if (node.kind === SyntaxKind.Identifier) {
         // Expressions like this.get_node("HBoxContainer/BuildButton").visible give
         // "no symbol" logs. I don't understand why
-        console.error(props.getNodeText(node), "no symbol")
+        console.error(node.getText(), "no symbol")
       }
     }
 
@@ -98,14 +99,11 @@ export const getCapturedScope = (
   capturedScopeObject: string
   unwrapCapturedScope: string
 } => {
-  const { getNodeText } = props
-
   const freeVariables = getFreeVariables(node.body, node, props)
   const uniqueFreeVariables = freeVariables.filter(
     (item, index) =>
-      freeVariables.findIndex(
-        (obj) => getNodeText(obj) === getNodeText(item)
-      ) === index
+      freeVariables.findIndex((obj) => obj.getText() === item.getText()) ===
+      index
   )
 
   // We don't want to capture `this` as part of our scope. There's no reason to
@@ -188,6 +186,7 @@ ${unwrapCapturedScope}
     props.addError({
       error: ErrorName.DeclarationNotGiven,
       location: node,
+      stack: new Error().stack ?? "",
       description: `
 Declaration not provided for arrow function. This is an internal ts2gd bug. Please report it. 
         `,

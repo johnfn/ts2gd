@@ -86,7 +86,7 @@ export const parseClassDeclaration = (
   }
 
   const isAutoload = !!node.decorators?.find(
-    (dec) => props.getNodeText(dec.expression) === "autoload"
+    (dec) => dec.expression.getText() === "autoload"
   )
 
   if (!modifiers?.includes("export") && !isAutoload) {
@@ -94,6 +94,7 @@ export const parseClassDeclaration = (
       description: "You must export this class.",
       error: ErrorName.ClassMustBeExported,
       location: node,
+      stack: new Error().stack ?? "",
     })
   }
 

@@ -6,9 +6,7 @@ import path from "path"
 import { Scope } from "../scope"
 import chalk from "chalk"
 import { TsGdError } from "../errors"
-import { AssetSourceFile } from "../project/assets/asset_source_file"
 import * as utils from "tsutils"
-import exp from "constants"
 
 export const compileTs = (
   code: string,
@@ -23,8 +21,6 @@ export const compileTs = (
     true,
     ts.ScriptKind.TS
   )
-
-  const transformedSourceFile = AssetSourceFile.transformSourceFile(sourceFile)
 
   const libDTs = ts.createSourceFile(
     "lib.d.ts",
@@ -43,7 +39,7 @@ export const compileTs = (
   const customCompilerHost: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
       if (name === filename) {
-        return transformedSourceFile
+        return sourceFile
       } else if (name === "lib.d.ts") {
         return libDTs
       } else {
@@ -75,19 +71,10 @@ export const compileTs = (
 
   const printer: ts.Printer = ts.createPrinter()
 
-  const getNodeText = (node: ts.Node) => {
-    return printer.printNode(
-      ts.EmitHint.Unspecified,
-      node,
-      transformedSourceFile
-    )
-  }
-
   // TODO: Make this less silly.
-  const godotFile = parseNode(transformedSourceFile, {
+  const godotFile = parseNode(sourceFile, {
     indent: "",
-    sourceFile: transformedSourceFile,
-    getNodeText,
+    sourceFile: sourceFile,
     scope: new Scope(program),
     isConstructor: false,
     program,

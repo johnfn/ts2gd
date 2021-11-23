@@ -57,7 +57,7 @@ export const parseVariableDeclaration = (
 
   let inferredType = getFloatOrInt(
     node.initializer,
-    node.initializer ? props.getNodeText(node.initializer) : ""
+    node.initializer ? node.initializer.getText() : ""
   )
 
   const type = declaredType ?? inferredType

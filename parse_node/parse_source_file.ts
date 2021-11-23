@@ -24,7 +24,7 @@ const preprocessClassDecl = (node: ts.ClassDeclaration, props: ParseState) => {
   }
 
   const isTool = !!node.decorators?.find(
-    (dec) => props.getNodeText(dec.expression) === "tool"
+    (dec) => dec.expression.getText() === "tool"
   )
 
   return `${isTool ? "tool\n" : ""}${

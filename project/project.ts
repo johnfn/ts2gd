@@ -190,6 +190,7 @@ export class TsGdProjectClass {
   async onChangeAsset(path: string): Promise<TsGdReturn<null>> {
     let start = new Date().getTime()
     let showTime = false
+    let errors: TsGdError[] = []
     let result = {
       result: null,
       errors: [] as TsGdError[],
@@ -243,10 +244,20 @@ export class TsGdProjectClass {
         result.errors = [...result.errors, ...(compileResult.errors ?? [])]
 
         buildAssetPathsType(this)
-        buildNodePathsTypeForScript(newAsset, this)
+        const { errors: newErrors } = buildNodePathsTypeForScript(
+          newAsset,
+          this
+        )
+
+        errors = errors.concat(newErrors ?? [])
       } else if (newAsset instanceof AssetGodotScene) {
         for (const script of this.sourceFiles()) {
-          buildNodePathsTypeForScript(script, this)
+          const { errors: newErrors } = buildNodePathsTypeForScript(
+            script,
+            this
+          )
+
+          errors = errors.concat(newErrors ?? [])
         }
 
         buildSceneImports(this)
@@ -259,6 +270,8 @@ export class TsGdProjectClass {
       console.info()
       console.info(`${chalk.gray(getTimestamp())} Done in ${time}s`)
     }
+
+    displayErrors(errors)
 
     return result
   }

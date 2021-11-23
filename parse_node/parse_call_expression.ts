@@ -221,7 +221,7 @@ export const parseCallExpression = (
   if (node.expression.kind === SyntaxKind.PropertyAccessExpression) {
     // prop = [[ a.b ]](c)
     const prop = node.expression as ts.PropertyAccessExpression
-    const functionName = props.getNodeText(prop.name)
+    const functionName = prop.name.getText()
 
     const type = props.program
       .getTypeChecker()
@@ -249,14 +249,47 @@ export const parseCallExpression = (
     if (isArrayType(type)) {
       if (functionName in LibraryFunctions) {
         const libFunctionName = functionName as LibraryFunctionName
-        let result: ParseNodeType
 
-        result = combine({
+        let result = combine({
           parent: node,
           nodes: [prop.expression, ...args],
           props,
           parsedStrings: (expr, ...args) => {
             return `__${libFunctionName}(${[expr, ...args].join(", ")})`
+          },
+        })
+
+        result.hoistedLibraryFunctions =
+          result.hoistedLibraryFunctions ?? new Set()
+        result.hoistedLibraryFunctions.add(libFunctionName)
+
+        return result
+      }
+    }
+
+    const typeAsString = props.program.getTypeChecker().typeToString(type)
+
+    if (
+      typeAsString === "Vector2Constructor" ||
+      typeAsString === "Vector2iConstructor" ||
+      typeAsString === "Vector3Constructor" ||
+      typeAsString === "Vector3iConstructor"
+    ) {
+      if (
+        functionName === "add" ||
+        functionName === "sub" ||
+        functionName === "mul" ||
+        functionName === "div"
+      ) {
+        const libFunctionName = (functionName +
+          "_vec_lib") as LibraryFunctionName
+
+        let result = combine({
+          parent: node,
+          nodes: [prop.expression, ...args],
+          props,
+          parsedStrings: (expr, ...args) => {
+            return `${libFunctionName}(${[expr, ...args].join(", ")})`
           },
         })
 
@@ -357,7 +390,7 @@ export const parseCallExpression = (
 
           if (pae.kind === SyntaxKind.PropertyAccessExpression) {
             const pae2 = pae.expression as ts.PropertyAccessExpression
-            let signalName = props.getNodeText(pae2.name)
+            let signalName = pae2.name.getText()
 
             if (signalName.startsWith("$")) {
               signalName = signalName.slice(1)
@@ -374,6 +407,7 @@ export const parseCallExpression = (
                   "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
                 error: ErrorName.Ts2GdError,
                 location: expression,
+                stack: new Error().stack ?? "",
               })
             } else {
               const { capturedScopeObject } = getCapturedScope(
@@ -416,7 +450,7 @@ export const parseCallExpression = (
 
           if (pae.expression.kind === SyntaxKind.PropertyAccessExpression) {
             const pae2 = pae.expression as ts.PropertyAccessExpression
-            const rpcFunctionName = props.getNodeText(pae2.name)
+            const rpcFunctionName = pae2.name.getText()
 
             const secondDot = parsedExpr.content.lastIndexOf(".")
             const firstDot = parsedExpr.content.lastIndexOf(".", secondDot - 1)
@@ -448,6 +482,7 @@ export const parseCallExpression = (
               description: "I'm confused by this rpc",
               error: ErrorName.Ts2GdError,
               location: pae.expression,
+              stack: new Error().stack ?? "",
             })
           }
         }

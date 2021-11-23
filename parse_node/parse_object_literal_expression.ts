@@ -16,7 +16,7 @@ export const parseObjectLiteralExpression = (
     })
   }
 
-  const isMultiline = props.getNodeText(node).includes("\n")
+  const isMultiline = node.getText().includes("\n")
 
   const unprocessedKeys = node.properties.map((prop) => {
     if (prop.kind === SyntaxKind.PropertyAssignment) {

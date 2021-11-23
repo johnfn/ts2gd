@@ -207,7 +207,7 @@ export function getGodotType(
     if (initializer) {
       let preciseInitializerType = getPreciseInitializerType(
         initializer,
-        props.getNodeText(initializer)
+        initializer.getText()
       )
 
       if (preciseInitializerType) {
@@ -216,17 +216,17 @@ export function getGodotType(
     }
 
     let errorString = ""
-    let nodeText = props.getNodeText(node)
+    let nodeText = node.getText()
 
     if (nodeText.includes("\n")) {
       errorString = `Please annotate
 
-${chalk.yellow(props.getNodeText(node))} 
+${chalk.yellow(node.getText())} 
 
 with either "int" or "float".`
     } else {
       errorString = `Please annotate ${chalk.yellow(
-        props.getNodeText(node)
+        node.getText()
       )} with either "int" or "float".`
     }
 
@@ -236,6 +236,7 @@ with either "int" or "float".`
           description: errorString,
           error: ErrorName.InvalidNumber,
           location: node,
+          stack: new Error().stack ?? "",
         },
       ],
 
@@ -285,10 +286,11 @@ with either "int" or "float".`
         {
           description: `This exported variable needs a type declaration:
 
-${chalk.yellow(props.getNodeText(node))}          
+${chalk.yellow(node.getText())}          
           `,
           error: ErrorName.ExportedVariableError,
           location: node,
+          stack: new Error().stack ?? "",
         },
       ],
     }
@@ -337,10 +339,11 @@ ${chalk.yellow(props.getNodeText(node))}
             {
               description: `You can't export a union type:
 
-${chalk.yellow(props.getNodeText(node))}          
+${chalk.yellow(node.getText())}          
           `,
               error: ErrorName.ExportedVariableError,
               location: node,
+              stack: new Error().stack ?? "",
             },
           ],
         }
@@ -375,7 +378,7 @@ ${chalk.yellow(props.getNodeText(node))}
   }
 
   return {
-    result: props.getNodeText(actualType),
+    result: actualType.getText(),
   }
 }
 

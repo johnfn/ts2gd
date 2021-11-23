@@ -84,7 +84,6 @@ export type ParseState = {
 
   addError: (error: TsGdError) => void
   sourceFile: ts.SourceFile
-  getNodeText: (node: ts.Node) => string
 }
 
 export enum ExtraLineType {
@@ -227,7 +226,7 @@ export function combine(args: {
     }
 
     if (isStandAloneLine || lines.length > 1) {
-      const preceding = generatePrecedingNewlines(node, props.getNodeText(node))
+      const preceding = generatePrecedingNewlines(node, node.getText())
       formattedContent = preceding + formattedContent
     }
 
@@ -501,6 +500,7 @@ export const parseNode = (
       props.addError({
         error: ErrorName.UnknownTsSyntax,
         location: genericNode,
+        stack: new Error().stack ?? "",
         description: `
 ts2gd does not current support this code:
 
