@@ -99,7 +99,9 @@ interface Function {
 }
 
 declare function exports(target: Node, name: string): void;
+declare const export_flags: (...flags: any[]) => (target: Test, name: string) => void
 declare function autoload(target: typeof Node): void
+declare function tool(target: typeof Node): void;
 
 declare type int = number;
 declare type float = number;
@@ -257,7 +259,17 @@ const buildBase = () => {
 exports.buildBase = buildBase;
 exports.baseContentForTests = `
 ${exports.baseFileContent}
-interface Vector2 {}
+
+declare class Vector2Constructor {
+  static ZERO: Vector2;
+  static ONE: Vector2;
+}
+declare type Vector2 = Vector2Constructor;
+declare var Vector2: typeof Vector2Constructor & {
+  new(x: float, y: float): Vector2;
+  (x: float, y: float): Vector2;
+}
+
 interface Vector3 {}
 interface Vector2i {}
 interface Vector3i {}

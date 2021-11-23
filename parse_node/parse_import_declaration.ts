@@ -46,6 +46,12 @@ export const getImportResPathForEnum = (
 
   const enumDeclarations = enumSymbol.declarations
 
+  if (!enumDeclarations) {
+    throw new Error(
+      `No Enum declartion given`
+    )
+  }
+
   if (enumDeclarations.length === 0 || enumDeclarations.length > 1) {
     throw new Error(
       `Invalid length for declarations: ${enumDeclarations.length}`

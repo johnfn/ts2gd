@@ -55,7 +55,10 @@ export const parseVariableDeclaration = (
     declaredType = undefined
   }
 
-  let inferredType = getFloatOrInt(node.initializer, node.initializer ? props.getNodeText(node.initializer) : "")
+  let inferredType = getFloatOrInt(
+    node.initializer,
+    node.initializer ? props.getNodeText(node.initializer) : ""
+  )
 
   const type = declaredType ?? inferredType
   const usages = props.usages.get(node.name as ts.Identifier)
@@ -66,7 +69,7 @@ export const parseVariableDeclaration = (
     const decl = props.program
       .getTypeChecker()
       .getTypeAtLocation(node)
-      .getSymbol()?.declarations[0]
+      .getSymbol()?.declarations?.[0]
 
     const isAutoload =
       props.isAutoload &&

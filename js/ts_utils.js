@@ -308,9 +308,7 @@ ${chalk_1.default.yellow(props.getNodeText(node))}
         return { result: tsTypeName };
     }
     return {
-        result: props.program
-            .getTypeChecker()
-            .typeToString(typecheckerInferredType),
+        result: props.getNodeText(actualType),
     };
 }
 exports.getGodotType = getGodotType;

@@ -1,16 +1,42 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testNumberTypeByNoAnnotation2 = exports.testNumberTypeByNoAnnotation = exports.testNumberTypeByAnnotation2 = exports.testNumberTypeByAnnotation = exports.testExportObj2 = exports.testExportObj = exports.testNotSoNormalExportedVariable10 = exports.testNotSoNormalExportedVariable9 = exports.testNotSoNormalExportedVariable8 = exports.testNotSoNormalExportedVariable7 = exports.testNotSoNormalExportedVariable6 = exports.testNormalExportedVariable5 = exports.testNormalExportedVariable4 = exports.testNormalExportedVariable3 = exports.testNormalExportedVariable2 = exports.testNormalExportedVariable = exports.parsePropertyDeclaration = void 0;
+exports.testExportFlags = exports.testNumberTypeByNoAnnotation2 = exports.testNumberTypeByNoAnnotation = exports.testNumberTypeByAnnotation2 = exports.testNumberTypeByAnnotation = exports.testExportObj2 = exports.testExportObj = exports.testNotSoNormalExportedVariable10 = exports.testNotSoNormalExportedVariable9 = exports.testNotSoNormalExportedVariable8 = exports.testNotSoNormalExportedVariable7 = exports.testNotSoNormalExportedVariable6 = exports.testNormalExportedVariable5 = exports.testNormalExportedVariable4 = exports.testNormalExportedVariable3 = exports.testNormalExportedVariable2 = exports.testNormalExportedVariable = exports.parsePropertyDeclaration = exports.isDecoratedAsExports = void 0;
+const typescript_1 = require("typescript");
 const parse_node_1 = require("../parse_node");
 const ts_utils_1 = require("../ts_utils");
 const errors_1 = require("../errors");
-const isExported = (node) => {
-    for (const dec of node.decorators ?? []) {
-        if (dec.expression.getText() === "exports") {
-            return true;
-        }
+const chalk_1 = __importDefault(require("chalk"));
+const isDecoratedAsExports = (node) => {
+    return !!node.decorators?.find((dec) => dec.expression.getText() === "exports");
+};
+exports.isDecoratedAsExports = isDecoratedAsExports;
+const isDecoratedAsExportFlags = (node) => {
+    return !!node.decorators?.find((dec) => dec.expression.getText().startsWith("export_flags"));
+};
+const parseExportFlags = (node, props) => {
+    const decoration = node.decorators?.find((dec) => dec.expression.getText().startsWith("export_flags"));
+    if (decoration.expression.kind !== typescript_1.SyntaxKind.CallExpression) {
+        props.addError({
+            description: `
+I'm confused by export_flags here. It should be a function call. 
+
+For instance, ${chalk_1.default.green(`@export_flags("A", "B", "C")`)}`,
+            error: errors_1.ErrorName.ExportedVariableError,
+            location: node,
+        });
+        return "";
     }
-    return false;
+    const fn = decoration.expression;
+    const result = parse_node_1.combine({
+        parent: decoration,
+        nodes: [...fn.arguments],
+        props,
+        parsedStrings: (...args) => args.join(", "),
+    });
+    return `export(int, FLAGS, ${result.content}) `;
 };
 const isOnReady = (node, props) => {
     if (node.initializer) {
@@ -80,13 +106,16 @@ const parsePropertyDeclaration = (node, props) => {
         });
     }
     let exportText = "";
-    if (isExported(node)) {
+    if (exports.isDecoratedAsExports(node)) {
         let typeGodotName = ts_utils_1.getGodotType(node, props.program.getTypeChecker().getTypeAtLocation(node), props, true, // isExported
         node.initializer, node.type);
         // TODO: Have a fallback
-        exportText = isExported(node)
+        exportText = exports.isDecoratedAsExports(node)
             ? `export(${typeGodotName.result ?? "null"}) `
             : "";
+    }
+    if (isDecoratedAsExportFlags(node)) {
+        exportText = parseExportFlags(node, props);
     }
     const onReady = isOnReady(node, props);
     return parse_node_1.combine({
@@ -296,6 +325,18 @@ export class Test {
     expected: `
 class_name Test
 var x: float = 1.0
+`,
+};
+exports.testExportFlags = {
+    ts: `
+export class Test {
+  @export_flags("A", "B", "C")
+  exportFlagsTest
+}
+  `,
+    expected: `
+class_name Test
+export(int, FLAGS, "A", "B", "C") var exportFlagsTest
 `,
 };
 //# sourceMappingURL=parse_property_declaration.js.map

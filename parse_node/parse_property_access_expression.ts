@@ -47,8 +47,12 @@ export const parsePropertyAccessExpression = (
   if (isEnumType(exprType)) {
     const symbol = exprType.getSymbol()!
     const declarations = symbol.declarations
-    const sourceFiles = declarations.map((d) => d.getSourceFile().fileName)
-    const isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"))
+
+    let isGlobal = false
+    if (declarations) {
+      const sourceFiles = declarations.map((d) => d.getSourceFile().fileName)
+      isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"))
+    }
 
     if (isGlobal) {
       return parseNode(node.name, props)

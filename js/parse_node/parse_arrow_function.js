@@ -21,6 +21,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseArrowFunction = exports.getCapturedScope = void 0;
 const typescript_1 = __importStar(require("typescript"));
+const errors_1 = require("../errors");
 const parse_node_1 = require("../parse_node");
 /**
  * Get all identifiers in a scope that were declared in an enclosing scope.
@@ -47,6 +48,16 @@ const getFreeVariables = (node, root, props) => {
         }
         const symbol = props.program.getTypeChecker().getSymbolAtLocation(node);
         if (symbol) {
+            if (!symbol.declarations) {
+                props.addError({
+                    error: errors_1.ErrorName.DeclarationNotGiven,
+                    location: node,
+                    description: `
+Declaration not provided for free variables. This is an internal ts2gd bug. Please report it. 
+        `,
+                });
+                return [];
+            }
             const decl = symbol.declarations[0];
             if (decl.getSourceFile() !== root.getSourceFile()) {
                 return [];
@@ -71,7 +82,7 @@ const getFreeVariables = (node, root, props) => {
             if (node.kind === typescript_1.SyntaxKind.Identifier) {
                 // Expressions like this.get_node("HBoxContainer/BuildButton").visible give
                 // "no symbol" logs. I don't understand why
-                console.log(props.getNodeText(node), "no symbol");
+                console.error(props.getNodeText(node), "no symbol");
             }
         }
         return [];
@@ -129,7 +140,7 @@ const parseArrowFunction = (node, props) => {
                 return `
 func ${name}(${[...args, "captures"].join(", ")}):
 ${unwrapCapturedScope}
-  ${body}
+  ${body.trim() === "" ? "pass" : body}
         `;
             }
             else {
@@ -145,14 +156,25 @@ ${unwrapCapturedScope}
     props.scope.leaveScope();
     const decls = props.program.getTypeChecker().getTypeAtLocation(node)
         .symbol?.declarations;
-    const { capturedScopeObject } = exports.getCapturedScope(decls[0], props);
+    if (!decls) {
+        props.addError({
+            error: errors_1.ErrorName.DeclarationNotGiven,
+            location: node,
+            description: `
+Declaration not provided for arrow function. This is an internal ts2gd bug. Please report it. 
+        `,
+        });
+    }
+    const capturedScopeObject = decls
+        ? exports.getCapturedScope(decls[0], props).capturedScopeObject
+        : "{}";
     // NOTE: parse_call_expression expects all arrow functions to be declared on self.
     return {
         content: `[funcref(self, "${name}"), ${capturedScopeObject}]`,
         hoistedArrowFunctions: [
             {
                 name,
-                node: node,
+                node,
                 content: parsed.content,
             },
             ...(parsed.hoistedArrowFunctions ?? []),

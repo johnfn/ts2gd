@@ -21,6 +21,8 @@ export enum ErrorName {
   NoComplicatedConnect,
 
   SignalsMustBePrefixedWith$,
+
+  DeclarationNotGiven,
 }
 
 export type TsGdReturn<T> = {

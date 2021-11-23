@@ -45,7 +45,7 @@ const parseVariableDeclaration = (node, props) => {
         const decl = props.program
             .getTypeChecker()
             .getTypeAtLocation(node)
-            .getSymbol()?.declarations[0];
+            .getSymbol()?.declarations?.[0];
         const isAutoload = props.isAutoload &&
             decl?.kind === typescript_1.SyntaxKind.ClassDeclaration &&
             decl.getSourceFile() === node.getSourceFile() &&

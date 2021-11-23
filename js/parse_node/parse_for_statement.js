@@ -20,7 +20,8 @@ const parseForStatement = (node, props) => {
         parsedStrings: (inc) => inc,
     });
     let incrementText = increment.extraLines
-        ?.filter((line) => line.isDecrement || line.isIncrement)
+        ?.filter((line) => line.lineType === parse_node_1.ExtraLineType.Decrement ||
+        line.lineType === parse_node_1.ExtraLineType.Increment)
         .map((line) => line.line) ?? [];
     props.mostRecentForStatement = {
         incrementor: incrementText.join("\n"),

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testWhileConditionPreIncrement = exports.testWhileConditionPostIncrement = exports.testPassWhile = exports.parseWhileStatement = void 0;
+exports.testWhileConditionPreIncrement = exports.testWhileConditionPass = exports.testWhileConditionPostIncrement = exports.testPassWhile = exports.parseWhileStatement = void 0;
 const parse_node_1 = require("../parse_node");
 const parseWhileStatement = (node, props) => {
     const newProps = { ...props, mostRecentControlStructureIsSwitch: false };
@@ -53,6 +53,17 @@ var x: int = 0
 while x < 10:
   x += 1
   print(x)
+`,
+};
+exports.testWhileConditionPass = {
+    ts: `
+let x = 0
+while (x++ < 10) { }
+  `,
+    expected: `
+var x: int = 0
+while x < 10:
+  x += 1
 `,
 };
 exports.testWhileConditionPreIncrement = {
