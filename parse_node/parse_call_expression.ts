@@ -1,5 +1,5 @@
 import ts, { SyntaxKind } from "typescript"
-import { ErrorName } from "../errors"
+import { addError, ErrorName } from "../errors"
 import {
   combine,
   ExtraLine,
@@ -402,7 +402,7 @@ export const parseCallExpression = (
             )
 
             if (!arrowFunctionObj) {
-              props.addError({
+              addError({
                 description:
                   "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
                 error: ErrorName.Ts2GdError,
@@ -478,7 +478,7 @@ export const parseCallExpression = (
               content: expressionWithoutRpcName,
             }
           } else {
-            props.addError({
+            addError({
               description: "I'm confused by this rpc",
               error: ErrorName.Ts2GdError,
               location: pae.expression,

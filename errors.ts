@@ -1,6 +1,6 @@
 import chalk from "chalk"
 import ts from "typescript"
-import { syntaxKindToString } from "./ts_utils"
+import { ParsedArgs } from "./parse_args"
 
 export enum ErrorName {
   InvalidNumber,
@@ -29,10 +29,10 @@ export enum ErrorName {
   DeclarationNotGiven,
 }
 
-export type TsGdReturn<T> = {
-  errors?: TsGdError[]
-  result: T
-}
+// export type TsGdReturn<T> = {
+//   errors?: TsGdError[]
+//   result: T
+// }
 
 export type TsGdError = {
   error: ErrorName
@@ -41,16 +41,40 @@ export type TsGdError = {
   description: string
 }
 
-export const displayErrors = (errors: TsGdError[]) => {
+let errors: TsGdError[] = []
+
+export const addError = (error: TsGdError) => {
+  errors.push(error)
+}
+
+export const displayErrors = (args: ParsedArgs, message: string) => {
+  if (!args.debug) {
+    console.clear()
+  }
+
+  if (errors.length === 0) {
+    console.info(message)
+    console.info()
+    console.info(chalk.greenBright("No errors."))
+
+    return
+  }
+
+  console.info(message)
+  console.info()
+  console.info(
+    chalk.redBright(`${errors.length} error${errors.length > 1 ? "s" : ""}.`)
+  )
+
   for (const error of errors) {
     if (typeof error.location === "string") {
-      console.warn("Error at", `${chalk.blueBright(error.location)}`)
+      console.warn(`${chalk.blueBright(error.location)}`)
     } else {
       const lineAndChar = error.location
         .getSourceFile()
         ?.getLineAndCharacterOfPosition(error.location.getStart())
 
-      if (!lineAndChar) {
+      if (!lineAndChar && args.debug) {
         console.log(lineAndChar)
         console.log(error.location)
         console.log(error.stack)
@@ -60,13 +84,26 @@ export const displayErrors = (errors: TsGdError[]) => {
 
       console.warn()
       console.warn(
-        "Error at",
         `${chalk.blueBright(
           error.location.getSourceFile().fileName
         )}:${chalk.yellow(line + 1)}:${chalk.yellow(character + 1)}`
       )
+
+      if (args.debug) {
+        console.log(error.stack)
+      }
     }
 
     console.info(error.description)
   }
+
+  errors = []
+}
+
+export const __getErrorsTestOnly = () => {
+  const result = errors
+
+  errors = []
+
+  return result
 }

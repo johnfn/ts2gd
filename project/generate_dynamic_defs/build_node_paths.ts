@@ -4,7 +4,7 @@ import { getCommonElements } from "../../ts_utils"
 import { TsGdProjectClass } from "../project"
 import { GodotNode, AssetGodotScene } from "../assets/asset_godot_scene"
 import { AssetSourceFile } from "../assets/asset_source_file"
-import { TsGdError, TsGdReturn } from "../../errors"
+import { TsGdError } from "../../errors"
 
 /**
  * Returns the paths to all children below this node, including grandchildren
@@ -30,9 +30,7 @@ export const getAllChildPaths = (
 export const buildNodePathsTypeForScript = (
   script: AssetSourceFile,
   project: TsGdProjectClass
-): TsGdReturn<void> => {
-  let errors: TsGdError[] = []
-
+): void => {
   // Find all instances of this script in all scenes.
 
   const nodesWithScript: GodotNode[] = []
@@ -67,10 +65,7 @@ export const buildNodePathsTypeForScript = (
   const extendedClassName = script.extendedClassName()
 
   if (!className) {
-    return {
-      result: void 0,
-      errors: [],
-    }
+    return
   }
 
   let commonRelativePaths: {
@@ -181,10 +176,7 @@ export const buildNodePathsTypeForScript = (
         -".ts".length
       )}").${script.exportedTsClassName()}`
     } else {
-      const { result: tsType, errors: newErrors } = node.tsType()
-
-      pathToImport[path] = tsType
-      errors = errors.concat(newErrors ?? [])
+      pathToImport[path] = node.tsType()
     }
   }
 
@@ -318,9 +310,4 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   )
 
   fs.writeFileSync(destPath, result)
-
-  return {
-    result: void 0,
-    errors,
-  }
 }

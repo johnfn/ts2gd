@@ -1,9 +1,9 @@
 import ts, { SyntaxKind } from "typescript"
-import { ErrorName } from "../errors"
+import { addError, ErrorName } from "../errors"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import { getGodotType, isArrayType } from "../ts_utils"
+import { getGodotType } from "../ts_utils"
 import { isDecoratedAsExports } from "./parse_property_declaration"
 
 const getSettersAndGetters = (
@@ -36,7 +36,7 @@ const getSettersAndGetters = (
         setGet.type
       )
 
-      exportText = `export(${typeGodotName.result ?? "null"}) `
+      exportText = `export(${typeGodotName ?? "null"}) `
     }
 
     if (setGet.kind === SyntaxKind.SetAccessor) {
@@ -90,7 +90,7 @@ export const parseClassDeclaration = (
   )
 
   if (!modifiers?.includes("export") && !isAutoload) {
-    props.addError({
+    addError({
       description: "You must export this class.",
       error: ErrorName.ClassMustBeExported,
       location: node,

@@ -19,7 +19,7 @@ import { AssetGodotScene } from "./assets/asset_godot_scene"
 import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
 import { BaseAsset } from "./assets/base_asset"
-import { displayErrors, TsGdError, TsGdReturn } from "../errors"
+import { displayErrors, TsGdError } from "../errors"
 import { getTimestamp } from "../ts_utils"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
@@ -152,21 +152,19 @@ export class TsGdProjectClass {
   monitor(watcher: chokidar.FSWatcher) {
     watcher
       .on("add", async (path) => {
-        const result = await this.onAddAsset(path)
+        const message = await this.onAddAsset(path)
 
-        displayErrors(result.errors ?? [])
+        displayErrors(this.args, message)
       })
       .on("change", async (path) => {
-        const result = await this.onChangeAsset(path)
+        const message = await this.onChangeAsset(path)
 
-        displayErrors(result.errors ?? [])
+        displayErrors(this.args, message)
       })
       .on("unlink", (path) => this.onRemoveAsset(path))
   }
 
-  async onAddAsset(path: string): Promise<TsGdReturn<null>> {
-    let result: TsGdReturn<null> = { result: null }
-
+  async onAddAsset(path: string): Promise<string> {
     const newAsset = this.createAsset(path)
 
     // Do this first because some assets expect themselves to exist - e.g.
@@ -176,7 +174,7 @@ export class TsGdProjectClass {
     }
 
     if (newAsset instanceof AssetSourceFile) {
-      result = await newAsset.compile(this.program)
+      await newAsset.compile(this.program)
     } else if (newAsset instanceof AssetGodotScene) {
       buildSceneImports(this)
       buildGroupTypes(this)
@@ -184,28 +182,30 @@ export class TsGdProjectClass {
 
     buildAssetPathsType(this)
 
-    return result
+    return `${chalk.whiteBright("Compile:")} ${chalk.blueBright(path)}...`
   }
 
-  async onChangeAsset(path: string): Promise<TsGdReturn<null>> {
+  async onChangeAsset(path: string): Promise<string> {
     let start = new Date().getTime()
     let showTime = false
-    let errors: TsGdError[] = []
-    let result = {
-      result: null,
-      errors: [] as TsGdError[],
-    }
+    let message = ""
 
     // Just noisy, since it's not caused by a user action
     if (!path.endsWith(".d.ts")) {
       if (!this.args.debug) console.clear()
 
       if (path.endsWith(".ts")) {
-        console.info("Compile:", chalk.blueBright(path))
+        message = `${chalk.whiteBright("Compile:")} ${chalk.blueBright(
+          path
+        )}...`
+
+        console.info(message)
 
         showTime = true
       } else {
-        console.info("Change:", chalk.blueBright(path))
+        message = `${chalk.whiteBright("Change:")} ${chalk.blueBright(path)}...`
+
+        console.info(message)
       }
     }
 
@@ -222,13 +222,9 @@ export class TsGdProjectClass {
         const script = this.sourceFiles().find((sf) => sf.resPath === resPath)
 
         if (script) {
-          const compileResult = await script.compile(this.program)
-
-          result.errors = [...result.errors, ...(compileResult.errors ?? [])]
+          await script.compile(this.program)
         }
       }
-
-      return result
     }
 
     let oldAsset = this.assets.find((asset) => asset.fsPath === path)
@@ -239,25 +235,13 @@ export class TsGdProjectClass {
       this.assets.push(newAsset)
 
       if (newAsset instanceof AssetSourceFile) {
-        const compileResult = await newAsset.compile(this.program)
-
-        result.errors = [...result.errors, ...(compileResult.errors ?? [])]
+        await newAsset.compile(this.program)
 
         buildAssetPathsType(this)
-        const { errors: newErrors } = buildNodePathsTypeForScript(
-          newAsset,
-          this
-        )
-
-        errors = errors.concat(newErrors ?? [])
+        buildNodePathsTypeForScript(newAsset, this)
       } else if (newAsset instanceof AssetGodotScene) {
         for (const script of this.sourceFiles()) {
-          const { errors: newErrors } = buildNodePathsTypeForScript(
-            script,
-            this
-          )
-
-          errors = errors.concat(newErrors ?? [])
+          buildNodePathsTypeForScript(script, this)
         }
 
         buildSceneImports(this)
@@ -267,13 +251,10 @@ export class TsGdProjectClass {
     if (showTime) {
       const time = (new Date().getTime() - start) / 1000
 
-      console.info()
-      console.info(`${chalk.gray(getTimestamp())} Done in ${time}s`)
+      message += ` Done in ${time}s`
     }
 
-    displayErrors(errors)
-
-    return result
+    return message
   }
 
   onRemoveAsset(path: string) {
@@ -296,18 +277,11 @@ export class TsGdProjectClass {
     const assetsToCompile = this.assets.filter(
       (a): a is AssetSourceFile => a instanceof AssetSourceFile
     )
-    const result = await Promise.all(
+    await Promise.all(
       assetsToCompile.map((asset) => asset.compile(this.program))
     )
-    const errors = result.flatMap(
-      (compiledSourceFile) => compiledSourceFile.errors ?? []
-    )
 
-    if (errors.length === 0) {
-      console.info("No errors in project.")
-    } else {
-      displayErrors(errors)
-    }
+    displayErrors(this.args, "Compiling all source files...")
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {

@@ -2,7 +2,7 @@ import ts, { SyntaxKind } from "typescript"
 import { combine, ParseState } from "../parse_node"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 import { ParseNodeType } from "../parse_node"
-import { ErrorName } from "../errors"
+import { addError, ErrorName } from "../errors"
 import { Test } from "../tests/test"
 import chalk from "chalk"
 
@@ -32,7 +32,7 @@ const parseExportFlags = (
   )!
 
   if (decoration.expression.kind !== SyntaxKind.CallExpression) {
-    props.addError({
+    addError({
       description: `
 I'm confused by export_flags here. It should be a function call. 
 
@@ -111,21 +111,6 @@ export const parsePropertyDeclaration = (
   let type = props.program.getTypeChecker().getTypeAtLocation(node)
   let superclassType = getSuperclassType(classType)
 
-  let nameOrError = getGodotType(
-    node,
-    props.program.getTypeChecker().getTypeAtLocation(node),
-    props,
-    false,
-    node.initializer,
-    node.type
-  )
-
-  if (nameOrError.errors) {
-    for (const error of nameOrError.errors) {
-      props.addError(error)
-    }
-  }
-
   let typeGodotName = getGodotType(
     node,
     props.program.getTypeChecker().getTypeAtLocation(node),
@@ -135,12 +120,10 @@ export const parsePropertyDeclaration = (
     node.type
   )
   let typeName = type.symbol?.getName() ?? ""
-  let typeHintName = typeGodotName.result
-
-  typeGodotName.errors?.forEach((error) => props.addError(error))
+  let typeHintName = typeGodotName
 
   if (isEnumType(type)) {
-    typeGodotName.result = props.program.getTypeChecker().typeToString(type)
+    typeGodotName = props.program.getTypeChecker().typeToString(type)
   }
 
   if (typeName === "Signal") {
@@ -149,7 +132,7 @@ export const parsePropertyDeclaration = (
     if (signalName.startsWith("$")) {
       signalName = signalName.slice(1)
     } else {
-      props.addError({
+      addError({
         description: "Signals must be prefixed with $.",
         error: ErrorName.SignalsMustBePrefixedWith$,
         location: node,
@@ -180,7 +163,7 @@ export const parsePropertyDeclaration = (
     // TODO: Have a fallback
 
     exportText = isDecoratedAsExports(node)
-      ? `export(${typeGodotName.result ?? "null"}) `
+      ? `export(${typeGodotName ?? "null"}) `
       : ""
   }
 

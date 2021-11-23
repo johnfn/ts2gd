@@ -3,7 +3,7 @@ import https from "https"
 import chalk from "chalk"
 
 export const checkVersionAsync = async () => {
-  console.info(chalk.blueBright("ts2gd", "v" + packageJson.version))
+  console.info(chalk.whiteBright("ts2gd", "v" + packageJson.version))
 
   const options = {
     hostname: "registry.npmjs.org",

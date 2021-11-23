@@ -94,7 +94,7 @@ interface Function {
 }
 
 declare function exports(target: Node, name: string): void;
-declare const export_flags: (...flags: any[]) => (target: Test, name: string) => void
+declare const export_flags: (...flags: any[]) => (target: Node, name: string) => void
 declare function autoload(target: typeof Node): void
 declare function tool(target: typeof Node): void;
 

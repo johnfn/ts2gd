@@ -1,4 +1,3 @@
-import { TsGdReturn } from "../../errors"
 import { TsGdProjectClass } from "../project"
 import { BaseAsset } from "./base_asset"
 
@@ -15,8 +14,8 @@ export class AssetImage extends BaseAsset {
     this.project = project
   }
 
-  tsType(): TsGdReturn<string> {
-    return { result: "StreamTexture" }
+  tsType(): string {
+    return "StreamTexture"
   }
 
   static extensions() {

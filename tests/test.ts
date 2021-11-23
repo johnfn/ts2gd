@@ -5,13 +5,10 @@ import fs from "fs"
 import path from "path"
 import { Scope } from "../scope"
 import chalk from "chalk"
-import { TsGdError } from "../errors"
+import { TsGdError, __getErrorsTestOnly } from "../errors"
 import * as utils from "tsutils"
 
-export const compileTs = (
-  code: string,
-  isAutoload: boolean
-): { compiled: ParseNodeType; errors: TsGdError[] } => {
+export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const filename = isAutoload ? "autoload.ts" : "test.ts"
 
   const sourceFile = ts.createSourceFile(
@@ -78,7 +75,6 @@ export const compileTs = (
     scope: new Scope(program),
     isConstructor: false,
     program,
-    addError: (error) => errors.push(error),
     project: {
       args: {
         buildLibraries: false,
@@ -120,10 +116,8 @@ export const compileTs = (
         removeAutoload: {} as any,
       },
       monitor: () => 0 as any,
-      onAddAsset: async () => ({ result: null }),
-      onChangeAsset: async () => {
-        return { result: null }
-      },
+      onAddAsset: async () => {},
+      onChangeAsset: async () => {},
       onRemoveAsset: () => {},
       sourceFiles: () => [
         {
@@ -168,7 +162,7 @@ export const compileTs = (
     usages: utils.collectVariableUsage(sourceFile),
   })
 
-  return { compiled: godotFile, errors }
+  return godotFile
 }
 
 export type Test = {
@@ -214,10 +208,9 @@ const test = (
   let errors: TsGdError[] = []
 
   try {
-    const result = compileTs(ts, props.isAutoload ?? false)
+    compiled = compileTs(ts, props.isAutoload ?? false)
 
-    compiled = result.compiled
-    errors = result.errors
+    errors = __getErrorsTestOnly()
   } catch (e) {
     return {
       type: "fail",

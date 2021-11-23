@@ -61,7 +61,7 @@ import { parseArrowFunction } from "./parse_node/parse_arrow_function"
 import { parseTypeofExpression } from "./parse_node/parse_typeof_expression"
 import { TsGdProjectClass } from "./project/project"
 import { Scope } from "./scope"
-import { ErrorName, TsGdError } from "./errors"
+import { addError, ErrorName, TsGdError } from "./errors"
 import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 
@@ -81,8 +81,6 @@ export type ParseState = {
     incrementor: string
   }
   usages: Map<ts.Identifier, utils.VariableInfo>
-
-  addError: (error: TsGdError) => void
   sourceFile: ts.SourceFile
 }
 
@@ -497,7 +495,7 @@ export const parseNode = (
 
     default:
       console.error("Unknown token:", syntaxKindToString(genericNode.kind))
-      props.addError({
+      addError({
         error: ErrorName.UnknownTsSyntax,
         location: genericNode,
         stack: new Error().stack ?? "",

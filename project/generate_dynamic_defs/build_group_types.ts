@@ -1,23 +1,19 @@
 import path from "path"
 import fs from "fs"
 import { TsGdProjectClass } from "../project"
-import { TsGdError, TsGdReturn } from "../../errors"
+import { TsGdError } from "../../errors"
 
-export const buildGroupTypes = (
-  project: TsGdProjectClass
-): TsGdReturn<void> => {
+export const buildGroupTypes = (project: TsGdProjectClass): void => {
   const groupNameToTypes: { [key: string]: Set<string> } = {}
-  let errors: TsGdError[] = []
 
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
       for (const group of node.groups) {
         groupNameToTypes[group] ??= new Set()
 
-        const { result, errors: newErrors } = node.tsType()
+        const result = node.tsType()
 
         groupNameToTypes[group].add(result)
-        errors = errors.concat(newErrors ?? [])
       }
     }
   }
@@ -38,9 +34,4 @@ export const buildGroupTypes = (
   )
 
   fs.writeFileSync(destPath, result)
-
-  return {
-    result: void 0,
-    errors,
-  }
 }

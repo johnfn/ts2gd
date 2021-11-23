@@ -11,7 +11,7 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
     result += `export const ${path.basename(
       scene.fsPath,
       ".tscn"
-    )}Tscn: PackedScene<${scene.tsType().result ?? "Node"}>;\n`
+    )}Tscn: PackedScene<${scene.tsType() ?? "Node"}>;\n`
   }
 
   const destPath = path.join(

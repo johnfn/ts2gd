@@ -1,4 +1,5 @@
 import ts, { SyntaxKind } from "typescript"
+import { addError, ErrorName } from "../errors"
 import {
   parseNode as parseNode,
   ParseNodeType,
@@ -45,13 +46,36 @@ export const parseSourceFile = (
   // props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false
 
-  const classDecl = statements.find(
+  const allClasses = statements.filter(
     (statement) =>
       statement.kind === SyntaxKind.ClassDeclaration &&
       // skip class type declarations
       (statement.modifiers ?? []).filter((m) => m.getText() === "declare")
         .length === 0
-  ) as ts.ClassDeclaration | null
+  ) as ts.ClassDeclaration[]
+
+  if (allClasses.length > 1) {
+    addError({
+      error: ErrorName.TooManyClassesFound,
+      location: allClasses[1],
+      description:
+        "Every file must have exactly one class. Consider moving this class into a new file.",
+      stack: new Error().stack ?? "",
+    })
+  }
+
+  if (allClasses.length === 0) {
+    addError({
+      error: ErrorName.TooManyClassesFound,
+      location: node,
+      description:
+        "Every file must have one class in it, but this file doesn't have any.",
+      stack: new Error().stack ?? "",
+    })
+  }
+
+  const classDecl = allClasses[0]
+
   const parsedStatements = statements.map((statement) =>
     parseNode(statement, props)
   )

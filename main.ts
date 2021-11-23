@@ -4,9 +4,10 @@
 // [x]: Can't import two Tscn from same file
 // [x]: Color and ColorConstructor are backwards lol
 // [ ]: improve on default value for parameters hack
+// [ ]: crash when we delete a file
 // [ ]: We don't clean up old generated .d.ts files when we rename a file.
 
-// [ ]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
+// [x]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
 
 // [ ]: "Can't find the autoload instance variable" error is displayed on empty classes
 // [ ]: Get enum values
@@ -33,10 +34,10 @@
 //        ^ generates incorrect code
 // [x]: Yield(myFunction(), "completed") - this may be impossible... or maybe not? because they're coroutines!o
 // [ ]: [] isnt assignable to PoolStringArray
-// [ ]: why doesnt enemy have root paths?
+// [x]: why doesnt enemy have root paths?
 // [ ]: Auto rebuild libraries when version changes
 // [ ]: could ts consider undefined and null the same? i doubt it. it's annoying for null coalescing
-// [ ]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
+// [x]: signal API is annoying - mostly hard to remember - why is Signal<> required anyway? esp since all signals are on their own classes
 // [ ]: i get autoload errors on empty ts files
 // [ ]: the autoload syntax should just be export blargh = new class { derp() } (note: this doesnt work b/c we need to refer to the type, which is now impossible)
 // [ ]: error for RPCing to a function that doesnt have @rpc?
@@ -60,7 +61,7 @@
 // [x]: get_children returns any[]
 
 // [ ]: Windows build.
-// [ ]: Could gitignore compiled files?
+// [x]: Could gitignore compiled files?
 // [x]: Yield autocompletion stopped working
 // [x]: Parse input actions
 
@@ -248,9 +249,9 @@ export const showLoadingMessage = (
 ) => {
   if (!args.debug) console.clear()
   console.info(
-    chalk.blueBright("ts2gd v" + packageJson.version),
-    "-",
-    msg + (done ? "" : "...")
+    `${chalk.whiteBright("ts2gd v" + packageJson.version)}: ${
+      msg + (done ? "" : "...")
+    }`
   )
 }
 
@@ -304,7 +305,7 @@ export const main = async (args: ParsedArgs) => {
 if (!process.argv[1].includes("test")) {
   const args = parseArgs()
 
-  checkVersionAsync()
+  // checkVersionAsync()
 
   if (args.help) {
     printHelp()

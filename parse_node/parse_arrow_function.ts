@@ -1,5 +1,5 @@
 import ts, { SyntaxKind } from "typescript"
-import { ErrorName } from "../errors"
+import { addError, ErrorName } from "../errors"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 
@@ -38,7 +38,7 @@ const getFreeVariables = (
 
     if (symbol) {
       if (!symbol.declarations) {
-        props.addError({
+        addError({
           error: ErrorName.DeclarationNotGiven,
           location: node,
           stack: new Error().stack ?? "",
@@ -183,7 +183,7 @@ ${unwrapCapturedScope}
     .symbol?.declarations
 
   if (!decls) {
-    props.addError({
+    addError({
       error: ErrorName.DeclarationNotGiven,
       location: node,
       stack: new Error().stack ?? "",

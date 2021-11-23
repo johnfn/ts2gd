@@ -1,10 +1,9 @@
 import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
 import { ParseState } from "./parse_node"
-import { ErrorName, TsGdReturn } from "./errors"
+import { addError, ErrorName } from "./errors"
 import fs from "fs"
 import path from "path"
 import chalk from "chalk"
-import { isNullLiteral } from "tsutils"
 
 export const isNullableNode = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)
@@ -134,37 +133,6 @@ export const syntaxKindToString = (kind: ts.Node["kind"]) => {
   return ts.SyntaxKind[kind]
 }
 
-// Location is either
-// * The TS AST node that the error occured at (preferred), or
-// * Some generic string (ideally a path to the file)
-// export const logErrorAtNode = (
-//   location: ts.Node | string,
-//   error: ErrorName
-// ): TsGdError => {
-//   if (typeof location === "string") {
-//     return {
-//       error,
-//       location,
-//     }
-//   } else {
-//     const {
-//       line,
-//       character,
-//     } = location
-//       .getSourceFile()
-//       ?.getLineAndCharacterOfPosition(location.getStart())
-//     console.warn()
-//     console.warn(
-//       "Error at",
-//       `${chalk.blueBright(location.getSourceFile().fileName)}:${chalk.yellow(
-//         line + 1
-//       )}:${chalk.yellow(character + 1)}`
-//     )
-//   }
-
-//   console.warn(chalk.redBright(error))
-// }
-
 /**
  * Get the Godot type for a node. The more arguments that are passed in, the more precise
  * we can be about this type.
@@ -187,7 +155,7 @@ export function getGodotType(
   isExport: boolean,
   initializer?: ts.Expression,
   actualType?: ts.TypeNode
-): TsGdReturn<string | null> {
+): string | null {
   // If we have a precise initializer, use that first
 
   // If we have an explicitly written type e.g. x: string, use that.
@@ -211,7 +179,7 @@ export function getGodotType(
       )
 
       if (preciseInitializerType) {
-        return { result: preciseInitializerType }
+        return preciseInitializerType
       }
     }
 
@@ -230,40 +198,36 @@ with either "int" or "float".`
       )} with either "int" or "float".`
     }
 
-    return {
-      errors: [
-        {
-          description: errorString,
-          error: ErrorName.InvalidNumber,
-          location: node,
-          stack: new Error().stack ?? "",
-        },
-      ],
+    addError({
+      description: errorString,
+      error: ErrorName.InvalidNumber,
+      location: node,
+      stack: new Error().stack ?? "",
+    })
 
-      result: "float",
-    }
+    return "float"
   }
 
   // TODO: Optionals make this nearly impossible
 
   if (tsTypeName === "string") {
-    return { result: "String" }
+    return "String"
   }
 
   if (tsTypeName === "int") {
-    return { result: "int" }
+    return "int"
   }
 
   if (tsTypeName === "float") {
-    return { result: "float" }
+    return "float"
   }
 
   if (tsTypeName === "boolean") {
-    return { result: "bool" }
+    return "bool"
   }
 
   if (tsTypeName.startsWith("IterableIterator")) {
-    return { result: "Array" }
+    return "Array"
   }
 
   // This ends the list of all the types we can say safely.
@@ -274,26 +238,23 @@ with either "int" or "float".`
   // and those would be a huge pain to resolve properly.
 
   if (!isExport) {
-    return { result: null }
+    return null
   }
 
   // For exports, we really want to do a best effort to get *a* typename
 
   if (!actualType) {
-    return {
-      result: null,
-      errors: [
-        {
-          description: `This exported variable needs a type declaration:
+    addError({
+      description: `This exported variable needs a type declaration:
 
 ${chalk.yellow(node.getText())}          
           `,
-          error: ErrorName.ExportedVariableError,
-          location: node,
-          stack: new Error().stack ?? "",
-        },
-      ],
-    }
+      error: ErrorName.ExportedVariableError,
+      location: node,
+      stack: new Error().stack ?? "",
+    })
+
+    return null
   }
 
   if (isNullableType(typecheckerInferredType)) {
@@ -333,20 +294,17 @@ ${chalk.yellow(node.getText())}
       }
 
       if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
-        return {
-          result: null,
-          errors: [
-            {
-              description: `You can't export a union type:
+        addError({
+          description: `You can't export a union type:
 
 ${chalk.yellow(node.getText())}          
           `,
-              error: ErrorName.ExportedVariableError,
-              location: node,
-              stack: new Error().stack ?? "",
-            },
-          ],
-        }
+          error: ErrorName.ExportedVariableError,
+          location: node,
+          stack: new Error().stack ?? "",
+        })
+
+        return null
       }
 
       return getGodotType(
@@ -361,11 +319,11 @@ ${chalk.yellow(node.getText())}
   }
 
   if (isDictionary(typecheckerInferredType)) {
-    return { result: "Dictionary" }
+    return "Dictionary"
   }
 
   if (isArrayType(typecheckerInferredType)) {
-    return { result: "Array" }
+    return "Array"
   }
 
   // if (tsTypeName.startsWith("PackedScene")) {
@@ -374,12 +332,10 @@ ${chalk.yellow(node.getText())}
   // }
 
   if (isEnumType(typecheckerInferredType)) {
-    return { result: tsTypeName }
+    return tsTypeName
   }
 
-  return {
-    result: actualType.getText(),
-  }
+  return actualType.getText()
 }
 
 export function notEmpty<TValue>(
@@ -392,6 +348,7 @@ export function notEmpty<TValue>(
  * In cases like
  *
  * var x = 1.5
+ *
  * var x = 1
  *
  * TypeScript will infer both of those to be type "number", but we want to be able to say

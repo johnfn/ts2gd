@@ -8,9 +8,9 @@ export function buildAssetPathsType(project: TsGdProjectClass) {
   const assetFileContents = `
 declare type AssetType = {
 ${project.assets
-  .filter((obj) => obj.tsType()?.result !== null)
+  .filter((obj) => obj.tsType() !== null)
   .map((obj) => {
-    const tsType = obj.tsType()?.result
+    const tsType = obj.tsType()
 
     if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
       return `  '${obj.resPath}': PackedScene<${tsType}>`

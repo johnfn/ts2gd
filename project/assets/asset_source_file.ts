@@ -4,7 +4,7 @@ import path from "path"
 
 import { BaseAsset } from "./base_asset"
 import { parseNode } from "../../parse_node"
-import { ErrorName, TsGdError, TsGdReturn } from "../../errors"
+import { addError, ErrorName, TsGdError } from "../../errors"
 import { Scope } from "../../scope"
 import { TsGdProjectClass } from "../project"
 import chalk from "chalk"
@@ -213,25 +213,20 @@ ${chalk.green(
     return this._isAutoload
   }
 
-  tsType(): TsGdReturn<string> {
+  tsType(): string {
     const className = this.exportedTsClassName()
 
     if (className) {
-      return {
-        result: `import('${this.fsPath.slice(0, -".ts".length)}').${className}`,
-      }
+      return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
     } else {
-      return {
-        result: "any",
-        errors: [
-          {
-            description: `Failed to find className for ${this.fsPath}`,
-            error: ErrorName.Ts2GdError,
-            location: this.fsPath,
-            stack: new Error().stack ?? "",
-          },
-        ],
-      }
+      addError({
+        description: `Failed to find className for ${this.fsPath}`,
+        error: ErrorName.Ts2GdError,
+        location: this.fsPath,
+        stack: new Error().stack ?? "",
+      })
+
+      return "any"
     }
   }
 
@@ -241,11 +236,11 @@ ${chalk.green(
     )
   }
 
-  private isDecoratedAutoload(): boolean | TsGdError {
+  private isDecoratedAutoload(): boolean {
     const classNode = this.getClassNode()
 
     if ("error" in classNode) {
-      return classNode
+      return false
     }
 
     for (const dec of classNode.decorators ?? []) {
@@ -287,55 +282,9 @@ ${chalk.green(
     return this.gdPath.slice(0, -".gd".length) + "_" + enumName + ".gd"
   }
 
-  // static transformSourceFile(sourceFile: ts.SourceFile): ts.SourceFile {
-  //   const transformer =
-  //     <T extends ts.Node>(context: ts.TransformationContext) =>
-  //     (rootNode: T) => {
-  //       function visit(node: ts.Node): ts.Node {
-  //         if (node.kind === ts.SyntaxKind.CallExpression) {
-  //           const call = node as ts.CallExpression
-
-  //           if (
-  //             call.expression.kind === ts.SyntaxKind.PropertyAccessExpression
-  //           ) {
-  //             const pae = call.expression as ts.PropertyAccessExpression
-  //             // TODO: Could have null and non-null coalescing lib functions.
-
-  //             if (
-  //               pae.name.text === "add" ||
-  //               pae.name.text === "sub" ||
-  //               pae.name.text === "mul" ||
-  //               pae.name.text === "div"
-  //             ) {
-  //               return context.factory.createCallExpression(
-  //                 context.factory.createIdentifier(`${pae.name.text}_vec_lib`),
-  //                 [],
-  //                 [
-  //                   ts.visitNode(pae.expression, visit),
-  //                   ts.visitNode(call.arguments[0], visit),
-  //                 ]
-  //               )
-  //             }
-  //           }
-  //         }
-
-  //         return ts.visitEachChild(node, visit, context)
-  //       }
-
-  //       return ts.visitNode(rootNode, visit)
-  //     }
-
-  //   const transformResult = ts.transform(sourceFile, [transformer], {})
-  //   const transformedSourceFile = transformResult
-  //     .transformed[0] as ts.SourceFile
-  //   // TODO: Error if >1 file results
-
-  //   return transformedSourceFile
-  // }
-
   async compile(
     watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
-  ): Promise<TsGdReturn<null>> {
+  ): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
@@ -348,17 +297,14 @@ ${chalk.green(
     }
 
     if (!sourceFileAst) {
-      return {
-        errors: [
-          {
-            description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
-            error: ErrorName.PathNotFound,
-            location: this.fsPath,
-            stack: new Error().stack ?? "",
-          },
-        ],
-        result: null,
-      }
+      addError({
+        description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
+        error: ErrorName.PathNotFound,
+        location: this.fsPath,
+        stack: new Error().stack ?? "",
+      })
+
+      return
     }
 
     // Since we use chokidar but TS uses something else to monitor files, sometimes
@@ -375,11 +321,6 @@ ${chalk.green(
     //   AssetSourceFile.transformSourceFile(sourceFileAst)
     // const printer: ts.Printer = ts.createPrinter()
 
-    const result: {
-      result: null
-      errors: TsGdError[]
-    } = { result: null, errors: [] }
-
     const parsedNode = parseNode(sourceFileAst, {
       indent: "",
       isConstructor: false,
@@ -389,7 +330,6 @@ ${chalk.green(
       isAutoload: this.isProjectAutoload(),
       program: watchProgram.getProgram().getProgram(),
       usages: utils.collectVariableUsage(sourceFileAst),
-      addError: (newError) => result.errors.push(newError),
       sourceFile: sourceFileAst,
     })
 
@@ -401,17 +341,13 @@ ${chalk.green(
       fs.writeFileSync(this.getEnumPath(name), this.getFileHeader() + content)
     }
 
-    const err = this.checkForAutoloadChanges()
-
-    if (err !== null) {
-      result.errors.push(err)
-    }
+    this.checkForAutoloadChanges()
 
     if (this.isAutoload()) {
       const error = this.validateAutoloadClass()
 
       if (error !== null) {
-        result.errors.push(error)
+        addError(error)
       }
 
       const newAutoloadClassName = this.getAutoloadNameFromExportedVariable()
@@ -431,8 +367,6 @@ ${chalk.green(
         }
       }
     }
-
-    return result
   }
 
   getFileHeader(): string {
@@ -469,20 +403,22 @@ ${chalk.white(
     return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length)
   }
 
-  checkForAutoloadChanges(): TsGdError | null {
+  checkForAutoloadChanges(): void {
     let shouldBeAutoload: boolean
     let prevAutoload = this.isAutoload()
 
+    const isDecoratedAutoload = this.isDecoratedAutoload()
+
     if (prevAutoload) {
       // Did we remove one?
-      if (!this.isDecoratedAutoload() || !this.isProjectAutoload()) {
+      if (!isDecoratedAutoload || !this.isProjectAutoload()) {
         shouldBeAutoload = false
       } else {
         shouldBeAutoload = true
       }
     } else {
       // Did we add one?
-      if (this.isDecoratedAutoload() || this.isProjectAutoload()) {
+      if (isDecoratedAutoload || this.isProjectAutoload()) {
         shouldBeAutoload = true
       } else {
         shouldBeAutoload = false
@@ -497,25 +433,29 @@ ${chalk.white(
           typeof autoloadClassName !== "string" &&
           "error" in autoloadClassName
         ) {
-          return autoloadClassName
+          addError(autoloadClassName)
+
+          return
         }
 
         this.project.godotProject.addAutoload(autoloadClassName, this.resPath)
       }
 
-      if (!this.isDecoratedAutoload()) {
+      if (!isDecoratedAutoload) {
         shouldBeAutoload = false
 
         const classNode = this.getClassNode()
 
-        return {
+        addError({
           error: ErrorName.AutoloadProjectButNotDecorated,
           description: `Since this is an autoload class in Godot, you must put ${chalk.white(
             "@autoload"
           )} the line before the class declaration.`,
           location: "error" in classNode ? this.fsPath : classNode,
           stack: new Error().stack ?? "",
-        }
+        })
+
+        return
       }
     }
 
@@ -529,20 +469,22 @@ ${chalk.white(
 
         const classNode = this.getClassNode()
 
-        return {
+        addError({
           error: ErrorName.AutoloadDecoratedButNotProject,
           description: `Since you removed this as an autoload class in Godot, you must remove ${chalk.white(
             "@autoload"
           )}.`,
           location: "error" in classNode ? this.fsPath : classNode,
           stack: new Error().stack ?? "",
-        }
+        })
+
+        return
       }
     }
 
     this._isAutoload = shouldBeAutoload
 
-    return null
+    return
   }
 
   destroy() {

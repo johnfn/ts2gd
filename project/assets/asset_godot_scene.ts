@@ -5,7 +5,7 @@ import { TsGdProjectClass } from "../project"
 import { AssetSourceFile } from "./asset_source_file"
 import { AssetGlb } from "./asset_glb"
 import { parseGodotConfigFile } from "../godot_parser"
-import { ErrorName, TsGdReturn } from "../../errors"
+import { addError, ErrorName } from "../../errors"
 import chalk from "chalk"
 
 interface IGodotSceneFile {
@@ -145,32 +145,29 @@ export class GodotNode {
     return undefined
   }
 
-  tsType(): TsGdReturn<string> {
+  tsType(): string {
     if (this._type) {
-      return { result: this._type }
+      return this._type
     }
 
     const instancedSceneType = this.instance()?.tsType()
 
-    if (instancedSceneType?.result) {
-      return { result: instancedSceneType.result }
+    if (instancedSceneType) {
+      return instancedSceneType
     }
 
-    return {
-      result: "any",
-      errors: [
-        {
-          description: `Error: Your Godot scene ${chalk.blue(
-            this.scene.name
-          )} refers to ${chalk.red(
-            this.scenePath()
-          )}, but it doesn't exist. It may have been deleted from the project.`,
-          error: ErrorName.InvalidFile,
-          location: this.name,
-          stack: new Error().stack ?? "",
-        },
-      ],
-    }
+    addError({
+      description: `Error: Your Godot scene ${chalk.blue(
+        this.scene.name
+      )} refers to ${chalk.red(
+        this.scenePath()
+      )}, but it doesn't exist. It may have been deleted from the project.`,
+      error: ErrorName.InvalidFile,
+      location: this.name,
+      stack: new Error().stack ?? "",
+    })
+
+    return "any"
   }
 
   getScript(): AssetSourceFile | undefined {
@@ -267,7 +264,7 @@ export class AssetGodotScene extends BaseAsset {
   }
 
   /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
-  tsType(): TsGdReturn<string> {
+  tsType(): string {
     const rootScript = this.rootNode.getScript()
 
     if (rootScript) {
@@ -276,41 +273,33 @@ export class AssetGodotScene extends BaseAsset {
         .find((sf) => sf.resPath === rootScript.resPath)
 
       if (!rootSourceFile) {
-        return {
-          result: "any",
-          errors: [
-            {
-              description: `Failed to find root source file for ${rootScript.fsPath}`,
-              error: ErrorName.Ts2GdError,
-              location: rootScript.fsPath,
-              stack: new Error().stack ?? "",
-            },
-          ],
-        }
+        addError({
+          description: `Failed to find root source file for ${rootScript.fsPath}`,
+          error: ErrorName.Ts2GdError,
+          location: rootScript.fsPath,
+          stack: new Error().stack ?? "",
+        })
+
+        return "any"
       }
 
       const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
-        return {
-          result: "any",
-          errors: [
-            {
-              description: `Failed to find classname for ${rootScript.fsPath}`,
-              error: ErrorName.Ts2GdError,
-              location: rootScript.fsPath,
-              stack: new Error().stack ?? "",
-            },
-          ],
-        }
+        addError({
+          description: `Failed to find classname for ${rootScript.fsPath}`,
+          error: ErrorName.Ts2GdError,
+          location: rootScript.fsPath,
+          stack: new Error().stack ?? "",
+        })
+
+        return "any"
       }
 
-      return {
-        result: `import('${rootSourceFile.fsPath.slice(
-          0,
-          -".ts".length
-        )}').${rootSourceFile.exportedTsClassName()}`,
-      }
+      return `import('${rootSourceFile.fsPath.slice(
+        0,
+        -".ts".length
+      )}').${rootSourceFile.exportedTsClassName()}`
     } else {
       return this.rootNode.tsType()
     }

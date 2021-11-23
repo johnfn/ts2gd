@@ -20,11 +20,7 @@ export const parseParameter = (
   )
   const usages = props.usages.get(node.name as ts.Identifier)
   const unusedPrefix = usages?.uses.length === 0 && !node.initializer ? "_" : ""
-  const typeString = type.result ? `: ${type.result}` : ""
-
-  if (type.errors) {
-    type.errors.forEach((err) => props.addError(err))
-  }
+  const typeString = type ? `: ${type}` : ""
 
   props.scope.addName(node.name)
 
