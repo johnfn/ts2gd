@@ -22,7 +22,7 @@ func ${name}_get(${params.join(", ")}):
 
 export const testGet: Test = {
   ts: `
-class Foo {
+export class Foo {
   _x;
   get x() { return this._x; }
 }

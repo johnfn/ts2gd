@@ -8,6 +8,7 @@ import chalk from "chalk"
 import { TsGdError } from "../errors"
 import { AssetSourceFile } from "../project/assets/asset_source_file"
 import * as utils from "tsutils"
+import exp from "constants"
 
 export const compileTs = (
   code: string,
@@ -184,7 +185,7 @@ export const compileTs = (
 }
 
 export type Test = {
-  expected: string
+  expected: string | { error: string }
   ts: string
   expectedFiles?: { filename: string; content: string }[]
 
@@ -197,7 +198,7 @@ type TestResult = TestResultPass | TestResultFail
 
 type TestResultPass = { type: "success" }
 type TestResultFail = {
-  type: "fail" | "fail-error"
+  type: "fail" | "fail-error" | "fail-no-error"
   result: string
   name: string
   expected: string
@@ -243,16 +244,49 @@ const test = (
 
   const output = compiled.content
 
-  if (errors.length > 0) {
-    return {
-      type: "fail-error",
-      result: "",
-      expected: `Got an unexpected error:\n\n${errors
-        .map((err) => err.description)
-        .join("\n")}`,
-      name,
-      expectFail: props.expectFail ?? false,
-      path,
+  if (typeof expected !== "string" && "error" in expected) {
+    if (errors.length > 0) {
+      if (errors.length > 1) {
+        return {
+          type: "fail-error",
+          result: "",
+          expected: `Got more than one error but expected one:\n\n${errors
+            .map((err) => err.description)
+            .join("\n")}`,
+          name,
+          expectFail: props.expectFail ?? false,
+          path,
+        }
+      } else {
+        if (errors[0].description.includes(expected.error)) {
+          return { type: "success" }
+        } else {
+          return {
+            type: "fail-error",
+            result: "",
+            expected: `Got an error of the wrong type.
+
+Wanted: ${expected.error}
+
+Got: 
+
+${errors[0].description}
+`,
+            name,
+            expectFail: props.expectFail ?? false,
+            path,
+          }
+        }
+      }
+    } else {
+      return {
+        type: "fail-no-error",
+        result: "",
+        expected: `Didn't get an error, but wanted: ${expected.error}`,
+        name,
+        expectFail: props.expectFail ?? false,
+        path,
+      }
     }
   }
 
@@ -368,7 +402,11 @@ export const runTests = async () => {
     console.log = oldConsoleLog
 
     total++
-    if (result.type === "fail" || result.type === "fail-error") {
+    if (
+      result.type === "fail" ||
+      result.type === "fail-error" ||
+      result.type === "fail-no-error"
+    ) {
       result.logs = logged
       failures.push(result)
     }
@@ -406,6 +444,8 @@ export const runTests = async () => {
       console.info("=============================================\n")
 
       if (type === "fail-error") {
+        console.info(expected + "\n")
+      } else if (type === "fail-no-error") {
         console.info(expected + "\n")
       } else {
         console.info("\x1b[31mExpected:\x1b[0m")

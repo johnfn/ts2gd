@@ -568,7 +568,7 @@ v1.distance_to(v1)
 
 export const testArrowScoping: Test = {
   ts: `
-class Foo {
+export class Foo {
   a() {
     const a = () => {};
   }
@@ -755,7 +755,7 @@ func _ready():
 
 export const testConnectComplex: Test = {
   ts: `
-class Test {
+export class Test {
   enemies: any;
 
   foo() {
@@ -880,7 +880,7 @@ export const testFunctionNull: Test = {
     x(): number | null;
   }
 
-  class Test {
+  export class Test {
     example() {
       const thing: Foo = new Foo()
       let result = thing.x()
@@ -914,7 +914,7 @@ x.get_node("Foo")
 
 export const testRewriteY: Test = {
   ts: `
-class Test extends Node {
+export class Test extends Node {
   f() {
     yield y(this.get_tree(), "idle_frame")
   }

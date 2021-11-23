@@ -1,7 +1,9 @@
 import ts, { SyntaxKind } from "typescript"
+import { ErrorName } from "../errors"
 import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
-import { getGodotType } from "../ts_utils"
+import { Test } from "../tests/test"
+import { getGodotType, isArrayType } from "../ts_utils"
 import { isDecoratedAsExports } from "./parse_property_declaration"
 
 const getSettersAndGetters = (
@@ -83,6 +85,18 @@ export const parseClassDeclaration = (
     })
   }
 
+  const isAutoload = !!node.decorators?.find(
+    (dec) => props.getNodeText(dec.expression) === "autoload"
+  )
+
+  if (!modifiers?.includes("export") && !isAutoload) {
+    props.addError({
+      description: "You must export this class.",
+      error: ErrorName.ClassMustBeExported,
+      location: node,
+    })
+  }
+
   // Preprocess set/get to make setget declarations
   const settersAndGetters = getSettersAndGetters(node.members, props)
   const parsedSetterGetters = settersAndGetters
@@ -109,15 +123,22 @@ ${members.join("")}
   })
 }
 
-// export const testConditionalExpression: Test = {
-//   ts: `
-// export class Foo {
-//   x = 1
-// }
+export const testRequireExportedClass: Test = {
+  ts: `
+class Foo {
+  x = 1
+}`,
+  expected: { error: "You must export this class" },
+}
 
-// class Bar {
-//   x = 2
-// }
-//   `,
-//   expected: `var _x = 1 if true else 2`,
-// }
+export const testDontRequireExportingAutoloads: Test = {
+  ts: `
+@autoload
+class Foo {
+  x = 1
+}`,
+  expected: `
+class_name Foo
+var x: int = 1  
+`,
+}
