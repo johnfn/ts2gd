@@ -253,7 +253,7 @@ const test = (props, name, testFileName, path) => {
 const getAllFiles = async () => {
     // __dirname allows this to either run via ts-node in developer mode or on CI with normal node
     // then __dirname will be within the js folder
-    const basePath = path_1.default.join(__dirname, '..', 'parse_node');
+    const basePath = path_1.default.join(__dirname, "..", "parse_node");
     const files = fs_1.default.readdirSync(basePath);
     const results = {};
     for (const fts of files) {

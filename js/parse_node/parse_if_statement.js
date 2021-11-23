@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testIfPostInc2 = exports.testIfPostInc1 = exports.testIfPreInc2 = exports.testIfPreInc1 = exports.testElseIf = exports.testIf = exports.parseIfStatement = void 0;
+exports.testIfPass2 = exports.testIfPass = exports.testIfPostInc2 = exports.testIfPostInc1 = exports.testIfPreInc2 = exports.testIfPreInc1 = exports.testElseIf = exports.testIf = exports.parseIfStatement = void 0;
 const parse_node_1 = require("../parse_node");
 const parseIfStatement = (node, props) => {
     props.scope.enterScope();
@@ -12,15 +12,26 @@ const parseIfStatement = (node, props) => {
         parsedObjs: (expression, thenStatement, elseStatement) => {
             const beforeLines = expression.extraLines?.filter((line) => line.type === "before") ?? [];
             const afterLines = expression.extraLines?.filter((line) => line.type === "after") ?? [];
+            let thenBody = afterLines.map(({ line }) => "  " + line + "\n") +
+                (thenStatement.content.trim() === ""
+                    ? ""
+                    : "  " + thenStatement.content);
+            let elseBody = afterLines.map(({ line }) => "  " + line + "\n") +
+                (elseStatement.content.trim() === ""
+                    ? ""
+                    : "  " + elseStatement.content);
+            if (thenBody.trim() === "") {
+                thenBody = "  pass";
+            }
             return `
 ${beforeLines.map((line) => line.line).join("\n")}
 if ${expression.content}:
-  ${afterLines.map((line) => line.line).join("\n")}
-  ${thenStatement.content}${elseStatement.content
-                ? `else:
-  ${afterLines.map((line) => line.line).join("\n")}
-  ${elseStatement.content}`
-                : ""}`;
+${thenBody}
+${elseBody.trim() === ""
+                ? ""
+                : `else:
+${elseBody}
+`}`;
         },
     });
     result.extraLines = [];
@@ -128,6 +139,32 @@ if x:
 else:
   print(x)
   x += 1
+  `,
+};
+exports.testIfPass = {
+    ts: `
+if (true) {
+} else {
+  print(0)
+}
+  `,
+    expected: `
+if true:
+  pass
+else:
+  print(0)
+  `,
+};
+exports.testIfPass2 = {
+    ts: `
+if (true) {
+  print(1)
+} else {
+}
+  `,
+    expected: `
+if true:
+  print(1)
   `,
 };
 //# sourceMappingURL=parse_if_statement.js.map

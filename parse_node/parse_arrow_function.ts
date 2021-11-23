@@ -1,4 +1,5 @@
 import ts, { SyntaxKind } from "typescript"
+import { ErrorName } from "../errors"
 import { combine, ParseState } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 
@@ -36,6 +37,16 @@ const getFreeVariables = (
     const symbol = props.program.getTypeChecker().getSymbolAtLocation(node)
 
     if (symbol) {
+      if (!symbol.declarations) {
+        props.addError({
+          error: ErrorName.DeclarationNotGiven,
+          location: node,
+          description: `
+Declaration not provided for free variables. This is an internal ts2gd bug. Please report it. 
+        `,
+        })
+        return []
+      }
       const decl = symbol.declarations[0]
 
       if (decl.getSourceFile() !== root.getSourceFile()) {
@@ -173,10 +184,19 @@ ${unwrapCapturedScope}
   const decls = props.program.getTypeChecker().getTypeAtLocation(node)
     .symbol?.declarations
 
-  const { capturedScopeObject } = getCapturedScope(
-    decls[0] as ts.ArrowFunction,
-    props
-  )
+  if (!decls) {
+    props.addError({
+      error: ErrorName.DeclarationNotGiven,
+      location: node,
+      description: `
+Declaration not provided for arrow function. This is an internal ts2gd bug. Please report it. 
+        `,
+    })
+  }
+
+  const capturedScopeObject = decls
+    ? getCapturedScope(decls[0] as ts.ArrowFunction, props).capturedScopeObject
+    : "{}"
 
   // NOTE: parse_call_expression expects all arrow functions to be declared on self.
   return {

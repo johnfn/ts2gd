@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.testProcessDoesntGetArgsAdded = exports.testProcessGetsArgsAdded = exports.parseMethodDeclaration = void 0;
+exports.testDefaultValuesSelfReference = exports.testDefaultValues = exports.testDefaultValue = exports.testProcessDoesntGetArgsAdded = exports.testProcessGetsArgsAdded = exports.parseMethodDeclaration = void 0;
 const parse_node_1 = require("../parse_node");
 const specialMethods = [
     { name: "_process", args: "_delta: float" },
@@ -21,20 +21,35 @@ const parseMethodDeclaration = (node, props) => {
             isRemoteSync = true;
         }
     }
+    // Need to grab extra lines for default parameters
+    const compiledParameters = parse_node_1.combine({
+        parent: node,
+        nodes: node.parameters,
+        props,
+        parsedStrings: (...params) => params.join(", "),
+    });
     let result = parse_node_1.combine({
         parent: node,
-        nodes: [node.body, ...node.parameters],
-        props: props,
+        nodes: [node.body],
+        props,
         addIndent: true,
-        parsedStrings: (body, ...params) => {
-            let joinedParams = params.join(", ");
+        parsedStrings: (body) => {
+            let joinedParams = compiledParameters.content;
             const specialMethod = specialMethods.find((method) => method.name === funcName);
             if (specialMethod && joinedParams.trim() === "") {
                 joinedParams = specialMethod.args;
             }
+            let bodyLines = [
+                ...(compiledParameters.extraLines?.map((param) => param.line) ?? []),
+                ...(body.trim() === "" ? [] : [body]),
+            ];
+            if (bodyLines.length === 0) {
+                bodyLines = ["pass"];
+            }
+            body = bodyLines.map((line) => "  " + line + "\n").join("");
             return `
 ${isRemote ? "remote " : ""}${isRemoteSync ? "remotesync " : ""}func ${funcName}(${joinedParams}):
-  ${body || " pass"}
+${body.trim() === "" ? "pass" : body}
 `;
         },
     });
@@ -67,5 +82,52 @@ class_name Foo
 func _process(_d: float):
   pass
   `,
+};
+exports.testDefaultValue = {
+    ts: `
+class Foo extends Node2D {
+  testDefault(a = 1) { }
+}
+  `,
+    expected: `
+extends Node2D
+class_name Foo
+func testDefault(a = "[no value passed in]"):
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+`,
+};
+exports.testDefaultValues = {
+    ts: `
+class Foo extends Node2D {
+  testDefault(a = 1, b = 2) { 
+    print("OK")
+    print("OK")
+  }
+}
+  `,
+    expected: `
+extends Node2D
+class_name Foo
+func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+  b = (2 if (typeof(b) == TYPE_STRING and b == "[no value passed in]") else b)
+  print("OK")
+  print("OK")
+`,
+};
+exports.testDefaultValuesSelfReference = {
+    ts: `
+class Foo extends Node2D {
+  testDefault(a = 1, b: int = a) { 
+  }
+}
+  `,
+    expected: `
+extends Node2D
+class_name Foo
+func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
+  a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
+  b = (a if (typeof(b) == TYPE_STRING and b == "[no value passed in]") else b)
+`,
 };
 //# sourceMappingURL=parse_method_declaration.js.map

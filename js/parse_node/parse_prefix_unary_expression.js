@@ -19,7 +19,7 @@ const parsePrefixUnaryExpression = (node, props) => {
                     newIncrements = {
                         type: "before",
                         line: `${operand} += 1`,
-                        isIncrement: true,
+                        lineType: parse_node_1.ExtraLineType.Increment,
                     };
                     return `${operand}`;
                 }
@@ -27,7 +27,7 @@ const parsePrefixUnaryExpression = (node, props) => {
                     newIncrements = {
                         type: "before",
                         line: `${operand} -= 1`,
-                        isDecrement: true,
+                        lineType: parse_node_1.ExtraLineType.Decrement,
                     };
                     return `${operand}`;
                 }

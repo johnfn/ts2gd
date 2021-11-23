@@ -32,8 +32,11 @@ const parsePropertyAccessExpression = (node, props) => {
     if (ts_utils_1.isEnumType(exprType)) {
         const symbol = exprType.getSymbol();
         const declarations = symbol.declarations;
-        const sourceFiles = declarations.map((d) => d.getSourceFile().fileName);
-        const isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"));
+        let isGlobal = false;
+        if (declarations) {
+            const sourceFiles = declarations.map((d) => d.getSourceFile().fileName);
+            isGlobal = !!sourceFiles.find((f) => f.includes("@globals.d.ts"));
+        }
         if (isGlobal) {
             return parse_node_1.parseNode(node.name, props);
         }
@@ -56,12 +59,14 @@ const parsePropertyAccessExpression = (node, props) => {
                     nullCoalesce = {
                         type: "before",
                         line: `var ${newName} = funcref(${lhs}, "${rhs}") if ${lhs} != null else null`,
+                        lineType: parse_node_1.ExtraLineType.NullableIntermediateExpression,
                     };
                     return newName;
                 }
                 nullCoalesce = {
                     type: "before",
                     line: `var ${newName} = ${lhs}`,
+                    lineType: parse_node_1.ExtraLineType.NullableIntermediateExpression,
                 };
                 return `(${newName}.${rhs} if ${newName} != null else null)`;
             }
