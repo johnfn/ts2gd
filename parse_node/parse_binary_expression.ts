@@ -44,6 +44,10 @@ export const parseBinaryExpression = (
         return `(${left} if (${left}) != null else ${right})`
       }
 
+      /**
+       * Godot has an annoying limitation where a == b actually throws an error (!) if a and b
+       * are not the same type.
+       */
       if (operatorToken === "==" || operatorToken === "===") {
         if (
           leftTypeString !== rightTypeString ||
