@@ -13,14 +13,9 @@ ${project.assets
     const tsType = obj.tsType()?.result
 
     if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
-      if (tsType?.startsWith("[")) {
-        console.log(obj.resPath, obj.constructor.name, tsType)
-      }
-
       return `  '${obj.resPath}': PackedScene<${tsType}>`
     }
 
-    // console.log("1", obj.resPath, obj.tsType())
     return `  '${obj.resPath}': ${tsType}`
   })
   .join(",\n")}

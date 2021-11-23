@@ -216,8 +216,6 @@ ${chalk.green(
   tsType(): TsGdReturn<string> {
     const className = this.exportedTsClassName()
 
-    console.log(className)
-
     if (className) {
       return {
         result: `import('${this.fsPath.slice(0, -".ts".length)}').${className}`,

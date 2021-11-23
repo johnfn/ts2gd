@@ -6,10 +6,12 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
   let result = ``
 
   for (const scene of project.godotScenes()) {
+    // TODO: Handle errors
+
     result += `export const ${path.basename(
       scene.fsPath,
       ".tscn"
-    )}Tscn: PackedScene<${scene.tsType() ?? "Node"}>;\n`
+    )}Tscn: PackedScene<${scene.tsType().result ?? "Node"}>;\n`
   }
 
   const destPath = path.join(
