@@ -8,13 +8,20 @@ export function buildAssetPathsType(project: TsGdProjectClass) {
   const assetFileContents = `
 declare type AssetType = {
 ${project.assets
-  .filter((obj) => obj.tsType() !== null)
+  .filter((obj) => obj.tsType()?.result !== null)
   .map((obj) => {
+    const tsType = obj.tsType()?.result
+
     if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
-      return `  '${obj.resPath}': PackedScene<${obj.tsType()}>`
+      if (tsType?.startsWith("[")) {
+        console.log(obj.resPath, obj.constructor.name, tsType)
+      }
+
+      return `  '${obj.resPath}': PackedScene<${tsType}>`
     }
 
-    return `  '${obj.resPath}': ${obj.tsType()}`
+    // console.log("1", obj.resPath, obj.tsType())
+    return `  '${obj.resPath}': ${tsType}`
   })
   .join(",\n")}
 }

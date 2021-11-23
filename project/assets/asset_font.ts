@@ -1,5 +1,6 @@
 import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "../project"
+import { TsGdReturn } from "../../errors"
 
 export class AssetFont extends BaseAsset {
   resPath: string
@@ -17,7 +18,7 @@ export class AssetFont extends BaseAsset {
     this.project = project
   }
 
-  tsType(): string {
-    return "DynamicFontData"
+  tsType(): TsGdReturn<string> {
+    return { result: "DynamicFontData" }
   }
 }

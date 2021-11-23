@@ -213,13 +213,27 @@ ${chalk.green(
     return this._isAutoload
   }
 
-  tsType(): string | null {
+  tsType(): TsGdReturn<string> {
     const className = this.exportedTsClassName()
 
+    console.log(className)
+
     if (className) {
-      return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
+      return {
+        result: `import('${this.fsPath.slice(0, -".ts".length)}').${className}`,
+      }
     } else {
-      return null
+      return {
+        result: "any",
+        errors: [
+          {
+            description: `Failed to find className for ${this.fsPath}`,
+            error: ErrorName.Ts2GdError,
+            location: this.fsPath,
+            stack: new Error().stack ?? "",
+          },
+        ],
+      }
     }
   }
 

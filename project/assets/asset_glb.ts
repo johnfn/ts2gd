@@ -1,3 +1,4 @@
+import { TsGdReturn } from "../../errors"
 import { TsGdProjectClass } from "../project"
 import { BaseAsset } from "./base_asset"
 
@@ -14,8 +15,8 @@ export class AssetGlb extends BaseAsset {
     this.project = project
   }
 
-  tsType(): string {
-    return "Spatial"
+  tsType(): TsGdReturn<string> {
+    return { result: "Spatial" }
   }
 
   static extensions() {

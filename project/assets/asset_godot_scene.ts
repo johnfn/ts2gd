@@ -149,8 +149,8 @@ export class GodotNode {
 
     const instancedSceneType = this.instance()?.tsType()
 
-    if (instancedSceneType) {
-      return { result: instancedSceneType }
+    if (instancedSceneType?.result) {
+      return { result: instancedSceneType.result }
     }
 
     return {
@@ -264,7 +264,7 @@ export class AssetGodotScene extends BaseAsset {
   }
 
   /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
-  tsType(): string | null {
+  tsType(): TsGdReturn<string> {
     const rootScript = this.rootNode.getScript()
 
     if (rootScript) {
@@ -273,23 +273,43 @@ export class AssetGodotScene extends BaseAsset {
         .find((sf) => sf.resPath === rootScript.resPath)
 
       if (!rootSourceFile) {
-        throw new Error(
-          `Failed to find root source file for ${rootScript.fsPath}`
-        )
+        return {
+          result: "any",
+          errors: [
+            {
+              description: `Failed to find root source file for ${rootScript.fsPath}`,
+              error: ErrorName.Ts2GdError,
+              location: rootScript.fsPath,
+              stack: new Error().stack ?? "",
+            },
+          ],
+        }
       }
 
       const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
-        return null
+        return {
+          result: "any",
+          errors: [
+            {
+              description: `Failed to find classname for ${rootScript.fsPath}`,
+              error: ErrorName.Ts2GdError,
+              location: rootScript.fsPath,
+              stack: new Error().stack ?? "",
+            },
+          ],
+        }
       }
 
-      return `import('${rootSourceFile.fsPath.slice(
-        0,
-        -".ts".length
-      )}').${rootSourceFile.exportedTsClassName()}`
+      return {
+        result: `import('${rootSourceFile.fsPath.slice(
+          0,
+          -".ts".length
+        )}').${rootSourceFile.exportedTsClassName()}`,
+      }
     } else {
-      return `${this.rootNode.tsType()}`
+      return this.rootNode.tsType()
     }
   }
 
