@@ -158,7 +158,7 @@ export class GodotNode {
       errors: [
         {
           description: `Error: Your Godot scene ${chalk.blue(
-            this.name
+            this.scene.name
           )} refers to ${chalk.red(
             this.scenePath()
           )}, but it doesn't exist. It may have been deleted from the project.`,
