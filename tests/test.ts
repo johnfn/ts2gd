@@ -116,8 +116,8 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         removeAutoload: {} as any,
       },
       monitor: () => 0 as any,
-      onAddAsset: async () => {},
-      onChangeAsset: async () => {},
+      onAddAsset: async () => "",
+      onChangeAsset: async () => "",
       onRemoveAsset: () => {},
       sourceFiles: () => [
         {
