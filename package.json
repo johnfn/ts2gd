@@ -17,6 +17,11 @@
   "bin": {
     "ts2gd": "bin/index.js"
   },
+  "files": [
+    "_godot_defs",
+    "bin",
+    "js"
+  ],
   "author": "johnfn",
   "license": "MIT",
   "prettier": {

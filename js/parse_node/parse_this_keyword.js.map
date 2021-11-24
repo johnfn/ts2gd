@@ -1,1 +1,0 @@
-{"version":3,"file":"parse_this_keyword.js","sourceRoot":"","sources":["../../parse_node/parse_this_keyword.ts"],"names":[],"mappings":";;;AAEA,8CAAkE;AAE3D,MAAM,gBAAgB,GAAG,CAC9B,IAAuB,EACvB,KAAiB,EACF,EAAE;IACjB,OAAO,oBAAO,CAAC;QACb,MAAM,EAAE,IAAI;QACZ,KAAK,EAAE,EAAE;QACT,KAAK;QACL,aAAa,EAAE,GAAG,EAAE,CAAC,MAAM;KAC5B,CAAC,CAAA;AACJ,CAAC,CAAA;AAVY,QAAA,gBAAgB,oBAU5B"}
