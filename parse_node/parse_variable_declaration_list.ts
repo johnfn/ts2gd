@@ -29,7 +29,6 @@ print(b)
   `,
 }
 
-
 export const testVDL2: Test = {
   ts: `
 export class Test extends Area2D {
@@ -39,12 +38,12 @@ export class Test extends Area2D {
     this.print(1)
   }
 }`,
-expected: `
+  expected: `
 extends Area2D
 class_name Test
 func _ready():
   var _x: int = 1
   var _y: int = 2
   self.print(1)
-`
+`,
 }

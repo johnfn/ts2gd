@@ -9,7 +9,7 @@
 
 // [x]: the ts transformer is going to get me in trouble one day. i should remove it before that happens.
 
-// [ ]: "Can't find the autoload instance variable" error is displayed on empty classes
+// [x]: "Can't find the autoload instance variable" error is displayed on empty classes
 // [ ]: Get enum values
 // [ ]: access children directly with property access, e.g. this.get_node("A/B") could be written this.A.B
 

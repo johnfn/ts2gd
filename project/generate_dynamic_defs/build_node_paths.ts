@@ -4,7 +4,6 @@ import { getCommonElements } from "../../ts_utils"
 import { TsGdProjectClass } from "../project"
 import { GodotNode, AssetGodotScene } from "../assets/asset_godot_scene"
 import { AssetSourceFile } from "../assets/asset_source_file"
-import { TsGdError } from "../../errors"
 
 /**
  * Returns the paths to all children below this node, including grandchildren

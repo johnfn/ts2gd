@@ -7,9 +7,10 @@ import { Scope } from "../scope"
 import chalk from "chalk"
 import { TsGdError, __getErrorsTestOnly } from "../errors"
 import * as utils from "tsutils"
+import { createStubSourceFileAsset } from "./stubs"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
-  const filename = isAutoload ? "autoload.ts" : "test.ts"
+  const filename = isAutoload ? "autoload.ts" : "Test.ts"
 
   const sourceFile = ts.createSourceFile(
     filename,
@@ -58,15 +59,12 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   }
 
   const program = ts.createProgram(
-    ["test.ts", "autoload.ts"],
+    ["Test.ts", "autoload.ts"],
     tsconfigOptions,
     customCompilerHost
   )
 
-  let i = 0
-  const errors: TsGdError[] = []
-
-  const printer: ts.Printer = ts.createPrinter()
+  const sourceFileAsset = createStubSourceFileAsset("Test")
 
   // TODO: Make this less silly.
   const godotFile = parseNode(sourceFile, {
@@ -116,8 +114,8 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
         removeAutoload: {} as any,
       },
       monitor: () => 0 as any,
-      onAddAsset: async () => {},
-      onChangeAsset: async () => {},
+      onAddAsset: async () => "",
+      onChangeAsset: async () => "",
       onRemoveAsset: () => {},
       sourceFiles: () => [
         {
@@ -127,7 +125,6 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           isAutoload: () => true,
           resPath: "",
           tsRelativePath: "",
-          getEnumPath: () => "",
           gdContainingDirectory: "",
           destroy: () => {},
           project: {} as any,
@@ -138,25 +135,10 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
           isDecoratedAutoload: {} as any,
           ...({} as any), // ssh about private properties.
         },
-        {
-          exportedTsClassName: () => "",
-          fsPath: "test.ts",
-          isProjectAutoload: () => false,
-          resPath: "",
-          gdPath: "",
-          tsRelativePath: "",
-          isAutoload: () => false,
-          getEnumPath: () => "",
-          gdContainingDirectory: "",
-          destroy: () => {},
-          project: {} as any,
-          tsType: () => "",
-          compile: async () => {},
-          reload: () => {},
-          ...({} as any),
-        },
+        sourceFileAsset,
       ],
     },
+    sourceFileAsset: sourceFileAsset,
     mostRecentControlStructureIsSwitch: false,
     isAutoload: false,
     usages: utils.collectVariableUsage(sourceFile),
@@ -166,10 +148,15 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
 }
 
 export type Test = {
-  expected: string | { error: string }
+  expected:
+    | string
+    | { type: "error"; error: string }
+    | {
+        type: "multiple-files"
+        files: { fileName: string; expected: string }[]
+      }
   ts: string
-  expectedFiles?: { filename: string; content: string }[]
-
+  fileName?: string
   isAutoload?: boolean
   only?: boolean
   expectFail?: boolean
@@ -180,6 +167,7 @@ type TestResult = TestResultPass | TestResultFail
 type TestResultPass = { type: "success" }
 type TestResultFail = {
   type: "fail" | "fail-error" | "fail-no-error"
+  fileName?: string
   result: string
   name: string
   expected: string
@@ -194,6 +182,24 @@ const trim = (s: string) => {
     .map((x) => x.trimRight())
     .filter((x) => x.trim() !== "")
     .join("\n")
+}
+
+const removeCommentLines = (s: string) => {
+  return s
+    .split("\n")
+    .filter((x) => !x.startsWith("#"))
+    .join("\n")
+}
+
+const normalize = (s: string) => {
+  return removeCommentLines(trim(s))
+}
+
+const areOutputsEqual = (left: string, right: string) => {
+  const leftTrimmed = removeCommentLines(trim(left))
+  const rightTrimmed = removeCommentLines(trim(right))
+
+  return leftTrimmed === rightTrimmed
 }
 
 const test = (
@@ -222,7 +228,7 @@ const test = (
     }
   }
 
-  const output = compiled.content
+  const output = compiled.files?.[0]?.body ?? "[no output]"
 
   if (typeof expected !== "string" && "error" in expected) {
     if (errors.length > 0) {
@@ -270,45 +276,69 @@ ${errors[0].description}
     }
   }
 
-  if (props.expectedFiles) {
-    // Go into file comparison mode
-    for (const { filename, content } of props.expectedFiles) {
-      const match = (compiled.enums ?? []).find(
-        (e) => e.name + ".gd" === filename
-      )
+  if (typeof expected === "string") {
+    if (areOutputsEqual(output, expected)) {
+      return { type: "success" }
+    }
+  } else {
+    if (expected.files.length !== compiled.files?.length) {
+      return {
+        type: "fail",
+        result:
+          compiled.files
+            ?.map(({ filePath: fileName }) => fileName)
+            .join(", ") ?? "[no files]",
+        expected: expected.files.map(({ fileName }) => fileName).join(", "),
+        name,
+        expectFail: props.expectFail ?? false,
+        path,
+      }
+    }
 
-      if (!match) {
-        return {
-          type: "fail",
-          result: "",
-          expected: `${filename} was not created.`,
-          name,
-          expectFail: props.expectFail ?? false,
-          path: "[generated]/" + testFileName,
+    for (const expectedFile of expected.files) {
+      let found = false
+
+      for (const actualFile of compiled.files ?? []) {
+        if (actualFile.filePath === expectedFile.fileName) {
+          if (!areOutputsEqual(actualFile.body, expectedFile.expected)) {
+            return {
+              type: "fail",
+              fileName: actualFile.filePath,
+              result: normalize(actualFile.body),
+              expected: normalize(expectedFile.expected),
+              name,
+              expectFail: props.expectFail ?? false,
+              path,
+            }
+          }
+
+          found = true
         }
       }
 
-      if (trim(content) !== trim(match.content)) {
+      if (!found) {
         return {
           type: "fail",
-          result: content,
-          expected: match.content,
+          result: `No file named ${
+            expectedFile.fileName
+          } was written.\n\nWritten files: ${compiled.files
+            ?.map((f) => f.filePath)
+            .join(", ")}`,
+          expected: "",
           name,
           expectFail: props.expectFail ?? false,
-          path: "[generated]/" + testFileName,
+          path,
         }
       }
     }
-  }
 
-  if (trim(output) === trim(expected)) {
     return { type: "success" }
   }
 
   return {
     type: "fail",
-    result: trim(output),
-    expected: trim(expected),
+    result: normalize(output),
+    expected: normalize(expected),
     name,
     expectFail: props.expectFail ?? false,
     path,
@@ -406,9 +436,15 @@ export const runTests = async () => {
     console.info("\nSome failed, but they were expected to fail:")
     console.info(failures.map((f) => "  " + f.name).join("\n"))
   } else {
-    for (let { expected, name, result, logs, path, type } of failures.filter(
-      (x) => !x.expectFail
-    )) {
+    for (let {
+      expected,
+      name,
+      result,
+      logs,
+      path,
+      type,
+      fileName,
+    } of failures.filter((x) => !x.expectFail)) {
       const fileContents = fs.readFileSync(path, "utf-8")
       const lines = fileContents.split("\n")
       // Take a guess at line
@@ -428,7 +464,11 @@ export const runTests = async () => {
       } else if (type === "fail-no-error") {
         console.info(expected + "\n")
       } else {
-        console.info("\x1b[31mExpected:\x1b[0m")
+        if (fileName) {
+          console.info(`${chalk.red("Expected")} (In file ${fileName}):`)
+        } else {
+          console.info(`${chalk.red("Expected")}`)
+        }
 
         let str = ""
 

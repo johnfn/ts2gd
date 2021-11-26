@@ -20,7 +20,6 @@ import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
 import { BaseAsset } from "./assets/base_asset"
 import { displayErrors, TsGdError } from "../errors"
-import { getTimestamp } from "../ts_utils"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would

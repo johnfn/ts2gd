@@ -129,7 +129,7 @@ export const testRequireExportedClass: Test = {
 class Foo {
   x = 1
 }`,
-  expected: { error: "You must export this class" },
+  expected: { error: "You must export this class", type: "error" },
 }
 
 export const testDontRequireExportingAutoloads: Test = {

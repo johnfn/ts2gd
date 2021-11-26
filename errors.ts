@@ -10,6 +10,7 @@ export enum ErrorName {
   ClassMustBeExported,
   TooManyClassesFound,
   ClassCannotBeAnonymous,
+  TwoClassesWithSameName,
   CantFindAutoloadInstance,
   UnknownTsSyntax,
   PathNotFound,

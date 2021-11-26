@@ -64,6 +64,7 @@ import { Scope } from "./scope"
 import { addError, ErrorName, TsGdError } from "./errors"
 import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
+import { AssetSourceFile } from "./project/assets/asset_source_file"
 
 export type ParseState = {
   isConstructor: boolean
@@ -82,6 +83,7 @@ export type ParseState = {
   }
   usages: Map<ts.Identifier, utils.VariableInfo>
   sourceFile: ts.SourceFile
+  sourceFileAsset: AssetSourceFile
 }
 
 export enum ExtraLineType {
@@ -99,7 +101,7 @@ export type ExtraLine = {
 
 export type ParseNodeType = {
   content: string
-  hoistedEnumImports?: string[]
+  files?: { filePath: string; body: string }[]
   hoistedArrowFunctions?: {
     name: string
     content: string
@@ -107,15 +109,6 @@ export type ParseNodeType = {
   }[]
   hoistedLibraryFunctions?: Set<LibraryFunctionName>
   extraLines?: ExtraLine[]
-  enums?: {
-    /** Content of the enum */
-    content: string
-
-    /**
-     * Name of the created enum
-     */
-    name: string
-  }[]
 }
 
 const isTsNodeArray = <T extends ts.Node>(x: any): x is ts.NodeArray<T> => {
@@ -161,11 +154,10 @@ export function combine(args: {
       node,
       errors: [],
       content: parsed?.content ?? "",
-      enums: parsed?.enums ?? [],
       extraLines: parsed?.extraLines ?? [],
-      hoistedEnumImports: parsed?.hoistedEnumImports ?? [],
       hoistedArrowFunctions: parsed?.hoistedArrowFunctions ?? [],
       hoistedLibraryFunctions: parsed?.hoistedLibraryFunctions ?? new Set(),
+      files: parsed?.files ?? [],
     }
   })
 
@@ -242,10 +234,6 @@ export function combine(args: {
 
   return {
     content: stringResult,
-    enums: parsedNodes.flatMap((node) => node.enums ?? []),
-    hoistedEnumImports: parsedNodes.flatMap(
-      (node) => node.hoistedEnumImports ?? []
-    ),
     hoistedLibraryFunctions: new Set(
       parsedNodes.flatMap((node) => [
         ...(node.hoistedLibraryFunctions?.keys() ?? []),

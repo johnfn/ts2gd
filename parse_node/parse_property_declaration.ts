@@ -320,11 +320,27 @@ export class Test {
   foo: MyEnum
 }
   `,
-  expected: `
+  fileName: "Test.ts",
+  expected: {
+    type: "multiple-files",
+    files: [
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Test.gd",
+        expected: `
 class_name Test
-const MyEnum = preload("_MyEnum.gd").MyEnum
+const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
 export(MyEnum) var foo
-`,
+      `,
+      },
+
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
+        expected: `
+const MyEnum = {
+}`,
+      },
+    ],
+  },
 }
 
 export const testExportObj: Test = {

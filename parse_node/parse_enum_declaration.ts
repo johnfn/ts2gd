@@ -37,15 +37,19 @@ export const parseEnumDeclaration = (
   const enumType = props.program.getTypeChecker().getTypeAtLocation(node)
   const { resPath, enumName } = getImportResPathForEnum(enumType, props)
 
-  const importString = `const ${enumName} = preload("${resPath}").${enumName}`
+  const fileName =
+    props.sourceFileAsset.gdContainingDirectory +
+    props.sourceFileAsset.name +
+    "_" +
+    enumName +
+    ".gd"
 
   return {
-    content: "",
-    hoistedEnumImports: [importString],
-    enums: [
+    content: `const ${enumName} = preload("${resPath}").${enumName}`,
+    files: [
       {
-        content: enumText.content,
-        name: node.name.text,
+        body: enumText.content,
+        filePath: fileName,
       },
     ],
   }
@@ -53,53 +57,74 @@ export const parseEnumDeclaration = (
 
 export const testEnumDeclaration: Test = {
   ts: `
-export enum Test { A, B }
+export enum MyEnum { A, B }
 
-print(Test.A)
+export class Hello {
+  constructor() {
+    print(MyEnum.A)
+  }
+}
   `,
-  expected: `
-const Test = preload("_Test.gd").Test
 
-print(Test.A)
-  `,
+  expected: {
+    type: "multiple-files",
+    files: [
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
+        expected: `
+class_name Hello
+const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
+func _ready():
+  print(MyEnum.A)
+      `,
+      },
 
-  expectedFiles: [
-    {
-      filename: "Test.gd",
-      content: `
-const Test = {
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
+        expected: `
+const MyEnum = {
   "A": 0,
   "B": 1,
-}      
-`,
-    },
-  ],
+}`,
+      },
+    ],
+  },
 }
 
 export const testEnumDeclaration2: Test = {
   ts: `
-export enum Test { 
+export enum TestEnum { 
   A = "A", 
   B = "B"
 }
 
-print(Test.A)
-  `,
-  expected: `
-const Test = preload("_Test.gd").Test
+export class Hello {
+  constructor() {
+    print(TestEnum.A)
+  }
+}
+`,
+  expected: {
+    type: "multiple-files",
+    files: [
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
+        expected: `
+class_name Hello
+const TestEnum = preload("res://compiled/Test_TestEnum.gd").TestEnum
+func _ready():
+  print(TestEnum.A)
+      `,
+      },
 
-print(Test.A)
-  `,
-
-  expectedFiles: [
-    {
-      filename: "Test.gd",
-      content: `
-const Test = {
+      {
+        fileName: "/Users/johnfn/MyGame/compiled/Test_TestEnum.gd",
+        expected: `
+const TestEnum = {
   "A": "A",
   "B": "B",
-}      
-`,
-    },
-  ],
+}`,
+      },
+    ],
+  },
 }
