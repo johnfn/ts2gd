@@ -105,16 +105,32 @@ export class GodotNode {
   children(): GodotNode[] {
     const path = this.scenePath()
 
-    return this.scene.nodes.filter((node) => node.parent === path)
+    return this.scene.nodes.filter(
+      (node) => node.parent === path && !node.isInstanceOverride()
+    )
+  }
+
+  private instanceId(): number | undefined {
+    let instanceId = this.$section.instance?.args[0]
+
+    if (!instanceId && instanceId !== 0) {
+      return undefined
+    }
+
+    return instanceId
+  }
+
+  isInstance(): boolean {
+    return !!this.instanceId()
   }
 
   /**
    * If this node is an instance of a scene, return that scene.
    */
   instance(): AssetGodotScene | AssetGlb | undefined {
-    let instanceId = this.$section.instance?.args[0]
+    const instanceId = this.instanceId()
 
-    if (!instanceId && instanceId !== 0) {
+    if (instanceId === undefined) {
       return undefined
     }
 
@@ -145,9 +161,31 @@ export class GodotNode {
     return undefined
   }
 
+  /**
+   * This will be true if this node is just the overridden properties
+   * of another node.
+   *
+   * This can happen e.g. when you instance a scene in another scene, and then
+   * move one of the instanced scene's nodes.
+   */
+  isInstanceOverride() {
+    return !this._type && !this.isInstance()
+  }
+
   tsType(): string {
     if (this._type) {
       return this._type
+    }
+
+    if (this.isInstanceOverride()) {
+      addError({
+        description: `Error: should never try to get the type of an instance override. This is a ts2gd internal bug. Please report it on GitHub.`,
+        error: ErrorName.InvalidFile,
+        location: this.name,
+        stack: new Error().stack ?? "",
+      })
+
+      return "any"
     }
 
     const instancedSceneType = this.instance()?.tsType()
@@ -158,10 +196,12 @@ export class GodotNode {
 
     addError({
       description: `Error: Your Godot scene ${chalk.blue(
-        this.scene.name
+        this.scene.fsPath
       )} refers to ${chalk.red(
         this.scenePath()
-      )}, but it doesn't exist. It may have been deleted from the project.`,
+      )}, but it doesn't exist. It may have been deleted from the project. the tstype was ${
+        this.scene.resPath
+      }`,
       error: ErrorName.InvalidFile,
       location: this.name,
       stack: new Error().stack ?? "",

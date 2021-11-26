@@ -14,13 +14,31 @@ import { AssetSourceFile } from "../assets/asset_source_file"
  */
 export const getAllChildPaths = (
   node: GodotNode,
+  ignoreNextName = false,
   prefix = ""
 ): { path: string; node: GodotNode }[] => {
-  let myPath = (prefix ? prefix + "/" : "") + node.name
-  let result: { path: string; node: GodotNode }[] = [{ path: myPath, node }]
+  let myPath = ""
+
+  if (ignoreNextName) {
+    myPath = prefix
+  } else {
+    myPath = (prefix ? prefix + "/" : "") + node.name
+  }
+
+  let result: { path: string; node: GodotNode }[] = []
+
+  if (myPath !== "") {
+    result.push({ path: myPath, node })
+  }
 
   for (const child of node.children()) {
-    result = [...result, ...getAllChildPaths(child, myPath)]
+    result = [...result, ...getAllChildPaths(child, false, myPath)]
+  }
+
+  const inst = node.instance()
+
+  if (inst instanceof AssetGodotScene) {
+    result = [...result, ...getAllChildPaths(inst.rootNode, true, myPath)]
   }
 
   return result
@@ -47,7 +65,7 @@ export const buildNodePathsTypeForScript = (
         } else {
           // We want to skip instances of this scene, because instances are not
           // stored with their children in .tscn files.
-          isValid = instance.resPath === nodeScript.resPath
+          isValid = instance.resPath !== nodeScript.resPath
         }
 
         if (isValid) {
@@ -101,8 +119,8 @@ export const buildNodePathsTypeForScript = (
       // console.error("Unused class:", className)
     }
   } else {
-    const relativePathsPerNode = nodesWithScript.map((i) =>
-      i.children().flatMap((ch) => getAllChildPaths(ch))
+    const relativePathsPerNode = nodesWithScript.map((node) =>
+      getAllChildPaths(node, true)
     )
 
     references = nodesWithScript.map((node) => ({
@@ -184,6 +202,7 @@ export const buildNodePathsTypeForScript = (
     name: string
     children: { [name: string]: RecursivePath }
   }
+
   const obj: RecursivePath = {
     type: "",
     name: "",
