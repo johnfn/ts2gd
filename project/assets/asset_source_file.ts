@@ -315,22 +315,6 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
         }
       }
     }
-
-    const allFiles = this.project.sourceFiles().flatMap((sf) => sf.writtenFiles)
-    const uniqueFiles = [...new Set(allFiles)]
-
-    if (allFiles.length !== uniqueFiles.length) {
-      let duplicateClassName = ""
-
-      outer: for (let i = 0; i < allFiles.length; i++) {
-        for (let j = i + 1; j < allFiles.length; j++) {
-          if (allFiles[i] === allFiles[j]) {
-            duplicateClassName = allFiles[i]
-            break outer
-          }
-        }
-      }
-    }
   }
 
   async compile(
