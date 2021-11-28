@@ -44,10 +44,7 @@ import { parseYieldExpression } from "./parse_node/parse_yield_expression"
 import { parseReturnStatement } from "./parse_node/parse_return_statement"
 import { parseBreakStatement } from "./parse_node/parse_break_statement"
 import { parseBlock } from "./parse_node/parse_block"
-import {
-  LibraryFunctionName,
-  parseCallExpression,
-} from "./parse_node/parse_call_expression"
+import { parseCallExpression } from "./parse_node/parse_call_expression"
 import { parseVariableStatement } from "./parse_node/parse_variable_statement"
 import { parseSetAccessor } from "./parse_node/parse_set_accessor"
 import { parseGetAccessor } from "./parse_node/parse_get_accessor"
@@ -65,6 +62,7 @@ import { addError, ErrorName, TsGdError } from "./errors"
 import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 import { AssetSourceFile } from "./project/assets/asset_source_file"
+import { LibraryFunctionName } from "./parse_node/library_functions"
 
 export type ParseState = {
   isConstructor: boolean
@@ -243,6 +241,7 @@ export function combine(args: {
       (node) => node.hoistedArrowFunctions ?? []
     ),
     extraLines: parsedNodes.flatMap((node) => node.extraLines ?? []),
+    files: parsedNodes.flatMap((node) => node.files ?? []),
   }
 }
 

@@ -1,8 +1,8 @@
 import ts, { SyntaxKind } from "typescript"
 import { addError, ErrorName } from "../errors"
-import { parseNode, ParseNodeType, ParseState } from "../parse_node"
+import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { Test } from "../tests/test"
-import { LibraryFunctions } from "./parse_call_expression"
+import { LibraryFunctions } from "./library_functions"
 
 /**
  * The class_name and extends statements *must* come first in the file, so we
@@ -77,41 +77,54 @@ export const parseSourceFile = (
   let hoistedLibraryFunctionDefinitions = ""
   let hoistedEnumImports = ""
   let hoistedArrowFunctions = ""
-  let miscParsedStatements = ""
+
+  /**
+   * These are almost always an error - it's invalid to write let x = 5 outside of
+   * a method scope in ts2gd. However, we use them for two reasons.
+   *
+   * 1. They make test writing a heck of a lot more convenient - no need to wrap
+   * everything in a class
+   * 2. They are used to declare the autoload global variable.
+   */
+  let toplevelStatements: ts.Statement[] = []
 
   const files: { filePath: string; body: string }[] = []
 
   for (const statement of statements) {
+    if (
+      statement.kind !== SyntaxKind.ClassDeclaration &&
+      statement.kind !== SyntaxKind.ClassExpression
+    ) {
+      toplevelStatements.push(statement)
+
+      continue
+    }
+
     const parsedStatement = parseNode(statement, props)
 
-    if (
-      statement.kind === SyntaxKind.ClassDeclaration ||
-      statement.kind === SyntaxKind.ClassExpression
-    ) {
-      if (!statement.modifiers?.map((m) => m.getText()).includes("declare")) {
-        const classDecl = statement as ts.ClassDeclaration | ts.ClassExpression
-        const className = classDecl.name?.text
+    if (!statement.modifiers?.map((m) => m.getText()).includes("declare")) {
+      // TODO: Push this logic into class declaration and expression classes
 
-        if (!className) {
-          addError({
-            description: "Anonymous classes are not supported",
-            error: ErrorName.ClassCannotBeAnonymous,
-            location: classDecl,
-            stack: new Error().stack ?? "",
-          })
+      const classDecl = statement as ts.ClassDeclaration | ts.ClassExpression
+      const className = classDecl.name?.text
 
-          continue
-        }
-
-        parsedClassDeclarations.push({
-          fileName:
-            props.sourceFileAsset.gdContainingDirectory + className + ".gd",
-          parsedClass: parsedStatement,
-          classDecl,
+      if (!className) {
+        addError({
+          description: "Anonymous classes are not supported",
+          error: ErrorName.ClassCannotBeAnonymous,
+          location: classDecl,
+          stack: new Error().stack ?? "",
         })
+
+        continue
       }
-    } else {
-      miscParsedStatements += parsedStatement.content + "\n"
+
+      parsedClassDeclarations.push({
+        fileName:
+          props.sourceFileAsset.gdContainingDirectory + className + ".gd",
+        parsedClass: parsedStatement,
+        classDecl,
+      })
     }
 
     for (const lf of parsedStatement.hoistedLibraryFunctions ?? []) {
@@ -128,6 +141,29 @@ export const parseSourceFile = (
     }
   }
 
+  const codegenToplevelStatements =
+    toplevelStatements.length > 0
+      ? combine({
+          nodes: toplevelStatements,
+          parent: toplevelStatements[0].parent,
+          props,
+          parsedStrings: (...strs) => strs.join("\n"),
+        })
+      : undefined
+
+  for (const lf of codegenToplevelStatements?.hoistedLibraryFunctions ?? []) {
+    hoistedLibraryFunctionDefinitions +=
+      LibraryFunctions[lf].definition("__" + LibraryFunctions[lf].name) + "\n"
+  }
+
+  for (const af of codegenToplevelStatements?.hoistedArrowFunctions ?? []) {
+    hoistedArrowFunctions += af.content + "\n"
+  }
+
+  for (const fi of codegenToplevelStatements?.files ?? []) {
+    files.push(fi)
+  }
+
   for (const { fileName, parsedClass, classDecl } of parsedClassDeclarations) {
     files.push({
       filePath: fileName,
@@ -137,7 +173,7 @@ ${getClassDeclarationHeader(classDecl, props)}
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
 ${hoistedArrowFunctions}
-${miscParsedStatements}
+${codegenToplevelStatements?.content ?? ""}
 ${parsedClass.content}`,
     })
   }
@@ -152,7 +188,7 @@ ${getFileHeader()}
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
 ${hoistedArrowFunctions}
-${miscParsedStatements}`,
+${codegenToplevelStatements?.content ?? ""}`,
     })
   }
 

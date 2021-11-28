@@ -9,197 +9,9 @@ import {
 } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
-import {
-  isArrayType,
-  isDictionary,
-  isNullableNode,
-  syntaxKindToString,
-} from "../ts_utils"
+import { isArrayType, isDictionary, isNullableNode } from "../ts_utils"
+import { LibraryFunctionName, LibraryFunctions } from "./library_functions"
 import { getCapturedScope } from "./parse_arrow_function"
-
-export type LibraryFunctionName =
-  | "map"
-  | "filter"
-  | "max_by"
-  | "min_by"
-  | "join"
-  | "entries"
-  | "flatten"
-  | "random_element"
-  | "add_vec_lib"
-  | "sub_vec_lib"
-  | "mul_vec_lib"
-  | "div_vec_lib"
-
-export const LibraryFunctions: {
-  [key in LibraryFunctionName]: {
-    name: LibraryFunctionName
-    definition: (name: string) => string
-  }
-} = {
-  entries: {
-    name: "entries",
-    definition: () => `
-func __entries(dict):
-  var result = []
-
-  for key in dict.keys():
-    var value = dict[key]
-
-    result.push_back([key, value])
-  
-  return result
-`,
-  },
-
-  add_vec_lib: {
-    name: "add_vec_lib",
-    definition: () => `
-func add_vec_lib(v1, v2):
-  return null if (v1 == null or v2 == null) else v1 + v2
-`,
-  },
-
-  sub_vec_lib: {
-    name: "sub_vec_lib",
-    definition: () => `
-func sub_vec_lib(v1, v2):
-  return null if (v1 == null or v2 == null) else v1 - v2
-`,
-  },
-
-  div_vec_lib: {
-    name: "div_vec_lib",
-    definition: () => `
-func div_vec_lib(v1, v2):
-  return null if (v1 == null or v2 == null) else v1 / v2
-`,
-  },
-
-  mul_vec_lib: {
-    name: "mul_vec_lib",
-    definition: () => `
-func mul_vec_lib(v1, v2):
-  return null if (v1 == null or v2 == null) else v1 * v2
-`,
-  },
-
-  map: {
-    name: "map",
-    definition: (name: string) => `
-func ${name}(list, fn):
-  var result = []
-
-  for item in list:
-    result.append(fn[0].call_func(item, fn[1]))
-
-  return result
-    `,
-  },
-
-  flatten: {
-    name: "flatten",
-    definition: (name: string) => `
-func ${name}(list):
-  var result = []
-
-  for item in list:
-    if (typeof(item) == TYPE_ARRAY):
-      var inner_result = ${name}(item)
-
-      for inner in inner_result:
-        result.append(inner)
-    else:
-      result.append(item)
-
-  return result
-    `,
-  },
-
-  filter: {
-    name: "filter",
-    definition: (name: string) => `
-func ${name}(list, fn):
-  var result = []
-
-  for item in list:
-    if fn[0].call_func(item, fn[1]):
-      result.append(item)
-
-  return result
-    `,
-  },
-
-  max_by: {
-    name: "max_by",
-    definition: (name: string) => `
-func ${name}(list, fn):
-  if len(list) == 0: 
-    return null
-
-  var result = []
-  var best = null
-  var best_score = -INF
-
-  for item in list:
-    var score = fn[0].call_func(item, fn[1])
-
-    if score > best_score:
-      best_score = score
-      best = item
-
-  return best
-    `,
-  },
-
-  min_by: {
-    name: "min_by",
-    definition: (name: string) => `
-func ${name}(list, fn):
-  if len(list) == 0: 
-    return null
-
-  var result = []
-  var best = null
-  var best_score = INF
-
-  for item in list:
-    var score = fn[0].call_func(item, fn[1])
-
-    if score < best_score:
-      best_score = score
-      best = item
-
-  return best
-    `,
-  },
-
-  join: {
-    name: "join",
-    definition: (name: string) => `
-func ${name}(list, join_str):
-  var result = ""
-
-  for i in range(len(list)):
-    result += str(list[i])
-
-    if i != len(list) - 1:
-      result += join_str
-
-  return result
-    `,
-  },
-
-  random_element: {
-    name: "random_element",
-    definition: (name: string) => `
-func ${name}(list):
-  if len(list) == 0: 
-    return null
-  return list[randi() % len(list)]
-    `,
-  },
-}
 
 export const parseCallExpression = (
   node: ts.CallExpression,
@@ -337,15 +149,6 @@ export const parseCallExpression = (
     props,
     parsedObjs: (parsedExpr, ...parsedArgs) => {
       let parsedStringArgs: string[] = parsedArgs.map((arg) => arg.content)
-
-      if (parsedExpr.content === "Yield") {
-        parsedExpr.content = "yield"
-      }
-
-      // This is for the y() helper method (TODO: Could be a bit more precise about how we check...)
-      if (parsedExpr.content === "y") {
-        parsedExpr.content = " "
-      }
 
       if (parsedExpr.content.endsWith("get_node_unsafe")) {
         parsedExpr.content = parsedExpr.content.replace(
@@ -518,17 +321,21 @@ export const parseCallExpression = (
 
       if (isNullableNode(expression, props.program.getTypeChecker())) {
         const newName = props.scope.createUniqueName()
-        // TODO: This is wrong, need to cache expr
+        const needsExplicitSelfArg =
+          expression.getText().endsWith("add") ||
+          expression.getText().endsWith("sub") ||
+          expression.getText().endsWith("mul") ||
+          expression.getText().endsWith("div")
 
-        if (symbol)
-          parsedExpr.content + "[1]",
-            (nullCoalesce = [
-              {
-                type: "before",
-                line: `var ${newName} = ${parsedExpr.content}.call_func(${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
-                lineType: ExtraLineType.NullableIntermediateExpression,
-              },
-            ])
+        nullCoalesce = [
+          {
+            type: "before",
+            line: `var ${newName} = ${parsedExpr.content}[0].call_func(${
+              needsExplicitSelfArg ? parsedExpr.content + "[2], " : ""
+            }${parsedStringArgs}) if ${parsedExpr.content} != null else null`,
+            lineType: ExtraLineType.NullableIntermediateExpression,
+          },
+        ]
 
         return `${newName}`
       }
@@ -947,20 +754,20 @@ x.get_node("Foo")
 `,
 }
 
-export const testRewriteY: Test = {
-  ts: `
-export class Test extends Node {
-  f() {
-    yield y(this.get_tree(), "idle_frame")
-  }
-}
-  `,
-  expected: `
-extends Node
-class_name Test
-func f():
-  yield (self.get_tree(), "idle_frame")`,
-}
+// export const testRewriteY: Test = {
+//   ts: `
+// export class Test extends Node {
+//   f() {
+//     yield y(this.get_tree(), "idle_frame")
+//   }
+// }
+//   `,
+//   expected: `
+// extends Node
+// class_name Test
+// func f():
+//   yield (self.get_tree(), "idle_frame")`,
+// }
 
 export const testConnectDirectlyToSig: Test = {
   ts: `
@@ -1090,4 +897,19 @@ func _ready():
   self.fn([funcref(self, "__gen1"), {}])
   fnObject[0].call_func(fnObject[1])
 `,
+}
+
+export const testLibFunction: Test = {
+  ts: `
+let test = [Vector2.UP, Vector2.DOWN].random_element()?.mul(5)
+  `,
+  expected: `
+func __random_element(list):
+  if len(list) == 0:
+    return null
+  return list[randi() % len(list)]
+var __gen = __random_element([Vector2.UP, Vector2.DOWN])
+var __gen1 = [funcref(self, "mul_vec_lib") if __gen != null else null, {}, __gen]
+var __gen2 = __gen1[0].call_func(__gen1[2], 5) if __gen1 != null else null
+var _test = __gen2`,
 }

@@ -149,9 +149,6 @@ interface IArguments {
 
 }
 
-declare const Yield: <T, U extends keyof T> (obj: KeysOnly<T, Signal<any>>, name: U) => void;
-declare const y: <T, U extends keyof T> (obj: KeysOnly<T, Signal<any>>, name: U) => SignalReturnValue<T[U]>;
-
 interface NewableFunction {
 
 }
@@ -257,19 +254,11 @@ export const buildBase = () => {
 }
 
 export const baseContentForTests = `
+${fs.readFileSync(
+  path.join(__dirname, "..", "_godot_defs", "static", "Vector2.d.ts")
+)}
+${fs.readFileSync(
+  path.join(__dirname, "..", "_godot_defs", "static", "Vector3.d.ts")
+)}
 ${baseFileContent}
-
-declare class Vector2Constructor {
-  static ZERO: Vector2;
-  static ONE: Vector2;
-}
-declare type Vector2 = Vector2Constructor;
-declare var Vector2: typeof Vector2Constructor & {
-  new(x: float, y: float): Vector2;
-  (x: float, y: float): Vector2;
-}
-
-interface Vector3 {}
-interface Vector2i {}
-interface Vector3i {}
 `

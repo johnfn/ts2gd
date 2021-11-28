@@ -1,5 +1,9 @@
 // VERY USEFUL
 
+// [ ]: We should match library function types to what they're called on -
+//      there's a (slim) possibility that we could call a vector extension method on
+//      an array extension method rn
+
 // [x]: pass in methods as first class objects to other functions.
 // [x]: Can't import two Tscn from same file
 // [x]: Color and ColorConstructor are backwards lol

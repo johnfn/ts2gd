@@ -59,7 +59,8 @@ export const parsePropertyAccessExpression = (
     }
   }
 
-  let nullCoalesce: ExtraLine | null = null
+  let nullCoalesce: ExtraLine[] = []
+  const tc = props.program.getTypeChecker()
 
   let result = combine({
     parent: node,
@@ -67,32 +68,72 @@ export const parsePropertyAccessExpression = (
     props,
     parsedStrings: (lhs, rhs) => {
       if (node.questionDotToken) {
-        const type = props.program
-          .getTypeChecker()
-          .getTypeAtLocation(node)
-          .getNonNullableType()
+        const type = tc.getTypeAtLocation(node).getNonNullableType()
         const areWeAFunction =
           type.symbol?.flags & SymbolFlags.Method ||
           type.symbol?.flags & SymbolFlags.Function
-        const newName = props.scope.createUniqueName()
+
+        let exprName: string
 
         if (areWeAFunction) {
-          nullCoalesce = {
-            type: "before",
-            line: `var ${newName} = funcref(${lhs}, "${rhs}") if ${lhs} != null else null`,
-            lineType: ExtraLineType.NullableIntermediateExpression,
+          let lhsName: string
+          const lhsType = tc.typeToString(
+            tc.getTypeAtLocation(node.expression).getNonNullableType()
+          )
+
+          lhsName = props.scope.createUniqueName()
+          exprName = props.scope.createUniqueName()
+
+          if (
+            (lhsType === "Vector2Constructor" ||
+              lhsType === "Vector2iConstructor" ||
+              lhsType === "Vector3Constructor" ||
+              lhsType === "Vector3iConstructor") &&
+            (rhs === "add" || rhs === "sub" || rhs === "mul" || rhs === "div")
+          ) {
+            nullCoalesce = [
+              {
+                type: "before",
+                line: `var ${lhsName} = ${lhs}`,
+                lineType: ExtraLineType.NullableIntermediateExpression,
+              },
+              {
+                type: "before",
+                line: `var ${exprName} = [funcref(self, "${rhs}_vec_lib") if ${lhsName} != null else null, {}, ${lhsName}]`,
+                lineType: ExtraLineType.NullableIntermediateExpression,
+              },
+            ]
+
+            return exprName
           }
 
-          return newName
+          nullCoalesce = [
+            {
+              type: "before",
+              line: `var ${lhsName} = ${lhs}`,
+              lineType: ExtraLineType.NullableIntermediateExpression,
+            },
+            {
+              type: "before",
+              line: `var ${exprName} = [funcref(${lhsName}, "${rhs}") if ${lhsName} != null else null, {}, null]`,
+              lineType: ExtraLineType.NullableIntermediateExpression,
+            },
+          ]
+
+          return exprName
+        } else {
+          exprName = props.scope.createUniqueName()
+
+          nullCoalesce = [
+            {
+              type: "before",
+              line: `var ${exprName} = ${lhs}`,
+              lineType: ExtraLineType.NullableIntermediateExpression,
+            },
+          ]
         }
 
-        nullCoalesce = {
-          type: "before",
-          line: `var ${newName} = ${lhs}`,
-          lineType: ExtraLineType.NullableIntermediateExpression,
-        }
-
-        return `(${newName}.${rhs} if ${newName} != null else null)`
+        return `(${exprName}.${rhs} if ${exprName} != null else null)`
       }
 
       // Godot does not like var foo = bar.baz when baz is not a key of bar
@@ -110,10 +151,7 @@ export const parsePropertyAccessExpression = (
     },
   })
 
-  result.extraLines = [
-    ...(result.extraLines ?? []),
-    ...(nullCoalesce ? [nullCoalesce] : []),
-  ]
+  result.extraLines = [...(result.extraLines ?? []), ...nullCoalesce]
 
   return result
 }
@@ -312,9 +350,10 @@ export class Test {
 class_name Test
 func test():
   var foo = null
-  var __gen = funcref(foo, "test") if foo != null else null
-  var __gen1 = __gen.call_func() if __gen != null else null
-  print(__gen1)
+  var __gen = foo
+  var __gen1 = [funcref(__gen, "test") if __gen != null else null, {}, null]
+  var __gen2 = __gen1[0].call_func() if __gen1 != null else null
+  print(__gen2)
   `,
 }
 
@@ -331,9 +370,10 @@ export class Test {
 class_name Test
 func test(_x: int):
   var foo = null
-  var __gen = funcref(foo, "test") if foo != null else null
-  var __gen1 = __gen.call_func(1) if __gen != null else null
-  print(__gen1)
+  var __gen = foo
+  var __gen1 = [funcref(__gen, "test") if __gen != null else null, {}, null]
+  var __gen2 = __gen1[0].call_func(1) if __gen1 != null else null
+  print(__gen2)
   `,
 }
 
@@ -360,4 +400,26 @@ func bar():
   `,
 
   expectFail: true,
+}
+
+// This ensures that we do funcref of .mul() correctly.
+export const testComplicatedLibFunc: Test = {
+  ts: `
+class Test extends Area2D {
+  test() {
+    const maybeVec = randi() ? Vector2(0, 0) : null
+    const foo = maybeVec?.mul(4)
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func test():
+  var maybeVec = Vector2(0, 0) if randi() else null
+  var __gen = maybeVec
+  var __gen1 = [funcref(self, "mul_vec_lib") if __gen != null else null, {}, __gen]
+  var __gen2 = __gen1[0].call_func(__gen1[2], 4) if __gen1 != null else null
+  var _foo = __gen2
+`,
 }

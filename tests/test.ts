@@ -511,7 +511,13 @@ export const runTests = async () => {
     const failureCount = failures.filter((x) => !x.expectFail).length
 
     console.info("\n")
-    console.info("Failed", failureCount, failureCount > 1 ? "tests." : "test.")
+    console.info(
+      "Failed",
+      failureCount,
+      failureCount > 1 ? "tests" : "test",
+      "in",
+      elapsed
+    )
     process.exit(failureCount > 0 ? -1 : 0)
   }
 }
