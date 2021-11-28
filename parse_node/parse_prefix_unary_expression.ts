@@ -30,7 +30,9 @@ export const parsePrefixUnaryExpression = (
             lineType: ExtraLineType.Increment,
           }
 
-          return `${operand}`
+          return node.parent.kind === SyntaxKind.ExpressionStatement
+            ? ""
+            : operand
         }
         case SyntaxKind.MinusMinusToken: {
           newIncrements = {
@@ -39,7 +41,9 @@ export const parsePrefixUnaryExpression = (
             lineType: ExtraLineType.Decrement,
           }
 
-          return `${operand}`
+          return node.parent.kind === SyntaxKind.ExpressionStatement
+            ? ""
+            : operand
         }
         case SyntaxKind.PlusToken:
           return `+${operand}`
@@ -75,7 +79,6 @@ if (true) {
   expected: `
 if true:
   x += 1
-  x
   print(x)
   `,
 }

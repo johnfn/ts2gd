@@ -3,6 +3,8 @@ const { SyntaxKind } = ts
 import { ParseState, combine, ExtraLine, ExtraLineType } from "../parse_node"
 
 import { ParseNodeType } from "../parse_node"
+import { Test } from "../tests/test"
+import { syntaxKindToString } from "../ts_utils"
 
 export const parsePostfixUnaryExpression = (
   node: ts.PostfixUnaryExpression,
@@ -16,24 +18,27 @@ export const parsePostfixUnaryExpression = (
     props,
     parsedStrings: (operand) => {
       switch (node.operator) {
-        case SyntaxKind.PlusPlusToken: {
+        case SyntaxKind.PlusPlusToken:
           newIncrements = {
             type: "after",
             line: `${operand} += 1`,
             lineType: ExtraLineType.Increment,
           }
+          break
 
-          return `${operand}`
-        }
-        case SyntaxKind.MinusMinusToken: {
+        case SyntaxKind.MinusMinusToken:
           newIncrements = {
             type: "after",
             line: `${operand} -= 1`,
             lineType: ExtraLineType.Decrement,
           }
+          break
+      }
 
-          return `${operand}`
-        }
+      if (node.parent.kind === SyntaxKind.ExpressionStatement) {
+        return ""
+      } else {
+        return `${operand}`
       }
     },
   })
@@ -44,4 +49,32 @@ export const parsePostfixUnaryExpression = (
   ]
 
   return result
+}
+
+export const testBasicInc: Test = {
+  ts: `
+var x = 1
+x++
+  `,
+  expected: `
+var x: int = 1
+x += 1
+`,
+}
+
+export const testBasicInc2: Test = {
+  ts: `
+var x = 1
+if (x++) {
+  print(x)
+} 
+  `,
+  expected: `
+var x: int = 1
+if x:
+  x += 1
+  print(x)
+else:
+  x += 1
+`,
 }
