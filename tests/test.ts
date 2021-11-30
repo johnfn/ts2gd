@@ -22,7 +22,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
 
   const libDTs = ts.createSourceFile(
     "lib.d.ts",
-    baseContentForTests,
+    baseContentForTests(),
     ts.ScriptTarget.Latest,
     true,
     ts.ScriptKind.TS

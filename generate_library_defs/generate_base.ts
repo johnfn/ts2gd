@@ -253,12 +253,14 @@ export const buildBase = () => {
   )
 }
 
-export const baseContentForTests = `
+export function baseContentForTests() {
+  return `
 ${fs.readFileSync(
-  path.join(__dirname, "..", "_godot_defs", "static", "Vector2.d.ts")
+  path.join(process.cwd(), "_godot_defs", "static", "Vector2.d.ts")
 )}
 ${fs.readFileSync(
-  path.join(__dirname, "..", "_godot_defs", "static", "Vector3.d.ts")
+  path.join(process.cwd(), "_godot_defs", "static", "Vector3.d.ts")
 )}
 ${baseFileContent}
 `
+}
