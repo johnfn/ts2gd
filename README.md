@@ -15,7 +15,7 @@
 
 Then just run `ts2gd` in your favorite Godot project folder.
 
-![](output.gif)
+![](readme/output.gif)
 
 ## Why?
 
@@ -47,9 +47,9 @@ To compile all source files once:
 child nodes. And yes, this means that if you arrange your nodes later, you'll
 get type errors if you break any `get_node` calls!!
 
-|     Godot hierarchy     |       ts2gd autocomplete       |
-| :---------------------: | :----------------------------: |
-| ![](get_node_godot.png) | ![](get_node_autocomplete.png) |
+|        Godot hierarchy         |          ts2gd autocomplete           |
+| :----------------------------: | :-----------------------------------: |
+| ![](readme/get_node_godot.png) | ![](readme/get_node_autocomplete.png) |
 
 ts2gd also provides a way to get any node by name, even the ones it can't verify exist:
 
@@ -65,7 +65,7 @@ feel this isn't the case.
 
 `preload` and `load` work as normal - plus they have good autocomplete support, and they return the proper type of the thing you're loading.
 
-<img src="https://raw.githubusercontent.com/johnfn/ts2gd/main/preload.png" width="250">
+[<img src="readme/preload.png" width="250"/>](readme/preload.png)
 
 ### Enums
 
