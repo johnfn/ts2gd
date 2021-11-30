@@ -276,6 +276,18 @@ get_children(): Node[];
  *
  * **Note:** For performance reasons, the order of node groups is **not** guaranteed. The order of node groups should not be relied upon as it can vary across project runs.
  *
+ * **Note:** The engine uses some group names internally (all starting with an underscore). To avoid conflicts with internal groups, do not add custom groups whose name starts with an underscore. To exclude internal groups while looping over [method get_groups], use the following snippet:
+ *
+ * @example 
+ * 
+ * # Stores the node's non-internal groups only (as an array of Strings).
+ * var non_internal_groups = []
+ * for group in get_groups():
+ *     if not group.begins_with("_"):
+ *         non_internal_groups.push_back(group)
+ * @summary 
+ * 
+ *
 */
 get_groups(): any[];
 
@@ -522,7 +534,12 @@ remove_child(node: Node): void;
 /** Removes a node from a group. See notes in the description, and the group methods in [SceneTree]. */
 remove_from_group(group: string): void;
 
-/** Replaces a node in a scene by the given one. Subscriptions that pass through this node will be lost. */
+/**
+ * Replaces a node in a scene by the given one. Subscriptions that pass through this node will be lost.
+ *
+ * Note that the replaced node is not automatically freed, so you either need to keep it in a variable for later use or free it using [method Object.free].
+ *
+*/
 replace_by(node: Node, keep_data?: boolean): void;
 
 /** Requests that [code]_ready[/code] be called again. Note that the method won't be called immediately, but is scheduled for when the node is added to the scene tree again (see [method _ready]). [code]_ready[/code] is called only for the node which requested it, which means that you need to request ready for each child if you want them to call [code]_ready[/code] too (in which case, [code]_ready[/code] will be called in the same order as it would normally). */

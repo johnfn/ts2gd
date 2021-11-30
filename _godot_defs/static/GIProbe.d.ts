@@ -4,7 +4,11 @@
  *
  * Having [GIProbe]s in a scene can be expensive, the quality of the probe can be turned down in exchange for better performance in the [ProjectSettings] using [member ProjectSettings.rendering/quality/voxel_cone_tracing/high_quality].
  *
- * **Note:** Meshes should have sufficiently thick walls to avoid light leaks (avoid one-sided walls). For interior levels, enclose your level geometry in a sufficiently large box and bridge the loops to close the mesh.
+ * **Procedural generation:** [GIProbe] can be baked in an exported project, which makes it suitable for procedurally generated or user-built levels as long as all the geometry is generated in advance.
+ *
+ * **Performance:** [GIProbe] is relatively demanding on the GPU and is not suited to low-end hardware such as integrated graphics (consider [BakedLightmap] instead). To provide a fallback for low-end hardware, consider adding an option to disable [GIProbe] in your project's options menus. A [GIProbe] node can be disabled by hiding it.
+ *
+ * **Note:** Meshes should have sufficiently thick walls to avoid light leaks (avoid one-sided walls). For interior levels, enclose your level geometry in a sufficiently large box and bridge the loops to close the mesh. To further prevent light leaks, you can also strategically place temporary [MeshInstance] nodes with [member GeometryInstance.use_in_baked_light] enabled. These temporary nodes can then be hidden after baking the [GIProbe] node.
  *
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
@@ -17,7 +21,11 @@ declare class GIProbe extends VisualInstance  {
  *
  * Having [GIProbe]s in a scene can be expensive, the quality of the probe can be turned down in exchange for better performance in the [ProjectSettings] using [member ProjectSettings.rendering/quality/voxel_cone_tracing/high_quality].
  *
- * **Note:** Meshes should have sufficiently thick walls to avoid light leaks (avoid one-sided walls). For interior levels, enclose your level geometry in a sufficiently large box and bridge the loops to close the mesh.
+ * **Procedural generation:** [GIProbe] can be baked in an exported project, which makes it suitable for procedurally generated or user-built levels as long as all the geometry is generated in advance.
+ *
+ * **Performance:** [GIProbe] is relatively demanding on the GPU and is not suited to low-end hardware such as integrated graphics (consider [BakedLightmap] instead). To provide a fallback for low-end hardware, consider adding an option to disable [GIProbe] in your project's options menus. A [GIProbe] node can be disabled by hiding it.
+ *
+ * **Note:** Meshes should have sufficiently thick walls to avoid light leaks (avoid one-sided walls). For interior levels, enclose your level geometry in a sufficiently large box and bridge the loops to close the mesh. To further prevent light leaks, you can also strategically place temporary [MeshInstance] nodes with [member GeometryInstance.use_in_baked_light] enabled. These temporary nodes can then be hidden after baking the [GIProbe] node.
  *
  * **Note:** Due to a renderer limitation, emissive [ShaderMaterial]s cannot emit light when used in a [GIProbe]. Only emissive [SpatialMaterial]s can emit light in a [GIProbe].
  *
@@ -61,7 +69,12 @@ propagation: float;
 /** Number of times to subdivide the grid that the [GIProbe] operates on. A higher number results in finer detail and thus higher visual quality, while lower numbers result in better performance. */
 subdiv: int;
 
-/** Bakes the effect from all [GeometryInstance]s marked with [member GeometryInstance.use_in_baked_light] and [Light]s marked with either [constant Light.BAKE_INDIRECT] or [constant Light.BAKE_ALL]. If [code]create_visual_debug[/code] is [code]true[/code], after baking the light, this will generate a [MultiMesh] that has a cube representing each solid cell with each cube colored to the cell's albedo color. This can be used to visualize the [GIProbe]'s data and debug any issues that may be occurring. */
+/**
+ * Bakes the effect from all [GeometryInstance]s marked with [member GeometryInstance.use_in_baked_light] and [Light]s marked with either [constant Light.BAKE_INDIRECT] or [constant Light.BAKE_ALL]. If `create_visual_debug` is `true`, after baking the light, this will generate a [MultiMesh] that has a cube representing each solid cell with each cube colored to the cell's albedo color. This can be used to visualize the [GIProbe]'s data and debug any issues that may be occurring.
+ *
+ * **Note:** [method bake] works from the editor and in exported projects. This makes it suitable for procedurally generated or user-built levels. Baking a [GIProbe] generally takes from 5 to 20 seconds in most scenes. Reducing [member subdiv] can speed up baking.
+ *
+*/
 bake(from_node?: Node, create_visual_debug?: boolean): void;
 
 /** Calls [method bake] with [code]create_visual_debug[/code] enabled. */
@@ -90,7 +103,7 @@ static SUBDIV_128: any;
 static SUBDIV_256: any;
 
 /**
- * Use 512 subdivisions. This is the highest quality setting, but the slowest. On lower-end hardware this could cause the GPU to stall.
+ * Use 512 subdivisions. This is the highest quality setting, but the slowest. On lower-end hardware, this could cause the GPU to stall.
  *
 */
 static SUBDIV_512: any;

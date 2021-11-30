@@ -214,7 +214,12 @@ get_class(): string;
 */
 get_incoming_connections(): any[];
 
-/** Gets the object's property indexed by the given [NodePath]. The node path should be relative to the current object and can use the colon character ([code]:[/code]) to access nested properties. Examples: [code]"position:x"[/code] or [code]"material:next_pass:blend_mode"[/code]. */
+/**
+ * Gets the object's property indexed by the given [NodePath]. The node path should be relative to the current object and can use the colon character (`:`) to access nested properties. Examples: `"position:x"` or `"material:next_pass:blend_mode"`.
+ *
+ * **Note:** Even though the method takes [NodePath] argument, it doesn't support actual paths to [Node]s in the scene tree, only colon-separated sub-property paths. For the purpose of nodes, use [method Node.get_node_and_resource] instead.
+ *
+*/
 get_indexed(property: NodePathType): any;
 
 /**

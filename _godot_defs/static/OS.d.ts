@@ -479,7 +479,7 @@ get_screen_dpi(screen?: int): int;
 */
 get_screen_max_scale(): float;
 
-/** Returns the position of the specified screen by index. If [code]screen[/code] is [/code]-1[/code] (the default value), the current screen will be used. */
+/** Returns the position of the specified screen by index. If [code]screen[/code] is [code]-1[/code] (the default value), the current screen will be used. */
 get_screen_position(screen?: int): Vector2;
 
 /**
@@ -492,7 +492,7 @@ get_screen_position(screen?: int): Vector2;
 */
 get_screen_scale(screen?: int): float;
 
-/** Returns the dimensions in pixels of the specified screen. If [code]screen[/code] is [/code]-1[/code] (the default value), the current screen will be used. */
+/** Returns the dimensions in pixels of the specified screen. If [code]screen[/code] is [code]-1[/code] (the default value), the current screen will be used. */
 get_screen_size(screen?: int): Vector2;
 
 /** Returns the amount of time in milliseconds it took for the boot logo to appear. */

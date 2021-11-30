@@ -78,7 +78,7 @@ is_on_floor(): boolean;
 is_on_wall(): boolean;
 
 /**
- * Moves the body along the vector `rel_vec`. The body will stop if it collides. Returns a [KinematicCollision2D], which contains information about the collision.
+ * Moves the body along the vector `rel_vec`. The body will stop if it collides. Returns a [KinematicCollision2D], which contains information about the collision when stopped, or when touching another body along the motion.
  *
  * If `test_only` is `true`, the body does not move but the would-be collision information is given.
  *
@@ -117,7 +117,12 @@ move_and_slide(linear_velocity: Vector2, up_direction?: Vector2, stop_on_slope?:
 */
 move_and_slide_with_snap(linear_velocity: Vector2, snap: Vector2, up_direction?: Vector2, stop_on_slope?: boolean, max_slides?: int, floor_max_angle?: float, infinite_inertia?: boolean): Vector2;
 
-/** Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform2D], then tries to move the body along the vector [code]rel_vec[/code]. Returns [code]true[/code] if a collision would occur. */
+/**
+ * Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform2D], then tries to move the body along the vector `rel_vec`. Returns `true` if a collision would stop the body from moving along the whole path.
+ *
+ * Use [method move_and_collide] instead for detecting collision with touching bodies.
+ *
+*/
 test_move(from: Transform2D, rel_vec: Vector2, infinite_inertia?: boolean): boolean;
 
   connect<T extends SignalsOf<KinematicBody2D>>(signal: T, method: SignalFunction<KinematicBody2D[T]>): number;

@@ -1,0 +1,5 @@
+[submodule "godot_src"]
+	path = godot_src
+	url = git@github.com:godotengine/godot.git
+	branch = 3.4
+	shallow = true

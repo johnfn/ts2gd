@@ -47,7 +47,21 @@ clip(b: Rect2): Rect2;
 /** Returns [code]true[/code] if this [Rect2] completely encloses another one. */
 encloses(b: Rect2): boolean;
 
-/** Returns this [Rect2] expanded to include a given point. */
+/**
+ * Returns a copy of this [Rect2] expanded to include a given point.
+ *
+ * **Example:**
+ *
+ * @example 
+ * 
+ * # position (-3, 2), size (1, 1)
+ * var rect = Rect2(Vector2(-3, 2), Vector2(1, 1))
+ * # position (-3, -1), size (3, 4), so we fit both rect and Vector2(0, -1)
+ * var rect2 = rect.expand(Vector2(0, -1))
+ * @summary 
+ * 
+ *
+*/
 expand(to: Vector2): Rect2;
 
 /** Returns the area of the [Rect2]. */
@@ -65,7 +79,12 @@ grow_margin(margin: int, by: float): Rect2;
 /** Returns [code]true[/code] if the [Rect2] is flat or empty. */
 has_no_area(): boolean;
 
-/** Returns [code]true[/code] if the [Rect2] contains a point. */
+/**
+ * Returns `true` if the [Rect2] contains a point. By convention, the right and bottom edges of the [Rect2] are considered exclusive, so points on these edges are **not** included.
+ *
+ * **Note:** This method is not reliable for [Rect2] with a **negative size**. Use [method abs] to get a positive sized equivalent rectangle to check for contained points.
+ *
+*/
 has_point(point: Vector2): boolean;
 
 /**
