@@ -86,7 +86,7 @@ is_on_floor(): boolean;
 is_on_wall(): boolean;
 
 /**
- * Moves the body along the vector `rel_vec`. The body will stop if it collides. Returns a [KinematicCollision], which contains information about the collision.
+ * Moves the body along the vector `rel_vec`. The body will stop if it collides. Returns a [KinematicCollision], which contains information about the collision when stopped, or when touching another body along the motion.
  *
  * If `test_only` is `true`, the body does not move but the would-be collision information is given.
  *
@@ -128,7 +128,12 @@ move_and_slide_with_snap(linear_velocity: Vector3, snap: Vector3, up_direction?:
 /** Locks or unlocks the specified [code]axis[/code] depending on the value of [code]lock[/code]. See also [member move_lock_x], [member move_lock_y] and [member move_lock_z]. */
 set_axis_lock(axis: int, lock: boolean): void;
 
-/** Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform], then tries to move the body along the vector [code]rel_vec[/code]. Returns [code]true[/code] if a collision would occur. */
+/**
+ * Checks for collisions without moving the body. Virtually sets the node's position, scale and rotation to that of the given [Transform], then tries to move the body along the vector `rel_vec`. Returns `true` if a collision would stop the body from moving along the whole path.
+ *
+ * Use [method move_and_collide] instead for detecting collision with touching bodies.
+ *
+*/
 test_move(from: Transform, rel_vec: Vector3, infinite_inertia?: boolean): boolean;
 
   connect<T extends SignalsOf<KinematicBody>>(signal: T, method: SignalFunction<KinematicBody[T]>): number;

@@ -151,10 +151,10 @@ world: World;
 /** The custom [World2D] which can be used as 2D environment source. */
 world_2d: World2D;
 
-/** Returns the 3D world of the viewport, or if none the world of the parent viewport. */
+/** Returns the first valid [World] for this viewport, searching the [member world] property of itself and any Viewport ancestor. */
 find_world(): World;
 
-/** Returns the 2D world of the viewport. */
+/** Returns the first valid [World2D] for this viewport, searching the [member world_2d] property of itself and any Viewport ancestor. */
 find_world_2d(): World2D;
 
 /** Returns the active 3D camera. */

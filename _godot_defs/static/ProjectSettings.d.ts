@@ -179,7 +179,14 @@ declare class ProjectSettingsClass extends Object  {
 /** Safer override for [member audio/mix_rate] in the Web platform. Here [code]0[/code] means "let the browser choose" (since some browsers do not like forcing the mix rate). */
 "audio/mix_rate_web": int;
 
-/** Output latency in milliseconds for audio. Lower values will result in lower audio latency at the cost of increased CPU usage. Low values may result in audible cracking on slower hardware. */
+/**
+ * Specifies the preferred output latency in milliseconds for audio. Lower values will result in lower audio latency at the cost of increased CPU usage. Low values may result in audible cracking on slower hardware.
+ *
+ * Audio output latency may be constrained by the host operating system and audio hardware drivers. If the host can not provide the specified audio output latency then Godot will attempt to use the nearest latency allowed by the host. As such you should always use [method AudioServer.get_output_latency] to determine the actual audio output latency.
+ *
+ * **Note:** This setting is ignored on Windows.
+ *
+*/
 "audio/output_latency": int;
 
 /** Safer override for [member audio/output_latency] in the Web platform, to avoid audio issues especially on mobile devices. */
@@ -1031,6 +1038,16 @@ declare class ProjectSettingsClass extends Object  {
 "physics/2d/bp_hash_table_size": int;
 
 /**
+ * Additional expansion applied to object bounds in the 2D physics bounding volume hierarchy. This can reduce BVH processing at the cost of a slightly coarser broadphase, which can stress the physics more in some situations.
+ *
+ * The default value will work well in most situations. A value of 0.0 will turn this optimization off, and larger values may work better for larger, faster moving objects.
+ *
+ * **Note:** Used only if [member ProjectSettings.physics/2d/use_bvh] is enabled.
+ *
+*/
+"physics/2d/bvh_collision_margin": float;
+
+/**
  * Cell size used for the broad-phase 2D hash grid algorithm (in pixels).
  *
  * **Note:** Not used if [member ProjectSettings.physics/2d/use_bvh] is enabled.
@@ -1168,6 +1185,16 @@ declare class ProjectSettingsClass extends Object  {
  *
 */
 "physics/3d/default_linear_damp": float;
+
+/**
+ * Additional expansion applied to object bounds in the 3D physics bounding volume hierarchy. This can reduce BVH processing at the cost of a slightly coarser broadphase, which can stress the physics more in some situations.
+ *
+ * The default value will work well in most situations. A value of 0.0 will turn this optimization off, and larger values may work better for larger, faster moving objects.
+ *
+ * **Note:** Used only if [member ProjectSettings.physics/3d/godot_physics/use_bvh] is enabled.
+ *
+*/
+"physics/3d/godot_physics/bvh_collision_margin": float;
 
 /** Enables the use of bounding volume hierarchy instead of octree for 3D physics spatial partitioning. This may give better performance. */
 "physics/3d/godot_physics/use_bvh": boolean;
@@ -1639,9 +1666,21 @@ declare class ProjectSettingsClass extends Object  {
 "rendering/quality/skinning/software_skinning_fallback": boolean;
 
 /**
+ * Additional expansion applied to object bounds in the 3D rendering bounding volume hierarchy. This can reduce BVH processing at the cost of a slightly reduced accuracy.
+ *
+ * The default value will work well in most situations. A value of 0.0 will turn this optimization off, and larger values may work better for larger, faster moving objects.
+ *
+ * **Note:** Used only if [member ProjectSettings.rendering/quality/spatial_partitioning/use_bvh] is enabled.
+ *
+*/
+"rendering/quality/spatial_partitioning/bvh_collision_margin": float;
+
+/**
  * The rendering octree balance can be changed to favor smaller (`0`), or larger (`1`) branches.
  *
  * Larger branches can increase performance significantly in some projects.
+ *
+ * **Note:** Not used if [member ProjectSettings.rendering/quality/spatial_partitioning/use_bvh] is enabled.
  *
 */
 "rendering/quality/spatial_partitioning/render_tree_balance": float;

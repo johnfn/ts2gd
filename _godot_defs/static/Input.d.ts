@@ -190,6 +190,9 @@ is_key_pressed(scancode: int): boolean;
 /** Returns [code]true[/code] if you are pressing the mouse button specified with [enum ButtonList]. */
 is_mouse_button_pressed(button: int): boolean;
 
+/** Returns [code]true[/code] if you are pressing the key in the physical location on the 101/102-key US QWERTY keyboard. You can pass a [enum KeyList] constant. */
+is_physical_key_pressed(scancode: int): boolean;
+
 /**
  * Notifies the [Input] singleton that a connection has changed, to update the state for the `device` index.
  *

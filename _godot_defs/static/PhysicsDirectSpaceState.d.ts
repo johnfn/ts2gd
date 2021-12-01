@@ -49,6 +49,24 @@ collide_shape(shape: PhysicsShapeQueryParameters, max_results?: int): any[];
 get_rest_info(shape: PhysicsShapeQueryParameters): Dictionary<any, any>;
 
 /**
+ * Checks whether a point is inside any solid shape. The shapes the point is inside of are returned in an array containing dictionaries with the following fields:
+ *
+ * `collider`: The colliding object.
+ *
+ * `collider_id`: The colliding object's ID.
+ *
+ * `rid`: The intersecting object's [RID].
+ *
+ * `shape`: The shape index of the colliding shape.
+ *
+ * The number of intersections can be limited with the `max_results` parameter, to reduce the processing time.
+ *
+ * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
+ *
+*/
+intersect_point(point: Vector3, max_results?: int, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): any[];
+
+/**
  * Intersects a ray in a given space. The returned object is a dictionary with the following fields:
  *
  * `collider`: The colliding object.

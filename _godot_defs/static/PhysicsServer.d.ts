@@ -153,7 +153,7 @@ body_get_collision_layer(body: RID): int;
 */
 body_get_collision_mask(body: RID): int;
 
-/** Returns the [PhysicsDirectBodyState] of the body. */
+/** Returns the [PhysicsDirectBodyState] of the body. Returns [code]null[/code] if the body is destroyed or removed from the physics space. */
 body_get_direct_state(body: RID): PhysicsDirectBodyState;
 
 /** No documentation provided. */

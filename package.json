@@ -13,7 +13,8 @@
     "test-ci": "node js/tests/test.js",
     "project-test": "ts-node-dev --respawn --clear tests/project_tests.ts",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "generate-defs": "ts-node main.ts --buildLibraries --buildOnly dummy/ts2gd.json"
   },
   "prepublish": "tsc",
   "bin": {

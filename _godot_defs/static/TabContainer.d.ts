@@ -1,17 +1,21 @@
 
 /**
- * Sets the active tab's `visible` property to the value `true`. Sets all other children's to `false`.
+ * Arranges [Control] children into a tabbed view, creating a tab for each one. The active tab's corresponding [Control] has its `visible` property set to `true`, and all other children's to `false`.
  *
  * Ignores non-[Control] children.
+ *
+ * **Note:** The drawing of the clickable tabs themselves is handled by this node. Adding [Tabs] as children is not needed.
  *
 */
 declare class TabContainer extends Container  {
 
   
 /**
- * Sets the active tab's `visible` property to the value `true`. Sets all other children's to `false`.
+ * Arranges [Control] children into a tabbed view, creating a tab for each one. The active tab's corresponding [Control] has its `visible` property set to `true`, and all other children's to `false`.
  *
  * Ignores non-[Control] children.
+ *
+ * **Note:** The drawing of the clickable tabs themselves is handled by this node. Adding [Tabs] as children is not needed.
  *
 */
   new(): TabContainer; 

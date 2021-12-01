@@ -98,7 +98,12 @@ add_vertex(vertex: Vector3): void;
 /** Specifies weight values to use for the [i]next[/i] vertex. [code]weights[/code] must contain 4 values. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all. */
 add_weights(weights: PoolRealArray): void;
 
-/** Append vertices from a given [Mesh] surface onto the current vertex array with specified [Transform]. */
+/**
+ * Append vertices from a given [Mesh] surface onto the current vertex array with specified [Transform].
+ *
+ * **Note:** Using [method append_from] on a [Thread] is much slower as the GPU must communicate data back to the CPU, while also causing the main thread to stall (as OpenGL is not thread-safe). Consider requesting a copy of the mesh, converting it to an [ArrayMesh] and adding vertices manually instead.
+ *
+*/
 append_from(existing: Mesh, surface: int, transform: Transform): void;
 
 /** Called before adding any vertices. Takes the primitive type as an argument (e.g. [constant Mesh.PRIMITIVE_TRIANGLES]). */

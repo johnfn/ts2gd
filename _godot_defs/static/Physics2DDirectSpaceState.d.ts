@@ -63,14 +63,35 @@ get_rest_info(shape: Physics2DShapeQueryParameters): Dictionary<any, any>;
  *
  * `shape`: The shape index of the colliding shape.
  *
- * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
+ * The number of intersections can be limited with the `max_results` parameter, to reduce the processing time.
+ *
+ * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody2D]s or [Area2D]s, respectively.
  *
  * **Note:** [ConcavePolygonShape2D]s and [CollisionPolygon2D]s in `Segments` build mode are not solid shapes. Therefore, they will not be detected.
  *
 */
 intersect_point(point: Vector2, max_results?: int, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): any[];
 
-/** No documentation provided. */
+/**
+ * Checks whether a point is inside any solid shape, in a specific canvas layer given by `canvas_instance_id`. The shapes the point is inside of are returned in an array containing dictionaries with the following fields:
+ *
+ * `collider`: The colliding object.
+ *
+ * `collider_id`: The colliding object's ID.
+ *
+ * `metadata`: The intersecting shape's metadata. This metadata is different from [method Object.get_meta], and is set with [method Physics2DServer.shape_set_data].
+ *
+ * `rid`: The intersecting object's [RID].
+ *
+ * `shape`: The shape index of the colliding shape.
+ *
+ * The number of intersections can be limited with the `max_results` parameter, to reduce the processing time.
+ *
+ * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody2D]s or [Area2D]s, respectively.
+ *
+ * **Note:** [ConcavePolygonShape2D]s and [CollisionPolygon2D]s in `Segments` build mode are not solid shapes. Therefore, they will not be detected.
+ *
+*/
 intersect_point_on_canvas(point: Vector2, canvas_instance_id: int, max_results?: int, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): any[];
 
 /**
@@ -92,7 +113,7 @@ intersect_point_on_canvas(point: Vector2, canvas_instance_id: int, max_results?:
  *
  * If the ray did not intersect anything, then an empty dictionary is returned instead.
  *
- * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody]s or [Area]s, respectively.
+ * Additionally, the method can take an `exclude` array of objects or [RID]s that are to be excluded from collisions, a `collision_mask` bitmask representing the physics layers to check in, or booleans to determine if the ray should collide with [PhysicsBody2D]s or [Area2D]s, respectively.
  *
 */
 intersect_ray(from: Vector2, to: Vector2, exclude?: any[], collision_layer?: int, collide_with_bodies?: boolean, collide_with_areas?: boolean): Dictionary<any, any>;

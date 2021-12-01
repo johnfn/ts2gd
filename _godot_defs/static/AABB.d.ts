@@ -45,7 +45,21 @@ abs(): AABB;
 /** Returns [code]true[/code] if this [AABB] completely encloses another one. */
 encloses(_with: AABB): boolean;
 
-/** Returns this [AABB] expanded to include a given point. */
+/**
+ * Returns a copy of this [AABB] expanded to include a given point.
+ *
+ * **Example:**
+ *
+ * @example 
+ * 
+ * # position (-3, 2, 0), size (1, 1, 1)
+ * var box = AABB(Vector3(-3, 2, 0), Vector3(1, 1, 1))
+ * # position (-3, -1, 0), size (3, 4, 2), so we fit both the original AABB and Vector3(0, -1, 2)
+ * var box2 = box.expand(Vector3(0, -1, 2))
+ * @summary 
+ * 
+ *
+*/
 expand(to_point: Vector3): AABB;
 
 /** Returns the volume of the [AABB]. */

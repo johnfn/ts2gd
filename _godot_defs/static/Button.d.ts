@@ -66,7 +66,12 @@ expand_icon: boolean;
 /** Flat buttons don't display decoration. */
 flat: boolean;
 
-/** Button's icon, if text is present the icon will be placed before the text. */
+/**
+ * Button's icon, if text is present the icon will be placed before the text.
+ *
+ * To edit margin and spacing of the icon, use `hseparation` theme property of [Button] and `content_margin_*` properties of the used [StyleBox]es.
+ *
+*/
 icon: Texture;
 
 /** The button's text that will be displayed inside the button's area. */

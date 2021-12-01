@@ -18,6 +18,9 @@ declare class TextEdit extends Control  {
   static "new"(): TextEdit 
 
 
+/** If [code]true[/code], the bookmark gutter is visible. */
+bookmark_gutter: boolean;
+
 /** If [code]true[/code], the breakpoint gutter is visible. */
 breakpoint_gutter: boolean;
 
@@ -182,8 +185,23 @@ get_keyword_color(keyword: string): Color;
 /** Returns the text of a specific line. */
 get_line(line: int): string;
 
+/** Returns the line and column at the given position. In the returned vector, [code]x[/code] is the column, [code]y[/code] is the line. */
+get_line_column_at_pos(position: Vector2): Vector2;
+
 /** Returns the amount of total lines in the text. */
 get_line_count(): int;
+
+/** Returns the height of a largest line. */
+get_line_height(): int;
+
+/** Returns the width in pixels of the [code]wrap_index[/code] on [code]line[/code]. */
+get_line_width(line: int, wrap_index?: int): int;
+
+/** Returns the number of times the given line is wrapped. */
+get_line_wrap_count(line: int): int;
+
+/** Returns an array of [String]s representing each wrapped index. */
+get_line_wrapped_text(line: int): PoolStringArray;
 
 /**
  * Returns the [PopupMenu] of this [TextEdit]. By default, this menu is displayed when right-clicking on the [TextEdit].
@@ -192,6 +210,22 @@ get_line_count(): int;
  *
 */
 get_menu(): PopupMenu;
+
+/**
+ * Returns the local position for the given `line` and `column`. If `x` or `y` of the returned vector equal `-1`, the position is outside of the viewable area of the control.
+ *
+ * **Note:** The Y position corresponds to the bottom side of the line. Use [method get_rect_at_line_column] to get the top side position.
+ *
+*/
+get_pos_at_line_column(line: int, column: int): Vector2;
+
+/**
+ * Returns the local position and size for the grapheme at the given `line` and `column`. If `x` or `y` position of the returned rect equal `-1`, the position is outside of the viewable area of the control.
+ *
+ * **Note:** The Y position of the returned rect corresponds to the top side of the line, unlike [method get_pos_at_line_column] which returns the bottom side.
+ *
+*/
+get_rect_at_line_column(line: int, column: int): Rect2;
 
 /** Returns the selection begin column. */
 get_selection_from_column(): int;
@@ -207,6 +241,9 @@ get_selection_to_column(): int;
 
 /** Returns the selection end line. */
 get_selection_to_line(): int;
+
+/** Returns the total width of all gutters and internal padding. */
+get_total_gutter_width(): int;
 
 /** Returns a [String] text with the word under the caret (text cursor) location. */
 get_word_under_cursor(): string;
@@ -237,6 +274,9 @@ is_line_set_as_breakpoint(line: int): boolean;
 
 /** Returns [code]true[/code] when the specified [code]line[/code] is marked as safe. */
 is_line_set_as_safe(line: int): boolean;
+
+/** Returns if the given line is wrapped. */
+is_line_wrapped(line: int): boolean;
 
 /** Returns [code]true[/code] if the selection is active. */
 is_selection_active(): boolean;

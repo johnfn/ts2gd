@@ -8,36 +8,17 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/js/main.js",
       "request": "launch",
-      "skipFiles": ["<node_internals>/**"],
-      "args": [
-        // "main.ts",
-        "/Users/johnfn/GodotProject2/tsgd.json"
+      "skipFiles": [
+        "<node_internals>/**"
       ],
-      "type": "pwa-node"
+      "args": [
+        "${workspaceFolder}/dummy/ts2gd.json"
+      ],
+      "type": "pwa-node",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": [
+        "${workspaceFolder}/js/**/*.js"
+      ]
     }
-    // {
-    //   "type": "node",
-    //   "request": "launch",
-    //   "name": "Launch Program",
-    //   "runtimeExecutable": "node",
-    //   "runtimeArgs": [
-    //     "--nolazy",
-    //     "-r",
-    //     "ts-node/register/transpile-only"
-    //   ],
-    //   "internalConsoleOptions": "openOnSessionStart",
-    //   "skipFiles": [
-    //     "<node_internals>/**",
-    //     "node_modules/**"
-    //   ],
-    //   "args": [
-    //     "main.ts",
-    //     "/Users/johnfn/GodotProject2/tsgd.json"
-    //   ],
-    //   "preLaunchTask": "tsc: build - tsconfig.json",
-    //   "outFiles": [
-    //     "${workspaceFolder}/js/**/*.js"
-    //   ]
-    // }
   ]
 }

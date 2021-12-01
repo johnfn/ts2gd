@@ -157,7 +157,7 @@ body_get_collision_mask(body: RID): int;
 /** Returns the continuous collision detection mode. */
 body_get_continuous_collision_detection_mode(body: RID): int;
 
-/** Returns the [Physics2DDirectBodyState] of the body. */
+/** Returns the [Physics2DDirectBodyState] of the body. Returns [code]null[/code] if the body is destroyed or removed from the physics space. */
 body_get_direct_state(body: RID): Physics2DDirectBodyState;
 
 /** Returns the maximum contacts that can be reported. See [method body_set_max_contacts_reported]. */
