@@ -17,14 +17,83 @@ export const isDecoratedAsExports = (
   )
 }
 
-const isDecoratedAsExportFlags = (node: ts.PropertyDeclaration): boolean => {
+export const isDecoratedAsExportArgs = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration
+) => {
+  return !!node.decorators?.find(
+    (dec) =>
+      ts.isCallExpression(dec.expression) &&
+      dec.expression.expression.getText() === "export_args"
+  )
+}
+
+export const parseExportArgs = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration,
+  props: ParseState
+) => {
+  const decoration = node.decorators?.find(
+    (dec) =>
+      ts.isCallExpression(dec.expression) &&
+      dec.expression.expression.getText() === "export_args"
+  )!
+
+  if (decoration.expression.kind !== SyntaxKind.CallExpression) {
+    addError({
+      description: `
+I'm confused by export_args here. It should be a function call.
+
+For instance, ${chalk.green(`@export_args(int, "A", "B", "C")`)}`,
+      error: ErrorName.ExportedVariableError,
+      location: node,
+      stack: new Error().stack ?? "",
+    })
+
+    return ""
+  }
+
+  const typeGodotName = getGodotType(
+    node,
+    props.program.getTypeChecker().getTypeAtLocation(node),
+    props,
+    true, // isExported
+    undefined,
+    node.type
+  )
+
+  const fn = decoration.expression as ts.CallExpression
+
+  const result = combine({
+    parent: decoration,
+    nodes: [...fn.arguments],
+    props,
+    parsedStrings: (...args) => args.join(", "),
+  })
+
+  return `export(${typeGodotName}, ${result.content}) `
+}
+
+export const isDecoratedAsExportFlags = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration
+): boolean => {
   return !!node.decorators?.find((dec) =>
     dec.expression.getText().startsWith("export_flags")
   )
 }
 
-const parseExportFlags = (
-  node: ts.PropertyDeclaration,
+export const parseExportFlags = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration,
   props: ParseState
 ): string => {
   const decoration = node.decorators?.find((dec) =>
@@ -34,7 +103,7 @@ const parseExportFlags = (
   if (decoration.expression.kind !== SyntaxKind.CallExpression) {
     addError({
       description: `
-I'm confused by export_flags here. It should be a function call. 
+I'm confused by export_flags here. It should be a function call.
 
 For instance, ${chalk.green(`@export_flags("A", "B", "C")`)}`,
       error: ErrorName.ExportedVariableError,
@@ -165,6 +234,10 @@ export const parsePropertyDeclaration = (
     exportText = isDecoratedAsExports(node)
       ? `export(${typeGodotName ?? "null"}) `
       : ""
+  }
+
+  if (isDecoratedAsExportArgs(node)) {
+    exportText = parseExportArgs(node, props)
   }
 
   if (isDecoratedAsExportFlags(node)) {
@@ -427,5 +500,18 @@ export class Test {
   expected: `
 class_name Test
 export(int, FLAGS, "A", "B", "C") var exportFlagsTest
+`,
+}
+
+export const testExportArgs: Test = {
+  ts: `
+export class Test {
+  @export_args(PackedScene)
+  exportFlagsTest: PackedScene<Node2D>[];
+}
+  `,
+  expected: `
+class_name Test
+export(Array, PackedScene) var exportFlagsTest
 `,
 }
