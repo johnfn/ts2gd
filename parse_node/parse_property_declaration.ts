@@ -47,45 +47,8 @@ export const parseExports = (
 
   if (node.type && ts.isArrayTypeNode(node.type)) {
     // Handle infering Array type for exports
-    let elementType = node.type.elementType
 
-    // If elementType is generic we need to extract only type name and discard type arguments
-    if (ts.isTypeReferenceNode(elementType)) {
-      // TODO: to remove this 'as any' cast the 'getGodotType' function
-      //       should be adjusted to allow other types of nodes than 'ts.TypeNode'
-      //       for actualType argument
-      elementType = elementType.typeName as any
-    }
-
-    // unknown and any keyword should not infer array type for export
-    if (
-      elementType.kind !== SyntaxKind.AnyKeyword &&
-      elementType.kind !== SyntaxKind.UnknownKeyword
-    ) {
-      const typeGodotElement = getGodotType(
-        elementType,
-        props.program.getTypeChecker().getTypeAtLocation(elementType),
-        props,
-        true, // isExported
-        undefined,
-        elementType
-      )
-
-      if (typeGodotElement) {
-        godotExportArgs.push(typeGodotElement)
-      } else {
-        addError({
-          description: `
-Cannot infer element type for array export.
-`,
-          error: ErrorName.ExportedVariableError,
-          location: elementType,
-          stack: new Error().stack ?? "",
-        })
-
-        return ""
-      }
-    }
+    godotExportArgs.push(...parseExportsArrayElement(node.type, props))
   }
 
   if (decoration.expression.kind === SyntaxKind.CallExpression) {
@@ -105,6 +68,72 @@ Cannot infer element type for array export.
   }
 
   return `export(${godotExportArgs.join(", ")}) `
+}
+
+const parseExportsArrayElement = (
+  node: ts.ArrayTypeNode,
+  props: ParseState
+): string[] => {
+  let elementType = node.elementType
+  const godotExportArgs = []
+
+  if (ts.isArrayTypeNode(elementType)) {
+    // Handle array of arrays of arrays ...
+
+    const typeGodotElement = getGodotType(
+      elementType,
+      props.program.getTypeChecker().getTypeAtLocation(elementType),
+      props,
+      true, // isExported
+      undefined,
+      elementType
+    )
+
+    return [
+      typeGodotElement ?? "null",
+      ...parseExportsArrayElement(elementType, props),
+    ]
+  } else if (ts.isTypeReferenceNode(elementType)) {
+    // If elementType is generic we need to extract only type name and discard type arguments
+
+    // TODO: to remove this 'as any' cast the 'getGodotType' function
+    //       should be adjusted to allow other types of nodes than 'ts.TypeNode'
+    //       for actualType argument
+    elementType = elementType.typeName as any
+  }
+
+  if (
+    elementType.kind !== SyntaxKind.AnyKeyword &&
+    elementType.kind !== SyntaxKind.UnknownKeyword
+  ) {
+    // unknown and any keyword should not infer array type for export
+
+    const typeGodotElement = getGodotType(
+      elementType,
+      props.program.getTypeChecker().getTypeAtLocation(elementType),
+      props,
+      true, // isExported
+      undefined,
+      elementType
+    )
+
+    if (typeGodotElement) {
+      godotExportArgs.push(typeGodotElement)
+    } else {
+      addError({
+        description: `
+Cannot infer element type for array export.
+`,
+        error: ErrorName.ExportedVariableError,
+        location: elementType,
+        stack: new Error().stack ?? "",
+      })
+
+      return []
+    }
+  }
+
+  return godotExportArgs
 }
 
 export const isDecoratedAsExportFlags = (
@@ -557,5 +586,18 @@ export class Test {
 class_name Test
 export(Array) var exportFlagsTest
 export(Array) var exportFlagsTest2
+`,
+}
+
+export const testExportInferArrayOfArrays: Test = {
+  ts: `
+export class Test {
+  @exports
+  exportFlagsTest: float[][];
+}
+  `,
+  expected: `
+class_name Test
+export(Array, Array, float) var exportFlagsTest
 `,
 }
