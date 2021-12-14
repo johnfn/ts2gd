@@ -60,7 +60,14 @@ export const parseExports = (
         parent: decoration,
         nodes: [...fn.arguments],
         props,
-        parsedStrings: (...args) => args.join(", "),
+        parsedStrings: (...args) =>
+          args
+            .map((arg) =>
+              arg.startsWith("ExportHint.")
+                ? arg.substr("ExportHint.".length)
+                : arg
+            )
+            .join(", "),
       })
 
       godotExportArgs.push(result.content)
@@ -599,5 +606,43 @@ export class Test {
   expected: `
 class_name Test
 export(Array, Array, float) var exportFlagsTest
+`,
+}
+
+export const testExportExportHint: Test = {
+  ts: `
+export class Test {
+  @exports(ExportHint.RGBA)
+  exportFlagsTest: Color;
+}
+  `,
+  expected: `
+class_name Test
+export(Color, RGBA) var exportFlagsTest
+`,
+}
+
+export const testExportExportHintComplex: Test = {
+  ts: `
+export class Test {
+  @exports(ExportHint.EXP, 100, 1000, 20)
+  exportFlagsTest: float;
+
+  @exports("Value1", "Value2", "Value3")
+  exportFlagsTest2: string;
+
+  @exports(ExportHint.FLAGS, "Fire", "Water", "Earth", "Wind")
+  exportFlagsTest3: int;
+
+  @exports(ExportHint.FILE, ExportHint.GLOBAL, "*.png")
+  exportFlagsTest4: string;
+}
+  `,
+  expected: `
+class_name Test
+export(float, EXP, 100, 1000, 20) var exportFlagsTest: float
+export(String, "Value1", "Value2", "Value3") var exportFlagsTest2: String
+export(int, FLAGS, "Fire", "Water", "Earth", "Wind") var exportFlagsTest3: int
+export(String, FILE, GLOBAL, "*.png") var exportFlagsTest4: String
 `,
 }

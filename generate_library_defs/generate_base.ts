@@ -93,7 +93,25 @@ interface Function {
   set_instance(instance: Object): void;
 }
 
-declare function exports(...args: any[]): (target: Node, name: string) => void;
+declare enum ExportHint {
+  RANGE,
+  EXP,
+  FILE,
+  DIR,
+  GLOBAL,
+  MULTILINE,
+  EASE,
+  RGB,
+  RGBA,
+  FLAGS,
+  LAYERS_2D_PHYSICS,
+  LAYERS_2D_RENDER,
+  LAYERS_3D_PHYSICS,
+  LAYERS_3D_RENDER
+}
+
+declare function exports(...args: (ExportHint | string | number)[]): (target: Node, name: string) => void;
+declare function exports(target: Node, name: string): void;
 declare const export_flags: (...flags: any[]) => (target: Node, name: string) => void
 declare function autoload(target: typeof Node): void
 declare function tool(target: typeof Node): void;
