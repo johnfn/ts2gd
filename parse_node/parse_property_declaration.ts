@@ -13,24 +13,14 @@ export const isDecoratedAsExports = (
     | ts.SetAccessorDeclaration
 ) => {
   return !!node.decorators?.find(
-    (dec) => dec.expression.getText() === "exports"
-  )
-}
-
-export const isDecoratedAsExportArgs = (
-  node:
-    | ts.PropertyDeclaration
-    | ts.GetAccessorDeclaration
-    | ts.SetAccessorDeclaration
-) => {
-  return !!node.decorators?.find(
     (dec) =>
-      ts.isCallExpression(dec.expression) &&
-      dec.expression.expression.getText() === "export_args"
+      dec.expression.getText() === "exports" ||
+      (ts.isCallExpression(dec.expression) &&
+        dec.expression.expression.getText() === "exports")
   )
 }
 
-export const parseExportArgs = (
+export const parseExports = (
   node:
     | ts.PropertyDeclaration
     | ts.GetAccessorDeclaration
@@ -39,23 +29,10 @@ export const parseExportArgs = (
 ) => {
   const decoration = node.decorators?.find(
     (dec) =>
-      ts.isCallExpression(dec.expression) &&
-      dec.expression.expression.getText() === "export_args"
+      dec.expression.getText() === "exports" ||
+      (ts.isCallExpression(dec.expression) &&
+        dec.expression.expression.getText() === "exports")
   )!
-
-  if (decoration.expression.kind !== SyntaxKind.CallExpression) {
-    addError({
-      description: `
-I'm confused by export_args here. It should be a function call.
-
-For instance, ${chalk.green(`@export_args(int, "A", "B", "C")`)}`,
-      error: ErrorName.ExportedVariableError,
-      location: node,
-      stack: new Error().stack ?? "",
-    })
-
-    return ""
-  }
 
   const typeGodotName = getGodotType(
     node,
@@ -66,16 +43,22 @@ For instance, ${chalk.green(`@export_args(int, "A", "B", "C")`)}`,
     node.type
   )
 
-  const fn = decoration.expression as ts.CallExpression
+  if (decoration.expression.kind === SyntaxKind.CallExpression) {
+    // Handle exports arguments
+    const fn = decoration.expression as ts.CallExpression
 
-  const result = combine({
-    parent: decoration,
-    nodes: [...fn.arguments],
-    props,
-    parsedStrings: (...args) => args.join(", "),
-  })
+    const result = combine({
+      parent: decoration,
+      nodes: [...fn.arguments],
+      props,
+      parsedStrings: (...args) => args.join(", "),
+    })
 
-  return `export(${typeGodotName}, ${result.content}) `
+    return `export(${typeGodotName}, ${result.content}) `
+  }
+
+  // exports used without any arguments
+  return `export(${typeGodotName}) `
 }
 
 export const isDecoratedAsExportFlags = (
@@ -220,24 +203,9 @@ export const parsePropertyDeclaration = (
   let exportText = ""
 
   if (isDecoratedAsExports(node)) {
-    let typeGodotName = getGodotType(
-      node,
-      props.program.getTypeChecker().getTypeAtLocation(node),
-      props,
-      true, // isExported
-      node.initializer,
-      node.type
-    )
-
     // TODO: Have a fallback
 
-    exportText = isDecoratedAsExports(node)
-      ? `export(${typeGodotName ?? "null"}) `
-      : ""
-  }
-
-  if (isDecoratedAsExportArgs(node)) {
-    exportText = parseExportArgs(node, props)
+    exportText = isDecoratedAsExports(node) ? parseExports(node, props) : ""
   }
 
   if (isDecoratedAsExportFlags(node)) {
@@ -506,7 +474,7 @@ export(int, FLAGS, "A", "B", "C") var exportFlagsTest
 export const testExportArgs: Test = {
   ts: `
 export class Test {
-  @export_args(PackedScene)
+  @exports(PackedScene)
   exportFlagsTest: PackedScene<Node2D>[];
 }
   `,

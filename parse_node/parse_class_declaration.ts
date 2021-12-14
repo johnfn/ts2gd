@@ -5,10 +5,9 @@ import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType } from "../ts_utils"
 import {
-  isDecoratedAsExportArgs,
   isDecoratedAsExportFlags,
   isDecoratedAsExports,
-  parseExportArgs,
+  parseExports,
   parseExportFlags,
 } from "./parse_property_declaration"
 
@@ -33,20 +32,7 @@ const getSettersAndGetters = (
     let exportText: string | null = null
 
     if (isDecoratedAsExports(setGet)) {
-      const typeGodotName = getGodotType(
-        setGet,
-        props.program.getTypeChecker().getTypeAtLocation(setGet),
-        props,
-        true, // isExported
-        undefined,
-        setGet.type
-      )
-
-      exportText = `export(${typeGodotName ?? "null"}) `
-    }
-
-    if (isDecoratedAsExportArgs(setGet)) {
-      exportText = parseExportArgs(setGet, props)
+      exportText = parseExports(setGet, props)
     }
 
     if (isDecoratedAsExportFlags(setGet)) {
@@ -162,7 +148,7 @@ export const testExportArgsSetGet: Test = {
   ts: `
 @autoload
 class Foo {
-  @export_args(PackedScene)
+  @exports(PackedScene)
   get nodes(): PackedScene<Node2D>[] {
       return [];
   }
