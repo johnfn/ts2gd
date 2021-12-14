@@ -374,7 +374,15 @@ const shouldIncludePath = (path: string, stats: fs.Stats): boolean => {
     return false
   }
 
+  if (path.includes("_godot_defs")) {
+    return false
+  }
+
   if (path.includes(".git")) {
+    return false
+  }
+
+  if (path.endsWith(".tmp")) {
     return false
   }
 
@@ -384,10 +392,6 @@ const shouldIncludePath = (path: string, stats: fs.Stats): boolean => {
 
   if (stats.isDirectory()) {
     return true
-  }
-
-  if (path.includes("_godot_defs")) {
-    return false
   }
 
   if (AssetFont.extensions().some((ext) => path.endsWith(ext))) {
