@@ -12,8 +12,8 @@ declare interface Boolean {
  * [code]-INF[/code]. Dividing by [code]-0.0[/code] will result in negative
  * infinity if the numerator is positive, so dividing by [code]0.0[/code] is not
  * the same as dividing by [code]-0.0[/code] (despite [code]0.0 == -0.0[/code]
- * returning [code]true[/code]).  
- * 
+ * returning [code]true[/code]).
+ *
  * [b]Note:[/b] Numeric infinity is only a concept with floating-point numbers,
  * and has no equivalent for integers.  Dividing an integer number by
  * [code]0[/code] will not result in [constant INF] and will result in a
@@ -48,7 +48,7 @@ declare const NAN: float;
 
 // Contents of these two interfaces were copied from FuncRef.d.ts
 
-declare interface CallableFunction { 
+declare interface CallableFunction {
   /** The name of the referenced function. */
   function: string
 
@@ -86,9 +86,8 @@ interface Function {
   set_instance(instance: Object): void;
 }
 
-declare function exports(target: Node, name: string): void;
+declare function exports(...args: any[]): (target: Node, name: string) => void;
 declare const export_flags: (...flags: any[]) => (target: Node, name: string) => void
-declare const export_args: (...args: any[]) => (target: Node, name: string) => void
 declare function autoload(target: typeof Node): void
 declare function tool(target: typeof Node): void;
 
