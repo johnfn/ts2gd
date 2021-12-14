@@ -148,7 +148,7 @@ export const testExportArgsSetGet: Test = {
   ts: `
 @autoload
 class Foo {
-  @exports(PackedScene)
+  @exports
   get nodes(): PackedScene<Node2D>[] {
       return [];
   }
