@@ -356,6 +356,10 @@ export const makeTsGdProject = async (
           // Chokidar is inconsistent about whether it passes in stats or not -
           // sometimes it does and sometimes it doesn't.
 
+          if (!fs.existsSync(path)) {
+            return true
+          }
+
           return !shouldIncludePath(path, stats ?? fs.statSync(path))
         },
       })
