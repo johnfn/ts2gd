@@ -353,13 +353,12 @@ export const makeTsGdProject = async (
     const watcher: chokidar.FSWatcher = chokidar
       .watch(ts2gdJson.rootPath, {
         ignored: (path: string, stats?: fs.Stats) => {
-          if (!fs.existsSync(path)) {
-            return true
-          }
-
           // Chokidar is inconsistent about whether it passes in stats or not -
           // sometimes it does and sometimes it doesn't.
-          return !shouldIncludePath(path, stats ?? fs.statSync(path))
+          return !shouldIncludePath(
+            path,
+            stats ?? (fs.existsSync(path) ? fs.statSync(path) : undefined)
+          )
         },
       })
       .on("add", addFn)
@@ -372,7 +371,7 @@ export const makeTsGdProject = async (
   return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson, args)
 }
 
-const shouldIncludePath = (path: string, stats: fs.Stats): boolean => {
+const shouldIncludePath = (path: string, stats?: fs.Stats): boolean => {
   if (path.includes("node_modules")) {
     return false
   }
@@ -393,7 +392,7 @@ const shouldIncludePath = (path: string, stats: fs.Stats): boolean => {
     return false
   }
 
-  if (stats.isDirectory()) {
+  if (stats && stats.isDirectory()) {
     return true
   }
 
