@@ -199,45 +199,56 @@ export const parseCallExpression = (
               signalName = signalName.slice(1)
             }
 
-            const af = args[0] as ts.ArrowFunction
-            const arrowFunctionObj = parsedArgs[0].hoistedArrowFunctions?.find(
-              (obj) => obj.node === af
-            )
-
-            if (!arrowFunctionObj) {
+            if (!parsedArgs[0]) {
               addError({
                 description:
-                  "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+                  "Missing arrow function argument in signal connect invocation.",
                 error: ErrorName.Ts2GdError,
                 location: expression,
                 stack: new Error().stack ?? "",
               })
             } else {
-              const { capturedScopeObject } = getCapturedScope(
-                arrowFunctionObj.node,
-                props
-              )
+              const af = args[0] as ts.ArrowFunction
+              const arrowFunctionObj =
+                parsedArgs[0].hoistedArrowFunctions?.find(
+                  (obj) => obj.node === af
+                )
 
-              parsedStringArgs = [
-                `"${signalName}"`,
-                "self",
-                `"${arrowFunctionObj.name}"`,
-                `[${capturedScopeObject}]`,
-              ]
+              if (!arrowFunctionObj) {
+                addError({
+                  description:
+                    "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
+                  error: ErrorName.Ts2GdError,
+                  location: expression,
+                  stack: new Error().stack ?? "",
+                })
+              } else {
+                const { capturedScopeObject } = getCapturedScope(
+                  arrowFunctionObj.node,
+                  props
+                )
 
-              const secondDot = parsedExpr.content.lastIndexOf(".")
-              const firstDot = parsedExpr.content.lastIndexOf(
-                ".",
-                secondDot - 1
-              )
+                parsedStringArgs = [
+                  `"${signalName}"`,
+                  "self",
+                  `"${arrowFunctionObj.name}"`,
+                  `[${capturedScopeObject}]`,
+                ]
 
-              // We have "self.variable.signal.connect" but we want
-              // "self.signal.connect".
-              // TODO: This is kinda a hack.
-              parsedExpr = {
-                content:
-                  parsedExpr.content.substring(0, firstDot) +
-                  parsedExpr.content.substring(secondDot),
+                const secondDot = parsedExpr.content.lastIndexOf(".")
+                const firstDot = parsedExpr.content.lastIndexOf(
+                  ".",
+                  secondDot - 1
+                )
+
+                // We have "self.variable.signal.connect" but we want
+                // "self.signal.connect".
+                // TODO: This is kinda a hack.
+                parsedExpr = {
+                  content:
+                    parsedExpr.content.substring(0, firstDot) +
+                    parsedExpr.content.substring(secondDot),
+                }
               }
             }
           }
