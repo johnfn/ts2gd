@@ -101,7 +101,8 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       .getChildren()
       .filter(
         (node): node is ts.ClassDeclaration =>
-          node.kind === SyntaxKind.ClassDeclaration
+          node.kind === SyntaxKind.ClassDeclaration &&
+          Boolean(node.modifiers?.map((x) => x.getText()).includes("default"))
       )
 
     if (topLevelClasses.length === 0) {
@@ -207,7 +208,7 @@ Hint: try ${chalk.blueBright(
       location: ast ?? this.tsRelativePath,
       stack: new Error().stack ?? "",
       description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
-        
+
 @autoload
 class MyAutoloadClass extends Node2D {
   public string hello = "hi"
@@ -302,8 +303,8 @@ ${chalk.green(
               description: `You have two classes named ${
                 this.name
               } in the same folder. ts2gd saves every class as "class_name.gd", so they will overwrite each other. We recommend renaming one, but you can also move it into a new directory.
-              
-First path:  ${chalk.yellow(this.fsPath)}              
+
+First path:  ${chalk.yellow(this.fsPath)}
 Second path: ${chalk.yellow(sf.fsPath)}`,
               error: ErrorName.TwoClassesWithSameName,
               location: sourceFile,
@@ -421,7 +422,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
 
 ${chalk.white(
   `export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`
-)}        
+)}
         `,
         location: classNode ?? this.fsPath,
         stack: new Error().stack ?? "",

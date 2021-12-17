@@ -191,7 +191,7 @@ export const buildNodePathsTypeForScript = (
       pathToImport[path] = `import("${script.fsPath.slice(
         0,
         -".ts".length
-      )}").${script.exportedTsClassName()}`
+      )}").${/*script.exportedTsClassName()*/ "default"}`
     } else {
       pathToImport[path] = node.tsType()
     }
@@ -277,28 +277,28 @@ declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
   .map(([path, importStr]) => `  "${path}": ${importStr},`)
   .join("\n")}
-}    
+}
 `
 
   result += `
-  
+
 import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}
 
-  interface ${className} {
+  export default interface ${className} {
     /**
      * Gets a node by a string path. There are two ways to use this function:
-     * 
+     *
      * 1. this.get_node("KnownNode") - Use this when ts2gd can prove there's a
      * node at the path you provide
-     * 
+     *
      * 2. this.get_node\<Label\>("DynamicNode") - Use this when ts2gd can't prove
      * there's a node at the provided path, but you know that it is there. Be
      * sure to add the type parameter (e.g. <Label>) to indicate to ts2gd what
      * type of node you're retrieving - otherwise there will be an error!
-     * 
+     *
      * N.B. It *should* be possible to use ts2gd without *ever* having to revert
      * to the second get_node call with the type parameter. Please open a GitHub
      * issue if you feel this isn't the case.

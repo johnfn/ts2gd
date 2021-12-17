@@ -73,10 +73,10 @@ export const parseClassDeclaration = (
   node: ts.ClassDeclaration | ts.ClassExpression,
   props: ParseState
 ): ParseNodeType => {
-  const modifiers = node.modifiers?.map((x) => x.getText())
+  const modifiers = (node.modifiers ?? []).map((x) => x.getText())
 
   // skip class declarations; there's no code to generate here
-  if (modifiers?.includes("declare")) {
+  if (modifiers.includes("declare")) {
     return combine({
       parent: node,
       nodes: [],
@@ -89,9 +89,13 @@ export const parseClassDeclaration = (
     (dec) => dec.expression.getText() === "autoload"
   )
 
-  if (!modifiers?.includes("export") && !isAutoload) {
+  if (
+    !modifiers.includes("export") &&
+    !modifiers.includes("default") &&
+    isAutoload
+  ) {
     addError({
-      description: "You must export this class.",
+      description: "Only class exported as default can be autoloaded.",
       error: ErrorName.ClassMustBeExported,
       location: node,
       stack: new Error().stack ?? "",
@@ -140,6 +144,6 @@ class Foo {
 }`,
   expected: `
 class_name Foo
-var x: int = 1  
+var x: int = 1
 `,
 }

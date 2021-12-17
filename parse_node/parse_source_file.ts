@@ -4,6 +4,12 @@ import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { Test } from "../tests/test"
 import { LibraryFunctions } from "./library_functions"
 
+type ParsedClassDeclaration = {
+  fileName: string
+  parsedClass: ParseNodeType
+  classDecl: ts.ClassDeclaration | ts.ClassExpression
+}
+
 /**
  * The class_name and extends statements *must* come first in the file, so we
  * preprocess the class to find them prior to our normal pass.
@@ -12,6 +18,7 @@ const getClassDeclarationHeader = (
   node: ts.ClassDeclaration | ts.ClassExpression,
   props: ParseState
 ) => {
+  const modifiers = (node.modifiers ?? []).map((x) => x.getText())
   // TODO: Can be moved into parse_class_declaration i think
 
   let extendsFrom = ""
@@ -29,10 +36,24 @@ const getClassDeclarationHeader = (
     (dec) => dec.expression.getText() === "tool"
   )
 
-  return `${isTool ? "tool\n" : ""}${
-    extendsFrom ? `extends ${extendsFrom}` : ""
-  }
+  if (modifiers.includes("default")) {
+    return `${isTool ? "tool\n" : ""}${
+      extendsFrom ? `extends ${extendsFrom}` : ""
+    }
 ${props.isAutoload ? "" : `class_name ${node.name?.getText()}\n`}`
+  }
+
+  if (isTool) {
+    addError({
+      description: "Only class exported as default can be decorated as tool.",
+      error: ErrorName.ClassMustBeExported,
+      location: node,
+      stack: new Error().stack ?? "",
+    })
+  }
+
+  return `
+class ${node.name?.getText()}${extendsFrom ? ` extends ${extendsFrom}` : ""}:`
 }
 
 export const getFileHeader = (): string => {
@@ -69,11 +90,7 @@ export const parseSourceFile = (
     })
   }
 
-  const parsedClassDeclarations: {
-    fileName: string
-    parsedClass: ParseNodeType
-    classDecl: ts.ClassDeclaration | ts.ClassExpression
-  }[] = []
+  const parsedClassDeclarations: ParsedClassDeclaration[] = []
   let hoistedLibraryFunctionDefinitions = ""
   let hoistedEnumImports = ""
   let hoistedArrowFunctions = ""
@@ -164,17 +181,58 @@ export const parseSourceFile = (
     files.push(fi)
   }
 
-  for (const { fileName, parsedClass, classDecl } of parsedClassDeclarations) {
+  let classFile: {
+    mainClass: ParsedClassDeclaration | null
+    innerClasses: ParsedClassDeclaration[]
+  } = {
+    mainClass: null,
+    innerClasses: [],
+  }
+
+  for (const cls of parsedClassDeclarations) {
+    if (cls.classDecl.modifiers?.map((x) => x.getText()).includes("default")) {
+      classFile.mainClass = cls
+    } else {
+      classFile.innerClasses.push(cls)
+    }
+  }
+
+  if (!classFile.mainClass) {
+    addError({
+      error: ErrorName.ClassNameNotFound,
+      location: node,
+      description:
+        "Every file must have one one class expoerted as default in it, but this file doesn't have any.",
+      stack: new Error().stack ?? "",
+    })
+  } else {
     files.push({
-      filePath: fileName,
+      filePath: classFile.mainClass.fileName,
       body: `
 ${getFileHeader()}
-${getClassDeclarationHeader(classDecl, props)}    
+${getClassDeclarationHeader(classFile.mainClass.classDecl, props)}
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
+${classFile.innerClasses
+  .map(
+    (innerClass) => `
+${getClassDeclarationHeader(innerClass.classDecl, props)}
+${
+  innerClass.parsedClass.content.trim()
+    ? innerClass.parsedClass.content
+        .trim()
+        .split("\n")
+        .map((line) => "  " + line)
+        .join("\n")
+    : "  pass"
+}
+`
+  )
+  .join("\n")}
 ${hoistedArrowFunctions}
 ${codegenToplevelStatements?.content ?? ""}
-${parsedClass.content}`,
+${classFile.mainClass.parsedClass.content}
+`,
     })
   }
 
