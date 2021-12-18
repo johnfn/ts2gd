@@ -215,7 +215,7 @@ export const parseImportDeclaration = (
           if (type === "class") {
             return `var ${importedName} = load("${resPath}")`
           } else if (type === "subclass") {
-            return `const ${importedName} = load("${resPath}").${importedName}`
+            return `const ${importedName} = preload("${resPath}").${importedName}`
           } else if (type === "enum") {
             return `const ${importedName} = preload("${resPath}").${importedName}`
           } else if (type === "scene") {
