@@ -31,7 +31,7 @@ print(b)
 
 export const testVDL2: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
     let x = 1, y = 2;

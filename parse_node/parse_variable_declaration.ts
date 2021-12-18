@@ -199,7 +199,7 @@ var _y = "a"
 export const testAutoloadVariableDeclaration: Test = {
   isAutoload: true,
   ts: `
-export class Blah {
+export default class Blah {
 
 }
 
@@ -211,7 +211,7 @@ const x: Blah = new Blah();
 
 export const testClassNameWithoutAutoload: Test = {
   ts: `
-export class Blah {
+export default class Blah {
 
 }
 
@@ -227,7 +227,7 @@ var _x = Blah.new()
 export const testAutoloadVariableDeclaration2: Test = {
   isAutoload: true,
   ts: `
-export class Blah {
+export default class Blah {
 
 }
 
@@ -241,7 +241,7 @@ export const testAutoloadVariableDeclaration3: Test = {
   isAutoload: true,
 
   ts: `
-export class Blah {
+export default class Blah {
   test() {
     const blah: Blah = new Blah();
   }

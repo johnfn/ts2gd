@@ -80,16 +80,6 @@ export const parseSourceFile = (
         .length === 0
   ) as ts.ClassDeclaration[]
 
-  if (allClasses.length === 0) {
-    addError({
-      error: ErrorName.ClassNameNotFound,
-      location: node,
-      description:
-        "Every file must have one class in it, but this file doesn't have any.",
-      stack: new Error().stack ?? "",
-    })
-  }
-
   const parsedClassDeclarations: ParsedClassDeclaration[] = []
   let hoistedLibraryFunctionDefinitions = ""
   let hoistedEnumImports = ""
@@ -197,20 +187,16 @@ export const parseSourceFile = (
     }
   }
 
-  if (!classFile.mainClass) {
-    addError({
-      error: ErrorName.ClassNameNotFound,
-      location: node,
-      description:
-        "Every file must have one one class expoerted as default in it, but this file doesn't have any.",
-      stack: new Error().stack ?? "",
-    })
-  } else {
-    files.push({
-      filePath: classFile.mainClass.fileName,
-      body: `
-${getFileHeader()}
-${getClassDeclarationHeader(classFile.mainClass.classDecl, props)}
+  let fileBody = `${getFileHeader()}\n`
+
+  if (classFile.mainClass) {
+    fileBody += `${getClassDeclarationHeader(
+      classFile.mainClass.classDecl,
+      props
+    )}\n`
+  }
+
+  fileBody += `
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
 ${classFile.innerClasses
@@ -231,24 +217,16 @@ ${
   .join("\n")}
 ${hoistedArrowFunctions}
 ${codegenToplevelStatements?.content ?? ""}
-${classFile.mainClass.parsedClass.content}
-`,
-    })
+`
+
+  if (classFile.mainClass) {
+    fileBody += `${classFile.mainClass.parsedClass.content}\n`
   }
 
-  if (parsedClassDeclarations.length === 0) {
-    // Generate SOME code - even though it'll certainly be wrong
-
-    files.push({
-      filePath: node.getSourceFile().fileName.slice(0, -".ts".length),
-      body: `
-${getFileHeader()}
-${hoistedEnumImports}
-${hoistedLibraryFunctionDefinitions}
-${hoistedArrowFunctions}
-${codegenToplevelStatements?.content ?? ""}`,
-    })
-  }
+  files.push({
+    filePath: props.sourceFileAsset.gdPath,
+    body: fileBody,
+  })
 
   return {
     files,
@@ -259,7 +237,7 @@ ${codegenToplevelStatements?.content ?? ""}`,
 export const testToolAnnotation: Test = {
   ts: `
 @tool
-export class Test {
+export default class Test {
 }
   `,
   expected: `
@@ -268,22 +246,41 @@ class_name Test
 `,
 }
 
-export const testTwoClasses: Test = {
+export const testInnerClass: Test = {
   ts: `
-export class Test1 { }
-export class Test2 { }
-  `,
-  expected: {
-    type: "multiple-files",
-    files: [
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test1.gd",
-        expected: `class_name Test1`,
-      },
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test2.gd",
-        expected: `class_name Test2`,
-      },
-    ],
-  },
+export default class Test {
 }
+
+export class InnerTest {
+  field: int = 2;
+}
+  `,
+  expected: `
+class_name Test
+
+class InnerTest:
+  var field: int = 2
+`,
+}
+
+// TODO: cleanup, this test is no longer valid
+
+// export const testTwoClasses: Test = {
+//   ts: `
+// export class Test1 { }
+// export class Test2 { }
+//   `,
+//   expected: {
+//     type: "multiple-files",
+//     files: [
+//       {
+//         fileName: "/Users/johnfn/MyGame/compiled/Test1.gd",
+//         expected: `class_name Test1`,
+//       },
+//       {
+//         fileName: "/Users/johnfn/MyGame/compiled/Test2.gd",
+//         expected: `class_name Test2`,
+//       },
+//     ],
+//   },
+// }

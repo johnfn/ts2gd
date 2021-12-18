@@ -12,6 +12,10 @@ ${project.assets
   .map((obj) => {
     const tsType = obj.tsType()
 
+    if (!tsType) {
+      return ""
+    }
+
     if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
       return `  '${obj.resPath}': PackedScene<${tsType}>`
     }
@@ -22,10 +26,12 @@ ${project.assets
 }
 
 declare type SceneName =
-${project.assets
-  .filter((obj): obj is AssetGodotScene => obj instanceof AssetGodotScene)
-  .map((obj) => `  | '${obj.resPath}'`)
-  .join("\n")}
+${
+  project.assets
+    .filter((obj): obj is AssetGodotScene => obj instanceof AssetGodotScene)
+    .map((obj) => `  | '${obj.resPath}'`)
+    .join("\n") || "  never;"
+}
 
 declare type AssetPath = keyof AssetType;
   `

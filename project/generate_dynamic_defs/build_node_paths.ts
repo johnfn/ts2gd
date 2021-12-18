@@ -81,7 +81,13 @@ export const buildNodePathsTypeForScript = (
   const className = script.exportedTsClassName()
   const extendedClassName = script.extendedClassName()
 
+  const destPath = path.join(
+    TsGdProjectClass.Paths.dynamicGodotDefsPath,
+    `@node_paths_${script.getGodotClassName()}.d.ts`
+  )
+
   if (!className) {
+    fs.writeFileSync(destPath, "")
     return
   }
 
@@ -321,11 +327,6 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   }
 }
 `
-
-  const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
-    `@node_paths_${script.getGodotClassName()}.d.ts`
-  )
 
   fs.writeFileSync(destPath, result)
 }

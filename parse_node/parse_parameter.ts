@@ -61,7 +61,7 @@ export const parseParameter = (
 
 export const testParameter: Test = {
   ts: `
-export class Test {
+export default class Test {
   test(a: int, b: string) {
     print(a);
   }

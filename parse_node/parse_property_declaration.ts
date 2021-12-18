@@ -194,7 +194,7 @@ export const parsePropertyDeclaration = (
 
 export const testNormalExportedVariable: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: int
 }
@@ -207,7 +207,7 @@ export(int) var foo: int
 
 export const testNormalExportedVariable2: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: float
 }
@@ -220,7 +220,7 @@ export(float) var foo: float
 
 export const testNormalExportedVariable3: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: string
 }
@@ -233,7 +233,7 @@ export(String) var foo: String
 
 export const testNormalExportedVariable4: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: { [key: string]: string }
 }
@@ -246,7 +246,7 @@ export(Dictionary) var foo
 
 export const testNormalExportedVariable5: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: number[]
 }
@@ -259,7 +259,7 @@ export(Array) var foo
 
 export const testNotSoNormalExportedVariable6: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: { [key: string]: string }[]
 }
@@ -272,7 +272,7 @@ export(Array) var foo
 
 export const testNotSoNormalExportedVariable7: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: int | null
 }
@@ -285,7 +285,7 @@ export(int) var foo
 
 export const testNotSoNormalExportedVariable8: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: int | null | undefined
 }
@@ -298,7 +298,7 @@ export(int) var foo
 
 export const testNotSoNormalExportedVariable9: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: { [key: string]: string } | null | undefined
 }
@@ -309,43 +309,63 @@ export(Dictionary) var foo
 `,
 }
 
+// export const testNotSoNormalExportedVariable10: Test = {
+//   ts: `
+// export enum MyEnum {
+
+// }
+
+// export default class Test {
+//   @exports
+//   foo: MyEnum
+// }
+//   `,
+//   fileName: "Test.ts",
+//   expected: {
+//     type: "multiple-files",
+//     files: [
+//       {
+//         fileName: "/Users/johnfn/MyGame/compiled/Test.gd",
+//         expected: `
+// class_name Test
+// const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
+// export(MyEnum) var foo
+//       `,
+//       },
+
+//       {
+//         fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
+//         expected: `
+// const MyEnum = {
+// }`,
+//       },
+//     ],
+//   },
+// }
+
 export const testNotSoNormalExportedVariable10: Test = {
   ts: `
 export enum MyEnum {
 
 }
 
-export class Test {
+export default class Test {
   @exports
   foo: MyEnum
 }
   `,
   fileName: "Test.ts",
-  expected: {
-    type: "multiple-files",
-    files: [
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test.gd",
-        expected: `
+  expected: `
 class_name Test
-const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
-export(MyEnum) var foo
-      `,
-      },
-
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
-        expected: `
 const MyEnum = {
-}`,
-      },
-    ],
-  },
+}
+export(MyEnum) var foo
+  `,
 }
 
 export const testExportObj: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: Vector2
 }
@@ -358,7 +378,7 @@ export(Vector2) var foo
 
 export const testExportObj2: Test = {
   ts: `
-export class Test {
+export default class Test {
   @exports
   foo: Vector2 | null
 }
@@ -371,7 +391,7 @@ export(Vector2) var foo
 
 export const testNumberTypeByAnnotation: Test = {
   ts: `
-export class Test {
+export default class Test {
   x: int = 1
 }
   `,
@@ -383,7 +403,7 @@ var x: int = 1
 
 export const testNumberTypeByAnnotation2: Test = {
   ts: `
-export class Test {
+export default class Test {
   x: float = 1
 }
   `,
@@ -395,7 +415,7 @@ var x: float = 1
 
 export const testNumberTypeByNoAnnotation: Test = {
   ts: `
-export class Test {
+export default class Test {
   x = 1
 }
   `,
@@ -407,7 +427,7 @@ var x: int = 1
 
 export const testNumberTypeByNoAnnotation2: Test = {
   ts: `
-export class Test {
+export default class Test {
   x = 1.0
 }
   `,
@@ -419,7 +439,7 @@ var x: float = 1.0
 
 export const testExportFlags: Test = {
   ts: `
-export class Test {
+export default class Test {
   @export_flags("A", "B", "C")
   exportFlagsTest
 }

@@ -421,7 +421,7 @@ v1.distance_to(v1)
 
 export const testArrowScoping: Test = {
   ts: `
-export class Foo {
+export default class Foo {
   a() {
     const a = () => {};
   }
@@ -513,7 +513,7 @@ d["b"] = 2
 export const testConnect: Test = {
   expectFail: true,
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
 
@@ -537,7 +537,7 @@ func on_body_entered(_body):
 
 export const testConnect2: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
 
@@ -559,7 +559,7 @@ func _ready():
 
 export const testConnectWithClosures: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
     let x = 1, y = 2;
@@ -584,7 +584,7 @@ func _ready():
 // we intentionally do not capture `this` as self - see comment in parse_arrow_function.ts for rationale
 export const testConnectWithClosuresNoThis: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
     let x = 1, y = 2;
@@ -608,7 +608,7 @@ func _ready():
 
 export const testConnectComplex: Test = {
   ts: `
-export class Test {
+export default class Test {
   enemies: any;
 
   foo() {
@@ -643,7 +643,7 @@ d[[1, 2]] = 2
 
 export const testEmitSignal: Test = {
   ts: `
-export class CityGridCollision extends Area {
+export default class CityGridCollision extends Area {
   $mouseenter!: Signal<[]>;
   test() {
     this.$mouseenter.emit()
@@ -678,7 +678,7 @@ __map(__filter(a, [funcref(self, "__gen"), {}]), [funcref(self, "__gen1"), {}])
 
 export const testRewriteGetNode: Test = {
   ts: `
-export class Test {
+export default class Test {
   foo() {
     this.get_node('hello')
   }
@@ -694,7 +694,7 @@ func foo():
 
 export const testRewriteGetNode2: Test = {
   ts: `
-export class Test {
+export default class Test {
   foo() {
     this.get_node_unsafe('hello')
   }
@@ -733,7 +733,7 @@ export const testFunctionNull: Test = {
     x(): number | null;
   }
 
-  export class Test {
+  export default class Test {
     example() {
       const thing: Foo = new Foo()
       let result = thing.x()
@@ -782,7 +782,7 @@ x.get_node("Foo")
 
 export const testConnectDirectlyToSig: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   $mysig!: Signal
 
   constructor() {
@@ -807,7 +807,7 @@ func _ready():
 
 export const testNestedDirectSignalConnect: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   $mysig!: Signal
   test!: Test
 
@@ -839,7 +839,7 @@ func _ready():
 
 export const testRpcRewrite: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   rpc_me() {
 
   }
@@ -879,7 +879,7 @@ func _ready():
 
 export const testPassInFunction: Test = {
   ts: `
-export class Test extends Area2D {
+export default class Test extends Area2D {
   fn(other: () => void) {
     other()
   }

@@ -304,7 +304,7 @@ export class AssetGodotScene extends BaseAsset {
   }
 
   /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
-  tsType(): string {
+  tsType(): string | null {
     const rootScript = this.rootNode.getScript()
 
     if (rootScript) {
@@ -326,14 +326,14 @@ export class AssetGodotScene extends BaseAsset {
       const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
-        addError({
-          description: `Failed to find classname for ${rootScript.fsPath}`,
-          error: ErrorName.Ts2GdError,
-          location: rootScript.fsPath,
-          stack: new Error().stack ?? "",
-        })
+        // addError({
+        //   description: `Failed to find classname for ${rootScript.fsPath}`,
+        //   error: ErrorName.Ts2GdError,
+        //   location: rootScript.fsPath,
+        //   stack: new Error().stack ?? "",
+        // })
 
-        return "any"
+        return null
       }
 
       return `import('${rootSourceFile.fsPath.slice(

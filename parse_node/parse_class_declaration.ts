@@ -128,22 +128,86 @@ ${members.join("")}
   })
 }
 
-export const testRequireExportedClass: Test = {
+export const testInnerClassExtends: Test = {
+  ts: `
+export default class Test {
+}
+
+export class InnerTest extends Node2D {
+  field: int = 2;
+}
+  `,
+  expected: `
+class_name Test
+
+class InnerTest extends Node2D:
+  var field: int = 2
+`,
+}
+
+// TODO: implement calling super on inner class
+
+// export const testInnerClassExtendsSuperCall: Test = {
+//   ts: `
+// export default class Test {
+// }
+
+// export class InnerTest extends Node2D {
+//   field: int = 2;
+
+//   constructor() {
+//     super();
+//   }
+// }
+//   `,
+//   expected: `
+// class_name Test
+
+// class InnerTest extends Node2D:
+//   var field: int = 2
+//   func _init().():
+//     pass
+// `,
+// }
+
+export const testFileWithoutDefaultClass: Test = {
   ts: `
 class Foo {
   x = 1
+}
+
+export class Foo2 {
+  x = 1
 }`,
-  expected: { error: "You must export this class", type: "error" },
+  expected: `
+class Foo:
+  var x: int = 1  
+
+class Foo2:
+  var x: int = 1 
+`,
 }
 
 export const testDontRequireExportingAutoloads: Test = {
   ts: `
 @autoload
-class Foo {
+export default class Foo {
   x = 1
 }`,
   expected: `
 class_name Foo
 var x: int = 1
 `,
+}
+
+export const testDontRequireDefaultExportingAutoloads: Test = {
+  ts: `
+@autoload
+class Foo {
+  x = 1
+}`,
+  expected: {
+    error: "Only class exported as default can be autoloaded",
+    type: "error",
+  },
 }
