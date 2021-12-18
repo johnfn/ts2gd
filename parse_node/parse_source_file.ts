@@ -291,16 +291,11 @@ class_name Test
 
 export const testInnerClass: Test = {
   ts: `
-export default class Test {
-}
-
 export class InnerTest {
   field: int = 2;
 }
   `,
   expected: `
-class_name Test
-
 class InnerTest:
   var field: int = 2
 `,
@@ -315,25 +310,3 @@ export default class extends Node2D {
 extends Node2D
 `,
 }
-
-// TODO: cleanup, this test is no longer valid
-
-// export const testTwoClasses: Test = {
-//   ts: `
-// export class Test1 { }
-// export class Test2 { }
-//   `,
-//   expected: {
-//     type: "multiple-files",
-//     files: [
-//       {
-//         fileName: "/Users/johnfn/MyGame/compiled/Test1.gd",
-//         expected: `class_name Test1`,
-//       },
-//       {
-//         fileName: "/Users/johnfn/MyGame/compiled/Test2.gd",
-//         expected: `class_name Test2`,
-//       },
-//     ],
-//   },
-// }
