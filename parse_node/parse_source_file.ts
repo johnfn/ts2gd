@@ -28,8 +28,41 @@ const getClassDeclarationHeader = (
 
     const clause = node.heritageClauses[0] as ts.HeritageClause
     const type = clause.types[0]
+    const tsType = props.program.getTypeChecker().getTypeAtLocation(type)
 
     extendsFrom = type.getText()
+
+    if (tsType.symbol && tsType.symbol.declarations) {
+      // Handle the case when extended class is a inner clas of file
+      const classDecl = tsType.symbol.declarations.find((v) =>
+        ts.isClassDeclaration(v)
+      )
+
+      if (
+        classDecl &&
+        !classDecl.modifiers?.map((v) => v.getText()).includes("default")
+      ) {
+        // If a class declaration does not have default export then this is an inner class
+        const asset = props.project
+          .sourceFiles()
+          .find((v) => v.fsPath === classDecl.getSourceFile().fileName)
+
+        if (asset) {
+          // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
+          extendsFrom = `"${asset.resPath}".${type.getText()}`
+        } else {
+          extendsFrom = "[missing]"
+
+          addError({
+            description:
+              "Class extends a type for which a source file is missing. This is an internal ts2gd bug. Please report it.",
+            error: ErrorName.ClassDoesntExtendAnything,
+            location: node,
+            stack: new Error().stack ?? "",
+          })
+        }
+      }
+    }
   }
 
   const isTool = !!node.decorators?.find(
@@ -199,6 +232,8 @@ export const parseSourceFile = (
   fileBody += `
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
+${hoistedArrowFunctions}
+${codegenToplevelStatements?.content ?? ""}
 ${classFile.innerClasses
   .map(
     (innerClass) => `
@@ -215,8 +250,6 @@ ${
 `
   )
   .join("\n")}
-${hoistedArrowFunctions}
-${codegenToplevelStatements?.content ?? ""}
 `
 
   if (classFile.mainClass) {
