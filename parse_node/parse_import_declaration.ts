@@ -182,6 +182,10 @@ export const parseImportDeclaration = (
         typeString = typeString.slice("typeof ".length)
       }
 
+      if (typeString === "(Missing)") {
+        typeString = element.name.getText()
+      }
+
       const usages = props.usages.get(element.name)
 
       let usedAsValue = false

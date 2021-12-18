@@ -1,4 +1,4 @@
-import ts, { SyntaxKind } from "typescript"
+import ts, { ClassDeclaration, SyntaxKind } from "typescript"
 import { addError, ErrorName } from "../errors"
 import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { Test } from "../tests/test"
@@ -36,23 +36,20 @@ const getClassDeclarationHeader = (
       // Handle the case when extended class is a inner clas of file
       const classDecl = tsType.symbol.declarations.find((v) =>
         ts.isClassDeclaration(v)
-      )
+      ) as ClassDeclaration | null
 
-      if (
-        classDecl &&
-        !classDecl.modifiers?.map((v) => v.getText()).includes("default")
-      ) {
-        // If a class declaration does not have default export then this is an inner class
+      if (classDecl) {
+        const modifiers = (classDecl.modifiers ?? []).map((v) => v.getText())
+
         const asset = props.project
           .sourceFiles()
           .find((v) => v.fsPath === classDecl.getSourceFile().fileName)
 
-        if (asset) {
-          // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
-          extendsFrom = `"${asset.resPath}".${type.getText()}`
-        } else {
-          extendsFrom = "[missing]"
-
+        if (
+          !asset &&
+          !modifiers.includes("declare") &&
+          (!modifiers.includes("default") || !classDecl.name)
+        ) {
           addError({
             description:
               "Class extends a type for which a source file is missing. This is an internal ts2gd bug. Please report it.",
@@ -60,6 +57,16 @@ const getClassDeclarationHeader = (
             location: node,
             stack: new Error().stack ?? "",
           })
+        } else if (!modifiers.includes("default")) {
+          // If a class declaration does not have default export then this is an inner class
+          // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
+          extendsFrom = asset
+            ? `"${asset.resPath}".${type.getText()}`
+            : "[missing]"
+        } else if (!classDecl.name) {
+          // If a class declaration have default export and does not have a name then it is anonymous
+          // The syntax for extending anonymous class in gdscript is: extends "res://compiled/Test.gd"
+          extendsFrom = asset ? `"${asset.resPath}"` : "[missing]"
         }
       }
     }
@@ -73,7 +80,7 @@ const getClassDeclarationHeader = (
     return `${isTool ? "tool\n" : ""}${
       extendsFrom ? `extends ${extendsFrom}` : ""
     }
-${props.isAutoload ? "" : `class_name ${node.name?.getText()}\n`}`
+${props.isAutoload || !node.name ? "" : `class_name ${node.name.getText()}\n`}`
   }
 
   if (isTool) {
@@ -148,16 +155,16 @@ export const parseSourceFile = (
       const classDecl = statement as ts.ClassDeclaration | ts.ClassExpression
       const className = classDecl.name?.text
 
-      if (!className) {
-        addError({
-          description: "Anonymous classes are not supported",
-          error: ErrorName.ClassCannotBeAnonymous,
-          location: classDecl,
-          stack: new Error().stack ?? "",
-        })
+      // if (!className) {
+      //   addError({
+      //     description: "Anonymous classes are not supported",
+      //     error: ErrorName.ClassCannotBeAnonymous,
+      //     location: classDecl,
+      //     stack: new Error().stack ?? "",
+      //   })
 
-        continue
-      }
+      //   continue
+      // }
 
       parsedClassDeclarations.push({
         fileName:
@@ -293,6 +300,16 @@ class_name Test
 
 class InnerTest:
   var field: int = 2
+`,
+}
+
+export const testAnonymousClass: Test = {
+  ts: `
+export default class extends Node2D {
+}
+  `,
+  expected: `
+extends Node2D
 `,
 }
 
