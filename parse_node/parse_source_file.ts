@@ -57,13 +57,16 @@ const getClassDeclarationHeader = (
             location: node,
             stack: new Error().stack ?? "",
           })
-        } else if (!modifiers.includes("default")) {
+        } else if (
+          !modifiers.includes("declare") &&
+          !modifiers.includes("default")
+        ) {
           // If a class declaration does not have default export then this is an inner class
           // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
           extendsFrom = asset
             ? `"${asset.resPath}".${type.getText()}`
             : "[missing]"
-        } else if (!classDecl.name) {
+        } else if (!modifiers.includes("declare") && !classDecl.name) {
           // If a class declaration have default export and does not have a name then it is anonymous
           // The syntax for extending anonymous class in gdscript is: extends "res://compiled/Test.gd"
           extendsFrom = asset ? `"${asset.resPath}"` : "[missing]"
