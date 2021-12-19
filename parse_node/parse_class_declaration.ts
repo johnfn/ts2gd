@@ -4,7 +4,12 @@ import { ParseState, combine } from "../parse_node"
 import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType } from "../ts_utils"
-import { isDecoratedAsExports } from "./parse_property_declaration"
+import {
+  isDecoratedAsExportFlags,
+  isDecoratedAsExports,
+  parseExports,
+  parseExportFlags,
+} from "./parse_property_declaration"
 
 const getSettersAndGetters = (
   members: readonly ts.ClassElement[],
@@ -27,16 +32,11 @@ const getSettersAndGetters = (
     let exportText: string | null = null
 
     if (isDecoratedAsExports(setGet)) {
-      const typeGodotName = getGodotType(
-        setGet,
-        props.program.getTypeChecker().getTypeAtLocation(setGet),
-        props,
-        true, // isExported
-        undefined,
-        setGet.type
-      )
+      exportText = parseExports(setGet, props)
+    }
 
-      exportText = `export(${typeGodotName ?? "null"}) `
+    if (isDecoratedAsExportFlags(setGet)) {
+      exportText = parseExportFlags(setGet, props)
     }
 
     if (setGet.kind === SyntaxKind.SetAccessor) {
@@ -195,6 +195,29 @@ export default class Foo {
   expected: `
 class_name Foo
 var x: int = 1
+`,
+}
+
+export const testExportArgsSetGet: Test = {
+  ts: `
+@autoload
+export default class Foo {
+  @exports
+  get nodes(): PackedScene<Node2D>[] {
+      return [];
+  }
+
+  set nodes(v: PackedScene<Node2D>[]) {
+
+  }
+}`,
+  expected: `
+class_name Foo
+export(Array, PackedScene) var nodes setget nodes_set, nodes_get
+func nodes_get():
+  return []
+func nodes_set(_v):
+  pass
 `,
 }
 

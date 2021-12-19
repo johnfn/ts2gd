@@ -13,18 +13,152 @@ export const isDecoratedAsExports = (
     | ts.SetAccessorDeclaration
 ) => {
   return !!node.decorators?.find(
-    (dec) => dec.expression.getText() === "exports"
+    (dec) =>
+      dec.expression.getText() === "exports" ||
+      (ts.isCallExpression(dec.expression) &&
+        dec.expression.expression.getText() === "exports")
   )
 }
 
-const isDecoratedAsExportFlags = (node: ts.PropertyDeclaration): boolean => {
+export const parseExports = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration,
+  props: ParseState
+) => {
+  const decoration = node.decorators?.find(
+    (dec) =>
+      dec.expression.getText() === "exports" ||
+      (ts.isCallExpression(dec.expression) &&
+        dec.expression.expression.getText() === "exports")
+  )!
+
+  const typeGodotName = getGodotType(
+    node,
+    props.program.getTypeChecker().getTypeAtLocation(node),
+    props,
+    true, // isExported
+    undefined,
+    node.type
+  )
+
+  const godotExportArgs: string[] = [typeGodotName ?? "null"]
+
+  if (node.type && ts.isArrayTypeNode(node.type)) {
+    // Handle infering Array type for exports
+
+    godotExportArgs.push(...parseExportsArrayElement(node.type, props))
+  }
+
+  if (decoration.expression.kind === SyntaxKind.CallExpression) {
+    // Handle exports arguments
+    const fn = decoration.expression as ts.CallExpression
+
+    if (fn.arguments.length > 0) {
+      const result = combine({
+        parent: decoration,
+        nodes: [...fn.arguments],
+        props,
+        parsedStrings: (...args) =>
+          args
+            .map((arg) =>
+              arg.startsWith("ExportHint.")
+                ? arg.substr("ExportHint.".length)
+                : arg
+            )
+            .join(", "),
+      })
+
+      godotExportArgs.push(result.content)
+    }
+  }
+
+  return `export(${godotExportArgs.join(", ")}) `
+}
+
+const parseExportsArrayElement = (
+  node: ts.ArrayTypeNode,
+  props: ParseState
+): string[] => {
+  let elementType = node.elementType
+  const godotExportArgs = []
+
+  if (ts.isArrayTypeNode(elementType)) {
+    // Handle array of arrays of arrays ...
+
+    const typeGodotElement = getGodotType(
+      elementType,
+      props.program.getTypeChecker().getTypeAtLocation(elementType),
+      props,
+      true, // isExported
+      undefined,
+      elementType
+    )
+
+    return [
+      typeGodotElement ?? "null",
+      ...parseExportsArrayElement(elementType, props),
+    ]
+  } else if (ts.isTypeReferenceNode(elementType)) {
+    // If elementType is generic we need to extract only type name and discard type arguments
+
+    // TODO: to remove this 'as any' cast the 'getGodotType' function
+    //       should be adjusted to allow other types of nodes than 'ts.TypeNode'
+    //       for actualType argument
+    elementType = elementType.typeName as any
+  }
+
+  if (
+    elementType.kind !== SyntaxKind.AnyKeyword &&
+    elementType.kind !== SyntaxKind.UnknownKeyword
+  ) {
+    // unknown and any keyword should not infer array type for export
+
+    const typeGodotElement = getGodotType(
+      elementType,
+      props.program.getTypeChecker().getTypeAtLocation(elementType),
+      props,
+      true, // isExported
+      undefined,
+      elementType
+    )
+
+    if (typeGodotElement) {
+      godotExportArgs.push(typeGodotElement)
+    } else {
+      addError({
+        description: `
+Cannot infer element type for array export.
+`,
+        error: ErrorName.ExportedVariableError,
+        location: elementType,
+        stack: new Error().stack ?? "",
+      })
+
+      return []
+    }
+  }
+
+  return godotExportArgs
+}
+
+export const isDecoratedAsExportFlags = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration
+): boolean => {
   return !!node.decorators?.find((dec) =>
     dec.expression.getText().startsWith("export_flags")
   )
 }
 
-const parseExportFlags = (
-  node: ts.PropertyDeclaration,
+export const parseExportFlags = (
+  node:
+    | ts.PropertyDeclaration
+    | ts.GetAccessorDeclaration
+    | ts.SetAccessorDeclaration,
   props: ParseState
 ): string => {
   const decoration = node.decorators?.find((dec) =>
@@ -34,7 +168,7 @@ const parseExportFlags = (
   if (decoration.expression.kind !== SyntaxKind.CallExpression) {
     addError({
       description: `
-I'm confused by export_flags here. It should be a function call. 
+I'm confused by export_flags here. It should be a function call.
 
 For instance, ${chalk.green(`@export_flags("A", "B", "C")`)}`,
       error: ErrorName.ExportedVariableError,
@@ -151,20 +285,9 @@ export const parsePropertyDeclaration = (
   let exportText = ""
 
   if (isDecoratedAsExports(node)) {
-    let typeGodotName = getGodotType(
-      node,
-      props.program.getTypeChecker().getTypeAtLocation(node),
-      props,
-      true, // isExported
-      node.initializer,
-      node.type
-    )
-
     // TODO: Have a fallback
 
-    exportText = isDecoratedAsExports(node)
-      ? `export(${typeGodotName ?? "null"}) `
-      : ""
+    exportText = isDecoratedAsExports(node) ? parseExports(node, props) : ""
   }
 
   if (isDecoratedAsExportFlags(node)) {
@@ -253,7 +376,7 @@ export default class Test {
   `,
   expected: `
 class_name Test
-export(Array) var foo
+export(Array, float) var foo
 `,
 }
 
@@ -266,7 +389,7 @@ export default class Test {
   `,
   expected: `
 class_name Test
-export(Array) var foo
+export(Array, Dictionary) var foo
 `,
 }
 
@@ -447,5 +570,99 @@ export default class Test {
   expected: `
 class_name Test
 export(int, FLAGS, "A", "B", "C") var exportFlagsTest
+`,
+}
+
+export const testExportInferArrayTypeFromNonGenericElement: Test = {
+  ts: `
+export default class Test {
+  @exports
+  exportFlagsTest: float[];
+}
+  `,
+  expected: `
+class_name Test
+export(Array, float) var exportFlagsTest
+`,
+}
+
+export const testExportInferArrayTypeFromGenericElement: Test = {
+  ts: `
+export default class Test {
+  @exports
+  exportFlagsTest: PackedScene<Node2D>[];
+}
+  `,
+  expected: `
+class_name Test
+export(Array, PackedScene) var exportFlagsTest
+`,
+}
+
+export const testExportInferAnyOrUnknownArray: Test = {
+  ts: `
+export default class Test {
+  @exports
+  exportFlagsTest: any[];
+
+  @exports
+  exportFlagsTest2: unknown[];
+}
+  `,
+  expected: `
+class_name Test
+export(Array) var exportFlagsTest
+export(Array) var exportFlagsTest2
+`,
+}
+
+export const testExportInferArrayOfArrays: Test = {
+  ts: `
+export default class Test {
+  @exports
+  exportFlagsTest: float[][];
+}
+  `,
+  expected: `
+class_name Test
+export(Array, Array, float) var exportFlagsTest
+`,
+}
+
+export const testExportExportHint: Test = {
+  ts: `
+export default class Test {
+  @exports(ExportHint.RGBA)
+  exportFlagsTest: Color;
+}
+  `,
+  expected: `
+class_name Test
+export(Color, RGBA) var exportFlagsTest
+`,
+}
+
+export const testExportExportHintComplex: Test = {
+  ts: `
+export default class Test {
+  @exports(ExportHint.EXP, 100, 1000, 20)
+  exportFlagsTest: float;
+
+  @exports("Value1", "Value2", "Value3")
+  exportFlagsTest2: string;
+
+  @exports(ExportHint.FLAGS, "Fire", "Water", "Earth", "Wind")
+  exportFlagsTest3: int;
+
+  @exports(ExportHint.FILE, ExportHint.GLOBAL, "*.png")
+  exportFlagsTest4: string;
+}
+  `,
+  expected: `
+class_name Test
+export(float, EXP, 100, 1000, 20) var exportFlagsTest: float
+export(String, "Value1", "Value2", "Value3") var exportFlagsTest2: String
+export(int, FLAGS, "Fire", "Water", "Earth", "Wind") var exportFlagsTest3: int
+export(String, FILE, GLOBAL, "*.png") var exportFlagsTest4: String
 `,
 }
