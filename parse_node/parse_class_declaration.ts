@@ -145,30 +145,28 @@ class InnerTest extends Node2D:
 `,
 }
 
-// TODO: implement calling super on inner class
+export const testInnerClassExtendsSuperCall: Test = {
+  ts: `
+export default class Test {
+}
 
-// export const testInnerClassExtendsSuperCall: Test = {
-//   ts: `
-// export default class Test {
-// }
+export class InnerTest extends Node2D {
+  field: int = 2;
 
-// export class InnerTest extends Node2D {
-//   field: int = 2;
+  constructor() {
+    super();
+  }
+}
+  `,
+  expected: `
+class_name Test
 
-//   constructor() {
-//     super();
-//   }
-// }
-//   `,
-//   expected: `
-// class_name Test
-
-// class InnerTest extends Node2D:
-//   var field: int = 2
-//   func _init().():
-//     pass
-// `,
-// }
+class InnerTest extends Node2D:
+  var field: int = 2
+  func _init().():
+    pass
+`,
+}
 
 export const testFileWithoutDefaultClass: Test = {
   ts: `
