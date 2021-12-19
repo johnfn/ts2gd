@@ -192,12 +192,13 @@ export const buildNodePathsTypeForScript = (
 
   for (const { path, node } of commonRelativePaths) {
     const script = node.getScript()
+    const className = script?.exportedTsClassName()
 
-    if (script) {
+    if (script && className) {
       pathToImport[path] = `import("${script.fsPath.slice(
         0,
         -".ts".length
-      )}").${/*script.exportedTsClassName()*/ "default"}`
+      )}").${className}`
     } else {
       pathToImport[path] = node.tsType()
     }

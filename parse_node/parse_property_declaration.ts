@@ -432,40 +432,6 @@ export(Dictionary) var foo
 `,
 }
 
-// export const testNotSoNormalExportedVariable10: Test = {
-//   ts: `
-// export enum MyEnum {
-
-// }
-
-// export default class Test {
-//   @exports
-//   foo: MyEnum
-// }
-//   `,
-//   fileName: "Test.ts",
-//   expected: {
-//     type: "multiple-files",
-//     files: [
-//       {
-//         fileName: "/Users/johnfn/MyGame/compiled/Test.gd",
-//         expected: `
-// class_name Test
-// const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
-// export(MyEnum) var foo
-//       `,
-//       },
-
-//       {
-//         fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
-//         expected: `
-// const MyEnum = {
-// }`,
-//       },
-//     ],
-//   },
-// }
-
 export const testNotSoNormalExportedVariable10: Test = {
   ts: `
 export enum MyEnum {

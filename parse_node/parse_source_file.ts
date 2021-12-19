@@ -161,17 +161,6 @@ export const parseSourceFile = (
       const classDecl = statement as ts.ClassDeclaration | ts.ClassExpression
       const className = classDecl.name?.text
 
-      // if (!className) {
-      //   addError({
-      //     description: "Anonymous classes are not supported",
-      //     error: ErrorName.ClassCannotBeAnonymous,
-      //     location: classDecl,
-      //     stack: new Error().stack ?? "",
-      //   })
-
-      //   continue
-      // }
-
       parsedClassDeclarations.push({
         fileName:
           props.sourceFileAsset.gdContainingDirectory + className + ".gd",

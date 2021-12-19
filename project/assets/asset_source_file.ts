@@ -106,25 +106,8 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       )
 
     if (topLevelClasses.length === 0) {
-      // return {
-      //   error: ErrorName.ClassNameNotFound,
-      //   location: ast,
-      //   description: "Every file must have a class.",
-      //   stack: new Error().stack ?? "",
-      // }
-
       return null
     }
-
-    // if (topLevelClasses.length > 1) {
-    //   return {
-    //     error: ErrorName.TooManyClassesFound,
-    //     location: topLevelClasses[1],
-    //     description:
-    //       "Every file must have exactly one class. Consider moving this class into a new file.",
-    //     stack: new Error().stack ?? "",
-    //   }
-    // }
 
     return topLevelClasses[0]
   }
@@ -141,18 +124,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       return null
     }
 
-    const name = node.name
-
-    if (!name) {
-      return {
-        error: ErrorName.ClassCannotBeAnonymous,
-        location: node ?? this.tsRelativePath,
-        description: "This class cannot be anonymous",
-        stack: new Error().stack ?? "",
-      }
-    }
-
-    return name?.text ?? null
+    return "default"
   }
 
   extendedClassName(): string | TsGdError | null {
@@ -235,17 +207,8 @@ ${chalk.green(
     const className = this.exportedTsClassName()
 
     if (className) {
-      return `import('${this.fsPath.slice(0, -".ts".length)}').${
-        /* className */ "default"
-      }`
+      return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
     } else {
-      // addError({
-      //   description: `Failed to find className for ${this.fsPath}`,
-      //   error: ErrorName.Ts2GdError,
-      //   location: this.fsPath,
-      //   stack: new Error().stack ?? "",
-      // })
-
       return null
     }
   }
