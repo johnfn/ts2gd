@@ -31,6 +31,9 @@ export class Paths {
   /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
   godotSourceRepoPath: string | undefined
 
+  /** When set to true does not generates comments in .gd code */
+  removeComments: boolean
+
   constructor(args: ParsedArgs) {
     if (args.init) {
       this.init()
@@ -95,6 +98,7 @@ export class Paths {
       "dynamic"
     )
 
+    this.removeComments = tsgdJson.removeComments || false
     this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
 
     this.tsconfigPath = path.join(

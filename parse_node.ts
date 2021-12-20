@@ -63,6 +63,7 @@ import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 import { AssetSourceFile } from "./project/assets/asset_source_file"
 import { LibraryFunctionName } from "./parse_node/library_functions"
+import { parseNodeWithComments } from "./parse_node/parse_node_with_comments"
 
 export type ParseState = {
   isConstructor: boolean
@@ -82,6 +83,7 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
   sourceFile: ts.SourceFile
   sourceFileAsset: AssetSourceFile
+  commentsStack?: ts.CommentRange[]
 }
 
 export enum ExtraLineType {
@@ -245,7 +247,7 @@ export function combine(args: {
   }
 }
 
-export const parseNode = (
+export const parseNodeWithoutComments = (
   genericNode: ts.Node,
   props: ParseState
 ): ParseNodeType => {
@@ -499,4 +501,14 @@ Try rewriting it, or opening an issue on the ts2gd GitHub repo.
         content: "",
       }
   }
+}
+
+export const parseNode = (
+  genericNode: ts.Node,
+  props: ParseState
+): ParseNodeType => {
+  // TsGdProjectClass.Paths is undefined when running tests
+  return (TsGdProjectClass.Paths ?? {}).removeComments
+    ? parseNodeWithoutComments(genericNode, props)
+    : parseNodeWithComments(genericNode, props)
 }
