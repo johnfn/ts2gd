@@ -6,7 +6,7 @@ import {
 } from "../parse_node"
 import { Test } from "../tests/test"
 
-const getBackwardsClosestNewLinesCount = (text: string, pos: number) => {
+const countNewlinesBeforePosition = (text: string, pos: number) => {
   let count = 0
 
   for (let i = pos - 1; i >= 0; i--) {
@@ -26,7 +26,7 @@ const getBackwardsClosestNewLinesCount = (text: string, pos: number) => {
   return count
 }
 
-export const parseNodeWithComments = (
+export const parseComments = (
   node: ts.Node,
   props: ParseState
 ): ParseNodeType => {
@@ -34,6 +34,7 @@ export const parseNodeWithComments = (
     return parseNodeWithoutComments(node, props)
   }
 
+  // gather up all leading and trailing comments from a node
   let leadingComments =
     ts
       .getLeadingCommentRanges(
@@ -42,7 +43,7 @@ export const parseNodeWithComments = (
       )
       ?.filter((v) => v.kind === ts.SyntaxKind.SingleLineCommentTrivia) ?? []
 
-  let tarilingComments =
+  let trailingComments =
     ts
       .getTrailingCommentRanges(
         node.getSourceFile().getFullText(),
@@ -50,28 +51,36 @@ export const parseNodeWithComments = (
       )
       ?.filter((v) => v.kind === ts.SyntaxKind.SingleLineCommentTrivia) ?? []
 
-  let commentStackUnwind = props.commentsStack?.length ?? 0
+  let lengthBeforeParsingThisNode = props.commentsStack?.length ?? 0
 
-  if (leadingComments.length > 0 || tarilingComments.length > 0) {
+  if (leadingComments.length > 0 || trailingComments.length > 0) {
     if (!props.commentsStack) {
       props.commentsStack = []
     }
 
+    /* all nodes in the same line report the same comments
+       we need to take only first of the node into account and 
+       ignore the rest
+
+       example code returning the same commment multiple times:
+           // some comment
+           myFunc(1 + 2, someVar)
+    */
     leadingComments = leadingComments.filter(
       (v) =>
         !props.commentsStack!.find((c) => c.pos === v.pos && c.end === v.end)
     )
-    tarilingComments = tarilingComments.filter(
+    trailingComments = trailingComments.filter(
       (v) =>
         !props.commentsStack!.find((c) => c.pos === v.pos && c.end === v.end)
     )
 
-    props.commentsStack.push(...leadingComments, ...tarilingComments)
+    props.commentsStack.push(...leadingComments, ...trailingComments)
   }
 
   const result = parseNodeWithoutComments(node, props)
 
-  if (leadingComments.length > 0 || tarilingComments.length > 0) {
+  if (leadingComments.length > 0 || trailingComments.length > 0) {
     const fullText = node.getSourceFile().getFullText()
 
     if (leadingComments.length > 0) {
@@ -79,8 +88,8 @@ export const parseNodeWithComments = (
         (v) => "#" + fullText.slice(v.pos + 2, v.end)
       )
       const addFirstNewLineToLeadingComments =
-        getBackwardsClosestNewLinesCount(fullText, leadingComments[0].pos) >
-          1 || !result.content.endsWith("\n")
+        countNewlinesBeforePosition(fullText, leadingComments[0].pos) > 1 ||
+        !result.content.endsWith("\n")
 
       result.content =
         (addFirstNewLineToLeadingComments ? "\n" : "") +
@@ -89,12 +98,12 @@ export const parseNodeWithComments = (
         result.content
     }
 
-    if (tarilingComments.length > 0) {
-      const trailingCommentsText = tarilingComments.map(
+    if (trailingComments.length > 0) {
+      const trailingCommentsText = trailingComments.map(
         (v) => "#" + fullText.slice(v.pos + 2, v.end)
       )
       const addFirstNewLineToTrailingComments =
-        getBackwardsClosestNewLinesCount(fullText, tarilingComments[0].pos) > 0
+        countNewlinesBeforePosition(fullText, trailingComments[0].pos) > 0
 
       result.content =
         result.content +
@@ -103,7 +112,10 @@ export const parseNodeWithComments = (
         "\n"
     }
 
-    props.commentsStack!.length = commentStackUnwind
+    props.commentsStack = props.commentsStack?.slice(
+      0,
+      lengthBeforeParsingThisNode
+    )
   }
 
   return result

@@ -31,7 +31,7 @@ export class Paths {
   /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
   godotSourceRepoPath: string | undefined
 
-  /** When set to true does not generates comments in .gd code */
+  /** Should we strip comments from the godot output? */
   removeComments: boolean
 
   constructor(args: ParsedArgs) {

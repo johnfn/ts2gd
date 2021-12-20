@@ -63,7 +63,7 @@ import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 import { AssetSourceFile } from "./project/assets/asset_source_file"
 import { LibraryFunctionName } from "./parse_node/library_functions"
-import { parseNodeWithComments } from "./parse_node/parse_node_with_comments"
+import { parseComments } from "./parse_node/parse_node_with_comments"
 
 export type ParseState = {
   isConstructor: boolean
@@ -510,5 +510,5 @@ export const parseNode = (
   // TsGdProjectClass.Paths is undefined when running tests
   return (TsGdProjectClass.Paths ?? {}).removeComments
     ? parseNodeWithoutComments(genericNode, props)
-    : parseNodeWithComments(genericNode, props)
+    : parseComments(genericNode, props)
 }
