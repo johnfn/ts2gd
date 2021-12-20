@@ -1,9 +1,11 @@
-import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
-import { ParseState } from "./parse_node"
-import { addError, ErrorName } from "./errors"
 import fs from "fs"
 import path from "path"
+
 import chalk from "chalk"
+import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
+
+import { ParseState } from "./parse_node"
+import { ErrorName, addError } from "./errors"
 
 export const isNullableNode = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)

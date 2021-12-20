@@ -1,14 +1,15 @@
 import ts, { SyntaxKind } from "typescript"
-import { addError, ErrorName } from "../errors"
-import { ParseState, combine } from "../parse_node"
-import { ParseNodeType } from "../parse_node"
+
+import { ErrorName, addError } from "../errors"
+import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType } from "../ts_utils"
+
 import {
   isDecoratedAsExportFlags,
   isDecoratedAsExports,
-  parseExports,
   parseExportFlags,
+  parseExports,
 } from "./parse_property_declaration"
 
 const getSettersAndGetters = (

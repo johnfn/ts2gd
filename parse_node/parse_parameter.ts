@@ -1,8 +1,14 @@
 import ts from "typescript"
-import { combine, ExtraLine, ExtraLineType, ParseState } from "../parse_node"
-import { getGodotType } from "../ts_utils"
-import { ParseNodeType } from "../parse_node"
+
+import {
+  ExtraLine,
+  ExtraLineType,
+  ParseState,
+  combine,
+  ParseNodeType,
+} from "../parse_node"
 import { Test } from "../tests/test"
+import { getGodotType } from "../ts_utils"
 
 const magic = `"[no value passed in]"`
 

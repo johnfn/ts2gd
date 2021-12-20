@@ -1,9 +1,10 @@
-import path from "path"
 import fs from "fs"
+import path from "path"
 import process from "process"
-import { showLoadingMessage } from "../main"
-import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
+
 import { ParsedArgs } from "../parse_args"
+import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
+import { showLoadingMessage } from "../main"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 

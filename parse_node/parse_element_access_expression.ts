@@ -1,7 +1,6 @@
 import ts from "typescript"
-import { ParseState, parseNode, combine } from "../parse_node"
 
-import { ParseNodeType } from "../parse_node"
+import { ParseState, combine, parseNode, ParseNodeType } from "../parse_node"
 
 export const parseElementAccessExpression = (
   node: ts.ElementAccessExpression,

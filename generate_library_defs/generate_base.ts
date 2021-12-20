@@ -1,9 +1,11 @@
 import fs from "fs"
 import path from "path"
+
+import { TsGdProjectClass } from "../project/project"
+
 import { ArrayDefinition } from "./custom_defs/array_def"
 import { DictionaryDefinition } from "./custom_defs/dictionary_def"
 import { PackedSceneDef } from "./custom_defs/packed_scene_def"
-import { TsGdProjectClass } from "../project/project"
 
 export const baseFileContent = `
 

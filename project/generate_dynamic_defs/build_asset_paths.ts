@@ -1,5 +1,6 @@
 import fs from "fs"
 import path from "path"
+
 import { AssetGodotScene } from "../assets/asset_godot_scene"
 import { AssetSourceFile } from "../assets/asset_source_file"
 import { TsGdProjectClass } from "../project"

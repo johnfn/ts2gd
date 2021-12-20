@@ -1,6 +1,6 @@
 import ts from "typescript"
-import { combine, ParseState } from "../parse_node"
-import { ParseNodeType } from "../parse_node"
+
+import { ParseNodeType, ParseState, combine } from "../parse_node"
 
 export const parseBlock = (
   node: ts.Block,

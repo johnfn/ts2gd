@@ -1,5 +1,7 @@
 import fs from "fs"
+
 import { parseStringPromise } from "xml2js"
+
 import {
   formatJsDoc,
   godotTypeToTsType,
@@ -152,7 +154,7 @@ export const parseMethod = (
     containingClassName !== undefined && name === containingClassName
   const docString = formatJsDoc(method.description[0].trim())
   let returnType = godotTypeToTsType(method.return?.[0]["$"].type ?? "Variant")
-  let argumentList: string = ""
+  let argumentList = ""
 
   if (args || isVarArgs) {
     if (isVarArgs) {

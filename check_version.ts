@@ -1,6 +1,8 @@
-import packageJson from "./package.json"
 import https from "https"
+
 import chalk from "chalk"
+
+import packageJson from "./package.json"
 
 export const checkVersionAsync = async () => {
   console.info(chalk.whiteBright("ts2gd", "v" + packageJson.version))

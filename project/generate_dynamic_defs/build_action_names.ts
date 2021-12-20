@@ -1,5 +1,6 @@
-import path from "path"
 import fs from "fs"
+import path from "path"
+
 import { TsGdProjectClass } from "../project"
 
 export const buildActionNames = (project: TsGdProjectClass) => {

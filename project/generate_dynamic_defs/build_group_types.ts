@@ -1,7 +1,8 @@
-import path from "path"
 import fs from "fs"
-import { TsGdProjectClass } from "../project"
+import path from "path"
+
 import { TsGdError } from "../../errors"
+import { TsGdProjectClass } from "../project"
 
 export const buildGroupTypes = (project: TsGdProjectClass): void => {
   const groupNameToTypes: { [key: string]: Set<string> } = {}

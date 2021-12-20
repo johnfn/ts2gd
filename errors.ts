@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import ts from "typescript"
+
 import { ParsedArgs } from "./parse_args"
 
 export enum ErrorName {

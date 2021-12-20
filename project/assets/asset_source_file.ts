@@ -1,14 +1,16 @@
 import fs from "fs"
-import ts, { SyntaxKind } from "typescript"
 import path from "path"
 
-import { BaseAsset } from "./base_asset"
-import { parseNode } from "../../parse_node"
-import { addError, ErrorName, TsGdError } from "../../errors"
+import ts, { SyntaxKind } from "typescript"
+import * as utils from "tsutils"
+import chalk from "chalk"
+
+import { ErrorName, TsGdError, addError } from "../../errors"
 import { Scope } from "../../scope"
 import { TsGdProjectClass } from "../project"
-import chalk from "chalk"
-import * as utils from "tsutils"
+import { parseNode } from "../../parse_node"
+
+import { BaseAsset } from "./base_asset"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we

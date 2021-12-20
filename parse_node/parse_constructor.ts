@@ -1,7 +1,6 @@
 import ts from "typescript"
-import { ParseState, combine } from "../parse_node"
 
-import { ParseNodeType } from "../parse_node"
+import { ParseState, combine, ParseNodeType } from "../parse_node"
 
 export const parseConstructor = (
   node: ts.ConstructorDeclaration,
