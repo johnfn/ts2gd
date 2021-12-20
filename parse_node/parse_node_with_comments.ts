@@ -1,9 +1,5 @@
 import ts from "typescript"
-import {
-  ParseNodeType,
-  parseNodeWithoutComments,
-  ParseState,
-} from "../parse_node"
+import { parseNode, ParseNodeType, ParseState } from "../parse_node"
 import { Test } from "../tests/test"
 
 const countNewlinesBeforePosition = (text: string, pos: number) => {
@@ -31,7 +27,7 @@ export const parseComments = (
   props: ParseState
 ): ParseNodeType => {
   if (ts.isSourceFile(node)) {
-    return parseNodeWithoutComments(node, props)
+    return parseNode(node, props, { ignoreComments: true })
   }
 
   // gather up all leading and trailing comments from a node
@@ -78,7 +74,7 @@ export const parseComments = (
     props.commentsStack.push(...leadingComments, ...trailingComments)
   }
 
-  const result = parseNodeWithoutComments(node, props)
+  const result = parseNode(node, props, { ignoreComments: true })
 
   if (leadingComments.length > 0 || trailingComments.length > 0) {
     const fullText = node.getSourceFile().getFullText()

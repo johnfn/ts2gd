@@ -247,10 +247,19 @@ export function combine(args: {
   }
 }
 
-export const parseNodeWithoutComments = (
+export const parseNode = (
   genericNode: ts.Node,
-  props: ParseState
+  props: ParseState,
+  options?: { ignoreComments?: boolean }
 ): ParseNodeType => {
+  // TsGdProjectClass.Paths is undefined when running tests
+  if (
+    !(TsGdProjectClass.Paths ?? {}).removeComments &&
+    !options?.ignoreComments
+  ) {
+    return parseComments(genericNode, props)
+  }
+
   switch (genericNode.kind) {
     case SyntaxKind.SourceFile:
       return parseSourceFile(genericNode as ts.SourceFile, props)
@@ -501,14 +510,4 @@ Try rewriting it, or opening an issue on the ts2gd GitHub repo.
         content: "",
       }
   }
-}
-
-export const parseNode = (
-  genericNode: ts.Node,
-  props: ParseState
-): ParseNodeType => {
-  // TsGdProjectClass.Paths is undefined when running tests
-  return (TsGdProjectClass.Paths ?? {}).removeComments
-    ? parseNodeWithoutComments(genericNode, props)
-    : parseComments(genericNode, props)
 }
