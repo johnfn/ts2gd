@@ -94,3 +94,31 @@ func _ready():
   print(TestEnum.A)
   `,
 }
+
+export const testEnumDeclaration3: Test = {
+  ts: `
+export enum TestEnum { 
+  A = "A", 
+  B = "B",
+  C = "C",
+  D = "D",
+}
+
+export default class Hello {
+  constructor() {
+    print(TestEnum.C)
+  }
+}
+`,
+  expected: `
+class_name Hello
+const TestEnum = {
+  "A": "A", 
+  "B": "B",
+  "C": "C",
+  "D": "D",
+}
+func _ready():
+  print(TestEnum.C)
+  `,
+}

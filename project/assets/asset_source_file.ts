@@ -113,7 +113,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
   }
 
   // This can be different than the Godot class name for autoload classes.
-  exportedTsClassName(): string | TsGdError | null {
+  exportedTsClassName(realName?: boolean): string | TsGdError | null {
     const node = this.getClassNode()
 
     if (node && "error" in node) {
@@ -124,7 +124,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       return null
     }
 
-    return "default"
+    return realName ? node.name?.text ?? "Anonymous" : "default"
   }
 
   extendedClassName(): string | TsGdError | null {
@@ -392,7 +392,9 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
         description: `Be sure to export an instance of your autoload class, e.g.:
 
 ${chalk.white(
-  `export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`
+  `export const ${this.getGodotClassName()} = new ${this.exportedTsClassName(
+    true
+  )}()`
 )}
         `,
         location: classNode ?? this.fsPath,

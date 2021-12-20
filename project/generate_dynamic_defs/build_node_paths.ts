@@ -78,7 +78,7 @@ export const buildNodePathsTypeForScript = (
   // For every potential relative path, validate that it can be found
   // in each instantiated node.
 
-  const className = script.exportedTsClassName()
+  const className = script.exportedTsClassName(true)
   const extendedClassName = script.extendedClassName()
 
   const destPath = path.join(
@@ -289,7 +289,7 @@ ${Object.entries(pathToImport)
 
   result += `
 
-import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
+import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}

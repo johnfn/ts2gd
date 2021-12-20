@@ -58,7 +58,7 @@ export const parseConstructor = (
           parsedStrings: (body) => `
 func _init(${constructorArgs.content}).(${superCallArgs.content}): 
   ${body.trim().length > 0 ? body : "pass"}
-        `,
+`,
         })
       }
 
@@ -71,14 +71,14 @@ func _init(${constructorArgs.content}).(${superCallArgs.content}):
         parsedStrings: (body) => `
 func _init(${constructorArgs.content}): 
   ${body.trim().length > 0 ? body : "pass"}
-  `,
+`,
       })
     } else {
       return combine({
         parent: node,
         nodes: [],
         props,
-        parsedStrings: () => `func _init():\n  pass`,
+        parsedStrings: () => `func _init():\n  pass\n`,
       })
     }
   }
@@ -101,7 +101,7 @@ func _ready():
       parent: node,
       nodes: [],
       props,
-      parsedStrings: () => `func _ready():\n  pass`,
+      parsedStrings: () => `func _ready():\n  pass\n`,
     })
   }
 }

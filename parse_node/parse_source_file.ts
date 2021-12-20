@@ -46,33 +46,37 @@ const getClassDeclarationHeader = (
           .find((v) => v.fsPath === classDecl.getSourceFile().fileName)
 
         if (
-          !asset &&
           !modifiers.includes("declare") &&
           (!modifiers.includes("default") || !classDecl.name)
         ) {
-          addError({
-            description:
-              "Class extends a type for which a source file is missing. This is an internal ts2gd bug. Please report it.",
-            error: ErrorName.ClassDoesntExtendAnything,
-            location: node,
-            stack: new Error().stack ?? "",
-          })
-        } else if (
-          !modifiers.includes("declare") &&
-          !modifiers.includes("default")
-        ) {
-          // If a class declaration does not have default export then this is an inner class
-          // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
+          // Only when a class is not marked as 'declare' and a class is inner
+          // class (does not have 'default') or anonymous class (does not have a name)
 
-          extendsFrom = asset
-            ? props.sourceFileAsset === asset
-              ? type.getText()
-              : `"${asset.resPath}".${type.getText()}`
-            : "[missing]"
-        } else if (!modifiers.includes("declare") && !classDecl.name) {
-          // If a class declaration have default export and does not have a name then it is anonymous
-          // The syntax for extending anonymous class in gdscript is: extends "res://compiled/Test.gd"
-          extendsFrom = asset ? `"${asset.resPath}"` : "[missing]"
+          if (!asset) {
+            extendsFrom = ""
+            addError({
+              description: `Class ${
+                classDecl.name ?? `<${classDecl.getSourceFile().fileName}>`
+              } extends ${type.getText()} for which a source file is missing. This is an internal ts2gd bug. Please report it.`,
+              error: ErrorName.ClassDoesntExtendAnything,
+              location: node,
+              stack: new Error().stack ?? "",
+            })
+          } else if (!modifiers.includes("default")) {
+            // If a class declaration does not have default export then this is an inner class
+            // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
+
+            if (props.sourceFileAsset === asset) {
+              extendsFrom = type.getText()
+            } else {
+              extendsFrom = `"${asset.resPath}".${type.getText()}`
+            }
+          } else if (!classDecl.name) {
+            // If a class declaration have default export and does not have a name then it is anonymous
+            // The syntax for extending anonymous class in gdscript is: extends "res://compiled/Test.gd"
+
+            extendsFrom = `"${asset.resPath}"`
+          }
         }
       }
     }
