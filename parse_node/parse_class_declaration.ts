@@ -89,11 +89,7 @@ export const parseClassDeclaration = (
     (dec) => dec.expression.getText() === "autoload"
   )
 
-  if (
-    !modifiers.includes("export") &&
-    !modifiers.includes("default") &&
-    isAutoload
-  ) {
+  if (!modifiers.includes("default") && isAutoload) {
     addError({
       description: "Only class exported as default can be autoloaded.",
       error: ErrorName.ClassMustBeExported,
