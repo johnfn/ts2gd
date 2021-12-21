@@ -41,6 +41,74 @@ To compile all source files once:
 
 ## Details and Differences
 
+### Classes
+
+Creating a file class in GDScript requires TypeScript class to be marked with `export default` keywords.
+
+```ts
+export default class MyNode extends Node2D {
+  constructor() {
+    super()
+    print("Hello world")
+  }
+}
+```
+
+```gdscript
+extends Node2D
+class_name MyNode
+
+func _ready():
+  print("Hello world")
+```
+
+File classes can also be anonymous to skip `class_name` generation.
+
+```ts
+export default class extends Node2D {
+  constructor() {
+    super()
+    print("Hello world")
+  }
+}
+```
+
+```gdscript
+extends Node2D
+
+func _ready():
+  print("Hello world")
+```
+
+### Inner classes
+
+To generate inner classes in GDScript file, TypeScript classes should not be marked with `default` keyword.
+
+```ts
+export class InnerClass extends Node2D {
+  constructor() {
+    super()
+    print("Hello InnerClass")
+  }
+}
+
+class NotExportedInnerClass {
+  constructor() {
+    print("Hello NotExportedInnerClass")
+  }
+}
+```
+
+```gdscript
+class InnerClass extends Node2D:
+  func _init().():
+    print("Hello InnerClass")
+
+class NotExportedInnerClass 
+  func _init():
+    print("Hello NotExportedInnerClass")
+```
+
 ### `get_node`
 
 `get_node` has been supercharged - it will now autocomplete the names of all
@@ -53,7 +121,7 @@ get type errors if you break any `get_node` calls!!
 
 ts2gd also provides a way to get any node by name, even the ones it can't verify exist:
 
-```
+```ts
 this.get_node<Label>("MyLabel")
 ```
 
@@ -73,13 +141,13 @@ Godot decides to put a bunch of enum values into global scope. I think this clut
 
 For instance,
 
-```
+```gdscript
 Input.is_key_pressed(KEY_W)
 ```
 
 becomes
 
-```
+```ts
 Input.is_key_pressed(KeyList.KEY_SPACE)
 ```
 
@@ -93,13 +161,13 @@ The RPC syntax has been improved.
 
 GDScript:
 
-```
+```gdscript
 this.rpc("my_rpc_method", "some-argument)
 ```
 
 TypeScript:
 
-```
+```ts
 this.my_rpc_method.rpc("some-argument")
 ```
 
@@ -111,7 +179,7 @@ Signals have been improved. All signals now start with `$` and are properties of
 
 This is what connect looks like in ts2gd:
 
-```
+```ts
 this.my_button.$pressed.connect(() => {
   print("Clicked the button!)
 })
@@ -129,7 +197,7 @@ yield this.get_tree().$idle_frame
 
 This is what emit looks like in ts2gd:
 
-```
+```ts
 class MySignallingClass extends Node2D {
   $my_signal!: Signal // ! to avoid the TS error about this signal being unassigned
 
@@ -145,9 +213,10 @@ In order to make a class autoload, decorate your class with `@autoload`, and cre
 
 Here's a full example of an autoload class.
 
-```
+```ts
+// autoload can be specified only on class marked 'export default'
 @autoload
-class MyAutoloadClass extends Node2D {
+export default class MyAutoloadClass extends Node2D {
   public hello = "hi"
 }
 
@@ -158,8 +227,8 @@ export const MyAutoload = new MyAutoloadClass()
 
 In order to mark an instance variable as `export`, use `@exports`, e.g.:
 
-```
-class ExportExample extends Node2D {
+```ts
+export default class ExportExample extends Node2D {
   @exports
   public hello = "exported"
 }
@@ -169,9 +238,9 @@ class ExportExample extends Node2D {
 
 In order to mark a script as `tool`, use `@tool`.
 
-```
+```ts
 @tool
-class MyToolScript extends Node2D {
+export default class MyToolScript extends Node2D {
   // ... do some tool script work here
 }
 ```
@@ -184,7 +253,7 @@ To mark a method as remotesync or remote, use `@remotesync` and `@remote`, respe
 
 TypeScript sadly has no support for operator overloading.
 
-```
+```ts
 const v1 = Vector(1, 2)
 const v2 = Vector(1, 2);
 
@@ -194,13 +263,13 @@ v1.mul(v2); // v1 * v2
 v1.div(v2); // v1 / v2
 ```
 
-The add/sub/mul/div gets compiled into the corresponding arithmatic.
+The add/sub/mul/div gets compiled into the corresponding arithmetic.
 
 ### Dictionary
 
 The default TS dictionary (e.g. `const dict = { a: 1 }`) only supports string, number and symbol as keys. If you want anything else, you can just use the Dictionary type, and use `.put` instead of square bracket access.
 
-```
+```ts
 const myComplexDict: Dictionary<Node2D, int> = todict({})
 
 myComplexDict.put(myNode, 5)
@@ -210,7 +279,7 @@ myComplexDict.put(myNode, 5)
 
 If you'd like ts2gd to generate the latest TS definitions from Godot, clone the Godot repository and point it at the 3.x tag. Then add the following to your ts2gd.json:
 
-```
+```json
   "godotSourceRepoPath": "/path/to/your/godot/clone"
 ```
 
@@ -264,7 +333,7 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 - [x] strongly type input action names
 - [x] handle renames better - delete the old compiled file, etc.
 - [ ] refactoring class names doesn't really work right now because i think we need to rename types in tscn files...
-- [ ] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
+- [x] would be nice to declare multiple classes in the same .ts file and have the compiler sort it out
 - [x] add a way to install ts2gd as a global command
 - [x] ensure that signal arguments match up
 - [ ] add a way to use ts2gd via installer rather than command line
