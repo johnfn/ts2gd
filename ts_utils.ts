@@ -441,3 +441,17 @@ export const getTimestamp = () => {
 
   return `[${h}:${m}:${s}]`
 }
+
+export const findContainingClassDeclaration = (
+  node: ts.Node
+): ts.ClassDeclaration | null => {
+  while (
+    !ts.isClassDeclaration(node) &&
+    !ts.isSourceFile(node) &&
+    node.parent
+  ) {
+    node = node.parent
+  }
+
+  return ts.isClassDeclaration(node) ? node : null
+}

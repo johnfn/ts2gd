@@ -20,6 +20,7 @@ export const parseMethodDeclaration = (
 
   let isRemote = false
   let isRemoteSync = false
+  let isStatic = node.modifiers?.some((v) => v.getText() === "static") ?? false
 
   for (const dec of node.decorators ?? []) {
     if (dec.expression.getText() === "remote") {
@@ -67,8 +68,8 @@ export const parseMethodDeclaration = (
       body = bodyLines.map((line) => "  " + line + "\n").join("")
 
       return `
-${isRemote ? "remote " : ""}${
-        isRemoteSync ? "remotesync " : ""
+${isRemote ? "remote " : ""}${isRemoteSync ? "remotesync " : ""}${
+        isStatic ? "static " : ""
       }func ${funcName}(${joinedParams}):
 ${body.trim() === "" ? "pass" : body}
 `
@@ -156,4 +157,19 @@ func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
   a = (1 if (typeof(a) == TYPE_STRING and a == "[no value passed in]") else a)
   b = (a if (typeof(b) == TYPE_STRING and b == "[no value passed in]") else b)
 `,
+}
+
+export const testStaticMethod: Test = {
+  ts: `
+export class Foo extends Node2D {
+  static staticMethod() {}
+}
+  `,
+  expected: `
+extends Node2D
+class_name Foo
+
+static func staticMethod():
+  pass
+  `,
 }

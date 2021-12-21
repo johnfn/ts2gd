@@ -8,7 +8,12 @@ import {
   ParseState,
 } from "../parse_node"
 import { Test } from "../tests/test"
-import { isDictionary, isEnumType, isNullableNode } from "../ts_utils"
+import {
+  findContainingClassDeclaration,
+  isDictionary,
+  isEnumType,
+  isNullableNode,
+} from "../ts_utils"
 
 const isRhs = (node: ts.PropertyAccessExpression) => {
   let parentExpression: ts.Node = node
@@ -145,6 +150,17 @@ export const parsePropertyAccessExpression = (
         isRhs(node)
       ) {
         return `(${lhs}.${rhs} if ${lhs}.has("${rhs}") else null)`
+      }
+
+      const containingClassDecl = findContainingClassDeclaration(node)
+
+      if (
+        containingClassDecl &&
+        exprType.symbol?.declarations &&
+        exprType.symbol.declarations[0] === containingClassDecl &&
+        node.expression.getText() === containingClassDecl.name?.getText()
+      ) {
+        return `self.${rhs}`
       }
 
       return `${lhs}.${rhs}`
@@ -421,5 +437,29 @@ func test():
   var __gen1 = [funcref(self, "mul_vec_lib") if __gen != null else null, {}, __gen]
   var __gen2 = __gen1[0].call_func(__gen1[2], 4) if __gen1 != null else null
   var _foo = __gen2
+`,
+}
+
+export const testStaticClassMethodInvoke: Test = {
+  ts: `
+class Test extends Area2D {
+  constructor() {
+    super()
+    Test.test()
+  }
+
+  static test() {
+    print("static")
+  }
+}
+  `,
+  expected: `
+extends Area2D
+class_name Test
+func _ready():
+  self.test()
+static func test():
+  print("static")
+
 `,
 }
