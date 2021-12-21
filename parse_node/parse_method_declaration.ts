@@ -161,7 +161,7 @@ func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
 
 export const testStaticMethod: Test = {
   ts: `
-export class Foo extends Node2D {
+export default class Foo extends Node2D {
   static staticMethod() {}
 }
   `,

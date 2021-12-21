@@ -442,7 +442,7 @@ func test():
 
 export const testStaticClassMethodInvoke: Test = {
   ts: `
-class Test extends Area2D {
+export default class Test extends Area2D {
   constructor() {
     super()
     Test.test()
