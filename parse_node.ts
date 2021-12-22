@@ -63,6 +63,7 @@ import { parseTemplateExpression } from "./parse_node/parse_template_expression"
 import { parseNoSubstitutionTemplateLiteral } from "./parse_node/parse_no_substitution_template_expression"
 import { AssetSourceFile } from "./project/assets/asset_source_file"
 import { LibraryFunctionName } from "./parse_node/library_functions"
+import { parseComments } from "./parse_node/parse_node_with_comments"
 
 export type ParseState = {
   isConstructor: boolean
@@ -82,6 +83,7 @@ export type ParseState = {
   usages: Map<ts.Identifier, utils.VariableInfo>
   sourceFile: ts.SourceFile
   sourceFileAsset: AssetSourceFile
+  commentsStack?: ts.CommentRange[]
 }
 
 export enum ExtraLineType {
@@ -247,8 +249,17 @@ export function combine(args: {
 
 export const parseNode = (
   genericNode: ts.Node,
-  props: ParseState
+  props: ParseState,
+  options?: { ignoreComments?: boolean }
 ): ParseNodeType => {
+  // TsGdProjectClass.Paths is undefined when running tests
+  if (
+    !(TsGdProjectClass.Paths ?? {}).removeComments &&
+    !options?.ignoreComments
+  ) {
+    return parseComments(genericNode, props)
+  }
+
   switch (genericNode.kind) {
     case SyntaxKind.SourceFile:
       return parseSourceFile(genericNode as ts.SourceFile, props)

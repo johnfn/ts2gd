@@ -160,6 +160,7 @@ export type Test = {
   isAutoload?: boolean
   only?: boolean
   expectFail?: boolean
+  keepComments?: boolean
 }
 
 type TestResult = TestResultPass | TestResultFail
@@ -191,13 +192,19 @@ const removeCommentLines = (s: string) => {
     .join("\n")
 }
 
-const normalize = (s: string) => {
-  return removeCommentLines(trim(s))
+const normalize = (s: string, keepComments?: boolean) => {
+  return keepComments ? trim(s) : removeCommentLines(trim(s))
 }
 
-const areOutputsEqual = (left: string, right: string) => {
-  const leftTrimmed = removeCommentLines(trim(left))
-  const rightTrimmed = removeCommentLines(trim(right))
+const areOutputsEqual = (
+  left: string,
+  right: string,
+  keepComments?: boolean
+) => {
+  const leftTrimmed = keepComments ? trim(left) : removeCommentLines(trim(left))
+  const rightTrimmed = keepComments
+    ? trim(right)
+    : removeCommentLines(trim(right))
 
   return leftTrimmed === rightTrimmed
 }
@@ -208,7 +215,7 @@ const test = (
   testFileName: string,
   path: string
 ): TestResult => {
-  const { ts, expected } = props
+  const { ts, expected, keepComments } = props
 
   let compiled: ParseNodeType | null = null
   let errors: TsGdError[] = []
@@ -277,7 +284,7 @@ ${errors[0].description}
   }
 
   if (typeof expected === "string") {
-    if (areOutputsEqual(output, expected)) {
+    if (areOutputsEqual(output, expected, keepComments)) {
       return { type: "success" }
     }
   } else {
@@ -300,12 +307,18 @@ ${errors[0].description}
 
       for (const actualFile of compiled.files ?? []) {
         if (actualFile.filePath === expectedFile.fileName) {
-          if (!areOutputsEqual(actualFile.body, expectedFile.expected)) {
+          if (
+            !areOutputsEqual(
+              actualFile.body,
+              expectedFile.expected,
+              keepComments
+            )
+          ) {
             return {
               type: "fail",
               fileName: actualFile.filePath,
-              result: normalize(actualFile.body),
-              expected: normalize(expectedFile.expected),
+              result: normalize(actualFile.body, keepComments),
+              expected: normalize(expectedFile.expected, keepComments),
               name,
               expectFail: props.expectFail ?? false,
               path,
@@ -337,8 +350,8 @@ ${errors[0].description}
 
   return {
     type: "fail",
-    result: normalize(output),
-    expected: normalize(expected),
+    result: normalize(output, keepComments),
+    expected: normalize(expected, keepComments),
     name,
     expectFail: props.expectFail ?? false,
     path,
