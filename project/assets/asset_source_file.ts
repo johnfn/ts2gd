@@ -503,7 +503,7 @@ ${chalk.white(
 
   destroy() {
     // Delete the .gd file
-    fs.rmSync(this.gdPath)
+    fs.rmSync(this.gdPath, { force: true })
 
     // Delete the generated enum files
     const filesInDirectory = fs.readdirSync(this.gdContainingDirectory)
@@ -513,7 +513,7 @@ ${chalk.white(
       const fullPath = this.gdContainingDirectory + fileName
 
       if (fullPath.startsWith(nameWithoutExtension)) {
-        fs.rmSync(fullPath)
+        fs.rmSync(fullPath, { force: true })
       }
     }
 
