@@ -1,12 +1,15 @@
-import * as ts from "typescript"
-import { parseNode, ParseNodeType } from "../parse_node"
-import { baseContentForTests } from "../generate_library_defs/generate_base"
 import fs from "fs"
 import path from "path"
-import { Scope } from "../scope"
-import chalk from "chalk"
-import { TsGdError, __getErrorsTestOnly } from "../errors"
+
+import * as ts from "typescript"
 import * as utils from "tsutils"
+import chalk from "chalk"
+
+import { ParseNodeType, parseNode } from "../parse_node"
+import { Scope } from "../scope"
+import { TsGdError, __getErrorsTestOnly } from "../errors"
+import { baseContentForTests } from "../generate_library_defs/generate_base"
+
 import { createStubSourceFileAsset } from "./stubs"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {

@@ -1,7 +1,7 @@
 import ts, { SyntaxKind } from "typescript"
-import { addError, ErrorName } from "../errors"
-import { combine, ParseState } from "../parse_node"
-import { ParseNodeType } from "../parse_node"
+
+import { ErrorName, addError } from "../errors"
+import { ParseNodeType, ParseState, combine } from "../parse_node"
 
 /**
  * Get all identifiers in a scope that were declared in an enclosing scope.

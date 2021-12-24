@@ -1,14 +1,17 @@
 import fs from "fs"
 import path from "path"
+
 import { parseStringPromise } from "xml2js"
+
 import { TsGdProjectClass } from "../project/project"
 import { copyFolderRecursiveSync } from "../ts_utils"
-import { buildBase as writeBaseDefinitions } from "./generate_base"
+
 import {
-  generateGdscriptLib,
   GodotXMLMethod,
+  generateGdscriptLib,
   parseMethod,
 } from "./generate_gdscript_lib"
+import { buildBase as writeBaseDefinitions } from "./generate_base"
 
 export function sanitizeGodotNameForTs(
   name: string,
@@ -86,7 +89,7 @@ export function godotTypeToTsType(godotType: string): string {
     return "NodePathType"
   }
 
-  if (!!godotType.match(/^[0-9]+$/)) {
+  if (godotType.match(/^[0-9]+$/)) {
     return "int"
   }
 

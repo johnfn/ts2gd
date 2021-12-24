@@ -1,7 +1,9 @@
 import ts, { SyntaxKind } from "typescript"
-import { addError, ErrorName } from "../errors"
-import { combine, parseNode, ParseNodeType, ParseState } from "../parse_node"
+
+import { ErrorName, addError } from "../errors"
+import { ParseNodeType, ParseState, combine, parseNode } from "../parse_node"
 import { Test } from "../tests/test"
+
 import { LibraryFunctions } from "./library_functions"
 
 /**

@@ -150,15 +150,16 @@
 
 // [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
 
-import ts from "typescript"
 import * as process from "process"
 
-import packageJson from "./package.json"
-import { makeTsGdProject } from "./project/project"
+import ts from "typescript"
+import chalk from "chalk"
+
+import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
 import { Paths } from "./project/tsgd_json"
 import { checkVersionAsync } from "./check_version"
-import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
-import chalk from "chalk"
+import { makeTsGdProject } from "./project/project"
+import packageJson from "./package.json"
 
 const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {

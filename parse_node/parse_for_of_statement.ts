@@ -1,10 +1,10 @@
 import ts from "typescript"
-const { SyntaxKind } = ts
-import { ParseState, combine } from "../parse_node"
 
-import { ParseNodeType } from "../parse_node"
+import { ParseState, combine, ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
+
 import { getDestructuredNamesAndAccessStrings } from "./parse_variable_declaration"
+const { SyntaxKind } = ts
 
 export const parseForOfStatement = (
   node: ts.ForOfStatement,

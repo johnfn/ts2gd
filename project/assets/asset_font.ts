@@ -1,5 +1,6 @@
-import { BaseAsset } from "./base_asset"
 import { TsGdProjectClass } from "../project"
+
+import { BaseAsset } from "./base_asset"
 
 export class AssetFont extends BaseAsset {
   resPath: string

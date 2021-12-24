@@ -1,6 +1,7 @@
-import { parseGodotConfigFile } from "./godot_parser"
-import { TsGdProjectClass as TsGdProject } from "./project"
 import fs from "fs"
+
+import { TsGdProjectClass as TsGdProject } from "./project"
+import { parseGodotConfigFile } from "./godot_parser"
 
 interface IRawGodotConfig {
   globals: {

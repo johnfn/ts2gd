@@ -1,10 +1,10 @@
-import ts, { SyntaxKind } from "typescript"
-import { combine, ParseState } from "../parse_node"
-import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
-import { ParseNodeType } from "../parse_node"
-import { addError, ErrorName } from "../errors"
-import { Test } from "../tests/test"
 import chalk from "chalk"
+import ts, { SyntaxKind } from "typescript"
+
+import { ErrorName, addError } from "../errors"
+import { ParseNodeType, ParseState, combine } from "../parse_node"
+import { Test } from "../tests/test"
+import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
 
 export const isDecoratedAsExports = (
   node:
@@ -32,7 +32,7 @@ export const parseExports = (
       dec.expression.getText() === "exports" ||
       (ts.isCallExpression(dec.expression) &&
         dec.expression.expression.getText() === "exports")
-  )!
+  )
 
   const typeGodotName = getGodotType(
     node,
@@ -51,7 +51,7 @@ export const parseExports = (
     godotExportArgs.push(...parseExportsArrayElement(node.type, props))
   }
 
-  if (decoration.expression.kind === SyntaxKind.CallExpression) {
+  if (decoration && decoration.expression.kind === SyntaxKind.CallExpression) {
     // Handle exports arguments
     const fn = decoration.expression as ts.CallExpression
 
@@ -163,9 +163,9 @@ export const parseExportFlags = (
 ): string => {
   const decoration = node.decorators?.find((dec) =>
     dec.expression.getText().startsWith("export_flags")
-  )!
+  )
 
-  if (decoration.expression.kind !== SyntaxKind.CallExpression) {
+  if (!decoration || decoration.expression.kind !== SyntaxKind.CallExpression) {
     addError({
       description: `
 I'm confused by export_flags here. It should be a function call.

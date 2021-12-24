@@ -1,4 +1,5 @@
 import { TsGdProjectClass } from "../project"
+
 import { BaseAsset } from "./base_asset"
 
 export class AssetImage extends BaseAsset {

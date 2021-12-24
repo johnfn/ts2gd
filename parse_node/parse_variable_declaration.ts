@@ -1,12 +1,12 @@
 import ts, { SyntaxKind } from "typescript"
-import { ParseState, combine } from "../parse_node"
-import { ParseNodeType } from "../parse_node"
+
+import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
 import { getPreciseInitializerType as getFloatOrInt } from "../ts_utils"
 
 export const getDestructuredNamesAndAccessStrings = (
   node: ts.BindingName,
-  access: string = ""
+  access = ""
 ): { id: ts.Identifier; access: string }[] => {
   if (node.kind === SyntaxKind.Identifier) {
     const id = node as ts.Identifier

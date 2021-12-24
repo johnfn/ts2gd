@@ -18,13 +18,9 @@
 // // Should not work - but sadly, there isnt much we can do!
 // let z = new Vector2();
 
-
 // class NodeExtender extends Node2D {
 
 // }
-
-
-
 
 // // Should work
 // let yee = Test("Hello");
@@ -42,7 +38,6 @@
 
 // // Should not work - but sadly, there isnt much we can do!
 // let aaz = new Vector2();
-
 
 // // class Testing {
 // // 	static stupid = 1;

@@ -1,9 +1,10 @@
-import path from "path"
 import fs from "fs"
-import { getCommonElements } from "../../ts_utils"
-import { TsGdProjectClass } from "../project"
-import { GodotNode, AssetGodotScene } from "../assets/asset_godot_scene"
+import path from "path"
+
+import { AssetGodotScene, GodotNode } from "../assets/asset_godot_scene"
 import { AssetSourceFile } from "../assets/asset_source_file"
+import { TsGdProjectClass } from "../project"
+import { getCommonElements } from "../../ts_utils"
 
 /**
  * Returns the paths to all children below this node, including grandchildren
@@ -294,7 +295,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
      * 1. this.get_node("KnownNode") - Use this when ts2gd can prove there's a
      * node at the path you provide
      * 
-     * 2. this.get_node\<Label\>("DynamicNode") - Use this when ts2gd can't prove
+     * 2. this.get_node<Label>("DynamicNode") - Use this when ts2gd can't prove
      * there's a node at the provided path, but you know that it is there. Be
      * sure to add the type parameter (e.g. <Label>) to indicate to ts2gd what
      * type of node you're retrieving - otherwise there will be an error!
