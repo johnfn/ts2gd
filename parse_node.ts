@@ -5,7 +5,6 @@ import { AssetSourceFile } from "./project/assets/asset_source_file"
 import { ErrorName, TsGdError, addError } from "./errors"
 import { LibraryFunctionName } from "./parse_node/library_functions"
 import { Scope } from "./scope"
-import { TsGdProjectClass } from "./project/project"
 import {
   generatePrecedingNewlines,
   syntaxKindToString as kindToString,
@@ -64,11 +63,12 @@ import { parseVariableDeclarationList } from "./parse_node/parse_variable_declar
 import { parseVariableStatement } from "./parse_node/parse_variable_statement"
 import { parseWhileStatement } from "./parse_node/parse_while_statement"
 import { parseYieldExpression } from "./parse_node/parse_yield_expression"
+import TsGdProject from "./project"
 
 export type ParseState = {
   isConstructor: boolean
   indent: string
-  project: TsGdProjectClass
+  project: TsGdProject
   program: ts.Program
   scope: Scope
 

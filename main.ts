@@ -156,7 +156,7 @@ import ts from "typescript"
 import chalk from "chalk"
 
 import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
-import { Paths } from "./project/tsgd_json"
+import { Paths } from "./project/paths"
 import { checkVersionAsync } from "./check_version"
 import { makeTsGdProject } from "./project/project"
 import packageJson from "./package.json"

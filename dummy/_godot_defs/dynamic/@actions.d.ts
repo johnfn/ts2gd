@@ -1,1 +1,0 @@
-declare type Action = never

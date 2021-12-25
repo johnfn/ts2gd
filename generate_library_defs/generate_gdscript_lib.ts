@@ -6,7 +6,7 @@ import {
   formatJsDoc,
   godotTypeToTsType,
   sanitizeGodotNameForTs,
-} from "./generate_library"
+} from "./generation_utils"
 
 export type GodotXMLMethod = {
   $: {

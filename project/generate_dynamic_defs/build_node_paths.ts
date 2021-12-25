@@ -2,9 +2,9 @@ import fs from "fs"
 import path from "path"
 
 import { AssetGodotScene, GodotNode } from "../assets/asset_godot_scene"
-import { AssetSourceFile } from "../assets/asset_source_file"
-import { TsGdProjectClass } from "../project"
 import { getCommonElements } from "../../ts_utils"
+import TsGdProject from "../project"
+import { AssetSourceFile } from "../assets/asset_source_file"
 
 /**
  * Returns the paths to all children below this node, including grandchildren
@@ -45,10 +45,10 @@ export const getAllChildPaths = (
   return result
 }
 
-export const buildNodePathsTypeForScript = (
+export default function buildNodePathsTypeForScript(
   script: AssetSourceFile,
-  project: TsGdProjectClass
-): void => {
+  project: TsGdProject
+): void {
   // Find all instances of this script in all scenes.
 
   const nodesWithScript: GodotNode[] = []
@@ -324,7 +324,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 `
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
+    project.paths.dynamicGodotDefsPath,
     `@node_paths_${script.getGodotClassName()}.d.ts`
   )
 

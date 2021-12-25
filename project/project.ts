@@ -1,41 +1,36 @@
 import fs from "fs"
-import path from "path"
 
 import chalk from "chalk"
 import chokidar from "chokidar"
 import ts from "typescript"
 
+import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
-import { TsGdError, displayErrors } from "../errors"
-import { generateGodotLibraryDefinitions as buildLibraryDefinitions } from "../generate_library_defs/generate_library"
+import { displayErrors, TsGdError } from "../errors"
 
+import { GodotProjectFile } from "./godot_project_file"
+import { Paths } from "./paths"
 import { AssetFont } from "./assets/asset_font"
 import { AssetGlb } from "./assets/asset_glb"
 import { AssetGodotScene } from "./assets/asset_godot_scene"
 import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
 import { BaseAsset } from "./assets/base_asset"
-import { GodotProjectFile } from "./godot_project_file"
-import { Paths } from "./tsgd_json"
-import { buildActionNames } from "./generate_dynamic_defs/build_action_names"
-import { buildAssetPathsType } from "./generate_dynamic_defs/build_asset_paths"
-import { buildGroupTypes } from "./generate_dynamic_defs/build_group_types"
-import { buildNodePathsTypeForScript } from "./generate_dynamic_defs/build_node_paths"
-import { buildSceneImports } from "./generate_dynamic_defs/build_scene_imports"
+import DefinitionBuilder from "./generate_dynamic_defs"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
 
-export class TsGdProjectClass {
+export class TsGdProject {
   /** Parsed tsgd.json file. */
-  static Paths: Paths
+  readonly paths: Paths
 
   /** Master list of all Godot assets */
   assets: BaseAsset[] = []
 
   /** Parsed project.godot file. */
-  godotProject!: GodotProjectFile
+  godotProject: GodotProjectFile
 
   /** Each source file. */
   sourceFiles(): AssetSourceFile[] {
@@ -72,6 +67,8 @@ export class TsGdProjectClass {
 
   args: ParsedArgs
 
+  definitionBuilder = new DefinitionBuilder(this)
+
   constructor(
     watcher: chokidar.FSWatcher,
     initialFilePaths: string[],
@@ -82,7 +79,7 @@ export class TsGdProjectClass {
     // Initial set up
 
     this.args = args
-    TsGdProjectClass.Paths = ts2gdJson
+    this.paths = ts2gdJson
     this.program = program
 
     // Parse assets
@@ -177,11 +174,11 @@ export class TsGdProjectClass {
     if (newAsset instanceof AssetSourceFile) {
       await newAsset.compile(this.program)
     } else if (newAsset instanceof AssetGodotScene) {
-      buildSceneImports(this)
-      buildGroupTypes(this)
+      this.definitionBuilder.buildSceneImports()
+      this.definitionBuilder.buildGroupTypes()
     }
 
-    buildAssetPathsType(this)
+    this.definitionBuilder.buildAssetPathsType()
 
     return `${chalk.whiteBright("Compile:")} ${chalk.blueBright(path)}...`
   }
@@ -238,14 +235,14 @@ export class TsGdProjectClass {
       if (newAsset instanceof AssetSourceFile) {
         await newAsset.compile(this.program)
 
-        buildAssetPathsType(this)
-        buildNodePathsTypeForScript(newAsset, this)
+        this.definitionBuilder.buildAssetPathsType()
+        this.definitionBuilder.buildNodePathsTypeForScript(newAsset)
       } else if (newAsset instanceof AssetGodotScene) {
         for (const script of this.sourceFiles()) {
-          buildNodePathsTypeForScript(script, this)
+          this.definitionBuilder.buildNodePathsTypeForScript(script)
         }
 
-        buildSceneImports(this)
+        this.definitionBuilder.buildSceneImports()
       }
     }
 
@@ -290,11 +287,11 @@ export class TsGdProjectClass {
       return true
     }
 
-    if (!fs.existsSync(TsGdProjectClass.Paths.staticGodotDefsPath)) {
+    if (!fs.existsSync(this.paths.staticGodotDefsPath)) {
       return true
     }
 
-    if (!fs.existsSync(TsGdProjectClass.Paths.dynamicGodotDefsPath)) {
+    if (!fs.existsSync(this.paths.dynamicGodotDefsPath)) {
       return true
     }
 
@@ -302,30 +299,11 @@ export class TsGdProjectClass {
   }
 
   async buildDynamicDefinitions() {
-    buildAssetPathsType(this)
-
-    for (const script of this.sourceFiles()) {
-      buildNodePathsTypeForScript(script, this)
-    }
-
-    buildSceneImports(this)
-    buildGroupTypes(this)
-    buildActionNames(this)
+    await this.definitionBuilder.buildProject(this.sourceFiles())
   }
 
   async buildLibraryDefinitions() {
-    await buildLibraryDefinitions()
-  }
-
-  static ResPathToFsPath(resPath: string) {
-    return path.join(
-      TsGdProjectClass.Paths.rootPath,
-      resPath.slice("res://".length)
-    )
-  }
-
-  static FsPathToResPath(fsPath: string) {
-    return "res://" + fsPath.slice(TsGdProjectClass.Paths.rootPath.length + 1)
+    await new LibraryBuilder(this.paths).buildProject()
   }
 
   /**
@@ -370,7 +348,7 @@ export const makeTsGdProject = async (
   watcher.off("add", addFn)
   watcher.off("ready", readyFn)
 
-  return new TsGdProjectClass(watcher, initialFiles, program, ts2gdJson, args)
+  return new TsGdProject(watcher, initialFiles, program, ts2gdJson, args)
 }
 
 const shouldIncludePath = (path: string, stats?: fs.Stats): boolean => {
@@ -429,3 +407,5 @@ const shouldIncludePath = (path: string, stats?: fs.Stats): boolean => {
 
   return false
 }
+
+export default TsGdProject
