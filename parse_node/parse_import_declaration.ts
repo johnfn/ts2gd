@@ -3,9 +3,9 @@ import path from "path"
 import { UsageDomain } from "tsutils"
 import ts, { SyntaxKind } from "typescript"
 
+import TsGdProject from "../project/project"
 import { ErrorName, addError } from "../errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { TsGdProjectClass } from "../project/project"
 import { isEnumType } from "../ts_utils"
 
 const getPathWithoutExtension = (
@@ -26,7 +26,7 @@ const getPathWithoutExtension = (
   } else {
     // Handle absolute paths
 
-    pathToImportedTs = path.join(TsGdProjectClass.Paths.rootPath, importPath)
+    pathToImportedTs = path.join(props.project.paths.rootPath, importPath)
   }
 
   return pathToImportedTs

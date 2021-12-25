@@ -7,7 +7,7 @@ import chalk from "chalk"
 
 import { ErrorName, TsGdError, addError } from "../../errors"
 import { Scope } from "../../scope"
-import { TsGdProjectClass } from "../project"
+import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
 
 import { BaseAsset } from "./base_asset"
@@ -40,27 +40,27 @@ export class AssetSourceFile extends BaseAsset {
    */
   writtenFiles: string[] = []
 
-  project: TsGdProjectClass
+  project: TsGdProject
 
   private _isAutoload: boolean
 
-  constructor(sourceFilePath: string, project: TsGdProjectClass) {
+  constructor(sourceFilePath: string, project: TsGdProject) {
     super()
 
     let gdPath = path.join(
-      TsGdProjectClass.Paths.destGdPath,
+      project.paths.destGdPath,
       sourceFilePath.slice(
-        TsGdProjectClass.Paths.sourceTsPath.length,
+        project.paths.sourceTsPath.length,
         -path.extname(sourceFilePath).length
       ) + ".gd"
     )
 
-    this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
+    this.resPath = project.paths.fsPathToResPath(gdPath)
     this.gdPath = gdPath
     this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1)
     this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
-      TsGdProjectClass.Paths.rootPath.length + 1
+      project.paths.rootPath.length + 1
     )
     this.name = this.gdPath.slice(
       this.gdContainingDirectory.length,
