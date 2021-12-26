@@ -2,9 +2,13 @@ import fs from "fs"
 import path from "path"
 import process from "process"
 
+import type { Matcher } from "anymatch"
+
 import { ParsedArgs } from "../parse_args"
 import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
 import { showLoadingMessage } from "../main"
+
+import { allAssetExtensions } from "./assets"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 
@@ -40,12 +44,33 @@ export class Paths {
 
   readonly gdscriptPath: string
 
+  additionalIgnores: string[]
+  tsFileIgnores: string[]
+
   resPathToFsPath(resPath: string) {
     return path.join(this.rootPath, resPath.slice("res://".length))
   }
 
   fsPathToResPath(fsPath: string) {
     return "res://" + fsPath.slice(this.rootPath.length + 1)
+  }
+
+  ignoredPaths(): Matcher {
+    return [
+      "**/node_modules/**",
+      "**/_godot_defs/**",
+      "**/.git/**",
+      ...this.additionalIgnores,
+      // ignore all files with extension
+      "**/*.*",
+      // ignore some files with no extensions (is there a better way?)
+      /(LICENSE|README)$/,
+      // but don't ignore non declaration typescript files
+      // also exclude ts files from the ignore field in the ts2gd.json file
+      `!**/!(*.d${this.tsFileIgnores.map((ignore) => `|${ignore}`)}).ts`,
+      // and don't ignore the following assets
+      ...allAssetExtensions().map((ext) => `!**/*${ext}`),
+    ]
   }
 
   constructor(args: ParsedArgs) {
@@ -133,6 +158,16 @@ export class Paths {
       this.godotSourceRepoPath ?? "",
       "modules/gdscript/doc_classes"
     )
+
+    this.additionalIgnores = []
+    this.tsFileIgnores = []
+    for (const entry of (tsgdJson.ignore as string[]) ?? []) {
+      if (entry.endsWith(".ts")) {
+        this.tsFileIgnores.push(entry.replace(/\.ts$/, ""))
+      } else {
+        this.additionalIgnores.push(entry)
+      }
+    }
 
     this.tsconfigPath = path.join(
       path.dirname(fullyQualifiedTs2gdPathWithFilename),

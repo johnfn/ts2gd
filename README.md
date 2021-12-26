@@ -225,6 +225,10 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 - Goto Editor -> Editor Settings -> Text Editor -> Indent
 - And switch to Type: Spaces and Size: 2
 
+## Ignoring sub directories containing TypeScript files
+
+In case your repository has further TypeScript files, we shouldn't be transpiled via ts2gd, you can add an ignore entry to your ts2gd.json configuration file. That entry takes an array of [anymatch](https://www.npmjs.com/package/anymatch) strings or globs.
+
 # Roadmap
 
 ## Road to usability
