@@ -347,6 +347,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     // Since we use chokidar but TS uses something else to monitor files, sometimes
     // we can race ahead of the TS compiler. This is a hack to wait for them to
     // catch up with us.
+    // We can skip that in a build only context is chokidar only generates the initial file list.
     while (
       !this.project.args.buildOnly &&
       (await fs.readFile(this.fsPath, "utf-8")) !== sourceFileAst.getFullText()
