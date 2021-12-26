@@ -227,7 +227,13 @@ ts2gd generates code with 2 spaces as indent. If Godot keeps changing your .gd f
 
 ## Ignoring sub directories containing TypeScript files
 
-In case your repository has further TypeScript files, we shouldn't be transpiled via ts2gd, you can add an ignore entry to your ts2gd.json configuration file. That entry takes an array of [anymatch](https://www.npmjs.com/package/anymatch) strings or globs.
+If you would like to tell ts2gd to ignore certain TypeScript files, you can add `"ignore": /* list of files */` to your ts2gd.json file.
+
+- To ignore a file: `"ignore": ["ignore_me.ts"]`
+- Two files: `"ignore": ["ignore_me.ts", "ignore_me_too.ts"]`
+- And everything inside directories named: `"ignore": ["**/ignore_me/**"]`
+
+In case that doesn't fit your needs, you can supply array of [anymatch](https://www.npmjs.com/package/anymatch) strings or globs.
 
 # Roadmap
 
