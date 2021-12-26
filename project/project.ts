@@ -7,8 +7,8 @@ import ts from "typescript"
 
 import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
-import { displayErrors, TsGdError } from "../errors"
 
+import Errors, { TsGdError } from "./errors"
 import { GodotProjectFile } from "./godot_project_file"
 import { Paths } from "./paths"
 import { AssetFont } from "./assets/asset_font"
@@ -66,9 +66,11 @@ export class TsGdProject {
 
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 
-  args: ParsedArgs
+  public readonly args: ParsedArgs
 
-  definitionBuilder = new DefinitionBuilder(this)
+  public readonly definitionBuilder: DefinitionBuilder
+
+  public readonly errors: Errors
 
   constructor(
     watcher: chokidar.FSWatcher,
@@ -82,6 +84,10 @@ export class TsGdProject {
     this.args = args
     this.paths = ts2gdJson
     this.program = program
+
+    this.errors = new Errors(this.args)
+
+    this.definitionBuilder = new DefinitionBuilder(this)
 
     // Parse assets
 
@@ -154,12 +160,12 @@ export class TsGdProject {
       .on("add", async (path) => {
         const message = await this.onAddAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("change", async (path) => {
         const message = await this.onChangeAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("unlink", async (path) => {
         await this.onRemoveAsset(path)
@@ -286,7 +292,7 @@ export class TsGdProject {
     await Promise.all(
       assetsToCompile.map((asset) => asset.compile(this.program))
     )
-    return !displayErrors(this.args, "Compiling all source files...")
+    return !this.errors.display("Compiling all source files...")
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {

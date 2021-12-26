@@ -13,6 +13,15 @@
       "type": "pwa-node",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/js/**/*.js"]
+    },
+    {
+      "name": "Launch Test",
+      "program": "${workspaceFolder}/js/tests/test.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/js/**/*.js"]
     }
   ]
 }
