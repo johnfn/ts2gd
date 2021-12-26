@@ -123,7 +123,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       monitor: () => 0 as any,
       onAddAsset: async () => "",
       onChangeAsset: async () => "",
-      onRemoveAsset: () => {},
+      onRemoveAsset: async () => {},
       sourceFiles: () => [
         {
           exportedTsClassName: () => "",

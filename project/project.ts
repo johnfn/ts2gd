@@ -159,7 +159,9 @@ export class TsGdProject {
 
         displayErrors(this.args, message)
       })
-      .on("unlink", (path) => this.onRemoveAsset(path))
+      .on("unlink", async (path) => {
+        await this.onRemoveAsset(path)
+      })
   }
 
   async onAddAsset(path: string): Promise<string> {
@@ -255,7 +257,7 @@ export class TsGdProject {
     return message
   }
 
-  onRemoveAsset(path: string) {
+  async onRemoveAsset(path: string) {
     console.info("Delete:\t", path)
 
     const changedAsset = this.assets.find((asset) => asset.fsPath === path)
@@ -265,7 +267,7 @@ export class TsGdProject {
     }
 
     if (changedAsset instanceof AssetSourceFile) {
-      changedAsset.destroy()
+      await changedAsset.destroy()
     }
 
     this.assets = this.assets.filter((asset) => asset !== changedAsset)
