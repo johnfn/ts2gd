@@ -4,6 +4,7 @@ module.exports = {
     "**/dummy/**",
     "**/godot_src/**",
     "**/js/**",
+    ".eslintrc.js",
   ],
   env: {
     es2021: true,
@@ -18,6 +19,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 13,
     sourceType: "module",
+    project: "./tsconfig.json",
   },
   plugins: ["import", "prettier", "@typescript-eslint"],
   rules: {
@@ -25,6 +27,7 @@ module.exports = {
     "import/first": "error",
     "import/no-duplicates": "error",
     "import/order": ["error", { "newlines-between": "always" }],
+    "@typescript-eslint/no-floating-promises": "error",
     // we could look into turning these on
     "prefer-const": "off",
     "@typescript-eslint/no-empty-function": "off",

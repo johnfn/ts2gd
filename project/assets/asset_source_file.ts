@@ -1,4 +1,4 @@
-import fs from "fs"
+import { promises as fs } from "fs"
 import path from "path"
 
 import ts, { SyntaxKind } from "typescript"
@@ -348,7 +348,8 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     // we can race ahead of the TS compiler. This is a hack to wait for them to
     // catch up with us.
     while (
-      fs.readFileSync(this.fsPath, "utf-8") !== sourceFileAst.getFullText()
+      !this.project.args.buildOnly &&
+      (await fs.readFile(this.fsPath, "utf-8")) !== sourceFileAst.getFullText()
     ) {
       await new Promise((resolve) => setTimeout(resolve, 10))
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
@@ -368,12 +369,12 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     })
 
     // TODO: Only do this once per program run max!
-    fs.mkdirSync(path.dirname(this.gdPath), { recursive: true })
+    await fs.mkdir(path.dirname(this.gdPath), { recursive: true })
 
     this.writtenFiles = []
 
     for (const { filePath, body } of parsedNode.files ?? []) {
-      fs.writeFileSync(filePath, body)
+      await fs.writeFile(filePath, body)
       this.writtenFiles.push(filePath)
     }
 
@@ -521,19 +522,19 @@ ${chalk.white(
     return
   }
 
-  destroy() {
+  async destroy() {
     // Delete the .gd file
-    fs.rmSync(this.gdPath, { force: true })
+    await fs.rm(this.gdPath, { force: true })
 
     // Delete the generated enum files
-    const filesInDirectory = fs.readdirSync(this.gdContainingDirectory)
+    const filesInDirectory = await fs.readdir(this.gdContainingDirectory)
     const nameWithoutExtension = this.gdPath.slice(0, -".gd".length)
 
     for (const fileName of filesInDirectory) {
       const fullPath = this.gdContainingDirectory + fileName
 
       if (fullPath.startsWith(nameWithoutExtension)) {
-        fs.rmSync(fullPath, { force: true })
+        await fs.rm(fullPath, { force: true })
       }
     }
 
