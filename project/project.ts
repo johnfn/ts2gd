@@ -271,15 +271,18 @@ export class TsGdProject {
     this.assets = this.assets.filter((asset) => asset !== changedAsset)
   }
 
-  async compileAllSourceFiles() {
+  /**
+   * Compile all current source files
+   * @returns false if the compilation had errors, true otherwise
+   */
+  async compileAllSourceFiles(): Promise<boolean> {
     const assetsToCompile = this.assets.filter(
       (a): a is AssetSourceFile => a instanceof AssetSourceFile
     )
     await Promise.all(
       assetsToCompile.map((asset) => asset.compile(this.program))
     )
-
-    displayErrors(this.args, "Compiling all source files...")
+    return !displayErrors(this.args, "Compiling all source files...")
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {

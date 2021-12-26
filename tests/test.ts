@@ -90,7 +90,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       buildDynamicDefinitions: async () => {},
       assets: [],
       program: undefined as any,
-      compileAllSourceFiles: async () => {},
+      compileAllSourceFiles: async () => true,
       shouldBuildLibraryDefinitions: () => false,
       validateAutoloads: () => [],
       buildLibraryDefinitions: async () => {},
@@ -529,4 +529,11 @@ export const runTests = async () => {
   }
 }
 
-runTests()
+void (async () => {
+  try {
+    await runTests()
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
+  }
+})

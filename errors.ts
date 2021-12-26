@@ -59,7 +59,7 @@ export const displayErrors = (args: ParsedArgs, message: string) => {
     console.info()
     console.info(chalk.greenBright("No errors."))
 
-    return
+    return false
   }
 
   console.info(message)
@@ -100,6 +100,7 @@ export const displayErrors = (args: ParsedArgs, message: string) => {
   }
 
   errors = []
+  return true
 }
 
 export const __getErrorsTestOnly = () => {

@@ -284,11 +284,20 @@ export const main = async (args: ParsedArgs) => {
   await tsInitializationFinished
 
   if (!project.validateAutoloads()) {
-    process.exit(0)
+    process.exit(1)
   }
 
   showLoadingMessage("Compiling all source files", args)
-  project.compileAllSourceFiles()
+  let hadErrors = true
+  try {
+    hadErrors = !(await project.compileAllSourceFiles())
+  } catch (e) {
+    // if in watch mode, try continuing
+    // in build mode, exit early with the error
+    if (args.buildOnly) {
+      throw e
+    }
+  }
 
   if (args.buildOnly) {
     showLoadingMessage(
@@ -297,7 +306,7 @@ export const main = async (args: ParsedArgs) => {
       true
     )
 
-    process.exit()
+    process.exit(hadErrors ? -1 : 0)
   } else {
     showLoadingMessage(
       `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
@@ -317,6 +326,13 @@ if (!process.argv[1].includes("test")) {
   } else if (args.printVersion) {
     // Nothing to do; we already printed the version.
   } else {
-    main(args)
+    void (async () => {
+      try {
+        await main(args)
+      } catch (e) {
+        console.error(e)
+        process.exit(1)
+      }
+    })()
   }
 }
