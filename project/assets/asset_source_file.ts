@@ -324,35 +324,40 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
   ): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
+    let fsContent = await fs.readFile(this.fsPath, "utf-8")
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
     let tries = 0
 
-    while (!sourceFileAst && ++tries < 50) {
+    while (
+      // we always need the AST
+      (!sourceFileAst ||
+        // if we are in watch mode, as chokidar uses other functionality compared to TS to monitor files,
+        // sometimes we can race ahead of the TS compiler.
+        // Thus wait for them catch up with us.
+        (!this.project.args.buildOnly &&
+          fsContent !== sourceFileAst.getFullText())) &&
+      // if we don't have AST or are not synced, something went wrong
+      ++tries < 50
+    ) {
+      // wait 10ms
       await new Promise((resolve) => setTimeout(resolve, 10))
-
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
+      // re-fetech data to compare again
+      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+      // only worth fetching from fs if we actually have ast to compare to
+      if (sourceFileAst) {
+        fsContent = await fs.readFile(this.fsPath, "utf-8")
+      }
     }
 
     if (!sourceFileAst) {
       addError({
-        description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
+        description: `TS can't find source file ${this.fsPath} after waiting 0.5 second. Try saving your TypeScript file again.`,
         error: ErrorName.PathNotFound,
         location: this.fsPath,
         stack: new Error().stack ?? "",
       })
 
       return
-    }
-
-    // Since we use chokidar but TS uses something else to monitor files, sometimes
-    // we can race ahead of the TS compiler. This is a hack to wait for them to
-    // catch up with us.
-    while (
-      !this.project.args.buildOnly &&
-      (await fs.readFile(this.fsPath, "utf-8")) !== sourceFileAst.getFullText()
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 10))
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
     const parsedNode = parseNode(sourceFileAst, {
