@@ -8,23 +8,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false
-      # when Github updates their Ubuntu image on Nov29 2021 we can switch to it
-      # as we don't need to manually add 16
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-      - run: npm install
+
+      - run: npm ci
       - run: npm run build-ci
       - run: npm run test-ci
-      - run: npm pack
-      - run: ls
-      - run: pwd
-      - name: Upload build
+
+      - if: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' }}
+        run: npm pack
+      - if: ${{ github.ref == 'refs/heads/main' && matrix.os == 'ubuntu-latest' }}
+        name: Upload build
         uses: actions/upload-artifact@v2
         with:
           name: package
