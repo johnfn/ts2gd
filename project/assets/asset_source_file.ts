@@ -329,21 +329,15 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     let tries = 0
 
     while (
-      // we always need the AST
       (!sourceFileAst ||
-        // if we are in watch mode, as chokidar uses other functionality compared to TS to monitor files,
-        // sometimes we can race ahead of the TS compiler.
-        // Thus wait for them catch up with us.
+        // Chokidar and TS use different strategies to monitor files, so we can race ahead of them.
+        // Wait for them to catch up.
         (!this.project.args.buildOnly &&
           fsContent !== sourceFileAst.getFullText())) &&
-      // if we don't have AST or are not synced, something went wrong
       ++tries < 50
     ) {
-      // wait 10ms
       await new Promise((resolve) => setTimeout(resolve, 10))
-      // re-fetech data to compare again
       sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
-      // only worth fetching from fs if we actually have ast to compare to
       if (sourceFileAst) {
         fsContent = await fs.readFile(this.fsPath, "utf-8")
       }
