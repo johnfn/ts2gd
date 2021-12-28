@@ -8,17 +8,20 @@
       "name": "Launch Program",
       "program": "${workspaceFolder}/js/main.js",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "args": [
-        "${workspaceFolder}/dummy/ts2gd.json"
-      ],
+      "skipFiles": ["<node_internals>/**"],
+      "args": ["${workspaceFolder}/example/ts2gd.json"],
       "type": "pwa-node",
       "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": [
-        "${workspaceFolder}/js/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/js/**/*.js"]
+    },
+    {
+      "name": "Launch Test",
+      "program": "${workspaceFolder}/js/tests/test.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/js/**/*.js"]
     }
   ]
 }

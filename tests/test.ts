@@ -1,19 +1,51 @@
 import fs from "fs"
 import path from "path"
 
-import * as ts from "typescript"
+import ts from "typescript"
 import * as utils from "tsutils"
 import chalk from "chalk"
 
 import { ParseNodeType, parseNode } from "../parse_node"
 import { Scope } from "../scope"
-import { TsGdError, __getErrorsTestOnly } from "../errors"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
-import { Paths } from "../project/paths"
+import { ParsedArgs } from "../parse_args"
+import TsGdProject, { TsGdError, Errors } from "../project"
 
 import { createStubSourceFileAsset } from "./stubs"
 
-export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
+export type Test = {
+  expected:
+    | string
+    | { type: "error"; error: string }
+    | {
+        type: "multiple-files"
+        files: { fileName: string; expected: string }[]
+      }
+  ts: string
+  fileName?: string
+  isAutoload?: boolean
+  only?: boolean
+  expectFail?: boolean
+}
+
+type TestResult = TestResultPass | TestResultFail
+
+type TestResultPass = { type: "success" }
+type TestResultFail = {
+  type: "fail" | "fail-error" | "fail-no-error"
+  fileName?: string
+  result: string
+  name: string
+  expected: string
+  expectFail?: boolean
+  path: string
+  logs?: any[][]
+}
+
+export function compileTs(
+  code: string,
+  isAutoload: boolean
+): [ParseNodeType, TsGdError[]] {
   const filename = isAutoload ? "autoload.ts" : "Test.ts"
 
   const sourceFile = ts.createSourceFile(
@@ -70,117 +102,93 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
 
   const sourceFileAsset = createStubSourceFileAsset("Test")
 
+  const args: ParsedArgs = {
+    buildLibraries: false,
+    buildOnly: false,
+    printVersion: false,
+    debug: false,
+    help: false,
+    init: false,
+  }
+
+  const project: TsGdProject = {
+    args,
+    errors: new Errors(args),
+    buildDynamicDefinitions: async () => {},
+    assets: [],
+    program: undefined as any,
+    compileAllSourceFiles: async () => true,
+    shouldBuildLibraryDefinitions: () => false,
+    validateAutoloads: () => [],
+    buildLibraryDefinitions: async () => {},
+    paths: {} as any,
+    definitionBuilder: {} as any,
+    mainScene: {
+      fsPath: "",
+      resPath: "",
+      nodes: [],
+      resources: [],
+      name: "mainScene",
+      project: {} as any,
+      rootNode: {} as any,
+    } as any,
+    godotScenes: () => [],
+    createAsset: () => 0 as any,
+    godotFonts: () => [],
+    godotImages: () => [],
+    godotGlbs: () => [],
+    godotProject: {
+      fsPath: "",
+      autoloads: [{ resPath: "autoload.ts" }],
+      mainScene: {} as any,
+      rawConfig: 0 as any,
+      actionNames: [],
+      project: {} as any,
+      addAutoload: {} as any,
+      removeAutoload: {} as any,
+    },
+    monitor: () => 0 as any,
+    onAddAsset: async () => "",
+    onChangeAsset: async () => "",
+    onRemoveAsset: async () => {},
+    sourceFiles: () => [
+      {
+        exportedTsClassName: () => "",
+        fsPath: "autoload.ts",
+        isProjectAutoload: () => true,
+        isAutoload: () => true,
+        resPath: "",
+        tsRelativePath: "",
+        gdContainingDirectory: "",
+        destroy: () => {},
+        project: {} as any,
+        tsType: () => "",
+        compile: async () => {},
+        gdPath: "",
+        reload: () => {},
+        isDecoratedAutoload: {} as any,
+        ...({} as any), // ssh about private properties.
+      },
+      sourceFileAsset,
+    ],
+  }
+
   // TODO: Make this less silly.
-  // I suppose we could actually use the dummy project
+  // I suppose we could actually use the example project
   const godotFile = parseNode(sourceFile, {
     indent: "",
     sourceFile: sourceFile,
     scope: new Scope(program),
     isConstructor: false,
     program,
-    project: {
-      args: {
-        buildLibraries: false,
-        buildOnly: false,
-        printVersion: false,
-        debug: false,
-        help: false,
-        init: false,
-      },
-      buildDynamicDefinitions: async () => {},
-      assets: [],
-      program: undefined as any,
-      compileAllSourceFiles: async () => true,
-      shouldBuildLibraryDefinitions: () => false,
-      validateAutoloads: () => [],
-      buildLibraryDefinitions: async () => {},
-      paths: {} as any,
-      definitionBuilder: {} as any,
-      mainScene: {
-        fsPath: "",
-        resPath: "",
-        nodes: [],
-        resources: [],
-        name: "mainScene",
-        project: {} as any,
-        rootNode: {} as any,
-      } as any,
-      godotScenes: () => [],
-      createAsset: () => 0 as any,
-      godotFonts: () => [],
-      godotImages: () => [],
-      godotGlbs: () => [],
-      godotProject: {
-        fsPath: "",
-        autoloads: [{ resPath: "autoload.ts" }],
-        mainScene: {} as any,
-        rawConfig: 0 as any,
-        actionNames: [],
-        project: {} as any,
-        addAutoload: {} as any,
-        removeAutoload: {} as any,
-      },
-      monitor: () => 0 as any,
-      onAddAsset: async () => "",
-      onChangeAsset: async () => "",
-      onRemoveAsset: async () => {},
-      sourceFiles: () => [
-        {
-          exportedTsClassName: () => "",
-          fsPath: "autoload.ts",
-          isProjectAutoload: () => true,
-          isAutoload: () => true,
-          resPath: "",
-          tsRelativePath: "",
-          gdContainingDirectory: "",
-          destroy: () => {},
-          project: {} as any,
-          tsType: () => "",
-          compile: async () => {},
-          gdPath: "",
-          reload: () => {},
-          isDecoratedAutoload: {} as any,
-          ...({} as any), // ssh about private properties.
-        },
-        sourceFileAsset,
-      ],
-    },
+    project,
     sourceFileAsset: sourceFileAsset,
     mostRecentControlStructureIsSwitch: false,
     isAutoload: false,
     usages: utils.collectVariableUsage(sourceFile),
   })
 
-  return godotFile
-}
-
-export type Test = {
-  expected:
-    | string
-    | { type: "error"; error: string }
-    | {
-        type: "multiple-files"
-        files: { fileName: string; expected: string }[]
-      }
-  ts: string
-  fileName?: string
-  isAutoload?: boolean
-  only?: boolean
-  expectFail?: boolean
-}
-
-type TestResult = TestResultPass | TestResultFail
-
-type TestResultPass = { type: "success" }
-type TestResultFail = {
-  type: "fail" | "fail-error" | "fail-no-error"
-  fileName?: string
-  result: string
-  name: string
-  expected: string
-  expectFail?: boolean
-  path: string
-  logs?: any[][]
+  return [godotFile, project.errors.get()]
 }
 
 const trim = (s: string) => {
@@ -221,9 +229,9 @@ const test = (
   let errors: TsGdError[] = []
 
   try {
-    compiled = compileTs(ts, props.isAutoload ?? false)
-
-    errors = __getErrorsTestOnly()
+    let tuple = compileTs(ts, props.isAutoload ?? false)
+    compiled = tuple[0]
+    errors = tuple[1]
   } catch (e) {
     return {
       type: "fail",

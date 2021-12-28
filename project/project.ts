@@ -1,4 +1,5 @@
 import fs from "fs"
+import path from "path"
 
 import chalk from "chalk"
 import chokidar from "chokidar"
@@ -6,8 +7,8 @@ import ts from "typescript"
 
 import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
-import { displayErrors, TsGdError } from "../errors"
 
+import Errors, { TsGdError } from "./errors"
 import { GodotProjectFile } from "./godot_project_file"
 import { Paths } from "./paths"
 import { AssetFont } from "./assets/asset_font"
@@ -65,9 +66,11 @@ export class TsGdProject {
 
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
 
-  args: ParsedArgs
+  public readonly args: ParsedArgs
 
-  definitionBuilder = new DefinitionBuilder(this)
+  public readonly definitionBuilder: DefinitionBuilder
+
+  public readonly errors: Errors
 
   constructor(
     watcher: chokidar.FSWatcher,
@@ -81,6 +84,10 @@ export class TsGdProject {
     this.args = args
     this.paths = ts2gdJson
     this.program = program
+
+    this.errors = new Errors(this.args)
+
+    this.definitionBuilder = new DefinitionBuilder(this)
 
     // Parse assets
 
@@ -123,6 +130,7 @@ export class TsGdProject {
     | GodotProjectFile
     | AssetGlb
     | null {
+    //TODO: move these checks to the asset classes in static methods
     if (path.endsWith(".ts")) {
       return new AssetSourceFile(path, this)
     } else if (path.endsWith(".tscn")) {
@@ -152,12 +160,12 @@ export class TsGdProject {
       .on("add", async (path) => {
         const message = await this.onAddAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("change", async (path) => {
         const message = await this.onChangeAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("unlink", async (path) => {
         await this.onRemoveAsset(path)
@@ -284,7 +292,7 @@ export class TsGdProject {
     await Promise.all(
       assetsToCompile.map((asset) => asset.compile(this.program))
     )
-    return !displayErrors(this.args, "Compiling all source files...")
+    return !this.errors.display("Compiling all source files...")
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {
@@ -326,91 +334,24 @@ export const makeTsGdProject = async (
   program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
   args: ParsedArgs
 ) => {
-  const initialFiles: string[] = []
-
-  let addFn!: (path: string) => void
-  let readyFn!: () => void
-
-  const watcher = await new Promise<chokidar.FSWatcher>((resolve) => {
-    addFn = (path) => initialFiles.push(path)
-    readyFn = () => resolve(watcher)
-
-    const watcher: chokidar.FSWatcher = chokidar
+  const [watcher, initialFiles] = await new Promise<
+    [chokidar.FSWatcher, string[]]
+  >((resolve) => {
+    const initialFiles: string[] = []
+    const watcher = chokidar
       .watch(ts2gdJson.rootPath, {
-        ignored: (path: string, stats?: fs.Stats) => {
-          // Chokidar is inconsistent about whether it passes in stats or not -
-          // sometimes it does and sometimes it doesn't.
-          return !shouldIncludePath(
-            path,
-            stats ?? (fs.existsSync(path) ? fs.statSync(path) : undefined)
-          )
-        },
+        // build only needs to scan once and then can turn off
+        persistent: !args.buildOnly,
+        ignored: ts2gdJson.ignoredPaths(),
       })
-      .on("add", addFn)
-      .on("ready", readyFn)
+      .on("add", (path) => initialFiles.push(path))
+      .on("ready", () => {
+        watcher.removeAllListeners()
+        resolve([watcher, initialFiles])
+      })
   })
 
-  watcher.off("add", addFn)
-  watcher.off("ready", readyFn)
-
   return new TsGdProject(watcher, initialFiles, program, ts2gdJson, args)
-}
-
-const shouldIncludePath = (path: string, stats?: fs.Stats): boolean => {
-  if (path.includes("node_modules")) {
-    return false
-  }
-
-  if (path.includes("_godot_defs")) {
-    return false
-  }
-
-  if (path.includes(".git")) {
-    return false
-  }
-
-  if (path.endsWith(".tmp")) {
-    return false
-  }
-
-  if (path.endsWith(".gd")) {
-    return false
-  }
-
-  if (stats && stats.isDirectory()) {
-    return true
-  }
-
-  if (AssetFont.extensions().some((ext) => path.endsWith(ext))) {
-    return true
-  }
-
-  if (AssetImage.extensions().some((ext) => path.endsWith(ext))) {
-    return true
-  }
-
-  // Note ordering (re: .ts)
-  if (path.endsWith(".d.ts")) {
-    return false
-  }
-
-  if (path.endsWith(".ts")) {
-    return true
-  }
-
-  if (AssetGodotScene.extensions().some((ext) => path.endsWith(ext))) {
-    return true
-  }
-
-  if (AssetGlb.extensions().some((ext) => path.endsWith(ext))) {
-    return true
-  }
-
-  if (path.endsWith(".godot")) {
-    return true
-  }
-
-  return false
 }
 
 export default TsGdProject

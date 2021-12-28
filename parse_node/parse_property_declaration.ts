@@ -1,7 +1,7 @@
 import chalk from "chalk"
 import ts, { SyntaxKind } from "typescript"
 
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
@@ -127,7 +127,7 @@ const parseExportsArrayElement = (
     if (typeGodotElement) {
       godotExportArgs.push(typeGodotElement)
     } else {
-      addError({
+      props.project.errors.add({
         description: `
 Cannot infer element type for array export.
 `,
@@ -166,7 +166,7 @@ export const parseExportFlags = (
   )
 
   if (!decoration || decoration.expression.kind !== SyntaxKind.CallExpression) {
-    addError({
+    props.project.errors.add({
       description: `
 I'm confused by export_flags here. It should be a function call.
 
@@ -266,7 +266,7 @@ export const parsePropertyDeclaration = (
     if (signalName.startsWith("$")) {
       signalName = signalName.slice(1)
     } else {
-      addError({
+      props.project.errors.add({
         description: "Signals must be prefixed with $.",
         error: ErrorName.SignalsMustBePrefixedWith$,
         location: node,

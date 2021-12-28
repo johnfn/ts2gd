@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 
-import { TsGdError } from "../../errors"
+import { TsGdError } from "../errors"
 import TsGdProject from "../project"
 
 export default function buildGroupTypes(project: TsGdProject): void {

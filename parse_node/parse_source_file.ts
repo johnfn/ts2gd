@@ -1,6 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine, parseNode } from "../parse_node"
 import { Test } from "../tests/test"
 
@@ -62,7 +62,7 @@ export const parseSourceFile = (
   ) as ts.ClassDeclaration[]
 
   if (allClasses.length === 0) {
-    addError({
+    props.project.errors.add({
       error: ErrorName.ClassNameNotFound,
       location: node,
       description:
@@ -111,7 +111,7 @@ export const parseSourceFile = (
       const className = classDecl.name?.text
 
       if (!className) {
-        addError({
+        props.project.errors.add({
           description: "Anonymous classes are not supported",
           error: ErrorName.ClassCannotBeAnonymous,
           location: classDecl,

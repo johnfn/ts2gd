@@ -5,7 +5,7 @@ import ts, { SyntaxKind } from "typescript"
 import * as utils from "tsutils"
 import chalk from "chalk"
 
-import { ErrorName, TsGdError, addError } from "../../errors"
+import { ErrorName, TsGdError } from "../errors"
 import { Scope } from "../../scope"
 import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
@@ -232,7 +232,7 @@ ${chalk.green(
     if (className) {
       return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
     } else {
-      addError({
+      this.project.errors.add({
         description: `Failed to find className for ${this.fsPath}`,
         error: ErrorName.Ts2GdError,
         location: this.fsPath,
@@ -300,7 +300,7 @@ ${chalk.green(
       for (const theirFile of sf.writtenFiles) {
         for (const ourFile of this.writtenFiles) {
           if (theirFile === ourFile) {
-            addError({
+            this.project.errors.add({
               description: `You have two classes named ${
                 this.name
               } in the same folder. ts2gd saves every class as "class_name.gd", so they will overwrite each other. We recommend renaming one, but you can also move it into a new directory.
@@ -334,7 +334,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     }
 
     if (!sourceFileAst) {
-      addError({
+      this.project.errors.add({
         description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
         error: ErrorName.PathNotFound,
         location: this.fsPath,
@@ -347,6 +347,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     // Since we use chokidar but TS uses something else to monitor files, sometimes
     // we can race ahead of the TS compiler. This is a hack to wait for them to
     // catch up with us.
+    // We can skip that in a build only context is chokidar only generates the initial file list.
     while (
       !this.project.args.buildOnly &&
       (await fs.readFile(this.fsPath, "utf-8")) !== sourceFileAst.getFullText()
@@ -386,7 +387,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       const error = this.validateAutoloadClass()
 
       if (error !== null) {
-        addError(error)
+        this.project.errors.add(error)
       }
 
       const newAutoloadClassName = this.getAutoloadNameFromExportedVariable()
@@ -468,7 +469,7 @@ ${chalk.white(
           typeof autoloadClassName !== "string" &&
           "error" in autoloadClassName
         ) {
-          addError(autoloadClassName)
+          this.project.errors.add(autoloadClassName)
 
           return
         }
@@ -481,7 +482,7 @@ ${chalk.white(
 
         const classNode = this.getClassNode()
 
-        addError({
+        this.project.errors.add({
           error: ErrorName.AutoloadProjectButNotDecorated,
           description: `Since this is an autoload class in Godot, you must put ${chalk.white(
             "@autoload"
@@ -504,7 +505,7 @@ ${chalk.white(
 
         const classNode = this.getClassNode()
 
-        addError({
+        this.project.errors.add({
           error: ErrorName.AutoloadDecoratedButNotProject,
           description: `Since you removed this as an autoload class in Godot, you must remove ${chalk.white(
             "@autoload"
