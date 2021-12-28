@@ -157,9 +157,8 @@ import chalk from "chalk"
 
 import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
 import { Paths } from "./project/paths"
-import { checkVersionAsync } from "./check_version"
+import { checkVersionAsync, getInstalledVersion } from "./check_version"
 import { makeTsGdProject } from "./project/project"
-import packageJson from "./package.json"
 
 const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {
@@ -247,6 +246,8 @@ const setup = (tsgdJson: Paths) => {
   }
 }
 
+const version = getInstalledVersion()
+
 export const showLoadingMessage = (
   msg: string,
   args: ParsedArgs,
@@ -254,9 +255,7 @@ export const showLoadingMessage = (
 ) => {
   if (!args.debug) console.clear()
   console.info(
-    `${chalk.whiteBright("ts2gd v" + packageJson.version)}: ${
-      msg + (done ? "" : "...")
-    }`
+    `${chalk.whiteBright("ts2gd v" + version)}: ${msg + (done ? "" : "...")}`
   )
 }
 
