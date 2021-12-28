@@ -61,9 +61,11 @@ export const getImportResPathForEnum = (
   const enumDeclaration = enumDeclarations[0]
   const enumSourceFile = enumDeclaration.getSourceFile()
 
+  const targetPath = path.normalize(enumSourceFile.fileName)
+
   const enumSourceFileAsset = props.project
     .sourceFiles()
-    .find((sf) => sf.fsPath === enumSourceFile.fileName)
+    .find((sf) => sf.fsPath === targetPath)
 
   if (!enumSourceFileAsset) {
     throw new Error(

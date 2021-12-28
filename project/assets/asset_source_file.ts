@@ -434,7 +434,7 @@ ${chalk.white(
   }
 
   getGodotClassName(): string {
-    return this.fsPath.slice(this.fsPath.lastIndexOf("/") + 1, -".ts".length)
+    return path.basename(this.fsPath)
   }
 
   checkForAutoloadChanges(): void {
