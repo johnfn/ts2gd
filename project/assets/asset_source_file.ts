@@ -18,17 +18,13 @@ import { BaseAsset } from "./base_asset"
 // Can we just create them on edit as well (if it doesn't exist but is valid)?
 
 export class AssetSourceFile extends BaseAsset {
-  /** Like "res://src/main.gd" */
-  resPath: string
+  static extensions = ["ts"]
 
   /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
   gdPath: string
 
   /** Like "/Users/johnfn/GodotProject/compiled/ " */
   gdContainingDirectory: string
-
-  /** Like "/Users/johnfn/GodotProject/src/main.ts" */
-  fsPath: string
 
   name: string
 
@@ -45,7 +41,7 @@ export class AssetSourceFile extends BaseAsset {
   private _isAutoload: boolean
 
   constructor(sourceFilePath: string, project: TsGdProject) {
-    super()
+    super(sourceFilePath, project)
 
     let gdPath = path.join(
       project.paths.destGdPath,
@@ -55,10 +51,8 @@ export class AssetSourceFile extends BaseAsset {
       ) + ".gd"
     )
 
-    this.resPath = project.paths.fsPathToResPath(gdPath)
     this.gdPath = gdPath
     this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1)
-    this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
       project.paths.rootPath.length + 1
     )

@@ -1,22 +1,23 @@
 import fs from "fs"
+import path from "path"
 
 import _ from "lodash"
 import chalk from "chalk"
 import chokidar from "chokidar"
-import ts from "typescript"
+import ts, { parseJsonText } from "typescript"
 
 import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
 
 import Errors, { TsGdError } from "./errors"
-import { GodotProjectFile, isProjectFile } from "./godot_project_file"
+import { AssetGodotProjectFile } from "./assets/asset_godot_project_file"
 import { Paths } from "./paths"
 import { AssetFont } from "./assets/asset_font"
 import { AssetGlb } from "./assets/asset_glb"
 import { AssetGodotScene } from "./assets/asset_godot_scene"
 import { AssetImage } from "./assets/asset_image"
 import { AssetSourceFile } from "./assets/asset_source_file"
-import { BaseAsset, isBaseAsset } from "./assets/base_asset"
+import { BaseAsset, AssetConstructor } from "./assets/base_asset"
 import DefinitionBuilder from "./generate_dynamic_defs"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
@@ -31,7 +32,7 @@ export class TsGdProject {
   assets: BaseAsset[] = []
 
   /** Parsed project.godot file. */
-  godotProject: GodotProjectFile
+  godotProject: AssetGodotProjectFile
 
   /** Each source file. */
   sourceFiles(): AssetSourceFile[] {
@@ -129,40 +130,31 @@ export class TsGdProject {
     this.monitor(options.watcher)
   }
 
-  createGodotProject(path: string): GodotProjectFile | null {
+  createGodotProject(path: string): AssetGodotProjectFile | null {
     if (path.endsWith(".godot")) {
-      return new GodotProjectFile(path, this)
+      return new AssetGodotProjectFile(path, this)
     }
 
     console.error(`unhandled asset type ${path}`)
     return null
   }
 
-  createAsset(
-    path: string
-  ):
-    | AssetSourceFile
-    | AssetGodotScene
-    | AssetFont
-    | AssetImage
-    | AssetGlb
-    | null {
-    //TODO: move these checks to the asset classes in static methods
-    if (path.endsWith(".ts")) {
-      return new AssetSourceFile(path, this)
-    } else if (path.endsWith(".tscn")) {
-      return new AssetGodotScene(path, this)
-    } else if (path.endsWith(".ttf")) {
-      return new AssetFont(path, this)
-    } else if (path.endsWith(".glb")) {
-      return new AssetGlb(path, this)
-    } else if (
-      path.endsWith(".png") ||
-      path.endsWith(".gif") ||
-      path.endsWith(".bmp") ||
-      path.endsWith(".jpg")
-    ) {
-      return new AssetImage(path, this)
+  private static assetLookup = [
+    AssetSourceFile,
+    AssetGodotScene,
+    AssetGodotProjectFile,
+    AssetFont,
+    AssetGlb,
+  ].reduce((acc, current) => {
+    current.extensions.forEach((ext) => acc.set(ext, current))
+    return acc
+  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb>>())
+
+  createAsset(fsPath: string) {
+    const ext = path.extname(fsPath)
+    const constructor = TsGdProject.assetLookup.get(ext)
+    if (constructor) {
+      return new constructor(fsPath, this)
     }
 
     console.error(`unhandled asset type ${path}`)
@@ -234,7 +226,7 @@ export class TsGdProject {
     if (path.endsWith(".godot")) {
       const oldProjectFile = this.godotProject
 
-      this.godotProject = new GodotProjectFile(path, this)
+      this.godotProject = new AssetGodotProjectFile(path, this)
 
       const oldAutoloads = oldProjectFile.autoloads
       const newAutoloads = this.godotProject.autoloads

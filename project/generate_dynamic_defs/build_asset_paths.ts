@@ -13,6 +13,8 @@ ${project.assets
   .map((obj) => {
     const tsType = obj.tsType()
 
+    console.log(obj.resPath)
+
     if (obj instanceof AssetSourceFile || obj instanceof AssetGodotScene) {
       return `  '${obj.resPath}': PackedScene<${tsType}>`
     }

@@ -8,7 +8,7 @@ import { ParsedArgs } from "../parse_args"
 import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
 import { showLoadingMessage } from "../main"
 
-import { allAssetExtensions } from "./assets"
+import { allNonTsAssetExtensions } from "./assets"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 
@@ -69,7 +69,7 @@ export class Paths {
       // also exclude ts files from the ignore field in the ts2gd.json file
       `!**/!(*.d${this.tsFileIgnores.map((ignore) => `|${ignore}`)}).ts`,
       // and don't ignore the following assets
-      ...allAssetExtensions().map((ext) => `!**/*${ext}`),
+      ...allNonTsAssetExtensions().map((ext) => `!**/*.${ext}`),
     ]
   }
 

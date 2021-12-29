@@ -1,7 +1,9 @@
 import fs from "fs"
 
-import { parseGodotConfigFile } from "./godot_parser"
-import TsGdProject from "./project"
+import { parseGodotConfigFile } from "../godot_parser"
+import TsGdProject from "../project"
+
+import { BaseAsset } from "./base_asset"
 
 interface IRawGodotConfig {
   globals: {
@@ -42,20 +44,18 @@ interface IRawGodotConfig {
   }
 }
 
-export class GodotProjectFile {
+export class AssetGodotProjectFile extends BaseAsset {
+  static extensions = ["godot"]
+
   rawConfig: IRawGodotConfig
   autoloads: { resPath: string }[]
-  fsPath: string
   actionNames: string[]
-  project: TsGdProject
 
-  constructor(path: string, project: TsGdProject) {
-    this.rawConfig = parseGodotConfigFile(path, {
+  constructor(fsPath: string, project: TsGdProject) {
+    super(fsPath, project)
+    this.rawConfig = parseGodotConfigFile(fsPath, {
       autoload: [],
     }) as IRawGodotConfig
-
-    this.project = project
-    this.fsPath = path
 
     this.autoloads = Object.values(this.rawConfig.autoload[0] ?? {})
       .filter((x) => typeof x === "string")
@@ -142,8 +142,10 @@ export class GodotProjectFile {
       fsPath: this.project.paths.resPathToFsPath(mainSceneResPath),
     }
   }
+
+  tsType() {
+    return null
+  }
 }
 
-export function isProjectFile(input: object): input is GodotProjectFile {
-  return input instanceof GodotProjectFile
-}
+export default AssetGodotProjectFile

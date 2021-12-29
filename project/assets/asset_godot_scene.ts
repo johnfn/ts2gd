@@ -260,11 +260,7 @@ type ResourceTemp = {
 }
 
 export class AssetGodotScene extends BaseAsset {
-  /** e.g. /Users/johnfn/GodotProject/Scenes/my_scene.tscn */
-  fsPath: string
-
-  /** e.g. res://Scenes/my_scene.tscn */
-  resPath: string
+  static extensions = ["tscn"]
 
   nodes: GodotNode[]
 
@@ -275,19 +271,13 @@ export class AssetGodotScene extends BaseAsset {
 
   rootNode: GodotNode
 
-  project: TsGdProject
-
   constructor(fsPath: string, project: TsGdProject) {
-    super()
+    super(fsPath, project)
 
     const sceneFile = parseGodotConfigFile(fsPath, {
       ext_resource: [],
       node: [],
     }) as IGodotSceneFile
-
-    this.fsPath = fsPath
-    this.project = project
-    this.resPath = project.paths.fsPathToResPath(fsPath)
 
     this.resources = (sceneFile.ext_resource ?? []).map((resource) => {
       return {
@@ -305,7 +295,6 @@ export class AssetGodotScene extends BaseAsset {
     this.rootNode = this.nodes.find((node) => !node.parent)!
   }
 
-  /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
   tsType(): string {
     const rootScript = this.rootNode.getScript()
 
@@ -346,8 +335,6 @@ export class AssetGodotScene extends BaseAsset {
       return this.rootNode.tsType()
     }
   }
-
-  static extensions() {
-    return [".tscn"]
-  }
 }
+
+export default AssetGodotScene
