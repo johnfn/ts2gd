@@ -1,7 +1,7 @@
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
-export class AssetFont extends BaseAsset {
-  static extensions = ["ttf"]
+export class AssetFont extends AssetBase {
+  static extensions = [".ttf"]
 
   tsType(): string {
     return "DynamicFontData"

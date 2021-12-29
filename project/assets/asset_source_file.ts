@@ -10,15 +10,15 @@ import { Scope } from "../../scope"
 import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
 
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
 // dont make them on edit).
 // Can we just create them on edit as well (if it doesn't exist but is valid)?
 
-export class AssetSourceFile extends BaseAsset {
-  static extensions = ["ts"]
+export class AssetSourceFile extends AssetBase {
+  static extensions = [".ts"]
 
   /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
   gdPath: string
@@ -534,3 +534,5 @@ ${chalk.white(
     this.project.godotProject.removeAutoload(this.resPath)
   }
 }
+
+export default AssetSourceFile

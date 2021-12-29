@@ -69,7 +69,7 @@ export class Paths {
       // also exclude ts files from the ignore field in the ts2gd.json file
       `!**/!(*.d${this.tsFileIgnores.map((ignore) => `|${ignore}`)}).ts`,
       // and don't ignore the following assets
-      ...allNonTsAssetExtensions().map((ext) => `!**/*.${ext}`),
+      ...allNonTsAssetExtensions().map((ext) => `!**/*${ext}`),
     ]
   }
 

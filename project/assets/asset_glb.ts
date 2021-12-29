@@ -1,7 +1,7 @@
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
-export class AssetGlb extends BaseAsset {
-  static extensions = ["glb"]
+export class AssetGlb extends AssetBase {
+  static extensions = [".glb"]
 
   tsType(): string {
     return "Spatial"

@@ -10,14 +10,17 @@ import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
 
 import Errors, { TsGdError } from "./errors"
-import { AssetGodotProjectFile } from "./assets/asset_godot_project_file"
+import {
+  AssetBase,
+  AssetGodotProjectFile,
+  AssetFont,
+  AssetGlb,
+  AssetGodotScene,
+  AssetImage,
+  AssetSourceFile,
+  AssetConstructor,
+} from "./assets"
 import { Paths } from "./paths"
-import { AssetFont } from "./assets/asset_font"
-import { AssetGlb } from "./assets/asset_glb"
-import { AssetGodotScene } from "./assets/asset_godot_scene"
-import { AssetImage } from "./assets/asset_image"
-import { AssetSourceFile } from "./assets/asset_source_file"
-import { BaseAsset, AssetConstructor } from "./assets/base_asset"
 import DefinitionBuilder from "./generate_dynamic_defs"
 
 // TODO: Instead of manually scanning to find all assets, i could just import
@@ -29,7 +32,7 @@ export class TsGdProject {
   readonly paths: Paths
 
   /** Master list of all Godot assets */
-  assets: BaseAsset[] = []
+  assets: AssetBase[] = []
 
   /** Parsed project.godot file. */
   godotProject: AssetGodotProjectFile
@@ -140,15 +143,16 @@ export class TsGdProject {
   }
 
   private static assetLookup = [
-    AssetSourceFile,
-    AssetGodotScene,
-    AssetGodotProjectFile,
     AssetFont,
     AssetGlb,
+    AssetGodotProjectFile,
+    AssetGodotScene,
+    AssetImage,
+    AssetSourceFile,
   ].reduce((acc, current) => {
     current.extensions.forEach((ext) => acc.set(ext, current))
     return acc
-  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb>>())
+  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb | AssetImage>>())
 
   createAsset(fsPath: string) {
     const ext = path.extname(fsPath)
@@ -157,7 +161,7 @@ export class TsGdProject {
       return new constructor(fsPath, this)
     }
 
-    console.error(`unhandled asset type ${path}`)
+    console.error(`unhandled asset type ${fsPath}`)
     return null
   }
 
@@ -183,7 +187,7 @@ export class TsGdProject {
 
     // Do this first because some assets expect themselves to exist - e.g.
     // an enum inside a source file expects that source file to exist.
-    if (newAsset instanceof BaseAsset) {
+    if (newAsset instanceof AssetBase) {
       this.assets.push(newAsset)
     }
 
@@ -243,13 +247,12 @@ export class TsGdProject {
       let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
       if (oldAsset) {
-        let newAsset = this.createAsset(path) as any as BaseAsset
+        let newAsset = this.createAsset(path) as any as AssetBase
         this.assets = this.assets.filter((a) => a.fsPath !== path)
         this.assets.push(newAsset)
 
         if (newAsset instanceof AssetSourceFile) {
           await newAsset.compile(this.program)
-
           this.definitionBuilder.buildAssetPathsType()
           this.definitionBuilder.buildNodePathsTypeForScript(newAsset)
         } else if (newAsset instanceof AssetGodotScene) {
@@ -340,6 +343,8 @@ export const makeTsGdProject = async (
   program: ts.Program,
   args: ParsedArgs
 ) => {
+  console.log(ts2gdJson.ignoredPaths())
+
   const [watcher, initialFiles] = await new Promise<
     [chokidar.FSWatcher, string[]]
   >((resolve) => {

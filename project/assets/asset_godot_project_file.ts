@@ -3,7 +3,7 @@ import fs from "fs"
 import { parseGodotConfigFile } from "../godot_parser"
 import TsGdProject from "../project"
 
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
 interface IRawGodotConfig {
   globals: {
@@ -44,8 +44,8 @@ interface IRawGodotConfig {
   }
 }
 
-export class AssetGodotProjectFile extends BaseAsset {
-  static extensions = ["godot"]
+export class AssetGodotProjectFile extends AssetBase {
+  static extensions = [".godot"]
 
   rawConfig: IRawGodotConfig
   autoloads: { resPath: string }[]

@@ -1,7 +1,7 @@
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
-export class AssetImage extends BaseAsset {
-  static extensions = ["gif", "png", "jpg", "bmp"]
+export class AssetImage extends AssetBase {
+  static extensions = [".gif", ".png", ".jpg", ".bmp"]
 
   tsType(): string {
     return "StreamTexture"

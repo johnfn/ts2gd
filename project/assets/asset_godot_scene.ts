@@ -8,7 +8,7 @@ import { parseGodotConfigFile } from "../godot_parser"
 
 import { AssetGlb } from "./asset_glb"
 import { AssetSourceFile } from "./asset_source_file"
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
 interface IGodotSceneFile {
   gd_scene: {
@@ -259,8 +259,8 @@ type ResourceTemp = {
   id: number
 }
 
-export class AssetGodotScene extends BaseAsset {
-  static extensions = ["tscn"]
+export class AssetGodotScene extends AssetBase {
+  static extensions = [".tscn"]
 
   nodes: GodotNode[]
 

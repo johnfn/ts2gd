@@ -1,11 +1,11 @@
 import TsGdProject from "../project"
 
-export type AssetConstructor<T extends BaseAsset> = new (
+export type AssetConstructor<T extends AssetBase> = new (
   fsPath: string,
   project: TsGdProject
 ) => T
 
-export abstract class BaseAsset {
+export abstract class AssetBase {
   /** e.g. /Users/johnfn/GodotProject/Scenes/my_scene.tscn */
   readonly fsPath: string
 
@@ -26,6 +26,4 @@ export abstract class BaseAsset {
   }
 }
 
-export function isBaseAsset(input?: object): input is BaseAsset {
-  return Boolean(input) && input instanceof BaseAsset
-}
+export default AssetBase

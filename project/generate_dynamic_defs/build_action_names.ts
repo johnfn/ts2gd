@@ -4,6 +4,8 @@ import path from "path"
 import TsGdProject from "../project"
 
 export default function buildActionNames(project: TsGdProject) {
+  console.log(project, project.godotProject)
+
   const actions = project.godotProject.actionNames.filter(
     (name) => name !== "$section"
   )
