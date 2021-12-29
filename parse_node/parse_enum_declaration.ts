@@ -41,9 +41,9 @@ export const parseEnumDeclaration = (
   const enumType = props.program.getTypeChecker().getTypeAtLocation(node)
   const { resPath, enumName } = getImportResPathForEnum(enumType, props)
 
-  const fileName = path.join(
-    props.sourceFileAsset.gdContainingDirectory,
-    `${props.sourceFileAsset.gdClassName}_${enumName}.gd`
+  const fileName = props.project.paths.replaceExtension(
+    props.sourceFileAsset.gdPath,
+    `_${enumName}.gd`
   )
 
   return {

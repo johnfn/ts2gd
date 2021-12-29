@@ -79,9 +79,10 @@ export const getImportResPathForEnum = (
     enumTypeString = enumTypeString.slice("typeof ".length)
   }
 
-  const pathWithoutEnum = enumSourceFileAsset.resPath
-  const importPath =
-    pathWithoutEnum.slice(0, -".gd".length) + "_" + enumTypeString + ".gd"
+  const importPath = props.project.paths.replaceResExtension(
+    enumSourceFileAsset.resPath,
+    `_${enumTypeString}.gd`
+  )
 
   return {
     resPath: importPath,

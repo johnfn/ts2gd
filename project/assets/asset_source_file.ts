@@ -28,17 +28,18 @@ export class AssetSourceFile extends AssetBase {
   /** Like "/Users/johnfn/GodotProject/compiled/ " */
   readonly gdContainingDirectory: string
 
-  /**
-   * List of all files that were written when compiling this source file.
-   */
+  /** List of all files that were written when compiling this source file. */
   writtenFiles: string[] = []
 
   private _isAutoload: boolean
 
   constructor(sourceFilePath: string, project: TsGdProject) {
-    super(sourceFilePath, project)
+    // swap in the gdPath for the tsPath as resPath
+    const gdPath = project.paths.gdPathForTs(sourceFilePath)
 
-    this.gdPath = project.paths.gdPathForTs(sourceFilePath)
+    super(sourceFilePath, project, project.paths.fsPathToResPath(gdPath))
+
+    this.gdPath = gdPath
     this.gdClassName = project.paths.gdName(this.gdPath)
     this.gdContainingDirectory = path.dirname(this.gdPath)
 
@@ -496,7 +497,7 @@ ${chalk.white(
 
     // Delete the generated enum files
     const filesInDirectory = await fs.readdir(this.gdContainingDirectory)
-    const nameWithoutExtension = this.gdPath.slice(0, -".gd".length)
+    const nameWithoutExtension = this.project.paths.removeExtension(this.gdPath)
 
     for (const fileName of filesInDirectory) {
       const fullPath = this.gdContainingDirectory + fileName

@@ -56,7 +56,6 @@ export default function buildNodePathsTypeForScript(
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
       const nodeScript = node.getScript()
-
       if (nodeScript && nodeScript.resPath === script.resPath) {
         const instance = node.instance()
         let isValid = false
@@ -186,16 +185,7 @@ export default function buildNodePathsTypeForScript(
   const pathToImport: { [key: string]: string } = {}
 
   for (const { path, node } of commonRelativePaths) {
-    const script = node.getScript()
-
-    if (script) {
-      pathToImport[path] = `import("${script.fsPath.slice(
-        0,
-        -".ts".length
-      )}").${script.exportedTsClassName()}`
-    } else {
-      pathToImport[path] = node.tsType()
-    }
+    pathToImport[path] = node.getScript()?.tsType ?? node.tsType
   }
 
   type RecursivePath = {

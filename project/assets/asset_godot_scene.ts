@@ -174,7 +174,7 @@ export class GodotNode {
     return !this._type && !this.isInstance()
   }
 
-  tsType(): string {
+  get tsType(): string {
     if (this._type) {
       return this._type
     }
@@ -327,12 +327,9 @@ export class AssetGodotScene extends AssetBase {
         return "any"
       }
 
-      return `import('${rootSourceFile.fsPath.slice(
-        0,
-        -".ts".length
-      )}').${rootSourceFile.exportedTsClassName()}`
+      return rootSourceFile.tsType
     } else {
-      return this.rootNode.tsType()
+      return this.rootNode.tsType
     }
   }
 }

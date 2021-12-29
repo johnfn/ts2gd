@@ -63,11 +63,22 @@ export class Paths {
     )}`
   }
 
+  replaceResExtension(resPath: string, replacement: string) {
+    return resPath.replace(/\.[0-9a-z]+$/i, replacement)
+  }
+
   removeExtension(fsPath: string) {
+    if (fsPath.startsWith("res://")) {
+      throw new Error("removeExtension isn't supported for res:// paths")
+    }
     return path.join(
       path.dirname(fsPath),
       path.basename(fsPath, path.extname(fsPath))
     )
+  }
+
+  replaceExtension(fsPath: string, replacement: string) {
+    return `${this.removeExtension(fsPath)}${replacement}`
   }
 
   tsRelativePath(fsPath: string, withExtension = false) {
@@ -81,10 +92,13 @@ export class Paths {
   }
 
   gdPathForTs(sourceFilePath: string) {
-    const relativeToSource = `${this.removeExtension(
-      path.relative(this.sourceTsPath, sourceFilePath)
-    )}.gd`
-    return path.join(this.destGdPath, relativeToSource)
+    return path.join(
+      this.destGdPath,
+      this.replaceExtension(
+        path.relative(this.sourceTsPath, sourceFilePath),
+        ".gd"
+      )
+    )
   }
 
   gdName(gdPath: string) {

@@ -184,7 +184,9 @@ ${parsedClass.content}`,
     // Generate SOME code - even though it'll certainly be wrong
 
     files.push({
-      filePath: node.getSourceFile().fileName.slice(0, -".ts".length),
+      filePath: props.project.paths.removeExtension(
+        node.getSourceFile().fileName
+      ),
       body: `
 ${getFileHeader()}
 ${hoistedEnumImports}

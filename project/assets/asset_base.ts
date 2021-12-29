@@ -19,10 +19,10 @@ export abstract class AssetBase {
   static readonly extensions: string[] = []
 
   readonly project: TsGdProject
-  constructor(fsPath: string, project: TsGdProject) {
+  constructor(fsPath: string, project: TsGdProject, resPath?: string) {
     this.project = project
     this.fsPath = fsPath
-    this.resPath = project.paths.fsPathToResPath(fsPath)
+    this.resPath = resPath ?? project.paths.fsPathToResPath(fsPath)
   }
 
   tsRelativePath(withExtension = false) {
