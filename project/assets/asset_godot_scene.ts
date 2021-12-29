@@ -190,7 +190,7 @@ export class GodotNode {
       return "any"
     }
 
-    const instancedSceneType = this.instance()?.tsType()
+    const instancedSceneType = this.instance()?.tsType
 
     if (instancedSceneType) {
       return instancedSceneType
@@ -295,7 +295,7 @@ export class AssetGodotScene extends AssetBase {
     this.rootNode = this.nodes.find((node) => !node.parent)!
   }
 
-  tsType(): string {
+  get tsType(): string {
     const rootScript = this.rootNode.getScript()
 
     if (rootScript) {
@@ -338,3 +338,7 @@ export class AssetGodotScene extends AssetBase {
 }
 
 export default AssetGodotScene
+
+export function isAssetGodotScene(input: object): input is AssetGodotScene {
+  return input instanceof AssetGodotScene
+}

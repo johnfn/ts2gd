@@ -12,7 +12,7 @@ export default function buildSceneImports(project: TsGdProject) {
     result += `export const ${path.basename(
       scene.fsPath,
       ".tscn"
-    )}Tscn: PackedScene<${scene.tsType() ?? "Node"}>;\n`
+    )}Tscn: PackedScene<${scene.tsType ?? "Node"}>;\n`
   }
 
   const destPath = path.join(project.paths.dynamicGodotDefsPath, "@scenes.d.ts")

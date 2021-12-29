@@ -1,1 +1,3 @@
-export class Nested {}
+export class Nested {
+  constructor() {}
+}

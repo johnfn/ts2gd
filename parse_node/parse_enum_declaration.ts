@@ -1,3 +1,5 @@
+import path from "path"
+
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
@@ -39,12 +41,10 @@ export const parseEnumDeclaration = (
   const enumType = props.program.getTypeChecker().getTypeAtLocation(node)
   const { resPath, enumName } = getImportResPathForEnum(enumType, props)
 
-  const fileName =
-    props.sourceFileAsset.gdContainingDirectory +
-    props.sourceFileAsset.name +
-    "_" +
-    enumName +
-    ".gd"
+  const fileName = path.join(
+    props.sourceFileAsset.gdContainingDirectory,
+    `${props.sourceFileAsset.gdClassName}_${enumName}.gd`
+  )
 
   return {
     content: `const ${enumName} = preload("${resPath}").${enumName}`,

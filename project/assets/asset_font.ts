@@ -3,7 +3,7 @@ import { AssetBase } from "./asset_base"
 export class AssetFont extends AssetBase {
   static extensions = [".ttf"]
 
-  tsType(): string {
+  get tsType() {
     return "DynamicFontData"
   }
 }

@@ -44,15 +44,51 @@ export class Paths {
 
   readonly gdscriptPath: string
 
-  additionalIgnores: string[]
-  tsFileIgnores: string[]
+  readonly additionalIgnores: string[]
+  readonly tsFileIgnores: string[]
 
   resPathToFsPath(resPath: string) {
-    return path.join(this.rootPath, resPath.slice("res://".length))
+    return path.normalize(
+      path.join(this.rootPath, resPath.slice("res://".length))
+    )
+  }
+
+  normalizeToPosix(fsPath: string) {
+    return path.normalize(fsPath).replaceAll(path.sep, path.posix.sep)
   }
 
   fsPathToResPath(fsPath: string) {
-    return "res://" + fsPath.slice(this.rootPath.length + 1)
+    return `res://${this.normalizeToPosix(
+      path.relative(this.rootPath, fsPath)
+    )}`
+  }
+
+  removeExtension(fsPath: string) {
+    return path.join(
+      path.dirname(fsPath),
+      path.basename(fsPath, path.extname(fsPath))
+    )
+  }
+
+  tsRelativePath(fsPath: string, withExtension = false) {
+    // on win this would have \, but we need /
+    return this.normalizeToPosix(
+      path.relative(
+        path.dirname(this.tsconfigPath),
+        withExtension ? fsPath : this.removeExtension(fsPath)
+      )
+    )
+  }
+
+  gdPathForTs(sourceFilePath: string) {
+    const relativeToSource = `${this.removeExtension(
+      path.relative(this.sourceTsPath, sourceFilePath)
+    )}.gd`
+    return path.join(this.destGdPath, relativeToSource)
+  }
+
+  gdName(gdPath: string) {
+    return path.basename(gdPath, path.extname(gdPath))
   }
 
   ignoredPaths(): Matcher {
@@ -71,26 +107,6 @@ export class Paths {
       // and don't ignore the following assets
       ...allNonTsAssetExtensions().map((ext) => `!**/*${ext}`),
     ]
-  }
-
-  normalizeToPosix(fsPath: string) {
-    return path.normalize(fsPath).replaceAll(path.sep, path.posix.sep)
-  }
-
-  tsConfigRelativePathWithoutExtension(fsPath: string) {
-    // on win this would have \, but we need /
-    return this.normalizeToPosix(
-      // get relative path
-      path.relative(
-        // to the directory containing the tsconfig file
-        path.dirname(this.tsconfigPath),
-        // but strip the file ending
-        path.join(
-          path.dirname(fsPath),
-          path.basename(fsPath, path.extname(fsPath))
-        )
-      )
-    )
   }
 
   constructor(args: ParsedArgs) {

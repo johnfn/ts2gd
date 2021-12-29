@@ -283,9 +283,9 @@ ${Object.entries(pathToImport)
 
   result += `
   
-import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
+import { ${className} } from '${script.tsRelativePath()}'
 
-declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
+declare module '${script.tsRelativePath()}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}
 
   interface ${className} {
@@ -325,7 +325,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 
   const destPath = path.join(
     project.paths.dynamicGodotDefsPath,
-    `@node_paths_${script.getGodotClassName()}.d.ts`
+    `@node_paths_${script.gdClassName}.d.ts`
   )
 
   fs.writeFileSync(destPath, result)

@@ -143,7 +143,7 @@ export class AssetGodotProjectFile extends AssetBase {
     }
   }
 
-  tsType() {
+  get tsType() {
     return null as never
   }
 }

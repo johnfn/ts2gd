@@ -123,8 +123,7 @@ export const parseSourceFile = (
       }
 
       parsedClassDeclarations.push({
-        fileName:
-          props.sourceFileAsset.gdContainingDirectory + className + ".gd",
+        fileName: props.sourceFileAsset.gdPath,
         parsedClass: parsedStatement,
         classDecl,
       })

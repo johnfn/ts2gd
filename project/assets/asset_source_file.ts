@@ -20,51 +20,30 @@ import { AssetBase } from "./asset_base"
 export class AssetSourceFile extends AssetBase {
   static extensions = [".ts"]
 
+  readonly gdClassName: string
+
   /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
-  gdPath: string
+  readonly gdPath: string
 
   /** Like "/Users/johnfn/GodotProject/compiled/ " */
-  gdContainingDirectory: string
-
-  name: string
-
-  /** Like "src/main.ts" */
-  tsRelativePath: string
+  readonly gdContainingDirectory: string
 
   /**
    * List of all files that were written when compiling this source file.
    */
   writtenFiles: string[] = []
 
-  project: TsGdProject
-
   private _isAutoload: boolean
 
   constructor(sourceFilePath: string, project: TsGdProject) {
     super(sourceFilePath, project)
 
-    let gdPath = path.join(
-      project.paths.destGdPath,
-      sourceFilePath.slice(
-        project.paths.sourceTsPath.length,
-        -path.extname(sourceFilePath).length
-      ) + ".gd"
-    )
+    this.gdPath = project.paths.gdPathForTs(sourceFilePath)
+    this.gdClassName = project.paths.gdName(this.gdPath)
+    this.gdContainingDirectory = path.dirname(this.gdPath)
 
-    this.gdPath = gdPath
-    this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1)
-    this.tsRelativePath = sourceFilePath.slice(
-      project.paths.rootPath.length + 1
-    )
-    this.name = this.gdPath.slice(
-      this.gdContainingDirectory.length,
-      -".gd".length
-    )
-    this.project = project
-    this._isAutoload = Boolean(
-      this.project.godotProject.autoloads.find(
-        (a) => a.resPath === this.resPath
-      )
+    this._isAutoload = !!this.project.godotProject.autoloads.find(
+      (a) => a.resPath === this.resPath
     )
   }
 
@@ -137,7 +116,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
     if (!name) {
       return {
         error: ErrorName.ClassCannotBeAnonymous,
-        location: node ?? this.tsRelativePath,
+        location: node ?? this.tsRelativePath(true),
         description: "This class cannot be anonymous",
         stack: new Error().stack ?? "",
       }
@@ -202,7 +181,7 @@ Hint: try ${chalk.blueBright(
     // TODO: Error could say the exact loc to write
     return {
       error: ErrorName.CantFindAutoloadInstance,
-      location: ast ?? this.tsRelativePath,
+      location: ast ?? this.tsRelativePath(true),
       stack: new Error().stack ?? "",
       description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
 
@@ -222,11 +201,11 @@ ${chalk.green(
     return this._isAutoload
   }
 
-  tsType(): string {
+  get tsType() {
     const className = this.exportedTsClassName()
 
     if (className) {
-      return `import('${this.tsconfigRelativePath()}').${className}`
+      return `import('${this.tsRelativePath()}').${className}`
     }
 
     this.project.errors.add({
@@ -298,7 +277,7 @@ ${chalk.green(
           if (theirFile === ourFile) {
             this.project.errors.add({
               description: `You have two classes named ${
-                this.name
+                this.gdClassName
               } in the same folder. ts2gd saves every class as "class_name.gd", so they will overwrite each other. We recommend renaming one, but you can also move it into a new directory.
 
 First path:  ${chalk.yellow(this.fsPath)}
@@ -416,7 +395,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
         description: `Be sure to export an instance of your autoload class, e.g.:
 
 ${chalk.white(
-  `export const ${this.getGodotClassName()} = new ${this.exportedTsClassName()}()`
+  `export const ${this.gdClassName} = new ${this.exportedTsClassName()}()`
 )}
         `,
         location: classNode ?? this.fsPath,
@@ -425,10 +404,6 @@ ${chalk.white(
     }
 
     return null
-  }
-
-  getGodotClassName(): string {
-    return path.basename(this.fsPath)
   }
 
   checkForAutoloadChanges(): void {
@@ -536,3 +511,7 @@ ${chalk.white(
 }
 
 export default AssetSourceFile
+
+export function isAssetSourceFile(input: object): input is AssetSourceFile {
+  return input instanceof AssetSourceFile
+}
