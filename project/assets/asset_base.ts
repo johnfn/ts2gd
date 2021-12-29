@@ -24,6 +24,10 @@ export abstract class AssetBase {
     this.fsPath = fsPath
     this.resPath = project.paths.fsPathToResPath(fsPath)
   }
+
+  tsconfigRelativePath() {
+    return this.project.paths.tsConfigRelativePathWithoutExtension(this.fsPath)
+  }
 }
 
 export default AssetBase

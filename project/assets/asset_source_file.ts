@@ -226,17 +226,17 @@ ${chalk.green(
     const className = this.exportedTsClassName()
 
     if (className) {
-      return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
-    } else {
-      this.project.errors.add({
-        description: `Failed to find className for ${this.fsPath}`,
-        error: ErrorName.Ts2GdError,
-        location: this.fsPath,
-        stack: new Error().stack ?? "",
-      })
-
-      return "any"
+      return `import('${this.tsconfigRelativePath()}').${className}`
     }
+
+    this.project.errors.add({
+      description: `Failed to find className for ${this.fsPath}`,
+      error: ErrorName.Ts2GdError,
+      location: this.fsPath,
+      stack: new Error().stack ?? "",
+    })
+
+    return "any"
   }
 
   private isProjectAutoload(): boolean {

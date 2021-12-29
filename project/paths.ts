@@ -73,6 +73,16 @@ export class Paths {
     ]
   }
 
+  tsConfigRelativePathWithoutExtension(fsPath: string) {
+    return path.relative(
+      path.dirname(this.tsconfigPath),
+      path.join(
+        path.dirname(fsPath),
+        path.basename(fsPath, path.extname(fsPath))
+      )
+    )
+  }
+
   constructor(args: ParsedArgs) {
     if (args.init) {
       this.init()
