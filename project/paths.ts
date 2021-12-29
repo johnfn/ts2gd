@@ -73,16 +73,24 @@ export class Paths {
     ]
   }
 
+  normalizeToPosix(fsPath: string) {
+    return path.normalize(fsPath).replaceAll(path.sep, path.posix.sep)
+  }
+
   tsConfigRelativePathWithoutExtension(fsPath: string) {
-    return path
-      .relative(
+    // on win this would have \, but we need /
+    return this.normalizeToPosix(
+      // get relative path
+      path.relative(
+        // to the directory containing the tsconfig file
         path.dirname(this.tsconfigPath),
+        // but strip the file ending
         path.join(
           path.dirname(fsPath),
           path.basename(fsPath, path.extname(fsPath))
         )
       )
-      .replace(path.sep, path.posix.sep)
+    )
   }
 
   constructor(args: ParsedArgs) {

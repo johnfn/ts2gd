@@ -13,9 +13,21 @@ _global_script_classes=[ {
 "class": "Test",
 "language": "GDScript",
 "path": "res://Test.gd"
+}, { 
+"class": "Main",
+"language": "GDScript",
+"path": "res://Main.gd"
+}, {
+"base": "Reference",
+"class": "Nested",
+"language": "GDScript",
+"path": "res://nested/Nested.gd"
 } ]
+
 _global_script_class_icons={
-"Test": ""
+"Test": "",
+"Main": "",
+"Nested": ""
 }
 
 [application]
@@ -31,6 +43,8 @@ Autoload="*res://Autoload.gd"
 [global]
 
 autoload=false
+tabs=false
+spaces=false
 
 [physics]
 

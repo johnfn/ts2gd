@@ -343,8 +343,6 @@ export const makeTsGdProject = async (
   program: ts.Program,
   args: ParsedArgs
 ) => {
-  console.log(ts2gdJson.ignoredPaths())
-
   const [watcher, initialFiles] = await new Promise<
     [chokidar.FSWatcher, string[]]
   >((resolve) => {
