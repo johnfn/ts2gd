@@ -324,35 +324,34 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
   ): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
+    let fsContent = await fs.readFile(this.fsPath, "utf-8")
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
     let tries = 0
 
-    while (!sourceFileAst && ++tries < 50) {
+    while (
+      (!sourceFileAst ||
+        // Chokidar and TS use different strategies to monitor files, so we can race ahead of them.
+        // Wait for them to catch up.
+        (!this.project.args.buildOnly &&
+          fsContent !== sourceFileAst.getFullText())) &&
+      ++tries < 50
+    ) {
       await new Promise((resolve) => setTimeout(resolve, 10))
-
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
+      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+      if (sourceFileAst) {
+        fsContent = await fs.readFile(this.fsPath, "utf-8")
+      }
     }
 
     if (!sourceFileAst) {
       addError({
-        description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
+        description: `TS can't find source file ${this.fsPath} after waiting 0.5 second. Try saving your TypeScript file again.`,
         error: ErrorName.PathNotFound,
         location: this.fsPath,
         stack: new Error().stack ?? "",
       })
 
       return
-    }
-
-    // Since we use chokidar but TS uses something else to monitor files, sometimes
-    // we can race ahead of the TS compiler. This is a hack to wait for them to
-    // catch up with us.
-    while (
-      !this.project.args.buildOnly &&
-      (await fs.readFile(this.fsPath, "utf-8")) !== sourceFileAst.getFullText()
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 10))
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
     const parsedNode = parseNode(sourceFileAst, {
