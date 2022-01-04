@@ -1,8 +1,9 @@
-import path from "path"
 import fs from "fs"
-import { TsGdProjectClass } from "../project"
+import path from "path"
 
-export const buildSceneImports = (project: TsGdProjectClass) => {
+import TsGdProject from "../project"
+
+export default function buildSceneImports(project: TsGdProject) {
   let result = ``
 
   for (const scene of project.godotScenes()) {
@@ -14,10 +15,7 @@ export const buildSceneImports = (project: TsGdProjectClass) => {
     )}Tscn: PackedScene<${scene.tsType() ?? "Node"}>;\n`
   }
 
-  const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
-    "@scenes.d.ts"
-  )
+  const destPath = path.join(project.paths.dynamicGodotDefsPath, "@scenes.d.ts")
 
   fs.writeFileSync(destPath, result)
 }

@@ -1,7 +1,7 @@
 import { main } from "../main"
 
-export const test = () => {
-  main({
+export async function test() {
+  return main({
     buildLibraries: false,
     help: false,
     init: false,
@@ -11,4 +11,11 @@ export const test = () => {
   })
 }
 
-test()
+void (async () => {
+  try {
+    await test()
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
+  }
+})()

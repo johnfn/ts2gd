@@ -1,9 +1,11 @@
 import fs from "fs"
 import path from "path"
+
+import { Paths } from "../project"
+
 import { ArrayDefinition } from "./custom_defs/array_def"
 import { DictionaryDefinition } from "./custom_defs/dictionary_def"
 import { PackedSceneDef } from "./custom_defs/packed_scene_def"
-import { TsGdProjectClass } from "../project/project"
 
 export const baseFileContent = `
 
@@ -264,9 +266,9 @@ declare class Signal<T extends (...args: any[]) => any = () => void> {
 }
 `
 
-export const buildBase = () => {
+export default function writeBaseDefinitions(paths: Paths) {
   fs.writeFileSync(
-    path.join(TsGdProjectClass.Paths.staticGodotDefsPath, "@base.d.ts"),
+    path.join(paths.staticGodotDefsPath, "@base.d.ts"),
     baseFileContent
   )
 }

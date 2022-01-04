@@ -1,35 +1,52 @@
-import path from "path"
 import fs from "fs"
+import path from "path"
 import process from "process"
-import { showLoadingMessage } from "../main"
-import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
+
 import { ParsedArgs } from "../parse_args"
+import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
+import { showLoadingMessage } from "../main"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 
 export class Paths {
   /** Where the .ts files live, e.g. ./src */
-  sourceTsPath: string
+  readonly sourceTsPath: string
 
   /** Where the compiled .gd files go, e.g. ./compiled */
-  destGdPath: string
+  readonly destGdPath: string
 
   /** The root path of the project */
-  rootPath: string
+  readonly rootPath: string
 
   /** The full path to the tsconfig file. e.g. /Users/johnfn/GodotProject/tsconfig.json */
-  tsconfigPath: string
+  readonly tsconfigPath: string
 
   /** The path to the Godot definitions folder for unchanging library definitions.
    * e.g. /Users/johnfn/GodotProject/_godot_defs/static */
-  staticGodotDefsPath: string
+  readonly staticGodotDefsPath: string
 
   /** The path to the Godot definitions folder for definitions based off user files.
    * e.g. /Users/johnfn/GodotProject/_godot_defs/dynamic */
-  dynamicGodotDefsPath: string
+  readonly dynamicGodotDefsPath: string
 
   /** The path to the Godot repository, e.g. /Users/johnfn/Godot */
-  godotSourceRepoPath: string | undefined
+  readonly godotSourceRepoPath: string | undefined
+
+  readonly csgClassesPath: string
+
+  readonly websocketClassesPath: string
+
+  readonly normalClassesPath: string
+
+  readonly gdscriptPath: string
+
+  resPathToFsPath(resPath: string) {
+    return path.join(this.rootPath, resPath.slice("res://".length))
+  }
+
+  fsPathToResPath(fsPath: string) {
+    return "res://" + fsPath.slice(this.rootPath.length + 1)
+  }
 
   constructor(args: ParsedArgs) {
     if (args.init) {
@@ -96,6 +113,26 @@ export class Paths {
     )
 
     this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
+
+    this.csgClassesPath = path.join(
+      this.godotSourceRepoPath ?? "",
+      "modules/csg/doc_classes"
+    )
+
+    this.websocketClassesPath = path.join(
+      this.godotSourceRepoPath ?? "",
+      "modules/websocket/doc_classes"
+    )
+
+    this.normalClassesPath = path.join(
+      this.godotSourceRepoPath ?? "",
+      "doc/classes"
+    )
+
+    this.gdscriptPath = path.join(
+      this.godotSourceRepoPath ?? "",
+      "modules/gdscript/doc_classes"
+    )
 
     this.tsconfigPath = path.join(
       path.dirname(fullyQualifiedTs2gdPathWithFilename),

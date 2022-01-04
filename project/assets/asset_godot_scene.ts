@@ -1,12 +1,14 @@
 import path from "path"
 
-import { BaseAsset } from "./base_asset"
-import { TsGdProjectClass } from "../project"
-import { AssetSourceFile } from "./asset_source_file"
-import { AssetGlb } from "./asset_glb"
-import { parseGodotConfigFile } from "../godot_parser"
-import { addError, ErrorName } from "../../errors"
 import chalk from "chalk"
+
+import { ErrorName, addError } from "../../errors"
+import TsGdProject from "../project"
+import { parseGodotConfigFile } from "../godot_parser"
+
+import { AssetGlb } from "./asset_glb"
+import { AssetSourceFile } from "./asset_source_file"
+import { BaseAsset } from "./base_asset"
 
 interface IGodotSceneFile {
   gd_scene: {
@@ -66,13 +68,13 @@ export class GodotNode {
   parent: string | undefined
   $section: Required<IGodotSceneFile>["node"][0]["$section"]
   scene: AssetGodotScene
-  project: TsGdProjectClass
+  project: TsGdProject
   scriptExtResourceId: number | undefined
 
   constructor(
     props: Required<IGodotSceneFile>["node"][0],
     scene: AssetGodotScene,
-    project: TsGdProjectClass
+    project: TsGdProject
   ) {
     this.name = props.$section.name
     this.project = project
@@ -273,9 +275,9 @@ export class AssetGodotScene extends BaseAsset {
 
   rootNode: GodotNode
 
-  project: TsGdProjectClass
+  project: TsGdProject
 
-  constructor(fsPath: string, project: TsGdProjectClass) {
+  constructor(fsPath: string, project: TsGdProject) {
     super()
 
     const sceneFile = parseGodotConfigFile(fsPath, {
@@ -285,12 +287,12 @@ export class AssetGodotScene extends BaseAsset {
 
     this.fsPath = fsPath
     this.project = project
-    this.resPath = TsGdProjectClass.FsPathToResPath(fsPath)
+    this.resPath = project.paths.fsPathToResPath(fsPath)
 
     this.resources = (sceneFile.ext_resource ?? []).map((resource) => {
       return {
         resPath: resource.$section.path,
-        fsPath: TsGdProjectClass.ResPathToFsPath(resource.$section.path),
+        fsPath: project.paths.resPathToFsPath(resource.$section.path),
         id: resource.$section.id,
       }
     })

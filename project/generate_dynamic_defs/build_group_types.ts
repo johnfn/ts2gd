@@ -1,9 +1,10 @@
-import path from "path"
 import fs from "fs"
-import { TsGdProjectClass } from "../project"
-import { TsGdError } from "../../errors"
+import path from "path"
 
-export const buildGroupTypes = (project: TsGdProjectClass): void => {
+import { TsGdError } from "../../errors"
+import TsGdProject from "../project"
+
+export default function buildGroupTypes(project: TsGdProject): void {
   const groupNameToTypes: { [key: string]: Set<string> } = {}
 
   for (const scene of project.godotScenes()) {
@@ -28,10 +29,7 @@ export const buildGroupTypes = (project: TsGdProjectClass): void => {
 
   result += `}`
 
-  const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
-    "@groups.d.ts"
-  )
+  const destPath = path.join(project.paths.dynamicGodotDefsPath, "@groups.d.ts")
 
   fs.writeFileSync(destPath, result)
 }

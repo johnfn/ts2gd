@@ -1,10 +1,15 @@
 import ts from "typescript"
-const { SyntaxKind } = ts
-import { ParseState, combine, ExtraLine, ExtraLineType } from "../parse_node"
 
-import { ParseNodeType } from "../parse_node"
+import {
+  ExtraLine,
+  ExtraLineType,
+  ParseState,
+  combine,
+  ParseNodeType,
+} from "../parse_node"
 import { Test } from "../tests/test"
 import { syntaxKindToString } from "../ts_utils"
+const { SyntaxKind } = ts
 
 export const parsePostfixUnaryExpression = (
   node: ts.PostfixUnaryExpression,

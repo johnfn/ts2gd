@@ -1,6 +1,7 @@
-import { parseGodotConfigFile } from "./godot_parser"
-import { TsGdProjectClass as TsGdProject } from "./project"
 import fs from "fs"
+
+import { parseGodotConfigFile } from "./godot_parser"
+import TsGdProject from "./project"
 
 interface IRawGodotConfig {
   globals: {
@@ -138,7 +139,7 @@ export class GodotProjectFile {
 
     return {
       resPath: mainSceneResPath,
-      fsPath: TsGdProject.ResPathToFsPath(mainSceneResPath),
+      fsPath: this.project.paths.resPathToFsPath(mainSceneResPath),
     }
   }
 }

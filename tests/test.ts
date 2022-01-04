@@ -1,12 +1,16 @@
-import * as ts from "typescript"
-import { parseNode, ParseNodeType } from "../parse_node"
-import { baseContentForTests } from "../generate_library_defs/generate_base"
 import fs from "fs"
 import path from "path"
-import { Scope } from "../scope"
-import chalk from "chalk"
-import { TsGdError, __getErrorsTestOnly } from "../errors"
+
+import * as ts from "typescript"
 import * as utils from "tsutils"
+import chalk from "chalk"
+
+import { ParseNodeType, parseNode } from "../parse_node"
+import { Scope } from "../scope"
+import { TsGdError, __getErrorsTestOnly } from "../errors"
+import { baseContentForTests } from "../generate_library_defs/generate_base"
+import { Paths } from "../project/paths"
+
 import { createStubSourceFileAsset } from "./stubs"
 
 export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
@@ -67,6 +71,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const sourceFileAsset = createStubSourceFileAsset("Test")
 
   // TODO: Make this less silly.
+  // I suppose we could actually use the dummy project
   const godotFile = parseNode(sourceFile, {
     indent: "",
     sourceFile: sourceFile,
@@ -85,10 +90,12 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       buildDynamicDefinitions: async () => {},
       assets: [],
       program: undefined as any,
-      compileAllSourceFiles: async () => {},
+      compileAllSourceFiles: async () => true,
       shouldBuildLibraryDefinitions: () => false,
       validateAutoloads: () => [],
       buildLibraryDefinitions: async () => {},
+      paths: {} as any,
+      definitionBuilder: {} as any,
       mainScene: {
         fsPath: "",
         resPath: "",
@@ -116,7 +123,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
       monitor: () => 0 as any,
       onAddAsset: async () => "",
       onChangeAsset: async () => "",
-      onRemoveAsset: () => {},
+      onRemoveAsset: async () => {},
       sourceFiles: () => [
         {
           exportedTsClassName: () => "",
@@ -522,4 +529,11 @@ export const runTests = async () => {
   }
 }
 
-runTests()
+void (async () => {
+  try {
+    await runTests()
+  } catch (e) {
+    console.error(e)
+    process.exit(1)
+  }
+})()

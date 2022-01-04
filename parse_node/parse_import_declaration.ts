@@ -1,10 +1,12 @@
-import ts, { SyntaxKind } from "typescript"
-import { combine, ParseNodeType, ParseState } from "../parse_node"
-import { addError, ErrorName } from "../errors"
 import path from "path"
-import { isEnumType } from "../ts_utils"
-import { TsGdProjectClass } from "../project/project"
+
 import { UsageDomain } from "tsutils"
+import ts, { SyntaxKind } from "typescript"
+
+import TsGdProject from "../project/project"
+import { ErrorName, addError } from "../errors"
+import { ParseNodeType, ParseState, combine } from "../parse_node"
+import { isEnumType } from "../ts_utils"
 
 const getPathWithoutExtension = (
   node: ts.ImportDeclaration,
@@ -12,7 +14,7 @@ const getPathWithoutExtension = (
 ) => {
   const importPathLiteral = node.moduleSpecifier as ts.StringLiteral
   const importPath = importPathLiteral.text
-  let pathToImportedTs: string = ""
+  let pathToImportedTs = ""
 
   if (importPath.startsWith(".")) {
     // Handle relative paths
@@ -24,7 +26,7 @@ const getPathWithoutExtension = (
   } else {
     // Handle absolute paths
 
-    pathToImportedTs = path.join(TsGdProjectClass.Paths.rootPath, importPath)
+    pathToImportedTs = path.join(props.project.paths.rootPath, importPath)
   }
 
   return pathToImportedTs

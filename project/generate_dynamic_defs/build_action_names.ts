@@ -1,8 +1,9 @@
-import path from "path"
 import fs from "fs"
-import { TsGdProjectClass } from "../project"
+import path from "path"
 
-export const buildActionNames = (project: TsGdProjectClass) => {
+import TsGdProject from "../project"
+
+export default function buildActionNames(project: TsGdProject) {
   const actions = project.godotProject.actionNames.filter(
     (name) => name !== "$section"
   )
@@ -18,7 +19,7 @@ export const buildActionNames = (project: TsGdProjectClass) => {
   }
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
+    project.paths.dynamicGodotDefsPath,
     "@actions.d.ts"
   )
 

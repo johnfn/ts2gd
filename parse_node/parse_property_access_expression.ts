@@ -1,11 +1,12 @@
 import ts, { SymbolFlags, SyntaxKind } from "typescript"
+
 import {
-  combine,
   ExtraLine,
   ExtraLineType,
-  parseNode,
   ParseNodeType,
   ParseState,
+  combine,
+  parseNode,
 } from "../parse_node"
 import { Test } from "../tests/test"
 import {

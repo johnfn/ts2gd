@@ -1,14 +1,16 @@
-import fs from "fs"
-import ts, { SyntaxKind } from "typescript"
+import { promises as fs } from "fs"
 import path from "path"
 
-import { BaseAsset } from "./base_asset"
-import { parseNode } from "../../parse_node"
-import { addError, ErrorName, TsGdError } from "../../errors"
-import { Scope } from "../../scope"
-import { TsGdProjectClass } from "../project"
-import chalk from "chalk"
+import ts, { SyntaxKind } from "typescript"
 import * as utils from "tsutils"
+import chalk from "chalk"
+
+import { ErrorName, TsGdError, addError } from "../../errors"
+import { Scope } from "../../scope"
+import TsGdProject from "../project"
+import { parseNode } from "../../parse_node"
+
+import { BaseAsset } from "./base_asset"
 
 // TODO: We currently allow for invalid states (e.g. className() is undefined)
 // because we only create AssetSourceFiles on a chokidar 'add' operation (we
@@ -38,27 +40,27 @@ export class AssetSourceFile extends BaseAsset {
    */
   writtenFiles: string[] = []
 
-  project: TsGdProjectClass
+  project: TsGdProject
 
   private _isAutoload: boolean
 
-  constructor(sourceFilePath: string, project: TsGdProjectClass) {
+  constructor(sourceFilePath: string, project: TsGdProject) {
     super()
 
     let gdPath = path.join(
-      TsGdProjectClass.Paths.destGdPath,
+      project.paths.destGdPath,
       sourceFilePath.slice(
-        TsGdProjectClass.Paths.sourceTsPath.length,
+        project.paths.sourceTsPath.length,
         -path.extname(sourceFilePath).length
       ) + ".gd"
     )
 
-    this.resPath = TsGdProjectClass.FsPathToResPath(gdPath)
+    this.resPath = project.paths.fsPathToResPath(gdPath)
     this.gdPath = gdPath
     this.gdContainingDirectory = gdPath.slice(0, gdPath.lastIndexOf("/") + 1)
     this.fsPath = sourceFilePath
     this.tsRelativePath = sourceFilePath.slice(
-      TsGdProjectClass.Paths.rootPath.length + 1
+      project.paths.rootPath.length + 1
     )
     this.name = this.gdPath.slice(
       this.gdContainingDirectory.length,
@@ -294,34 +296,34 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
   ): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
+    let fsContent = await fs.readFile(this.fsPath, "utf-8")
     let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
     let tries = 0
 
-    while (!sourceFileAst && ++tries < 50) {
+    while (
+      (!sourceFileAst ||
+        // Chokidar and TS use different strategies to monitor files, so we can race ahead of them.
+        // Wait for them to catch up.
+        (!this.project.args.buildOnly &&
+          fsContent !== sourceFileAst.getFullText())) &&
+      ++tries < 50
+    ) {
       await new Promise((resolve) => setTimeout(resolve, 10))
-
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
+      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+      if (sourceFileAst) {
+        fsContent = await fs.readFile(this.fsPath, "utf-8")
+      }
     }
 
     if (!sourceFileAst) {
       addError({
-        description: `TS can't find source file ${this.fsPath} after waiting 1 second. Try saving your TypeScript file again.`,
+        description: `TS can't find source file ${this.fsPath} after waiting 0.5 second. Try saving your TypeScript file again.`,
         error: ErrorName.PathNotFound,
         location: this.fsPath,
         stack: new Error().stack ?? "",
       })
 
       return
-    }
-
-    // Since we use chokidar but TS uses something else to monitor files, sometimes
-    // we can race ahead of the TS compiler. This is a hack to wait for them to
-    // catch up with us.
-    while (
-      fs.readFileSync(this.fsPath, "utf-8") !== sourceFileAst.getFullText()
-    ) {
-      await new Promise((resolve) => setTimeout(resolve, 10))
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)!
     }
 
     const parsedNode = parseNode(sourceFileAst, {
@@ -338,12 +340,12 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     })
 
     // TODO: Only do this once per program run max!
-    fs.mkdirSync(path.dirname(this.gdPath), { recursive: true })
+    await fs.mkdir(path.dirname(this.gdPath), { recursive: true })
 
     this.writtenFiles = []
 
     for (const { filePath, body } of parsedNode.files ?? []) {
-      fs.writeFileSync(filePath, body)
+      await fs.writeFile(filePath, body)
       this.writtenFiles.push(filePath)
     }
 
@@ -501,19 +503,19 @@ ${chalk.white(
     return
   }
 
-  destroy() {
+  async destroy() {
     // Delete the .gd file
-    fs.rmSync(this.gdPath, { force: true })
+    await fs.rm(this.gdPath, { force: true })
 
     // Delete the generated enum files
-    const filesInDirectory = fs.readdirSync(this.gdContainingDirectory)
+    const filesInDirectory = await fs.readdir(this.gdContainingDirectory)
     const nameWithoutExtension = this.gdPath.slice(0, -".gd".length)
 
     for (const fileName of filesInDirectory) {
       const fullPath = this.gdContainingDirectory + fileName
 
       if (fullPath.startsWith(nameWithoutExtension)) {
-        fs.rmSync(fullPath, { force: true })
+        await fs.rm(fullPath, { force: true })
       }
     }
 

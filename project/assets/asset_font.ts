@@ -1,19 +1,20 @@
+import TsGdProject from "../project"
+
 import { BaseAsset } from "./base_asset"
-import { TsGdProjectClass } from "../project"
 
 export class AssetFont extends BaseAsset {
   resPath: string
   fsPath: string
-  project: TsGdProjectClass
+  project: TsGdProject
 
   static extensions() {
     return [".ttf"]
   }
 
-  constructor(path: string, project: TsGdProjectClass) {
+  constructor(path: string, project: TsGdProject) {
     super()
     this.fsPath = path
-    this.resPath = TsGdProjectClass.FsPathToResPath(this.fsPath)
+    this.resPath = project.paths.fsPathToResPath(this.fsPath)
     this.project = project
   }
 

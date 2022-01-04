@@ -1,5 +1,6 @@
 import chalk from "chalk"
 import ts from "typescript"
+
 import { ParsedArgs } from "./parse_args"
 
 export enum ErrorName {
@@ -58,7 +59,7 @@ export const displayErrors = (args: ParsedArgs, message: string) => {
     console.info()
     console.info(chalk.greenBright("No errors."))
 
-    return
+    return false
   }
 
   console.info(message)
@@ -99,6 +100,7 @@ export const displayErrors = (args: ParsedArgs, message: string) => {
   }
 
   errors = []
+  return true
 }
 
 export const __getErrorsTestOnly = () => {

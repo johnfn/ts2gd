@@ -1,10 +1,11 @@
 import fs from "fs"
 import path from "path"
+
 import { AssetGodotScene } from "../assets/asset_godot_scene"
 import { AssetSourceFile } from "../assets/asset_source_file"
-import { TsGdProjectClass } from "../project"
+import TsGdProject from "../project"
 
-export function buildAssetPathsType(project: TsGdProjectClass) {
+export default function buildAssetPathsType(project: TsGdProject) {
   const assetFileContents = `
 declare type AssetType = {
 ${project.assets
@@ -37,7 +38,7 @@ declare type AssetPath = keyof AssetType;
   `
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
+    project.paths.dynamicGodotDefsPath,
     "@asset_paths.d.ts"
   )
   fs.writeFileSync(destPath, assetFileContents)

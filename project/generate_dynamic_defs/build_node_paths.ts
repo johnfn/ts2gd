@@ -1,8 +1,9 @@
-import path from "path"
 import fs from "fs"
+import path from "path"
+
+import { AssetGodotScene, GodotNode } from "../assets/asset_godot_scene"
 import { getCommonElements } from "../../ts_utils"
-import { TsGdProjectClass } from "../project"
-import { GodotNode, AssetGodotScene } from "../assets/asset_godot_scene"
+import TsGdProject from "../project"
 import { AssetSourceFile } from "../assets/asset_source_file"
 
 /**
@@ -44,10 +45,10 @@ export const getAllChildPaths = (
   return result
 }
 
-export const buildNodePathsTypeForScript = (
+export default function buildNodePathsTypeForScript(
   script: AssetSourceFile,
-  project: TsGdProjectClass
-): void => {
+  project: TsGdProject
+): void {
   // Find all instances of this script in all scenes.
 
   const nodesWithScript: GodotNode[] = []
@@ -82,7 +83,7 @@ export const buildNodePathsTypeForScript = (
   const extendedClassName = script.extendedClassName()
 
   const destPath = path.join(
-    TsGdProjectClass.Paths.dynamicGodotDefsPath,
+    project.paths.dynamicGodotDefsPath,
     `@node_paths_${script.getGodotClassName()}.d.ts`
   )
 
@@ -301,7 +302,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
      * 1. this.get_node("KnownNode") - Use this when ts2gd can prove there's a
      * node at the path you provide
      *
-     * 2. this.get_node\<Label\>("DynamicNode") - Use this when ts2gd can't prove
+     * 2. this.get_node<Label>("DynamicNode") - Use this when ts2gd can't prove
      * there's a node at the provided path, but you know that it is there. Be
      * sure to add the type parameter (e.g. <Label>) to indicate to ts2gd what
      * type of node you're retrieving - otherwise there will be an error!
@@ -328,6 +329,5 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   }
 }
 `
-
   fs.writeFileSync(destPath, result)
 }

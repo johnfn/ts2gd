@@ -1,7 +1,6 @@
 import ts from "typescript"
-import { ParseState, combine } from "../parse_node"
 
-import { ParseNodeType } from "../parse_node"
+import { ParseState, combine, ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 
 export const parseConstructor = (
@@ -56,7 +55,7 @@ export const parseConstructor = (
           props,
           addIndent: true,
           parsedStrings: (body) => `
-func _init(${constructorArgs.content}).(${superCallArgs.content}): 
+func _init(${constructorArgs.content}).(${superCallArgs.content}):
   ${body.trim().length > 0 ? body : "pass"}
 `,
         })
@@ -69,7 +68,7 @@ func _init(${constructorArgs.content}).(${superCallArgs.content}):
         props,
         addIndent: true,
         parsedStrings: (body) => `
-func _init(${constructorArgs.content}): 
+func _init(${constructorArgs.content}):
   ${body.trim().length > 0 ? body : "pass"}
 `,
       })
@@ -92,7 +91,7 @@ func _init(${constructorArgs.content}):
       props,
       addIndent: true,
       parsedStrings: (body) => `
-func _ready(): 
+func _ready():
   ${body.trim().length > 0 ? body : "pass"}
 `,
     })

@@ -1,15 +1,17 @@
 import ts, { SyntaxKind } from "typescript"
-import { addError, ErrorName } from "../errors"
+
+import { ErrorName, addError } from "../errors"
 import {
-  combine,
   ExtraLine,
   ExtraLineType,
-  parseNode,
   ParseState,
+  combine,
+  parseNode,
+  ParseNodeType,
 } from "../parse_node"
-import { ParseNodeType } from "../parse_node"
 import { Test } from "../tests/test"
 import { isArrayType, isDictionary, isNullableNode } from "../ts_utils"
+
 import { LibraryFunctionName, LibraryFunctions } from "./library_functions"
 import { getCapturedScope } from "./parse_arrow_function"
 

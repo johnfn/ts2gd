@@ -1,16 +1,17 @@
-import { TsGdProjectClass } from "../project"
+import TsGdProject from "../project"
+
 import { BaseAsset } from "./base_asset"
 
 export class AssetImage extends BaseAsset {
   resPath: string
   fsPath: string
-  project: TsGdProjectClass
+  project: TsGdProject
 
-  constructor(path: string, project: TsGdProjectClass) {
+  constructor(path: string, project: TsGdProject) {
     super()
 
     this.fsPath = path
-    this.resPath = TsGdProjectClass.FsPathToResPath(this.fsPath)
+    this.resPath = project.paths.fsPathToResPath(this.fsPath)
     this.project = project
   }
 

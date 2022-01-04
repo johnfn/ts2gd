@@ -1,7 +1,8 @@
 import ts from "typescript"
 
-import { combine, ParseNodeType, ParseState } from "../parse_node"
+import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
+
 import { getImportResPathForEnum } from "./parse_import_declaration"
 
 export const parseEnumDeclaration = (

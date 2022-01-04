@@ -150,15 +150,15 @@
 
 // [x]: a better signal API would just be this.signal.connect(() => { stuff }) - we should get rid of all the other stuff.
 
-import ts from "typescript"
 import * as process from "process"
 
-import packageJson from "./package.json"
-import { makeTsGdProject } from "./project/project"
-import { Paths } from "./project/tsgd_json"
-import { checkVersionAsync } from "./check_version"
-import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
+import ts from "typescript"
 import chalk from "chalk"
+
+import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
+import { Paths } from "./project/paths"
+import { checkVersionAsync, getInstalledVersion } from "./check_version"
+import { makeTsGdProject } from "./project/project"
 
 const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {
@@ -246,6 +246,8 @@ const setup = (tsgdJson: Paths) => {
   }
 }
 
+const version = getInstalledVersion()
+
 export const showLoadingMessage = (
   msg: string,
   args: ParsedArgs,
@@ -253,9 +255,7 @@ export const showLoadingMessage = (
 ) => {
   if (!args.debug) console.clear()
   console.info(
-    `${chalk.whiteBright("ts2gd v" + packageJson.version)}: ${
-      msg + (done ? "" : "...")
-    }`
+    `${chalk.whiteBright("ts2gd v" + version)}: ${msg + (done ? "" : "...")}`
   )
 }
 
@@ -283,11 +283,20 @@ export const main = async (args: ParsedArgs) => {
   await tsInitializationFinished
 
   if (!project.validateAutoloads()) {
-    process.exit(0)
+    process.exit(1)
   }
 
   showLoadingMessage("Compiling all source files", args)
-  project.compileAllSourceFiles()
+  let hadErrors = true
+  try {
+    hadErrors = !(await project.compileAllSourceFiles())
+  } catch (e) {
+    // if in watch mode, try continuing
+    // in build mode, exit early with the error
+    if (args.buildOnly) {
+      throw e
+    }
+  }
 
   if (args.buildOnly) {
     showLoadingMessage(
@@ -296,7 +305,7 @@ export const main = async (args: ParsedArgs) => {
       true
     )
 
-    process.exit()
+    process.exit(hadErrors ? -1 : 0)
   } else {
     showLoadingMessage(
       `Startup complete in ${(new Date().getTime() - start) / 1000 + "s"}`,
@@ -316,6 +325,13 @@ if (!process.argv[1].includes("test")) {
   } else if (args.printVersion) {
     // Nothing to do; we already printed the version.
   } else {
-    main(args)
+    void (async () => {
+      try {
+        await main(args)
+      } catch (e) {
+        console.error(e)
+        process.exit(1)
+      }
+    })()
   }
 }

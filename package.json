@@ -33,17 +33,27 @@
     "semi": false
   },
   "lint-staged": {
-    "*.{ts,json}": "prettier --write"
+    "*.{ts,json}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
+    "pkginfo": "^0.4.1",
     "tsutils": "^3.21.0",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@types/node": "^16.11.9",
+    "@types/pkginfo": "^0.4.0",
     "@types/xml2js": "^0.4.9",
+    "@typescript-eslint/eslint-plugin": "^5.7.0",
+    "@typescript-eslint/parser": "^5.7.0",
+    "eslint": "^8.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.2",
     "prettier": "^2.5.1",

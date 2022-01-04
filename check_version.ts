@@ -1,9 +1,17 @@
-import packageJson from "./package.json"
 import https from "https"
+
 import chalk from "chalk"
+import pkginfo from "pkginfo"
+
+pkginfo(module, "version")
+
+export function getInstalledVersion() {
+  return module.exports.version as string
+}
 
 export const checkVersionAsync = async () => {
-  console.info(chalk.whiteBright("ts2gd", "v" + packageJson.version))
+  const version = getInstalledVersion()
+  console.info(chalk.whiteBright("ts2gd", "v" + version))
 
   const options = {
     hostname: "registry.npmjs.org",
@@ -45,10 +53,10 @@ export const checkVersionAsync = async () => {
     break
   }
 
-  if (latestPublishedVersion !== packageJson.version) {
+  if (latestPublishedVersion !== version) {
     console.info(``)
     console.info(
-      `There is a new version (${latestPublishedVersion}) of ts2gd. (You have ${packageJson.version}.)`
+      `There is a new version (${latestPublishedVersion}) of ts2gd. (You have ${version}.)`
     )
     console.info(`Install it with`)
     console.info(``)
