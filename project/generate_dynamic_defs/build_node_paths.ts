@@ -80,6 +80,7 @@ export default function buildNodePathsTypeForScript(
   // in each instantiated node.
 
   const className = script.exportedTsClassName(true)
+  const classNode = script.getClassNode()
   const extendedClassName = script.extendedClassName()
 
   const destPath = path.join(
@@ -87,10 +88,14 @@ export default function buildNodePathsTypeForScript(
     `@node_paths_${script.getGodotClassName()}.d.ts`
   )
 
-  if (!className) {
+  if (!className || !classNode) {
     fs.writeFileSync(destPath, "")
     return
   }
+
+  const isClassDefault = !("error" in classNode)
+    ? classNode.modifiers?.some((v) => v.getText() === "default")
+    : false
 
   let commonRelativePaths: {
     path: string
@@ -290,12 +295,14 @@ ${Object.entries(pathToImport)
 
   result += `
 
-import ${className} from '${script.tsRelativePath.slice(0, -".ts".length)}'
+import ${
+    isClassDefault ? className : "{ " + className + " }"
+  } from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}
 
-  export default interface ${className} {
+  export${isClassDefault ? " default" : ""} interface ${className} {
     /**
      * Gets a node by a string path. There are two ways to use this function:
      *

@@ -525,3 +525,13 @@ export const checkIfMainClass = (
   // No candidates found for main class
   return false
 }
+
+export const extractClassDeclarationFromType = (type: ts.Type) => {
+  if (!type.symbol || !type.symbol.declarations) {
+    return null
+  }
+
+  return type.symbol.declarations.find((v) =>
+    ts.isClassDeclaration(v)
+  ) as ts.ClassDeclaration
+}

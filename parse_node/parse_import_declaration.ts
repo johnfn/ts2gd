@@ -1,12 +1,15 @@
 import path from "path"
 
 import { UsageDomain } from "tsutils"
-import ts, { SyntaxKind } from "typescript"
+import ts from "typescript"
 
-import TsGdProject from "../project/project"
 import { ErrorName, addError } from "../errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { isEnumType } from "../ts_utils"
+import {
+  checkIfMainClass,
+  extractClassDeclarationFromType,
+  isEnumType,
+} from "../ts_utils"
 
 const getPathWithoutExtension = (
   node: ts.ImportDeclaration,
@@ -107,29 +110,38 @@ export const parseImportDeclaration = (
   }
 
   const namedBindings = node.importClause.namedBindings
+  const checker = props.program.getTypeChecker()
 
   const namedImports: {
     name: ts.Identifier
-    isDefault: boolean
-  }[] = [
-    // Map default import into meta object
-    ...(node.importClause.name
-      ? [
-          {
-            name: node.importClause.name,
-            isDefault: true,
-          },
-        ]
-      : []),
+    isMain: boolean
+  }[] = []
 
+  if (node.importClause.name) {
+    // Map default import into meta object
+    const declaration = extractClassDeclarationFromType(
+      checker.getTypeAtLocation(node.importClause.name)
+    )
+
+    namedImports.push({
+      name: node.importClause.name,
+      isMain: declaration ? checkIfMainClass(declaration) : false,
+    })
+  }
+
+  if (namedBindings && ts.isNamedImports(namedBindings)) {
     // Map all bindings into meta objects
-    ...(namedBindings?.kind === SyntaxKind.NamedImports
-      ? (namedBindings as ts.NamedImports).elements.map((binding) => ({
-          name: binding.name,
-          isDefault: false,
-        }))
-      : []),
-  ]
+    namedBindings.elements.forEach((binding) => {
+      const declaration = extractClassDeclarationFromType(
+        checker.getTypeAtLocation(binding.name)
+      )
+
+      namedImports.push({
+        name: binding.name,
+        isMain: declaration ? checkIfMainClass(declaration) : false,
+      })
+    })
+  }
 
   let imports: ImportType[] = []
 
@@ -205,7 +217,7 @@ export const parseImportDeclaration = (
         imports.push({
           importedName: typeString,
           resPath: importedSourceFile.resPath,
-          type: element.isDefault ? "class" : "subclass",
+          type: element.isMain ? "class" : "subclass",
         })
       }
     }
