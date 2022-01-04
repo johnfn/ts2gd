@@ -43,10 +43,10 @@ To compile all source files once:
 
 ### Classes
 
-Creating a file class in GDScript requires TypeScript class to be marked with `export default` keywords.
+Single exported class in file is always treated as main class in GDScript.
 
 ```ts
-export default class MyNode extends Node2D {
+export class MyNode extends Node2D {
   constructor() {
     super()
     print("Hello world")
@@ -62,7 +62,7 @@ func _ready():
   print("Hello world")
 ```
 
-File classes can also be anonymous to skip `class_name` generation.
+If class is marked with default it can be anonymous. This omits `class_name` generation.
 
 ```ts
 export default class extends Node2D {
@@ -82,9 +82,12 @@ func _ready():
 
 ### Inner classes
 
-To generate inner classes in GDScript file, TypeScript classes should not be marked with `default` keyword.
+To generate inner classes in GDScript file class can be marked with `@inner` attribute. Not exported classes are
+also inner classes by default with one exception, when not exported class is the only one in the file then it is treated
+as main class.
 
 ```ts
+@inner
 export class InnerClass extends Node2D {
   constructor() {
     super()
@@ -104,9 +107,40 @@ class InnerClass extends Node2D:
   func _init().():
     print("Hello InnerClass")
 
-class NotExportedInnerClass 
+class NotExportedInnerClass
   func _init():
     print("Hello NotExportedInnerClass")
+```
+
+With multiple exported classes in file it is necessary to mark one as the main class for GDScript. This can be done by
+exporting a class with `default` keyword or by marking a class with `@main` decorator. Other classes in the same file will be treated as inner classes. `@main` decorator takes precedence over `export default`.
+
+```ts
+@main
+export class MainClass extends Node2D {
+  constructor() {
+    super()
+    print("Hello MainClass")
+  }
+}
+
+export class OtherClass {
+  constructor() {
+    print("Hello OtherClass")
+  }
+}
+```
+
+```gdscript
+extends Node2D
+class_name MainClass
+
+class OtherClass
+  func _init():
+    print("Hello OtherClass")
+
+func _ready():
+  print("Hello MainClass")
 ```
 
 ### `get_node`

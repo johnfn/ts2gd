@@ -462,12 +462,25 @@ export const checkIfMainClass = (
   cls: ts.ClassDeclaration | ts.ClassExpression
 ) => {
   // Search for classes not marked with 'default' or 'inner'
-  const mainCandidates = cls.getSourceFile().statements.filter(
+  const allClasses = cls.getSourceFile().statements.filter(
     (statement) =>
       statement.kind === SyntaxKind.ClassDeclaration &&
       // skip class type declarations
-      !(statement.modifiers ?? []).some((m) => m.getText() === "declare") &&
-      // skip class marked with @inner
+      !(statement.modifiers ?? []).some((m) => m.getText() === "declare")
+  )
+
+  // If file contains only one non inner class then it is main by default
+  if (
+    allClasses.length === 1 &&
+    allClasses[0] === cls &&
+    !cls.decorators?.some((v) => v.expression.getText() === "inner")
+  ) {
+    return true
+  }
+
+  // Search for non inner classes
+  const mainCandidates = allClasses.filter(
+    (statement) =>
       !(statement.decorators ?? []).some(
         (d) => d.expression.getText() === "inner"
       )
@@ -492,15 +505,9 @@ export const checkIfMainClass = (
     return false
   }
 
-  // If file contains only one class then it is main by default
-  if (mainCandidates.length === 1 && mainCandidates[0] === cls) {
-    return true
-  }
-
-  // Otherwise search for exported classes
+  // Search for exported classes
   const exportedMainCandidates = mainCandidates.filter((statement) =>
-    // skip not exported classes
-    (statement.modifiers ?? []).some((m) => m.getText() === "export")
+    statement.modifiers?.some((m) => m.getText() === "export")
   )
 
   // If only one class is exported then it is main by default

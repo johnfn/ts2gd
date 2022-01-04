@@ -351,3 +351,23 @@ class Foo {
     type: "error",
   },
 }
+
+export const testMultipleClassesWithInnerMarking2: Test = {
+  ts: `
+@inner
+export class Foo {
+  x = 1
+}
+
+class Bar {
+  y = 1
+}`,
+  expected: `
+class Foo:
+  var x: int = 1
+
+class Bar:
+  var y: int = 1
+
+`,
+}
