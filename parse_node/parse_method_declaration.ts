@@ -83,7 +83,7 @@ ${body.trim() === "" ? "pass" : body}
 
 export const testProcessGetsArgsAdded: Test = {
   ts: `
-export default class Foo extends Node2D {
+export class Foo extends Node2D {
   _process() {}
 }
   `,
@@ -97,7 +97,7 @@ func _process(_delta: float):
 
 export const testProcessDoesntGetArgsAdded: Test = {
   ts: `
-export default class Foo extends Node2D {
+export class Foo extends Node2D {
   _process(d: float) {}
 }
   `,
@@ -111,7 +111,7 @@ func _process(_d: float):
 
 export const testDefaultValue: Test = {
   ts: `
-export default class Foo extends Node2D {
+export class Foo extends Node2D {
   testDefault(a = 1) { }
 }
   `,
@@ -125,8 +125,8 @@ func testDefault(a = "[no value passed in]"):
 
 export const testDefaultValues: Test = {
   ts: `
-export default class Foo extends Node2D {
-  testDefault(a = 1, b = 2) { 
+export class Foo extends Node2D {
+  testDefault(a = 1, b = 2) {
     print("OK")
     print("OK")
   }
@@ -145,8 +145,8 @@ func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
 
 export const testDefaultValuesSelfReference: Test = {
   ts: `
-export default class Foo extends Node2D {
-  testDefault(a = 1, b: int = a) { 
+export class Foo extends Node2D {
+  testDefault(a = 1, b: int = a) {
   }
 }
   `,
@@ -161,7 +161,7 @@ func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
 
 export const testStaticMethod: Test = {
   ts: `
-export default class Foo extends Node2D {
+export class Foo extends Node2D {
   static staticMethod() {}
 }
   `,

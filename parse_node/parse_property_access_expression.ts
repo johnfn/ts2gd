@@ -258,7 +258,7 @@ foo[0].bar = 2
 
 export const testNoSelfForSignal: Test = {
   ts: `
-export default class Test {
+export class Test {
   $mouseenter!: Signal<[]>;
 
   test() {
@@ -277,7 +277,7 @@ func test():
 
 export const testAddSelfForParams: Test = {
   ts: `
-export default class Test {
+export class Test {
   a: float
   b: string
 
@@ -299,7 +299,7 @@ func test(a: float, b: String):
 
 export const testNullCoalesce: Test = {
   ts: `
-export default class Test {
+export class Test {
   test() {
     const foo: string | null = "hello"
 
@@ -318,7 +318,7 @@ func test():
 
 export const testNullCoalesce2: Test = {
   ts: `
-export default class Test {
+export class Test {
   test() {
     const foo: string | null = "hello"
 
@@ -337,7 +337,7 @@ func test():
 
 export const testNullCoalesce3: Test = {
   ts: `
-export default class Test {
+export class Test {
   foo: string | null = "hello"
 
   test(): void {
@@ -356,7 +356,7 @@ func test():
 
 export const testNullCoalesce4: Test = {
   ts: `
-export default class Test {
+export class Test {
   test(): void {
     let foo: Test | null = null as (Test | null)
     print(foo?.test())
@@ -376,7 +376,7 @@ func test():
 
 export const testNullCoalesce5: Test = {
   ts: `
-export default class Test {
+export class Test {
   test(x: int): void {
     let foo: Test | null = null as (Test | null)
     print(foo?.test(1))
@@ -396,7 +396,7 @@ func test(_x: int):
 
 export const testPropertyConvertToFuncRef: Test = {
   ts: `
-class default Test extends Area2D {
+class Test extends Area2D {
   foo(arg: () => void) {
 
   }
@@ -422,7 +422,7 @@ func bar():
 // This ensures that we do funcref of .mul() correctly.
 export const testComplicatedLibFunc: Test = {
   ts: `
-export default class Test extends Area2D {
+export class Test extends Area2D {
   test() {
     const maybeVec = randi() ? Vector2(0, 0) : null
     const foo = maybeVec?.mul(4)
@@ -443,7 +443,7 @@ func test():
 
 export const testStaticClassMethodInvoke: Test = {
   ts: `
-export default class Test extends Area2D {
+export class Test extends Area2D {
   constructor() {
     super()
     Test.test()

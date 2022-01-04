@@ -317,7 +317,7 @@ export const parsePropertyDeclaration = (
 
 export const testNormalExportedVariable: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: int
 }
@@ -330,7 +330,7 @@ export(int) var foo: int
 
 export const testNormalExportedVariable2: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: float
 }
@@ -343,7 +343,7 @@ export(float) var foo: float
 
 export const testNormalExportedVariable3: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: string
 }
@@ -356,7 +356,7 @@ export(String) var foo: String
 
 export const testNormalExportedVariable4: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: { [key: string]: string }
 }
@@ -369,7 +369,7 @@ export(Dictionary) var foo
 
 export const testNormalExportedVariable5: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: number[]
 }
@@ -382,7 +382,7 @@ export(Array, float) var foo
 
 export const testNotSoNormalExportedVariable6: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: { [key: string]: string }[]
 }
@@ -395,7 +395,7 @@ export(Array, Dictionary) var foo
 
 export const testNotSoNormalExportedVariable7: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: int | null
 }
@@ -408,7 +408,7 @@ export(int) var foo
 
 export const testNotSoNormalExportedVariable8: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: int | null | undefined
 }
@@ -421,7 +421,7 @@ export(int) var foo
 
 export const testNotSoNormalExportedVariable9: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: { [key: string]: string } | null | undefined
 }
@@ -438,7 +438,7 @@ export enum MyEnum {
 
 }
 
-export default class Test {
+export class Test {
   @exports
   foo: MyEnum
 }
@@ -454,7 +454,7 @@ export(MyEnum) var foo
 
 export const testExportObj: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: Vector2
 }
@@ -467,7 +467,7 @@ export(Vector2) var foo
 
 export const testExportObj2: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   foo: Vector2 | null
 }
@@ -480,7 +480,7 @@ export(Vector2) var foo
 
 export const testNumberTypeByAnnotation: Test = {
   ts: `
-export default class Test {
+export class Test {
   x: int = 1
 }
   `,
@@ -492,7 +492,7 @@ var x: int = 1
 
 export const testNumberTypeByAnnotation2: Test = {
   ts: `
-export default class Test {
+export class Test {
   x: float = 1
 }
   `,
@@ -504,7 +504,7 @@ var x: float = 1
 
 export const testNumberTypeByNoAnnotation: Test = {
   ts: `
-export default class Test {
+export class Test {
   x = 1
 }
   `,
@@ -516,7 +516,7 @@ var x: int = 1
 
 export const testNumberTypeByNoAnnotation2: Test = {
   ts: `
-export default class Test {
+export class Test {
   x = 1.0
 }
   `,
@@ -528,7 +528,7 @@ var x: float = 1.0
 
 export const testExportFlags: Test = {
   ts: `
-export default class Test {
+export class Test {
   @export_flags("A", "B", "C")
   exportFlagsTest
 }
@@ -541,7 +541,7 @@ export(int, FLAGS, "A", "B", "C") var exportFlagsTest
 
 export const testExportInferArrayTypeFromNonGenericElement: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   exportFlagsTest: float[];
 }
@@ -554,7 +554,7 @@ export(Array, float) var exportFlagsTest
 
 export const testExportInferArrayTypeFromGenericElement: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   exportFlagsTest: PackedScene<Node2D>[];
 }
@@ -567,7 +567,7 @@ export(Array, PackedScene) var exportFlagsTest
 
 export const testExportInferAnyOrUnknownArray: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   exportFlagsTest: any[];
 
@@ -584,7 +584,7 @@ export(Array) var exportFlagsTest2
 
 export const testExportInferArrayOfArrays: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   exportFlagsTest: float[][];
 }
@@ -597,7 +597,7 @@ export(Array, Array, float) var exportFlagsTest
 
 export const testExportExportHint: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports(ExportHint.RGBA)
   exportFlagsTest: Color;
 }
@@ -610,7 +610,7 @@ export(Color, RGBA) var exportFlagsTest
 
 export const testExportExportHintComplex: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports(ExportHint.EXP, 100, 1000, 20)
   exportFlagsTest: float;
 

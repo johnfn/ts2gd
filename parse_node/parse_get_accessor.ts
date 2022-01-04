@@ -21,7 +21,7 @@ func ${name}_get(${params.join(", ")}):
 
 export const testGet: Test = {
   ts: `
-export default class Foo {
+export class Foo {
   _x;
   get x() { return this._x; }
 }
@@ -37,7 +37,7 @@ func x_get():
 
 export const testExportingGetSetBig: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   set label(text: string) {
     if (this.LI) {
@@ -64,7 +64,7 @@ func label_get():
 
 export const testExportingGetSet2: Test = {
   ts: `
-export default class Test {
+export class Test {
   set label(text: string) {
   }
 
@@ -88,7 +88,7 @@ func label_get():
 // Strictly speaking this makes no sense, but there's no reason to error.
 export const testExportingGetSetBoth: Test = {
   ts: `
-export default class Test {
+export class Test {
   @exports
   set label(text: string) {
   }

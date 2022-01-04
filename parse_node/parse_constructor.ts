@@ -105,7 +105,7 @@ func ${props.isMainClass ? `_ready()` : `_init(${constructorArgs.content})`}:
 
 export const testConstructorNoBody: Test = {
   ts: `
-export default class Test {
+export class Test {
   constructor();
 }
     `,
@@ -119,7 +119,7 @@ func _ready():
 
 export const testConstructorEmptyBody: Test = {
   ts: `
-export default class Test {
+export class Test {
   constructor() {
 
   }
@@ -135,7 +135,7 @@ func _ready():
 
 export const testConstructor: Test = {
   ts: `
-export default class Test {
+export class Test {
   constructor() {
     print("Hello");
   }

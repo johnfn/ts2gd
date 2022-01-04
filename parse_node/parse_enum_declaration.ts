@@ -55,7 +55,7 @@ export const testEnumDeclaration: Test = {
   ts: `
 export enum MyEnum { A, B }
 
-export default class Hello {
+export class Hello {
   constructor() {
     print(MyEnum.A)
   }
@@ -74,12 +74,12 @@ func _ready():
 
 export const testEnumDeclaration2: Test = {
   ts: `
-export enum TestEnum { 
-  A = 1, 
+export enum TestEnum {
+  A = 1,
   B = 2
 }
 
-export default class Hello {
+export class Hello {
   constructor() {
     print(TestEnum.A)
   }
@@ -98,14 +98,14 @@ func _ready():
 
 export const testEnumDeclaration3: Test = {
   ts: `
-export enum TestEnum { 
-  A = "A", 
+export enum TestEnum {
+  A = "A",
   B = "B",
   C = "C",
   D = "D",
 }
 
-export default class Hello {
+export class Hello {
   constructor() {
     print(TestEnum.C)
   }
@@ -114,7 +114,7 @@ export default class Hello {
   expected: `
 class_name Hello
 const TestEnum = {
-  "A": "A", 
+  "A": "A",
   "B": "B",
   "C": "C",
   "D": "D",
