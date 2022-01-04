@@ -187,11 +187,11 @@ var b1 = __gen.b
 
 export const testNormalVariableDeclaration: Test = {
   ts: `
-let x = 1  
+let x = 1
 let y = 'a'
   `,
   expected: `
-var _x: int = 1  
+var _x: int = 1
 var _y = "a"
   `,
 }
@@ -199,7 +199,7 @@ var _y = "a"
 export const testAutoloadVariableDeclaration: Test = {
   isAutoload: true,
   ts: `
-export default class Blah {
+export class Blah {
 
 }
 
@@ -211,7 +211,7 @@ const x: Blah = new Blah();
 
 export const testClassNameWithoutAutoload: Test = {
   ts: `
-export default class Blah {
+export class Blah {
 
 }
 
@@ -227,7 +227,7 @@ var _x = Blah.new()
 export const testAutoloadVariableDeclaration2: Test = {
   isAutoload: true,
   ts: `
-export default class Blah {
+export class Blah {
 
 }
 
@@ -241,7 +241,7 @@ export const testAutoloadVariableDeclaration3: Test = {
   isAutoload: true,
 
   ts: `
-export default class Blah {
+export class Blah {
   test() {
     const blah: Blah = new Blah();
   }

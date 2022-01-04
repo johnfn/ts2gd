@@ -23,7 +23,7 @@ export const parseYieldExpression = (
 
 export const testYieldSignal: Test = {
   ts: `
-export default class Test {
+export class Test {
   *test(): void {
     yield this.get_tree().$idle_frame
   }
@@ -38,7 +38,7 @@ func test():
 
 export const testYieldSignal2: Test = {
   ts: `
-export default class Test {
+export class Test {
   $mysignal: Signal
   *test(): void {
     yield this.$mysignal
