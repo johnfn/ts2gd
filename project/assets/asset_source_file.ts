@@ -9,6 +9,7 @@ import { ErrorName, TsGdError, addError } from "../../errors"
 import { Scope } from "../../scope"
 import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
+import { checkIfMainClass } from "../../ts_utils"
 
 import { BaseAsset } from "./base_asset"
 
@@ -103,8 +104,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       .getChildren()
       .filter(
         (node): node is ts.ClassDeclaration =>
-          node.kind === SyntaxKind.ClassDeclaration &&
-          Boolean(node.modifiers?.map((x) => x.getText()).includes("default"))
+          ts.isClassDeclaration(node) && checkIfMainClass(node)
       )
 
     if (topLevelClasses.length === 0) {
@@ -337,6 +337,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       usages: utils.collectVariableUsage(sourceFileAst),
       sourceFile: sourceFileAst,
       sourceFileAsset: this,
+      isMainClass: false,
     })
 
     // TODO: Only do this once per program run max!

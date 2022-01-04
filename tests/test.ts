@@ -78,6 +78,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     scope: new Scope(program),
     isConstructor: false,
     program,
+    isMainClass: false,
     project: {
       args: {
         buildLibraries: false,
@@ -261,7 +262,7 @@ const test = (
 
 Wanted: ${expected.error}
 
-Got: 
+Got:
 
 ${errors[0].description}
 `,

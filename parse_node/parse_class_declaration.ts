@@ -90,9 +90,9 @@ export const parseClassDeclaration = (
     (dec) => dec.expression.getText() === "autoload"
   )
 
-  if (!modifiers.includes("default") && isAutoload) {
+  if (!props.isMainClass && isAutoload) {
     addError({
-      description: "Only class exported as default can be autoloaded.",
+      description: "Only main class can be autoloaded.",
       error: ErrorName.ClassMustBeExported,
       location: node,
       stack: new Error().stack ?? "",
@@ -172,14 +172,15 @@ class Foo {
 }
 
 export class Foo2 {
-  x = 1
+  y = 1
 }`,
   expected: `
-class Foo:
-  var x: int = 1  
+class_name Foo2
 
-class Foo2:
-  var x: int = 1 
+class Foo:
+  var x: int = 1
+
+var y: int = 1
 `,
 }
 
@@ -221,11 +222,132 @@ func nodes_set(_v):
 export const testDontRequireDefaultExportingAutoloads: Test = {
   ts: `
 @autoload
+@inner
 class Foo {
   x = 1
 }`,
   expected: {
-    error: "Only class exported as default can be autoloaded",
+    error: "Only main class can be autoloaded",
+    type: "error",
+  },
+}
+
+export const testMultipleClassesWithoutMarking: Test = {
+  ts: `
+class Foo {
+  x = 1
+}
+
+class Bar {
+  x = 1
+}`,
+  expected: {
+    error: "Please mark one of Foo, Bar as the default (main) class.",
+    type: "error",
+  },
+}
+
+export const testMultipleClassesWithMainMarking: Test = {
+  ts: `
+@main
+export class Foo {
+  x = 1
+}
+
+class Bar {
+  y = 1
+}`,
+  expected: `
+class_name Foo
+
+class Bar:
+  var y: int = 1
+
+var x: int = 1
+`,
+}
+
+export const testMultipleClassesWithInnerMarking: Test = {
+  ts: `
+export class Foo {
+  x = 1
+}
+
+@inner
+class Bar {
+  y = 1
+}`,
+  expected: `
+class_name Foo
+
+class Bar:
+  var y: int = 1
+
+var x: int = 1
+`,
+}
+
+export const testMultipleClassesWithDefaultMarking: Test = {
+  ts: `
+export default class Foo {
+  x = 1
+}
+
+class Bar {
+  y = 1
+}`,
+  expected: `
+class_name Foo
+
+class Bar:
+  var y: int = 1
+
+var x: int = 1
+`,
+}
+
+export const testMultipleClassesWithExportMarking: Test = {
+  ts: `
+export class Foo {
+  x = 1
+}
+
+class Bar {
+  y = 1
+}`,
+  expected: `
+class_name Foo
+
+class Bar:
+  var y: int = 1
+
+var x: int = 1
+`,
+}
+
+export const testMultipleClassesWithMainMarkingFail: Test = {
+  ts: `
+@main
+class Foo {
+  x = 1
+}
+
+class Bar {
+  y = 1
+}`,
+  expected: {
+    error: "Main class Foo must be exported.",
+    type: "error",
+  },
+}
+
+export const testMainClassNotExported: Test = {
+  ts: `
+class Foo {
+  y = 1
+}`,
+  expected: {
+    error: "Main class Foo must be exported.",
     type: "error",
   },
 }

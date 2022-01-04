@@ -3,6 +3,7 @@ import ts, { ClassDeclaration, SyntaxKind } from "typescript"
 import { ErrorName, addError } from "../errors"
 import { ParseNodeType, ParseState, combine, parseNode } from "../parse_node"
 import { Test } from "../tests/test"
+import { checkIfMainClass } from "../ts_utils"
 
 import { LibraryFunctions } from "./library_functions"
 
@@ -10,6 +11,7 @@ type ParsedClassDeclaration = {
   fileName: string
   parsedClass: ParseNodeType
   classDecl: ts.ClassDeclaration | ts.ClassExpression
+  isMain: boolean
 }
 
 /**
@@ -49,7 +51,7 @@ const getClassDeclarationHeader = (
 
         if (
           !modifiers.includes("declare") &&
-          (!modifiers.includes("default") || !classDecl.name)
+          (!props.isMainClass || !classDecl.name)
         ) {
           // Only when a class is not marked as 'declare' and a class is inner
           // class (does not have 'default') or anonymous class (does not have a name)
@@ -64,7 +66,7 @@ const getClassDeclarationHeader = (
               location: node,
               stack: new Error().stack ?? "",
             })
-          } else if (!modifiers.includes("default")) {
+          } else if (!props.isMainClass) {
             // If a class declaration does not have default export then this is an inner class
             // The syntax for extending inner class in gdscript is: extends "res://compiled/Test.gd".BaseType
 
@@ -88,7 +90,7 @@ const getClassDeclarationHeader = (
     (dec) => dec.expression.getText() === "tool"
   )
 
-  if (modifiers.includes("default")) {
+  if (props.isMainClass) {
     return `${isTool ? "tool\n" : ""}${
       extendsFrom ? `extends ${extendsFrom}` : ""
     }
@@ -124,14 +126,6 @@ export const parseSourceFile = (
   // props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false
 
-  const allClasses = statements.filter(
-    (statement) =>
-      statement.kind === SyntaxKind.ClassDeclaration &&
-      // skip class type declarations
-      (statement.modifiers ?? []).filter((m) => m.getText() === "declare")
-        .length === 0
-  ) as ts.ClassDeclaration[]
-
   const parsedClassDeclarations: ParsedClassDeclaration[] = []
   let hoistedLibraryFunctionDefinitions = ""
   let hoistedEnumImports = ""
@@ -159,6 +153,8 @@ export const parseSourceFile = (
       continue
     }
 
+    props.isMainClass = checkIfMainClass(statement as ts.ClassDeclaration)
+
     const parsedStatement = parseNode(statement, props)
 
     if (!statement.modifiers?.map((m) => m.getText()).includes("declare")) {
@@ -172,6 +168,7 @@ export const parseSourceFile = (
           props.sourceFileAsset.gdContainingDirectory + className + ".gd",
         parsedClass: parsedStatement,
         classDecl,
+        isMain: props.isMainClass,
       })
     }
 
@@ -221,22 +218,58 @@ export const parseSourceFile = (
   }
 
   for (const cls of parsedClassDeclarations) {
-    if (cls.classDecl.modifiers?.map((x) => x.getText()).includes("default")) {
+    if (cls.isMain) {
       classFile.mainClass = cls
     } else {
       classFile.innerClasses.push(cls)
     }
   }
 
+  if (
+    !classFile.mainClass &&
+    // check if all inner classes are not marked explicitly @inner
+    !classFile.innerClasses.every((v) =>
+      (v.classDecl.decorators ?? [])
+        .map((d) => d.expression.getText())
+        .includes("inner")
+    )
+  ) {
+    addError({
+      description: `Please mark one of ${classFile.innerClasses
+        .map((v) => v.classDecl.name?.getText())
+        .join(", ")} as the default (main) class. `,
+      error: ErrorName.TooManyClassesFound,
+      location: node,
+      stack: new Error().stack ?? "",
+    })
+  }
+
   let fileBody = `${getFileHeader()}\n`
 
   if (classFile.mainClass) {
-    fileBody += `${getClassDeclarationHeader(
-      classFile.mainClass.classDecl,
-      props
-    )}\n`
+    if (
+      !(classFile.mainClass.classDecl.modifiers ?? [])
+        .map((v) => v.getText())
+        .includes("export")
+    ) {
+      addError({
+        description: `Main class ${
+          classFile.mainClass.classDecl.name?.getText() ?? "<anonymous>"
+        } must be exported.`,
+        error: ErrorName.ClassMustBeExported,
+        location: node,
+        stack: new Error().stack ?? "",
+      })
+    } else {
+      props.isMainClass = true
+      fileBody += `${getClassDeclarationHeader(
+        classFile.mainClass.classDecl,
+        props
+      )}\n`
+    }
   }
 
+  props.isMainClass = false
   fileBody += `
 ${hoistedEnumImports}
 ${hoistedLibraryFunctionDefinitions}
@@ -289,6 +322,7 @@ class_name Test
 
 export const testInnerClass: Test = {
   ts: `
+@inner
 export class InnerTest {
   field: int = 2;
 }

@@ -191,7 +191,7 @@ export function getGodotType(
     if (nodeText.includes("\n")) {
       errorString = `Please annotate
 
-${chalk.yellow(node.getText())} 
+${chalk.yellow(node.getText())}
 
 with either "int" or "float".`
     } else {
@@ -249,7 +249,7 @@ with either "int" or "float".`
     addError({
       description: `This exported variable needs a type declaration:
 
-${chalk.yellow(node.getText())}          
+${chalk.yellow(node.getText())}
           `,
       error: ErrorName.ExportedVariableError,
       location: node,
@@ -299,7 +299,7 @@ ${chalk.yellow(node.getText())}
         addError({
           description: `You can't export a union type:
 
-${chalk.yellow(node.getText())}          
+${chalk.yellow(node.getText())}
           `,
           error: ErrorName.ExportedVariableError,
           location: node,
@@ -456,4 +456,72 @@ export const findContainingClassDeclaration = (
   }
 
   return ts.isClassDeclaration(node) ? node : null
+}
+
+export const checkIfMainClass = (
+  cls: ts.ClassDeclaration | ts.ClassExpression
+) => {
+  // Search for classes not marked with 'default' or 'inner'
+  const mainCandidates = cls.getSourceFile().statements.filter(
+    (statement) =>
+      statement.kind === SyntaxKind.ClassDeclaration &&
+      // skip class type declarations
+      !(statement.modifiers ?? []).some((m) => m.getText() === "declare") &&
+      // skip class marked with @inner
+      !(statement.decorators ?? []).some(
+        (d) => d.expression.getText() === "inner"
+      )
+  )
+
+  // Try to find class marked by '@main' attribute
+  const markedMainCandidates = mainCandidates.filter((candidate) =>
+    (candidate.decorators ?? [])
+      .map((d) => d.expression.getText())
+      .includes("main")
+  )
+
+  if (markedMainCandidates.length === 1) {
+    return markedMainCandidates[0] === cls
+  } else if (markedMainCandidates.length > 1) {
+    addError({
+      description: `There are more than one class marked with '@main' attribute`,
+      error: ErrorName.TooManyClassesFound,
+      location: cls,
+      stack: new Error().stack ?? "",
+    })
+    return false
+  }
+
+  // If file contains only one class then it is main by default
+  if (mainCandidates.length === 1 && mainCandidates[0] === cls) {
+    return true
+  }
+
+  // Otherwise search for exported classes
+  const exportedMainCandidates = mainCandidates.filter((statement) =>
+    // skip not exported classes
+    (statement.modifiers ?? []).some((m) => m.getText() === "export")
+  )
+
+  // If only one class is exported then it is main by default
+  if (
+    exportedMainCandidates.length === 1 &&
+    exportedMainCandidates[0] === cls
+  ) {
+    return true
+  }
+
+  // Otherwise search for a 'export default class'
+  if (
+    exportedMainCandidates.some(
+      (v) =>
+        (v.modifiers ?? []).map((m) => m.getText()).includes("default") &&
+        v === cls
+    )
+  ) {
+    return true
+  }
+
+  // No candidates found for main class
+  return false
 }
