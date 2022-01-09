@@ -1,3 +1,5 @@
+import path from "path"
+
 import ts, { SyntaxKind } from "typescript"
 
 import { ErrorName } from "../project"
@@ -123,7 +125,7 @@ export const parseSourceFile = (
       }
 
       parsedClassDeclarations.push({
-        fileName: props.sourceFileAsset.gdPath,
+        fileName: props.sourceFileAsset.pathForClassname(className),
         parsedClass: parsedStatement,
         classDecl,
       })

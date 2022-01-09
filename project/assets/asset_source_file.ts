@@ -22,7 +22,11 @@ export class AssetSourceFile extends AssetBase {
 
   readonly gdClassName: string
 
-  /** Like "/Users/johnfn/GodotProject/compiled/main.gd" */
+  /** Like "/Users/johnfn/GodotProject/compiled/main.gd"
+   * Beware that this only is correct if the className corresponds to the file name
+   * Should be refactored, maybe add the contained classnames to the Asset
+   * @deprecated
+   */
   readonly gdPath: string
 
   /** Like "/Users/johnfn/GodotProject/compiled/ " */
@@ -46,6 +50,10 @@ export class AssetSourceFile extends AssetBase {
     this._isAutoload = !!this.project.godotProject.autoloads.find(
       (a) => a.resPath === this.resPath
     )
+  }
+
+  pathForClassname(className: string) {
+    return path.join(this.gdContainingDirectory, `${className}.gd`)
   }
 
   reload() {}
@@ -342,7 +350,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     })
 
     // TODO: Only do this once per program run max!
-    await fs.mkdir(path.dirname(this.gdPath), { recursive: true })
+    await fs.mkdir(this.gdContainingDirectory, { recursive: true })
 
     this.writtenFiles = []
 
