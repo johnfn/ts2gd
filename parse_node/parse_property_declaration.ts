@@ -5,6 +5,7 @@ import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType, getTypeHierarchy, isEnumType } from "../ts_utils"
+import { mockProjectPath } from "../tests/test_utils"
 
 export const isDecoratedAsExports = (
   node:
@@ -448,16 +449,16 @@ export class Test {
     type: "multiple-files",
     files: [
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test.gd",
+        fileName: mockProjectPath("Test.gd"),
         expected: `
 class_name Test
-const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
+const MyEnum = preload("res://Test_MyEnum.gd").MyEnum
 export(MyEnum) var foo
       `,
       },
 
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
+        fileName: mockProjectPath("Test_MyEnum.gd"),
         expected: `
 const MyEnum = {
 }`,

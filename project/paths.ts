@@ -137,7 +137,9 @@ export class Paths {
       "dynamic"
     )
 
-    this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
+    this.godotSourceRepoPath =
+      path.join(fullyQualifiedTs2gdPath, tsgdJson.godotSourceRepoPath) ||
+      undefined
 
     this.csgClassesPath = path.join(
       this.godotSourceRepoPath ?? "",

@@ -67,15 +67,17 @@ export class AssetSourceFile extends BaseAsset {
       -".gd".length
     )
     this.project = project
-    this._isAutoload = !!this.project.godotProject.autoloads.find(
-      (a) => a.resPath === this.resPath
+    this._isAutoload = Boolean(
+      this.project.godotProject.autoloads.find(
+        (a) => a.resPath === this.resPath
+      )
     )
   }
 
   reload() {}
 
   private getAst(): TsGdError | ts.SourceFile {
-    const ast = this.project.program.getProgram().getSourceFile(this.fsPath)
+    const ast = this.project.program.getSourceFile(this.fsPath)
 
     if (!ast) {
       return {
@@ -319,13 +321,11 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     }
   }
 
-  async compile(
-    watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
-  ): Promise<void> {
+  async compile(watchProgram: ts.Program): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
     let fsContent = await fs.readFile(this.fsPath, "utf-8")
-    let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+    let sourceFileAst = watchProgram.getSourceFile(this.fsPath)
     let tries = 0
 
     while (
@@ -337,7 +337,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       ++tries < 50
     ) {
       await new Promise((resolve) => setTimeout(resolve, 10))
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+      sourceFileAst = watchProgram.getSourceFile(this.fsPath)!
       if (sourceFileAst) {
         fsContent = await fs.readFile(this.fsPath, "utf-8")
       }
@@ -357,11 +357,11 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     const parsedNode = parseNode(sourceFileAst, {
       indent: "",
       isConstructor: false,
-      scope: new Scope(watchProgram.getProgram().getProgram()),
+      scope: new Scope(watchProgram),
       project: this.project,
       mostRecentControlStructureIsSwitch: false,
       isAutoload: this.isProjectAutoload(),
-      program: watchProgram.getProgram().getProgram(),
+      program: watchProgram,
       usages: utils.collectVariableUsage(sourceFileAst),
       sourceFile: sourceFileAst,
       sourceFileAsset: this,

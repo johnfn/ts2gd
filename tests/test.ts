@@ -10,8 +10,10 @@ import { Scope } from "../scope"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
 import { ParsedArgs } from "../parse_args"
 import TsGdProject, { TsGdError, Errors } from "../project"
+import { Paths } from "../project/paths"
+import { AssetSourceFile } from "../project/assets/asset_source_file"
 
-import { createStubSourceFileAsset } from "./stubs"
+import { mockProjectPath } from "./test_utils"
 
 export type Test = {
   expected:
@@ -44,9 +46,10 @@ type TestResultFail = {
 
 export function compileTs(
   code: string,
-  isAutoload: boolean
+  isAutoload = false
 ): [ParseNodeType, TsGdError[]] {
-  const filename = isAutoload ? "autoload.ts" : "Test.ts"
+  const filename = mockProjectPath(isAutoload ? "Autoload.ts" : "Test.ts")
+  const normalizedFilename = path.normalize(filename)
 
   const sourceFile = ts.createSourceFile(
     filename,
@@ -72,7 +75,8 @@ export function compileTs(
 
   const customCompilerHost: ts.CompilerHost = {
     getSourceFile: (name, languageVersion) => {
-      if (name === filename) {
+      const normalizedName = path.normalize(name)
+      if (normalizedName === normalizedFilename) {
         return sourceFile
       } else if (name === "lib.d.ts") {
         return libDTs
@@ -95,12 +99,10 @@ export function compileTs(
   }
 
   const program = ts.createProgram(
-    ["Test.ts", "autoload.ts"],
+    [mockProjectPath("Test.ts"), mockProjectPath("Autoload.ts")],
     tsconfigOptions,
     customCompilerHost
   )
-
-  const sourceFileAsset = createStubSourceFileAsset("Test")
 
   const args: ParsedArgs = {
     buildLibraries: false,
@@ -109,72 +111,23 @@ export function compileTs(
     debug: false,
     help: false,
     init: false,
+    tsgdPath: mockProjectPath("ts2gd.json"),
   }
 
-  const project: TsGdProject = {
+  const project = new TsGdProject({
+    program,
     args,
-    errors: new Errors(args),
-    buildDynamicDefinitions: async () => {},
-    assets: [],
-    program: undefined as any,
-    compileAllSourceFiles: async () => true,
-    shouldBuildLibraryDefinitions: () => false,
-    validateAutoloads: () => [],
-    buildLibraryDefinitions: async () => {},
-    paths: {} as any,
-    definitionBuilder: {} as any,
-    mainScene: {
-      fsPath: "",
-      resPath: "",
-      nodes: [],
-      resources: [],
-      name: "mainScene",
-      project: {} as any,
-      rootNode: {} as any,
-    } as any,
-    godotScenes: () => [],
-    createAsset: () => 0 as any,
-    godotFonts: () => [],
-    godotImages: () => [],
-    godotGlbs: () => [],
-    godotProject: {
-      fsPath: "",
-      autoloads: [{ resPath: "autoload.ts" }],
-      mainScene: {} as any,
-      rawConfig: 0 as any,
-      actionNames: [],
-      project: {} as any,
-      addAutoload: {} as any,
-      removeAutoload: {} as any,
-    },
-    monitor: () => 0 as any,
-    onAddAsset: async () => "",
-    onChangeAsset: async () => "",
-    onRemoveAsset: async () => {},
-    sourceFiles: () => [
-      {
-        exportedTsClassName: () => "",
-        fsPath: "autoload.ts",
-        isProjectAutoload: () => true,
-        isAutoload: () => true,
-        resPath: "",
-        tsRelativePath: "",
-        gdContainingDirectory: "",
-        destroy: () => {},
-        project: {} as any,
-        tsType: () => "",
-        compile: async () => {},
-        gdPath: "",
-        reload: () => {},
-        isDecoratedAutoload: {} as any,
-        ...({} as any), // ssh about private properties.
-      },
-      sourceFileAsset,
+    initialFilePaths: [
+      mockProjectPath("project.godot"),
+      mockProjectPath("main.tscn"),
+      mockProjectPath("Test.ts"),
+      mockProjectPath("Autoload.ts"),
     ],
-  }
+    ts2gdJson: new Paths(args),
+  })
 
-  // TODO: Make this less silly.
-  // I suppose we could actually use the example project
+  const sourceFileAsset = new AssetSourceFile(filename, project)
+
   const godotFile = parseNode(sourceFile, {
     indent: "",
     sourceFile: sourceFile,
@@ -184,7 +137,7 @@ export function compileTs(
     project,
     sourceFileAsset: sourceFileAsset,
     mostRecentControlStructureIsSwitch: false,
-    isAutoload: false,
+    isAutoload,
     usages: utils.collectVariableUsage(sourceFile),
   })
 
@@ -229,7 +182,7 @@ const test = (
   let errors: TsGdError[] = []
 
   try {
-    let tuple = compileTs(ts, props.isAutoload ?? false)
+    let tuple = compileTs(ts, props.isAutoload)
     compiled = tuple[0]
     errors = tuple[1]
   } catch (e) {
