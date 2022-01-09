@@ -51,7 +51,7 @@ export const parseSourceFile = (
   const { statements } = node
   const sourceInfo = props.project
     .sourceFiles()
-    .find((file) => file.fsPath === node.fileName)
+    .find((file) => file.fsPath === path.normalize(node.fileName))
 
   // props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false
