@@ -6,7 +6,7 @@ import type { Matcher } from "anymatch"
 
 import { ParsedArgs } from "../parse_args"
 import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
-import { showLoadingMessage } from "../main"
+import { showLoadingMessage } from "../tui"
 
 import { allNonTsAssetExtensions } from "./assets"
 
@@ -282,3 +282,5 @@ export class Paths {
     console.info("src/ created.")
   }
 }
+
+export default Paths

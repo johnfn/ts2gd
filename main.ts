@@ -153,12 +153,12 @@
 import * as process from "process"
 
 import ts from "typescript"
-import chalk from "chalk"
 
 import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
 import { Paths } from "./project/paths"
 import { checkVersionAsync, getInstalledVersion } from "./check_version"
 import { makeTsGdProject } from "./project/project"
+import { showLoadingMessage } from "./tui"
 
 const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {
@@ -246,19 +246,6 @@ const setup = (tsgdJson: Paths) => {
   }
 }
 
-const version = getInstalledVersion()
-
-export const showLoadingMessage = (
-  msg: string,
-  args: ParsedArgs,
-  done = false
-) => {
-  if (!args.debug) console.clear()
-  console.info(
-    `${chalk.whiteBright("ts2gd v" + version)}: ${msg + (done ? "" : "...")}`
-  )
-}
-
 export const main = async (args: ParsedArgs) => {
   const start = new Date().getTime()
 
@@ -315,23 +302,21 @@ export const main = async (args: ParsedArgs) => {
   }
 }
 
-if (!process.argv[1].includes("test")) {
-  const args = parseArgs()
+const args = parseArgs()
 
-  // checkVersionAsync()
+// checkVersionAsync()
 
-  if (args.help) {
-    printHelp()
-  } else if (args.printVersion) {
-    // Nothing to do; we already printed the version.
-  } else {
-    void (async () => {
-      try {
-        await main(args)
-      } catch (e) {
-        console.error(e)
-        process.exit(1)
-      }
-    })()
-  }
+if (args.help) {
+  printHelp()
+} else if (args.printVersion) {
+  // Nothing to do; we already printed the version.
+} else {
+  void (async () => {
+    try {
+      await main(args)
+    } catch (e) {
+      console.error(e)
+      process.exit(1)
+    }
+  })()
 }

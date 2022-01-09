@@ -8,12 +8,12 @@ import chalk from "chalk"
 import { ParseNodeType, parseNode } from "../parse_node"
 import { Scope } from "../scope"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
-import { ParsedArgs } from "../parse_args"
-import TsGdProject, { TsGdError, Errors } from "../project"
+import TsGdProject, { TsGdError } from "../project"
 import { Paths } from "../project/paths"
 import { AssetSourceFile } from "../project/assets/asset_source_file"
 
 import { mockProjectPath } from "./test_utils"
+import * as fixtures from "./test_fixtures"
 
 export type Test = {
   expected:
@@ -104,26 +104,16 @@ export function compileTs(
     customCompilerHost
   )
 
-  const args: ParsedArgs = {
-    buildLibraries: false,
-    buildOnly: false,
-    printVersion: false,
-    debug: false,
-    help: false,
-    init: false,
-    tsgdPath: mockProjectPath("ts2gd.json"),
-  }
-
   const project = new TsGdProject({
     program,
-    args,
+    args: fixtures.args,
     initialFilePaths: [
       mockProjectPath("project.godot"),
       mockProjectPath("main.tscn"),
       mockProjectPath("Test.ts"),
       mockProjectPath("Autoload.ts"),
     ],
-    ts2gdJson: new Paths(args),
+    ts2gdJson: new Paths(fixtures.args),
   })
 
   const sourceFileAsset = new AssetSourceFile(filename, project)
