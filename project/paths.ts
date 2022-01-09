@@ -122,6 +122,7 @@ export class Paths {
 
     fullyQualifiedTs2gdPath = path.dirname(fullyQualifiedTs2gdPathWithFilename)
 
+    //TODO: type this
     const tsgdJson = JSON.parse(
       fs.readFileSync(fullyQualifiedTs2gdPathWithFilename, "utf-8")
     )
@@ -138,7 +139,8 @@ export class Paths {
     )
 
     this.godotSourceRepoPath =
-      path.join(fullyQualifiedTs2gdPath, tsgdJson.godotSourceRepoPath) ||
+      (tsgdJson.godotSourceRepoPath &&
+        path.join(fullyQualifiedTs2gdPath, tsgdJson.godotSourceRepoPath)) ||
       undefined
 
     this.csgClassesPath = path.join(
