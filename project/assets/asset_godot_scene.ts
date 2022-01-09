@@ -2,13 +2,13 @@ import path from "path"
 
 import chalk from "chalk"
 
-import { ErrorName, addError } from "../../errors"
+import { ErrorName } from "../errors"
 import TsGdProject from "../project"
 import { parseGodotConfigFile } from "../godot_parser"
 
 import { AssetGlb } from "./asset_glb"
 import { AssetSourceFile } from "./asset_source_file"
-import { BaseAsset } from "./base_asset"
+import { AssetBase } from "./asset_base"
 
 interface IGodotSceneFile {
   gd_scene: {
@@ -174,13 +174,13 @@ export class GodotNode {
     return !this._type && !this.isInstance()
   }
 
-  tsType(): string {
+  get tsType(): string {
     if (this._type) {
       return this._type
     }
 
     if (this.isInstanceOverride()) {
-      addError({
+      this.project.errors.add({
         description: `Error: should never try to get the type of an instance override. This is a ts2gd internal bug. Please report it on GitHub.`,
         error: ErrorName.InvalidFile,
         location: this.name,
@@ -190,13 +190,13 @@ export class GodotNode {
       return "any"
     }
 
-    const instancedSceneType = this.instance()?.tsType()
+    const instancedSceneType = this.instance()?.tsType
 
     if (instancedSceneType) {
       return instancedSceneType
     }
 
-    addError({
+    this.project.errors.add({
       description: `Error: Your Godot scene ${chalk.blue(
         this.scene.fsPath
       )} refers to ${chalk.red(
@@ -259,12 +259,8 @@ type ResourceTemp = {
   id: number
 }
 
-export class AssetGodotScene extends BaseAsset {
-  /** e.g. /Users/johnfn/GodotProject/Scenes/my_scene.tscn */
-  fsPath: string
-
-  /** e.g. res://Scenes/my_scene.tscn */
-  resPath: string
+export class AssetGodotScene extends AssetBase {
+  static extensions = [".tscn"]
 
   nodes: GodotNode[]
 
@@ -275,19 +271,13 @@ export class AssetGodotScene extends BaseAsset {
 
   rootNode: GodotNode
 
-  project: TsGdProject
-
   constructor(fsPath: string, project: TsGdProject) {
-    super()
+    super(fsPath, project)
 
     const sceneFile = parseGodotConfigFile(fsPath, {
       ext_resource: [],
       node: [],
     }) as IGodotSceneFile
-
-    this.fsPath = fsPath
-    this.project = project
-    this.resPath = project.paths.fsPathToResPath(fsPath)
 
     this.resources = (sceneFile.ext_resource ?? []).map((resource) => {
       return {
@@ -305,8 +295,7 @@ export class AssetGodotScene extends BaseAsset {
     this.rootNode = this.nodes.find((node) => !node.parent)!
   }
 
-  /** e.g. import('/Users/johnfn/GodotGame/scripts/Enemy').Enemy */
-  tsType(): string {
+  get tsType(): string {
     const rootScript = this.rootNode.getScript()
 
     if (rootScript) {
@@ -315,7 +304,7 @@ export class AssetGodotScene extends BaseAsset {
         .find((sf) => sf.resPath === rootScript.resPath)
 
       if (!rootSourceFile) {
-        addError({
+        this.project.errors.add({
           description: `Failed to find root source file for ${rootScript.fsPath}`,
           error: ErrorName.Ts2GdError,
           location: rootScript.fsPath,
@@ -328,7 +317,7 @@ export class AssetGodotScene extends BaseAsset {
       const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
-        addError({
+        this.project.errors.add({
           description: `Failed to find classname for ${rootScript.fsPath}`,
           error: ErrorName.Ts2GdError,
           location: rootScript.fsPath,
@@ -338,16 +327,15 @@ export class AssetGodotScene extends BaseAsset {
         return "any"
       }
 
-      return `import('${rootSourceFile.fsPath.slice(
-        0,
-        -".ts".length
-      )}').${rootSourceFile.exportedTsClassName()}`
+      return rootSourceFile.tsType
     } else {
-      return this.rootNode.tsType()
+      return this.rootNode.tsType
     }
   }
+}
 
-  static extensions() {
-    return [".tscn"]
-  }
+export default AssetGodotScene
+
+export function isAssetGodotScene(input: object): input is AssetGodotScene {
+  return input instanceof AssetGodotScene
 }

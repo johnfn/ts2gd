@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 
-import { TsGdError } from "../../errors"
+import { TsGdError } from "../errors"
 import TsGdProject from "../project"
 
 export default function buildGroupTypes(project: TsGdProject): void {
@@ -12,7 +12,7 @@ export default function buildGroupTypes(project: TsGdProject): void {
       for (const group of node.groups) {
         groupNameToTypes[group] ??= new Set()
 
-        const result = node.tsType()
+        const result = node.tsType
 
         groupNameToTypes[group].add(result)
       }

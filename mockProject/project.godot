@@ -8,11 +8,43 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Test",
+"language": "GDScript",
+"path": "res://Test.gd"
+}, { 
+"class": "Main",
+"language": "GDScript",
+"path": "res://Main.gd"
+}, {
+"base": "Reference",
+"class": "Nested",
+"language": "GDScript",
+"path": "res://nested/Nested.gd"
+} ]
+
+_global_script_class_icons={
+"Test": "",
+"Main": "",
+"Nested": ""
+}
+
 [application]
 
 config/name="mockProject"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Autoload="*res://Autoload.gd"
+
+[global]
+
+autoload=false
+tabs=false
+spaces=false
 
 [physics]
 

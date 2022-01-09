@@ -11,6 +11,7 @@
     "test": "ts-node-dev --respawn --clear tests/test.ts",
     "build-ci": "tsc",
     "test-ci": "node js/tests/test.js",
+    "test-ci-jest": "jest --coverage",
     "project-test": "ts-node-dev --respawn --clear tests/project_tests.ts",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
@@ -33,29 +34,40 @@
     "semi": false
   },
   "lint-staged": {
-    "*.{ts,json}": [
+    "*.ts": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.json": [
       "prettier --write"
     ]
   },
   "dependencies": {
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
+    "lodash": "^4.17.21",
     "pkginfo": "^0.4.1",
     "tsutils": "^3.21.0",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.5",
+    "@types/jest": "^27.0.3",
+    "@types/lodash": "^4.14.178",
     "@types/node": "^16.11.9",
     "@types/pkginfo": "^0.4.0",
     "@types/xml2js": "^0.4.9",
     "@typescript-eslint/eslint-plugin": "^5.7.0",
     "@typescript-eslint/parser": "^5.7.0",
     "anymatch": "^3.1.2",
+    "babel-jest": "^27.4.5",
     "eslint": "^8.5.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
+    "jest": "^27.4.5",
     "lint-staged": "^12.1.2",
     "prettier": "^2.5.1",
     "ts-node": "^10.4.0",

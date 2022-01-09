@@ -1,6 +1,6 @@
 {
   "destination": "./",
   "source": "./",
-  "godotSourceRepoPath": "./godot_src",
+  "godotSourceRepoPath": "../godot_src",
   "ignore": ["**/ignore_me/**", "ignore_me.ts"]
 }

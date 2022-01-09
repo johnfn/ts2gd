@@ -153,12 +153,12 @@
 import * as process from "process"
 
 import ts from "typescript"
-import chalk from "chalk"
 
 import { ParsedArgs, parseArgs, printHelp } from "./parse_args"
 import { Paths } from "./project/paths"
 import { checkVersionAsync, getInstalledVersion } from "./check_version"
 import { makeTsGdProject } from "./project/project"
+import { showLoadingMessage } from "./tui"
 
 const setup = (tsgdJson: Paths) => {
   const formatHost: ts.FormatDiagnosticsHost = {
@@ -239,24 +239,11 @@ const setup = (tsgdJson: Paths) => {
   opt.config.useCaseSensitiveFileNames = false
 
   return {
-    watchProgram,
+    program: watchProgram.getProgram().getProgram(),
     tsgdJson,
     reportWatchStatusChanged,
     tsInitializationFinished,
   }
-}
-
-const version = getInstalledVersion()
-
-export const showLoadingMessage = (
-  msg: string,
-  args: ParsedArgs,
-  done = false
-) => {
-  if (!args.debug) console.clear()
-  console.info(
-    `${chalk.whiteBright("ts2gd v" + version)}: ${msg + (done ? "" : "...")}`
-  )
 }
 
 export const main = async (args: ParsedArgs) => {
@@ -265,10 +252,10 @@ export const main = async (args: ParsedArgs) => {
   const tsgdJson = new Paths(args)
 
   showLoadingMessage("Initializing TypeScript", args)
-  const { watchProgram, tsInitializationFinished } = setup(tsgdJson)
+  const { program, tsInitializationFinished } = setup(tsgdJson)
 
   showLoadingMessage("Scanning project", args)
-  let project = await makeTsGdProject(tsgdJson, watchProgram, args)
+  let project = await makeTsGdProject(tsgdJson, program, args)
 
   if (args.buildLibraries || project.shouldBuildLibraryDefinitions(args)) {
     showLoadingMessage("Building definition files", args)
@@ -315,23 +302,21 @@ export const main = async (args: ParsedArgs) => {
   }
 }
 
-if (!process.argv[1].includes("test")) {
-  const args = parseArgs()
+const args = parseArgs()
 
-  // checkVersionAsync()
+// checkVersionAsync()
 
-  if (args.help) {
-    printHelp()
-  } else if (args.printVersion) {
-    // Nothing to do; we already printed the version.
-  } else {
-    void (async () => {
-      try {
-        await main(args)
-      } catch (e) {
-        console.error(e)
-        process.exit(1)
-      }
-    })()
-  }
+if (args.help) {
+  printHelp()
+} else if (args.printVersion) {
+  // Nothing to do; we already printed the version.
+} else {
+  void (async () => {
+    try {
+      await main(args)
+    } catch (e) {
+      console.error(e)
+      process.exit(1)
+    }
+  })()
 }

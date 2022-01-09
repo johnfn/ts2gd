@@ -1,6 +1,7 @@
 node_modules/
 js/
 .DS_Store
+coverage/
 
 # Godot-specific ignores
 .import/

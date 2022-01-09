@@ -1,7 +1,10 @@
+import path from "path"
+
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
+import { mockProjectPath } from "../tests/test_utils"
 
 import { getImportResPathForEnum } from "./parse_import_declaration"
 
@@ -38,12 +41,10 @@ export const parseEnumDeclaration = (
   const enumType = props.program.getTypeChecker().getTypeAtLocation(node)
   const { resPath, enumName } = getImportResPathForEnum(enumType, props)
 
-  const fileName =
-    props.sourceFileAsset.gdContainingDirectory +
-    props.sourceFileAsset.name +
-    "_" +
-    enumName +
-    ".gd"
+  const fileName = props.project.paths.replaceExtension(
+    props.sourceFileAsset.gdPath,
+    `_${enumName}.gd`
+  )
 
   return {
     content: `const ${enumName} = preload("${resPath}").${enumName}`,
@@ -71,17 +72,17 @@ export class Hello {
     type: "multiple-files",
     files: [
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
+        fileName: mockProjectPath("Hello.gd"),
         expected: `
 class_name Hello
-const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
+const MyEnum = preload("res://Test_MyEnum.gd").MyEnum
 func _ready():
   print(MyEnum.A)
       `,
       },
 
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
+        fileName: mockProjectPath("Test_MyEnum.gd"),
         expected: `
 const MyEnum = {
   "A": 0,
@@ -109,17 +110,17 @@ export class Hello {
     type: "multiple-files",
     files: [
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
+        fileName: mockProjectPath("Hello.gd"),
         expected: `
 class_name Hello
-const TestEnum = preload("res://compiled/Test_TestEnum.gd").TestEnum
+const TestEnum = preload("res://Test_TestEnum.gd").TestEnum
 func _ready():
   print(TestEnum.A)
       `,
       },
 
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_TestEnum.gd",
+        fileName: mockProjectPath("Test_TestEnum.gd"),
         expected: `
 const TestEnum = {
   "A": "A",

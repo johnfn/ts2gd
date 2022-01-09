@@ -4,7 +4,7 @@ import { UsageDomain } from "tsutils"
 import ts, { SyntaxKind } from "typescript"
 
 import TsGdProject from "../project/project"
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { isEnumType } from "../ts_utils"
 
@@ -61,9 +61,11 @@ export const getImportResPathForEnum = (
   const enumDeclaration = enumDeclarations[0]
   const enumSourceFile = enumDeclaration.getSourceFile()
 
+  const targetPath = path.normalize(enumSourceFile.fileName)
+
   const enumSourceFileAsset = props.project
     .sourceFiles()
-    .find((sf) => sf.fsPath === enumSourceFile.fileName)
+    .find((sf) => sf.fsPath === targetPath)
 
   if (!enumSourceFileAsset) {
     throw new Error(
@@ -77,9 +79,10 @@ export const getImportResPathForEnum = (
     enumTypeString = enumTypeString.slice("typeof ".length)
   }
 
-  const pathWithoutEnum = enumSourceFileAsset.resPath
-  const importPath =
-    pathWithoutEnum.slice(0, -".gd".length) + "_" + enumTypeString + ".gd"
+  const importPath = props.project.paths.replaceResExtension(
+    enumSourceFileAsset.resPath,
+    `_${enumTypeString}.gd`
+  )
 
   return {
     resPath: importPath,
@@ -152,7 +155,7 @@ export const parseImportDeclaration = (
             continue
           }
 
-          addError({
+          props.project.errors.add({
             error: ErrorName.InvalidNumber,
             location: node,
             description: `Import ${pathToImportedTs} not found.`,

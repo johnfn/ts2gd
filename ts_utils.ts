@@ -5,7 +5,7 @@ import chalk from "chalk"
 import ts, { ObjectFlags, SyntaxKind, TypeFlags } from "typescript"
 
 import { ParseState } from "./parse_node"
-import { ErrorName, addError } from "./errors"
+import { ErrorName } from "./project"
 
 export const isNullableNode = (node: ts.Node, typechecker: ts.TypeChecker) => {
   const type = typechecker.getTypeAtLocation(node)
@@ -200,7 +200,7 @@ with either "int" or "float".`
       )} with either "int" or "float".`
     }
 
-    addError({
+    props.project.errors.add({
       description: errorString,
       error: ErrorName.InvalidNumber,
       location: node,
@@ -246,7 +246,7 @@ with either "int" or "float".`
   // For exports, we really want to do a best effort to get *a* typename
 
   if (!actualType) {
-    addError({
+    props.project.errors.add({
       description: `This exported variable needs a type declaration:
 
 ${chalk.yellow(node.getText())}          
@@ -296,7 +296,7 @@ ${chalk.yellow(node.getText())}
       }
 
       if (nonNullTypes.length > 1 || nonNullTypeNodes.length > 1) {
-        addError({
+        props.project.errors.add({
           description: `You can't export a union type:
 
 ${chalk.yellow(node.getText())}          

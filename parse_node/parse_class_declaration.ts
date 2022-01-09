@@ -1,6 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { Test } from "../tests/test"
 import { getGodotType } from "../ts_utils"
@@ -91,7 +91,7 @@ export const parseClassDeclaration = (
   )
 
   if (!modifiers?.includes("export") && !isAutoload) {
-    addError({
+    props.project.errors.add({
       description: "You must export this class.",
       error: ErrorName.ClassMustBeExported,
       location: node,

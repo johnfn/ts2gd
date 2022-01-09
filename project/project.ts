@@ -1,23 +1,42 @@
 import fs from "fs"
 import path from "path"
 
+import _ from "lodash"
 import chalk from "chalk"
 import chokidar from "chokidar"
-import ts from "typescript"
+import ts, { parseJsonText } from "typescript"
 
 import LibraryBuilder from "../generate_library_defs"
 import { ParsedArgs } from "../parse_args"
-import { displayErrors, TsGdError } from "../errors"
 
-import { GodotProjectFile } from "./godot_project_file"
+import Errors, { TsGdError } from "./errors"
+import {
+  AssetBase,
+  AssetGodotProjectFile,
+  AssetFont,
+  AssetGlb,
+  AssetGodotScene,
+  AssetImage,
+  AssetSourceFile,
+  AssetConstructor,
+} from "./assets"
 import { Paths } from "./paths"
-import { AssetFont } from "./assets/asset_font"
-import { AssetGlb } from "./assets/asset_glb"
-import { AssetGodotScene } from "./assets/asset_godot_scene"
-import { AssetImage } from "./assets/asset_image"
-import { AssetSourceFile } from "./assets/asset_source_file"
-import { BaseAsset } from "./assets/base_asset"
 import DefinitionBuilder from "./generate_dynamic_defs"
+
+// not static to wait for module load
+const AssetLookup = _.memoize(() =>
+  [
+    AssetFont,
+    AssetGlb,
+    AssetGodotProjectFile,
+    AssetGodotScene,
+    AssetImage,
+    AssetSourceFile,
+  ].reduce((acc, current) => {
+    current.extensions.forEach((ext) => acc.set(ext, current))
+    return acc
+  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb | AssetImage>>())
+)
 
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
@@ -28,10 +47,10 @@ export class TsGdProject {
   readonly paths: Paths
 
   /** Master list of all Godot assets */
-  assets: BaseAsset[] = []
+  assets: AssetBase[] = []
 
   /** Parsed project.godot file. */
-  godotProject: GodotProjectFile
+  godotProject: AssetGodotProjectFile
 
   /** Each source file. */
   sourceFiles(): AssetSourceFile[] {
@@ -64,102 +83,102 @@ export class TsGdProject {
 
   mainScene: AssetGodotScene
 
-  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+  //program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
+  program: ts.Program
 
-  args: ParsedArgs
+  public readonly args: ParsedArgs
 
-  definitionBuilder = new DefinitionBuilder(this)
+  public readonly definitionBuilder: DefinitionBuilder
 
-  constructor(
-    watcher: chokidar.FSWatcher,
-    initialFilePaths: string[],
-    program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
-    ts2gdJson: Paths,
+  public readonly errors: Errors
+
+  constructor(options: {
+    watcher?: chokidar.FSWatcher
+    initialFilePaths: string[]
+    program: ts.Program
+    ts2gdJson: Paths
     args: ParsedArgs
-  ) {
+  }) {
     // Initial set up
 
-    this.args = args
-    this.paths = ts2gdJson
-    this.program = program
+    this.args = options.args
+    this.paths = options.ts2gdJson
+    this.program = options.program
+
+    this.errors = new Errors(this.args)
+
+    this.definitionBuilder = new DefinitionBuilder(this)
 
     // Parse assets
 
-    const projectGodot = initialFilePaths.filter((path) =>
-      path.includes("project.godot")
-    )[0]
+    const [projectFilePaths, otherAssetPaths] = _.partition(
+      options.initialFilePaths,
+      (path) => path.includes("project.godot")
+    )
 
-    this.godotProject = this.createAsset(projectGodot)! as GodotProjectFile
-
-    const initialAssets = initialFilePaths.map((path) => this.createAsset(path))
-
-    for (const asset of initialAssets) {
-      if (asset === null) {
-        continue
-      }
-
-      if (asset instanceof BaseAsset) {
-        this.assets.push(asset)
-      }
-
-      if (asset instanceof GodotProjectFile) {
-        this.godotProject = asset
+    if (projectFilePaths.length !== 1) {
+      throw new Error(
+        `Need exactly one project.godot file, but found ${projectFilePaths.length}!`
+      )
+    } else {
+      const project = this.createGodotProject(projectFilePaths[0])
+      if (project) {
+        this.godotProject = project
+      } else {
+        throw new Error(
+          `Couldn't parse godot project from ${projectFilePaths[0]}`
+        )
       }
     }
 
-    this.mainScene = this.godotScenes().find(
-      (scene) => scene.resPath === this.godotProject.mainScene().resPath
-    )!
+    this.assets = _.compact(
+      otherAssetPaths.map((path) => this.createAsset(path))
+    )
 
-    this.monitor(watcher)
+    const mainScene = this.godotScenes().find(
+      (scene) => scene.resPath === this.godotProject.mainScene().resPath
+    )
+
+    if (!mainScene) {
+      throw new Error("Main scene not found, check your Godot project!")
+    }
+
+    this.mainScene = mainScene
+
+    this.monitor(options.watcher)
   }
 
-  createAsset(
-    path: string
-  ):
-    | AssetSourceFile
-    | AssetGodotScene
-    | AssetFont
-    | AssetImage
-    | GodotProjectFile
-    | AssetGlb
-    | null {
-    //TODO: move these checks to the asset classes in static methods
-    if (path.endsWith(".ts")) {
-      return new AssetSourceFile(path, this)
-    } else if (path.endsWith(".tscn")) {
-      return new AssetGodotScene(path, this)
-    } else if (path.endsWith(".godot")) {
-      return new GodotProjectFile(path, this)
-    } else if (path.endsWith(".ttf")) {
-      return new AssetFont(path, this)
-    } else if (path.endsWith(".glb")) {
-      return new AssetGlb(path, this)
-    } else if (
-      path.endsWith(".png") ||
-      path.endsWith(".gif") ||
-      path.endsWith(".bmp") ||
-      path.endsWith(".jpg")
-    ) {
-      return new AssetImage(path, this)
+  createGodotProject(path: string): AssetGodotProjectFile | null {
+    if (path.endsWith(".godot")) {
+      return new AssetGodotProjectFile(path, this)
     }
 
     console.error(`unhandled asset type ${path}`)
-
     return null
   }
 
-  monitor(watcher: chokidar.FSWatcher) {
+  createAsset(fsPath: string) {
+    const ext = path.extname(fsPath)
+    const constructor = AssetLookup().get(ext)
+    if (constructor) {
+      return new constructor(fsPath, this)
+    }
+
+    console.error(`unhandled asset type ${fsPath}`)
+    return null
+  }
+
+  monitor(watcher?: chokidar.FSWatcher) {
     watcher
-      .on("add", async (path) => {
+      ?.on("add", async (path) => {
         const message = await this.onAddAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("change", async (path) => {
         const message = await this.onChangeAsset(path)
 
-        displayErrors(this.args, message)
+        this.errors.display(message)
       })
       .on("unlink", async (path) => {
         await this.onRemoveAsset(path)
@@ -171,7 +190,7 @@ export class TsGdProject {
 
     // Do this first because some assets expect themselves to exist - e.g.
     // an enum inside a source file expects that source file to exist.
-    if (newAsset instanceof BaseAsset) {
+    if (newAsset instanceof AssetBase) {
       this.assets.push(newAsset)
     }
 
@@ -214,7 +233,7 @@ export class TsGdProject {
     if (path.endsWith(".godot")) {
       const oldProjectFile = this.godotProject
 
-      this.godotProject = new GodotProjectFile(path, this)
+      this.godotProject = new AssetGodotProjectFile(path, this)
 
       const oldAutoloads = oldProjectFile.autoloads
       const newAutoloads = this.godotProject.autoloads
@@ -227,26 +246,25 @@ export class TsGdProject {
           await script.compile(this.program)
         }
       }
-    }
+    } else {
+      let oldAsset = this.assets.find((asset) => asset.fsPath === path)
 
-    let oldAsset = this.assets.find((asset) => asset.fsPath === path)
+      if (oldAsset) {
+        let newAsset = this.createAsset(path) as any as AssetBase
+        this.assets = this.assets.filter((a) => a.fsPath !== path)
+        this.assets.push(newAsset)
 
-    if (oldAsset) {
-      let newAsset = this.createAsset(path) as any as BaseAsset
-      this.assets = this.assets.filter((a) => a.fsPath !== path)
-      this.assets.push(newAsset)
+        if (newAsset instanceof AssetSourceFile) {
+          await newAsset.compile(this.program)
+          this.definitionBuilder.buildAssetPathsType()
+          this.definitionBuilder.buildNodePathsTypeForScript(newAsset)
+        } else if (newAsset instanceof AssetGodotScene) {
+          for (const script of this.sourceFiles()) {
+            this.definitionBuilder.buildNodePathsTypeForScript(script)
+          }
 
-      if (newAsset instanceof AssetSourceFile) {
-        await newAsset.compile(this.program)
-
-        this.definitionBuilder.buildAssetPathsType()
-        this.definitionBuilder.buildNodePathsTypeForScript(newAsset)
-      } else if (newAsset instanceof AssetGodotScene) {
-        for (const script of this.sourceFiles()) {
-          this.definitionBuilder.buildNodePathsTypeForScript(script)
+          this.definitionBuilder.buildSceneImports()
         }
-
-        this.definitionBuilder.buildSceneImports()
       }
     }
 
@@ -286,7 +304,7 @@ export class TsGdProject {
     await Promise.all(
       assetsToCompile.map((asset) => asset.compile(this.program))
     )
-    return !displayErrors(this.args, "Compiling all source files...")
+    return !this.errors.display("Compiling all source files...")
   }
 
   shouldBuildLibraryDefinitions(flags: ParsedArgs) {
@@ -325,7 +343,7 @@ export class TsGdProject {
 
 export const makeTsGdProject = async (
   ts2gdJson: Paths,
-  program: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>,
+  program: ts.Program,
   args: ParsedArgs
 ) => {
   const [watcher, initialFiles] = await new Promise<
@@ -345,7 +363,13 @@ export const makeTsGdProject = async (
       })
   })
 
-  return new TsGdProject(watcher, initialFiles, program, ts2gdJson, args)
+  return new TsGdProject({
+    watcher,
+    initialFilePaths: initialFiles,
+    program,
+    ts2gdJson,
+    args,
+  })
 }
 
 export default TsGdProject
