@@ -233,7 +233,7 @@ If you would like to tell ts2gd to ignore certain TypeScript files, you can add 
 - Two files: `"ignore": ["ignore_me.ts", "ignore_me_too.ts"]`
 - Everything inside a directory: `"ignore": ["**/ignore_me/**"]`
 
-eed something more customized? You can provide an array of [anymatch](https://www.npmjs.com/package/anymatch) strings or globs.
+Need something more customized? You can provide an array of [anymatch](https://www.npmjs.com/package/anymatch) strings or globs.
 
 # Roadmap
 

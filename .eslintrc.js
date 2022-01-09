@@ -1,7 +1,7 @@
 module.exports = {
   ignorePatterns: [
     "**/_godot_defs/**",
-    "**/example/**",
+    "**/mockProject/**",
     "**/godot_src/**",
     "**/js/**",
     ".eslintrc.js",

@@ -14,7 +14,7 @@
     "project-test": "ts-node-dev --respawn --clear tests/project_tests.ts",
     "prepare": "husky install",
     "lint-staged": "lint-staged",
-    "generate-defs": "ts-node main.ts --buildLibraries --buildOnly example/ts2gd.json"
+    "generate-defs": "ts-node main.ts --buildLibraries --buildOnly mockProject/ts2gd.json"
   },
   "prepublish": "tsc",
   "bin": {
