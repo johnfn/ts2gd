@@ -23,6 +23,21 @@ import {
 import { Paths } from "./paths"
 import DefinitionBuilder from "./generate_dynamic_defs"
 
+// not static to wait for module load
+const AssetLookup = _.memoize(() =>
+  [
+    AssetFont,
+    AssetGlb,
+    AssetGodotProjectFile,
+    AssetGodotScene,
+    AssetImage,
+    AssetSourceFile,
+  ].reduce((acc, current) => {
+    current.extensions.forEach((ext) => acc.set(ext, current))
+    return acc
+  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb | AssetImage>>())
+)
+
 // TODO: Instead of manually scanning to find all assets, i could just import
 // all godot files, and then parse them for all their asset types. It would
 // probably be easier to find the tscn and tres files.
@@ -142,21 +157,9 @@ export class TsGdProject {
     return null
   }
 
-  private static assetLookup = [
-    AssetFont,
-    AssetGlb,
-    AssetGodotProjectFile,
-    AssetGodotScene,
-    AssetImage,
-    AssetSourceFile,
-  ].reduce((acc, current) => {
-    current.extensions.forEach((ext) => acc.set(ext, current))
-    return acc
-  }, new Map<string, AssetConstructor<AssetSourceFile | AssetGodotScene | AssetGodotProjectFile | AssetFont | AssetGlb | AssetImage>>())
-
   createAsset(fsPath: string) {
     const ext = path.extname(fsPath)
-    const constructor = TsGdProject.assetLookup.get(ext)
+    const constructor = AssetLookup().get(ext)
     if (constructor) {
       return new constructor(fsPath, this)
     }
