@@ -43,7 +43,7 @@ To compile all source files once:
 
 ### Classes
 
-Single exported class in file is always treated as main class in GDScript.
+A single exported class in a file is always treated as the main GDScript class.
 
 ```ts
 export class MyNode extends Node2D {
@@ -62,36 +62,19 @@ func _ready():
   print("Hello world")
 ```
 
-If class is marked with default it can be anonymous. This omits `class_name` generation.
+Classes marked `default` are the main class (the class that gets attached to the node when you add a script to a node in Godot). Other classes are inner classes in Godot. There is one exception to this rule: if you have only a single class in a file, that automatically becomes the main class, default or not.
 
 ```ts
-export default class extends Node2D {
+export default class MyNode extends Node2D {
   constructor() {
     super()
-    print("Hello world")
+    print("Hello main class")
   }
 }
-```
 
-```gdscript
-extends Node2D
-
-func _ready():
-  print("Hello world")
-```
-
-### Inner classes
-
-To generate inner classes in GDScript file class can be marked with `@inner` attribute. Not exported classes are
-also inner classes by default with one exception, when not exported class is the only one in the file then it is treated
-as main class.
-
-```ts
-@inner
-export class InnerClass extends Node2D {
+export class ExportedInnerClass {
   constructor() {
-    super()
-    print("Hello InnerClass")
+    print("Hello ExportedInnerClass")
   }
 }
 
@@ -103,17 +86,22 @@ class NotExportedInnerClass {
 ```
 
 ```gdscript
-class InnerClass extends Node2D:
-  func _init().():
-    print("Hello InnerClass")
+extends Node2D
+class_name MyNode
+
+class ExportedInnerClass
+  func _init():
+    print("Hello ExportedInnerClass")
 
 class NotExportedInnerClass
   func _init():
     print("Hello NotExportedInnerClass")
+
+func _ready():
+  print("Hello main class")
 ```
 
-With multiple exported classes in file it is necessary to mark one as the main class for GDScript. This can be done by
-exporting a class with `default` keyword or by marking a class with `@main` decorator. Other classes in the same file will be treated as inner classes. `@main` decorator takes precedence over `export default`.
+If you prefer not to use `default`, you can also decorate the class with `@main`, which has the same effect. Again, this is only necessary if you are using multiple classes in a file.
 
 ```ts
 @main
@@ -141,6 +129,42 @@ class OtherClass
 
 func _ready():
   print("Hello MainClass")
+```
+
+If you want single class in a file to be an inner class in Godot then you need to explicitly mark it with `@inner` attribute.
+
+```ts
+@inner
+export class MyNode extends Node2D {
+  constructor() {
+    super()
+    print("Hello world")
+  }
+}
+```
+
+```gdscript
+class MyNode extends Node2D:
+  func _init().():
+    print("Hello world")
+```
+
+If a class is marked `default`, it can be anonymous. This omits `class_name` generation.
+
+```ts
+export default class extends Node2D {
+  constructor() {
+    super()
+    print("Hello world")
+  }
+}
+```
+
+```gdscript
+extends Node2D
+
+func _ready():
+  print("Hello world")
 ```
 
 ### `get_node`
@@ -248,7 +272,7 @@ In order to make a class autoload, decorate your class with `@autoload`, and cre
 Here's a full example of an autoload class.
 
 ```ts
-// autoload can be specified only on class marked 'export default'
+// autoload can be specified only on a main class (marked 'export default' or with '@main' decorator)
 @autoload
 export default class MyAutoloadClass extends Node2D {
   public hello = "hi"
