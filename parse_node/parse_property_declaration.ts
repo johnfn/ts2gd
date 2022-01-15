@@ -371,7 +371,7 @@ export const testNormalExportedVariable5: Test = {
   ts: `
 export class Test {
   @exports
-  foo: number[]
+  foo: float[]
 }
   `,
   expected: `

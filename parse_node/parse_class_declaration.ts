@@ -92,7 +92,15 @@ export const parseClassDeclaration = (
 
   if (!props.isMainClass && isAutoload) {
     addError({
-      description: "Only main class can be autoloaded.",
+      description: `
+Only the main class can be autoloaded. You can make this the main class either by exporting it as default, or using @main. For example:
+
+@autoload export default class ${node.name?.getText() ?? ""} { // ...
+
+Or:
+
+@autoload @main export class ${node.name?.getText() ?? ""} { // ...
+`,
       error: ErrorName.ClassMustBeExported,
       location: node,
       stack: new Error().stack ?? "",
@@ -196,6 +204,51 @@ var x: int = 1
 `,
 }
 
+export const testMainDecoratorAutoload: Test = {
+  ts: `
+@autoload
+@main
+export class Foo {
+  x = 1
+}
+
+export class Bar {
+
+}`,
+  expected: `
+class_name Foo
+class Bar:
+  pass
+var x: int = 1
+
+`,
+}
+
+export const testAutoloadMustBeMainClass: Test = {
+  ts: `
+@autoload
+export class Foo {
+  x = 1
+}
+
+@main
+export class Bar {
+  y = 2
+}`,
+  expected: {
+    type: "error",
+    error: `
+Only the main class can be autoloaded. You can make this the main class either by exporting it as default, or using @main. For example:
+
+@autoload export default class Foo { // ...
+
+Or:
+
+@autoload @main export class Foo { // ...
+`,
+  },
+}
+
 export const testExportArgsSetGet: Test = {
   ts: `
 @autoload
@@ -227,7 +280,15 @@ class Foo {
   x = 1
 }`,
   expected: {
-    error: "Only main class can be autoloaded",
+    error: `
+Only the main class can be autoloaded. You can make this the main class either by exporting it as default, or using @main. For example:
+
+@autoload export default class Foo { // ...
+
+Or:
+
+@autoload @main export class Foo { // ...
+`,
     type: "error",
   },
 }
@@ -359,6 +420,7 @@ export class Foo {
   x = 1
 }
 
+@inner
 class Bar {
   y = 1
 }`,
