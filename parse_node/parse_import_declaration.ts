@@ -117,6 +117,7 @@ export const parseImportDeclaration = (
     isMain: boolean
   }[] = []
 
+  // handle default import, e.g. import Foo from "./bar"
   if (node.importClause.name) {
     // Map default import into meta object
     const declaration = extractClassDeclarationFromType(
@@ -129,9 +130,10 @@ export const parseImportDeclaration = (
     })
   }
 
+  // handle named import, e.g. import { Foo, Bar } from "./baz"
   if (namedBindings && ts.isNamedImports(namedBindings)) {
     // Map all bindings into meta objects
-    namedBindings.elements.forEach((binding) => {
+    for (const binding of namedBindings.elements) {
       const declaration = extractClassDeclarationFromType(
         checker.getTypeAtLocation(binding.name)
       )
@@ -140,7 +142,7 @@ export const parseImportDeclaration = (
         name: binding.name,
         isMain: declaration ? checkIfMainClass(declaration) : false,
       })
-    })
+    }
   }
 
   let imports: ImportType[] = []

@@ -37,7 +37,7 @@ const getClassDeclarationHeader = (
     extendsFrom = type.getText()
 
     if (tsType.symbol && tsType.symbol.declarations) {
-      // Handle the case when extended class is a inner clas of file
+      // Handle the case when extended class is a inner class of file
       const classDecl = tsType.symbol.declarations.find((v) =>
         ts.isClassDeclaration(v)
       ) as ClassDeclaration | null
@@ -99,7 +99,15 @@ ${props.isAutoload || !node.name ? "" : `class_name ${node.name.getText()}\n`}`
 
   if (isTool) {
     addError({
-      description: "Only class exported as default can be decorated as tool.",
+      description: `
+Only the main class can be decorated as tool. You can make this the main class either by exporting it as default, or using @main. For example:
+
+@tool export default class ${node.name?.getText() ?? ""} { // ...
+
+Or:
+
+@tool @main export class ${node.name?.getText() ?? ""} { // ...
+`,
       error: ErrorName.ClassMustBeExported,
       location: node,
       stack: new Error().stack ?? "",
@@ -237,7 +245,20 @@ export const parseSourceFile = (
     addError({
       description: `Please mark one of ${classFile.innerClasses
         .map((v) => v.classDecl.name?.getText())
-        .join(", ")} as the default (main) class. `,
+        .join(
+          ", "
+        )} as the main class using 'export default' or '@main' decorator. For example:
+
+export default class ${
+        classFile.innerClasses[0].classDecl.name?.getText() ?? ""
+      } { // ...
+
+Or:
+
+@main export class ${
+        classFile.innerClasses[0].classDecl.name?.getText() ?? ""
+      } { // ...
+`,
       error: ErrorName.TooManyClassesFound,
       location: node,
       stack: new Error().stack ?? "",
@@ -255,7 +276,12 @@ export const parseSourceFile = (
       addError({
         description: `Main class ${
           classFile.mainClass.classDecl.name?.getText() ?? "<anonymous>"
-        } must be exported.`,
+        } must be exported. For example:
+
+export default class ${
+          classFile.mainClass.classDecl.name?.getText() ?? ""
+        } { // ...
+`,
         error: ErrorName.ClassMustBeExported,
         location: node,
         stack: new Error().stack ?? "",

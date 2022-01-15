@@ -497,7 +497,11 @@ export const checkIfMainClass = (
     return markedMainCandidates[0] === cls
   } else if (markedMainCandidates.length > 1) {
     addError({
-      description: `There are more than one class marked with '@main' attribute`,
+      description: `The classes ${markedMainCandidates
+        .map((v) => (v as ts.ClassDeclaration).name?.getText() ?? "<anonymous>")
+        .join(
+          ", "
+        )} are all marked '@main', but only one class can be marked '@main' per file.`,
       error: ErrorName.TooManyClassesFound,
       location: cls,
       stack: new Error().stack ?? "",

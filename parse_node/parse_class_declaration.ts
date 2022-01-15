@@ -303,7 +303,14 @@ class Bar {
   x = 1
 }`,
   expected: {
-    error: "Please mark one of Foo, Bar as the default (main) class.",
+    error: `Please mark one of Foo, Bar as the main class using 'export default' or '@main' decorator. For example:
+
+export default class Foo { // ...
+
+Or:
+
+@main export class Foo { // ...
+`,
     type: "error",
   },
 }
