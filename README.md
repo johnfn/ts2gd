@@ -39,6 +39,16 @@ To compile all source files once:
 
 `ts2gd --buildOnly`
 
+## Windows
+
+ts2gd should run on GNU/Linux, Mac OS and Windows. If you run into issues, please fill a ticket.
+
+Development of ts2gd makes use of symlinks within the repository, thus when cloning on windows, clone with:
+
+```
+git clone -c core.symlinks=true --recurse-submodules git@github.com:johnfn/ts2gd.git
+```
+
 ## Details and Differences
 
 ### `get_node`
