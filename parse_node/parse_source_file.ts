@@ -1,8 +1,11 @@
+import path from "path"
+
 import ts, { SyntaxKind } from "typescript"
 
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project"
 import { ParseNodeType, ParseState, combine, parseNode } from "../parse_node"
 import { Test } from "../tests/test"
+import { mockProjectPath } from "../tests/test_utils"
 
 import { LibraryFunctions } from "./library_functions"
 
@@ -48,7 +51,7 @@ export const parseSourceFile = (
   const { statements } = node
   const sourceInfo = props.project
     .sourceFiles()
-    .find((file) => file.fsPath === node.fileName)
+    .find((file) => file.fsPath === path.normalize(node.fileName))
 
   // props.usages = utils.collectVariableUsage(node)
   props.isAutoload = sourceInfo?.isAutoload() ?? false
@@ -62,7 +65,7 @@ export const parseSourceFile = (
   ) as ts.ClassDeclaration[]
 
   if (allClasses.length === 0) {
-    addError({
+    props.project.errors.add({
       error: ErrorName.ClassNameNotFound,
       location: node,
       description:
@@ -111,7 +114,7 @@ export const parseSourceFile = (
       const className = classDecl.name?.text
 
       if (!className) {
-        addError({
+        props.project.errors.add({
           description: "Anonymous classes are not supported",
           error: ErrorName.ClassCannotBeAnonymous,
           location: classDecl,
@@ -122,8 +125,7 @@ export const parseSourceFile = (
       }
 
       parsedClassDeclarations.push({
-        fileName:
-          props.sourceFileAsset.gdContainingDirectory + className + ".gd",
+        fileName: props.sourceFileAsset.pathForClassname(className),
         parsedClass: parsedStatement,
         classDecl,
       })
@@ -184,7 +186,9 @@ ${parsedClass.content}`,
     // Generate SOME code - even though it'll certainly be wrong
 
     files.push({
-      filePath: node.getSourceFile().fileName.slice(0, -".ts".length),
+      filePath: props.project.paths.removeExtension(
+        node.getSourceFile().fileName
+      ),
       body: `
 ${getFileHeader()}
 ${hoistedEnumImports}
@@ -221,11 +225,11 @@ export class Test2 { }
     type: "multiple-files",
     files: [
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test1.gd",
+        fileName: mockProjectPath("Test1.gd"),
         expected: `class_name Test1`,
       },
       {
-        fileName: "/Users/johnfn/MyGame/compiled/Test2.gd",
+        fileName: mockProjectPath("Test2.gd"),
         expected: `class_name Test2`,
       },
     ],

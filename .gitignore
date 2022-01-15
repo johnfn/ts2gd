@@ -1,3 +1,5 @@
+example/_godot_defs/dynamic
+example/**/*.gd
 node_modules/
 js/
 .DS_Store

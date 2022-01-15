@@ -239,7 +239,7 @@ const setup = (tsgdJson: Paths) => {
   opt.config.useCaseSensitiveFileNames = false
 
   return {
-    watchProgram,
+    program: watchProgram.getProgram().getProgram(),
     tsgdJson,
     reportWatchStatusChanged,
     tsInitializationFinished,
@@ -265,10 +265,10 @@ export const main = async (args: ParsedArgs) => {
   const tsgdJson = new Paths(args)
 
   showLoadingMessage("Initializing TypeScript", args)
-  const { watchProgram, tsInitializationFinished } = setup(tsgdJson)
+  const { program, tsInitializationFinished } = setup(tsgdJson)
 
   showLoadingMessage("Scanning project", args)
-  let project = await makeTsGdProject(tsgdJson, watchProgram, args)
+  let project = await makeTsGdProject(tsgdJson, program, args)
 
   if (args.buildLibraries || project.shouldBuildLibraryDefinitions(args)) {
     showLoadingMessage("Building definition files", args)

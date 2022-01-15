@@ -56,7 +56,6 @@ export default function buildNodePathsTypeForScript(
   for (const scene of project.godotScenes()) {
     for (const node of scene.nodes) {
       const nodeScript = node.getScript()
-
       if (nodeScript && nodeScript.resPath === script.resPath) {
         const instance = node.instance()
         let isValid = false
@@ -186,16 +185,7 @@ export default function buildNodePathsTypeForScript(
   const pathToImport: { [key: string]: string } = {}
 
   for (const { path, node } of commonRelativePaths) {
-    const script = node.getScript()
-
-    if (script) {
-      pathToImport[path] = `import("${script.fsPath.slice(
-        0,
-        -".ts".length
-      )}").${script.exportedTsClassName()}`
-    } else {
-      pathToImport[path] = node.tsType()
-    }
+    pathToImport[path] = node.getScript()?.tsType ?? node.tsType
   }
 
   type RecursivePath = {
@@ -283,9 +273,9 @@ ${Object.entries(pathToImport)
 
   result += `
   
-import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
+import { ${className} } from '${script.tsRelativePath()}'
 
-declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
+declare module '${script.tsRelativePath()}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}
 
   interface ${className} {
@@ -325,7 +315,7 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
 
   const destPath = path.join(
     project.paths.dynamicGodotDefsPath,
-    `@node_paths_${script.getGodotClassName()}.d.ts`
+    `@node_paths_${script.gdClassName}.d.ts`
   )
 
   fs.writeFileSync(destPath, result)

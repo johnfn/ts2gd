@@ -8,7 +8,7 @@ import { ParsedArgs } from "../parse_args"
 import { defaultTsconfig } from "../generate_library_defs/generate_tsconfig"
 import { showLoadingMessage } from "../main"
 
-import { allAssetExtensions } from "./assets"
+import { allNonTsAssetExtensions } from "./assets"
 
 // TODO: Do sourceTsPath and destGdPath have to be relative?
 
@@ -44,15 +44,65 @@ export class Paths {
 
   readonly gdscriptPath: string
 
-  additionalIgnores: string[]
-  tsFileIgnores: string[]
+  readonly additionalIgnores: string[]
+  readonly tsFileIgnores: string[]
 
   resPathToFsPath(resPath: string) {
-    return path.join(this.rootPath, resPath.slice("res://".length))
+    return path.normalize(
+      path.join(this.rootPath, resPath.slice("res://".length))
+    )
+  }
+
+  normalizeToPosix(fsPath: string) {
+    return path.normalize(fsPath).replaceAll(path.sep, path.posix.sep)
   }
 
   fsPathToResPath(fsPath: string) {
-    return "res://" + fsPath.slice(this.rootPath.length + 1)
+    return `res://${this.normalizeToPosix(
+      path.relative(this.rootPath, fsPath)
+    )}`
+  }
+
+  replaceResExtension(resPath: string, replacement: string) {
+    return resPath.replace(/\.[0-9a-z]+$/i, replacement)
+  }
+
+  removeExtension(fsPath: string) {
+    if (fsPath.startsWith("res://")) {
+      throw new Error("removeExtension isn't supported for res:// paths")
+    }
+    return path.join(
+      path.dirname(fsPath),
+      path.basename(fsPath, path.extname(fsPath))
+    )
+  }
+
+  replaceExtension(fsPath: string, replacement: string) {
+    return `${this.removeExtension(fsPath)}${replacement}`
+  }
+
+  tsRelativePath(fsPath: string, withExtension = false) {
+    // on win this would have \, but we need /
+    return this.normalizeToPosix(
+      path.relative(
+        path.dirname(this.tsconfigPath),
+        withExtension ? fsPath : this.removeExtension(fsPath)
+      )
+    )
+  }
+
+  gdPathForTs(sourceFilePath: string) {
+    return path.join(
+      this.destGdPath,
+      this.replaceExtension(
+        path.relative(this.sourceTsPath, sourceFilePath),
+        ".gd"
+      )
+    )
+  }
+
+  gdName(gdPath: string) {
+    return path.basename(gdPath, path.extname(gdPath))
   }
 
   ignoredPaths(): Matcher {
@@ -69,7 +119,7 @@ export class Paths {
       // also exclude ts files from the ignore field in the ts2gd.json file
       `!**/!(*.d${this.tsFileIgnores.map((ignore) => `|${ignore}`)}).ts`,
       // and don't ignore the following assets
-      ...allAssetExtensions().map((ext) => `!**/*${ext}`),
+      ...allNonTsAssetExtensions().map((ext) => `!**/*${ext}`),
     ]
   }
 
@@ -122,6 +172,7 @@ export class Paths {
 
     fullyQualifiedTs2gdPath = path.dirname(fullyQualifiedTs2gdPathWithFilename)
 
+    //TODO: type this
     const tsgdJson = JSON.parse(
       fs.readFileSync(fullyQualifiedTs2gdPathWithFilename, "utf-8")
     )
@@ -137,7 +188,10 @@ export class Paths {
       "dynamic"
     )
 
-    this.godotSourceRepoPath = tsgdJson.godotSourceRepoPath || undefined
+    this.godotSourceRepoPath =
+      (tsgdJson.godotSourceRepoPath &&
+        path.join(fullyQualifiedTs2gdPath, tsgdJson.godotSourceRepoPath)) ||
+      undefined
 
     this.csgClassesPath = path.join(
       this.godotSourceRepoPath ?? "",

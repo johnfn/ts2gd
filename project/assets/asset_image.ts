@@ -1,25 +1,11 @@
-import TsGdProject from "../project"
+import { AssetBase } from "./asset_base"
 
-import { BaseAsset } from "./base_asset"
+export class AssetImage extends AssetBase {
+  static extensions = [".gif", ".png", ".jpg", ".bmp"]
 
-export class AssetImage extends BaseAsset {
-  resPath: string
-  fsPath: string
-  project: TsGdProject
-
-  constructor(path: string, project: TsGdProject) {
-    super()
-
-    this.fsPath = path
-    this.resPath = project.paths.fsPathToResPath(this.fsPath)
-    this.project = project
-  }
-
-  tsType(): string {
+  get tsType() {
     return "StreamTexture"
   }
-
-  static extensions() {
-    return [".gif", ".png", ".jpg", ".bmp"]
-  }
 }
+
+export default AssetImage
