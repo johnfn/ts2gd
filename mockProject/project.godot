@@ -8,11 +8,29 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Reference",
+"class": "Test",
+"language": "GDScript",
+"path": "res://Test.gd"
+} ]
+_global_script_class_icons={
+"Test": ""
+}
+
 [application]
 
 config/name="mockProject"
-run/main_scene="res://Main.tscn"
+run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Autoload="*res://Autoload.gd"
+
+[global]
+
+autoload=false
 
 [physics]
 

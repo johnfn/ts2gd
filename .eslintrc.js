@@ -5,7 +5,6 @@ module.exports = {
     "**/godot_src/**",
     "**/js/**",
     ".eslintrc.js",
-    "tsconfig.json",
   ],
   env: {
     es2021: true,

@@ -1,6 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import {
   ExtraLine,
   ExtraLineType,
@@ -202,7 +202,7 @@ export const parseCallExpression = (
             }
 
             if (!parsedArgs[0]) {
-              addError({
+              props.project.errors.add({
                 description:
                   "Missing arrow function argument in signal connect invocation.",
                 error: ErrorName.Ts2GdError,
@@ -217,7 +217,7 @@ export const parseCallExpression = (
                 )
 
               if (!arrowFunctionObj) {
-                addError({
+                props.project.errors.add({
                   description:
                     "ts2gd can't find that arrow function. This is an internal ts2gd error. Please report it on GitHub along with the code that caused it.",
                   error: ErrorName.Ts2GdError,
@@ -294,7 +294,7 @@ export const parseCallExpression = (
               content: expressionWithoutRpcName,
             }
           } else {
-            addError({
+            props.project.errors.add({
               description: "I'm confused by this rpc",
               error: ErrorName.Ts2GdError,
               location: pae.expression,

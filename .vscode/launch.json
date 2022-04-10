@@ -5,11 +5,20 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
+      "name": "Run mockProject",
       "program": "${workspaceFolder}/js/main.js",
       "request": "launch",
       "skipFiles": ["<node_internals>/**"],
-      "args": ["${workspaceFolder}/example/ts2gd.json"],
+      "args": ["${workspaceFolder}/mockProject/ts2gd.json"],
+      "type": "pwa-node",
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/js/**/*.js"]
+    },
+    {
+      "name": "Run Tests",
+      "program": "${workspaceFolder}/js/tests/test.js",
+      "request": "launch",
+      "skipFiles": ["<node_internals>/**"],
       "type": "pwa-node",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/js/**/*.js"]
