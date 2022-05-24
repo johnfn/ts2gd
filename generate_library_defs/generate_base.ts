@@ -117,6 +117,8 @@ declare function exports(target: Node, name: string): void;
 declare const export_flags: (...flags: any[]) => (target: Node, name: string) => void
 declare function autoload(target: typeof Node): void
 declare function tool(target: typeof Node): void;
+declare function main(target: typeof Node): void;
+declare function inner(target: typeof Node): void;
 
 declare type int = number;
 declare type float = number;

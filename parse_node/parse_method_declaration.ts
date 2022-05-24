@@ -126,7 +126,7 @@ func testDefault(a = "[no value passed in]"):
 export const testDefaultValues: Test = {
   ts: `
 export class Foo extends Node2D {
-  testDefault(a = 1, b = 2) { 
+  testDefault(a = 1, b = 2) {
     print("OK")
     print("OK")
   }
@@ -146,7 +146,7 @@ func testDefault(a = "[no value passed in]", b = "[no value passed in]"):
 export const testDefaultValuesSelfReference: Test = {
   ts: `
 export class Foo extends Node2D {
-  testDefault(a = 1, b: int = a) { 
+  testDefault(a = 1, b: int = a) {
   }
 }
   `,

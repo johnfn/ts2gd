@@ -422,7 +422,7 @@ func bar():
 // This ensures that we do funcref of .mul() correctly.
 export const testComplicatedLibFunc: Test = {
   ts: `
-class Test extends Area2D {
+export class Test extends Area2D {
   test() {
     const maybeVec = randi() ? Vector2(0, 0) : null
     const foo = maybeVec?.mul(4)
@@ -443,7 +443,7 @@ func test():
 
 export const testStaticClassMethodInvoke: Test = {
   ts: `
-class Test extends Area2D {
+export class Test extends Area2D {
   constructor() {
     super()
     Test.test()

@@ -22,7 +22,7 @@ func ${name}_set(${params.join(", ")}):
 
 export const testGet: Test = {
   ts: `
-class Foo {
+export class Foo {
   _x: float;
   set x(value: float) { _x = value; }
 }

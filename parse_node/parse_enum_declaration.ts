@@ -46,13 +46,8 @@ export const parseEnumDeclaration = (
     ".gd"
 
   return {
-    content: `const ${enumName} = preload("${resPath}").${enumName}`,
-    files: [
-      {
-        body: enumText.content,
-        filePath: fileName,
-      },
-    ],
+    content: enumText.content,
+    files: [],
   }
 }
 
@@ -66,37 +61,22 @@ export class Hello {
   }
 }
   `,
-
-  expected: {
-    type: "multiple-files",
-    files: [
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
-        expected: `
+  expected: `
 class_name Hello
-const MyEnum = preload("res://compiled/Test_MyEnum.gd").MyEnum
-func _ready():
-  print(MyEnum.A)
-      `,
-      },
-
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_MyEnum.gd",
-        expected: `
 const MyEnum = {
   "A": 0,
   "B": 1,
-}`,
-      },
-    ],
-  },
+}
+func _ready():
+  print(MyEnum.A)
+  `,
 }
 
 export const testEnumDeclaration2: Test = {
   ts: `
-export enum TestEnum { 
-  A = "A", 
-  B = "B"
+export enum TestEnum {
+  A = 1,
+  B = 2
 }
 
 export class Hello {
@@ -105,27 +85,41 @@ export class Hello {
   }
 }
 `,
-  expected: {
-    type: "multiple-files",
-    files: [
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Hello.gd",
-        expected: `
+  expected: `
 class_name Hello
-const TestEnum = preload("res://compiled/Test_TestEnum.gd").TestEnum
+const TestEnum = {
+  "A": 1,
+  "B": 2,
+}
 func _ready():
   print(TestEnum.A)
-      `,
-      },
+  `,
+}
 
-      {
-        fileName: "/Users/johnfn/MyGame/compiled/Test_TestEnum.gd",
-        expected: `
+export const testEnumDeclaration3: Test = {
+  ts: `
+export enum TestEnum {
+  A = "A",
+  B = "B",
+  C = "C",
+  D = "D",
+}
+
+export class Hello {
+  constructor() {
+    print(TestEnum.C)
+  }
+}
+`,
+  expected: `
+class_name Hello
 const TestEnum = {
   "A": "A",
   "B": "B",
-}`,
-      },
-    ],
-  },
+  "C": "C",
+  "D": "D",
+}
+func _ready():
+  print(TestEnum.C)
+  `,
 }

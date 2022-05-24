@@ -449,7 +449,7 @@ func b():
 export const testArrowFunction: Test = {
   ts: `
 const test = () => 5;
-test()  
+test()
   `,
   expected: `
 func __gen(captures):
@@ -616,7 +616,7 @@ export class Test {
   foo() {
     let enem: any;
 
-    enem.$on_die.connect(() => { this.enemies.erase(enem) });  
+    enem.$on_die.connect(() => { this.enemies.erase(enem) });
   }
 }
   `,
@@ -628,7 +628,7 @@ func __gen(captures):
 var enemies
 func foo():
   var enem
-  enem.connect("on_die", self, "__gen", [{"enem": enem}])  
+  enem.connect("on_die", self, "__gen", [{"enem": enem}])
 `,
 }
 

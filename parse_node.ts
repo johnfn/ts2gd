@@ -76,6 +76,7 @@ export type ParseState = {
    * Is the current file we're in an autoload class?
    */
   isAutoload: boolean
+  isMainClass: boolean
   mostRecentControlStructureIsSwitch: boolean
   mostRecentForStatement?: {
     incrementor: string

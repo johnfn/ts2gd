@@ -78,6 +78,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
     scope: new Scope(program),
     isConstructor: false,
     program,
+    isMainClass: false,
     project: {
       args: {
         buildLibraries: false,
@@ -261,7 +262,7 @@ const test = (
 
 Wanted: ${expected.error}
 
-Got: 
+Got:
 
 ${errors[0].description}
 `,
@@ -284,6 +285,21 @@ ${errors[0].description}
   }
 
   if (typeof expected === "string") {
+    if (errors.length > 0) {
+      // Need to check if errors occured otherwise some passing tests are false positive
+
+      return {
+        type: "fail-error",
+        result: "",
+        expected: `Expected a string value but got an error:\n\n${errors
+          .map((err) => err.description)
+          .join("\n")}`,
+        name,
+        expectFail: props.expectFail ?? false,
+        path,
+      }
+    }
+
     if (areOutputsEqual(output, expected)) {
       return { type: "success" }
     }

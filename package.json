@@ -33,8 +33,10 @@
     "semi": false
   },
   "lint-staged": {
+    "*.ts": [
+      "eslint --fix"
+    ],
     "*.{ts,json}": [
-      "eslint --fix",
       "prettier --write"
     ]
   },
