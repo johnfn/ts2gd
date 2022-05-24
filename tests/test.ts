@@ -71,7 +71,7 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   const sourceFileAsset = createStubSourceFileAsset("Test")
 
   // TODO: Make this less silly.
-  // I suppose we could actually use the dummy project
+  // I suppose we could actually use the example project
   const godotFile = parseNode(sourceFile, {
     indent: "",
     sourceFile: sourceFile,

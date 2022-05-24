@@ -130,6 +130,16 @@ ${Object.keys(enums)
       className === "Rect2" ||
       className === "Color"
 
+    let arrayAccessType = null
+
+    if (className === "PoolByteArray") arrayAccessType = "number"
+    if (className === "PoolColorArray") arrayAccessType = "Color"
+    if (className === "PoolIntArray") arrayAccessType = "number"
+    if (className === "PoolRealArray") arrayAccessType = "number"
+    if (className === "PoolStringArray") arrayAccessType = "string"
+    if (className === "PoolVector2Array") arrayAccessType = "Vector2"
+    if (className === "PoolVector3Array") arrayAccessType = "Vector3"
+
     if (className === "Signal") {
       className = "Signal<T extends (...args: any[]): any>"
     }
@@ -184,7 +194,7 @@ ${(() => {
   }
 })()}
 
-  
+${arrayAccessType ? `[n: number]: ${arrayAccessType};` : ""}  
 ${formatJsDoc(json.class.description[0])}
 ${isSpecialConstructorClass ? "" : constructors}
 ${members

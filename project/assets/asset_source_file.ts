@@ -170,6 +170,7 @@ Hint: try ${chalk.blueBright(
     }
 
     const topLevelDefinitions = ast.getChildren()[0] // SyntaxList
+    let classDecl: ts.ClassDeclaration | undefined = undefined
 
     for (const d of topLevelDefinitions.getChildren()) {
       if (d.kind === SyntaxKind.VariableStatement) {
@@ -182,24 +183,45 @@ Hint: try ${chalk.blueBright(
           return vs.declarationList.declarations[0].name.getText()
         }
       }
+
+      if (d.kind === SyntaxKind.ClassDeclaration) {
+        classDecl = d as ts.ClassDeclaration
+      }
     }
 
-    // TODO: Error could say the exact loc to write
-    return {
-      error: ErrorName.CantFindAutoloadInstance,
-      location: ast ?? this.tsRelativePath,
-      stack: new Error().stack ?? "",
-      description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
+    if (classDecl) {
+      return {
+        error: ErrorName.CantFindAutoloadInstance,
+        location: ast ?? this.tsRelativePath,
+        stack: new Error().stack ?? "",
+        description: `Can't find the autoload global variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
 
-@autoload
-class MyAutoloadClass extends Node2D {
-  public string hello = "hi"
-}
+${classDecl?.getText() ?? ""}
 
 ${chalk.green(
-  "export const MyAutoload = new MyAutoloadClass()"
-)} // This line is what you're missing!
+  `export const MyAutoload = new ${
+    classDecl?.name?.text ?? "[class needs a name]"
+  }()`
+)} // Add this line!
 `,
+      }
+    } else {
+      // Couldn't find the class; just show a generic error.
+      return {
+        error: ErrorName.CantFindAutoloadInstance,
+        location: ast ?? this.tsRelativePath,
+        stack: new Error().stack ?? "",
+        description: `Can't find the autoload instance variable for this autoload class. All files with an autoload class must export an instance of that class. Here's an example:
+  @autoload
+  class MyAutoloadClass extends Node2D {
+    public string hello = "hi"
+  }
+
+  ${chalk.green(
+    "export const MyAutoload = new MyAutoloadClass()"
+  )} // Add this line!
+  `,
+      }
     }
   }
 
