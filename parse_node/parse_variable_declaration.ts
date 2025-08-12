@@ -187,11 +187,11 @@ var b1 = __gen.b
 
 export const testNormalVariableDeclaration: Test = {
   ts: `
-let x = 1  
+let x = 1
 let y = 'a'
   `,
   expected: `
-var _x: int = 1  
+var _x: int = 1
 var _y = "a"
   `,
 }

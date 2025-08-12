@@ -1,12 +1,15 @@
 import path from "path"
 
 import { UsageDomain } from "tsutils"
-import ts, { SyntaxKind } from "typescript"
+import ts from "typescript"
 
-import TsGdProject from "../project/project"
 import { ErrorName, addError } from "../errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { isEnumType } from "../ts_utils"
+import {
+  checkIfMainClass,
+  extractClassDeclarationFromType,
+  isEnumType,
+} from "../ts_utils"
 
 const getPathWithoutExtension = (
   node: ts.ImportDeclaration,
@@ -77,12 +80,8 @@ export const getImportResPathForEnum = (
     enumTypeString = enumTypeString.slice("typeof ".length)
   }
 
-  const pathWithoutEnum = enumSourceFileAsset.resPath
-  const importPath =
-    pathWithoutEnum.slice(0, -".gd".length) + "_" + enumTypeString + ".gd"
-
   return {
-    resPath: importPath,
+    resPath: enumSourceFileAsset.resPath,
     sourceFile: enumSourceFile,
     enumName: enumTypeString,
   }
@@ -102,92 +101,126 @@ export const parseImportDeclaration = (
 
   type ImportType = {
     importedName: string
-    type: "enum" | "class" | "scene"
+    type: "enum" | "class" | "scene" | "subclass"
     resPath: string
   }
 
-  const namedBindings = node.importClause?.namedBindings
-
-  if (!namedBindings) {
+  if (!node.importClause) {
     throw new Error("Unsupported import type!")
+  }
+
+  const namedBindings = node.importClause.namedBindings
+  const checker = props.program.getTypeChecker()
+
+  const namedImports: {
+    name: ts.Identifier
+    isMain: boolean
+  }[] = []
+
+  // handle default import, e.g. import Foo from "./bar"
+  if (node.importClause.name) {
+    // Map default import into meta object
+    const declaration = extractClassDeclarationFromType(
+      checker.getTypeAtLocation(node.importClause.name)
+    )
+
+    namedImports.push({
+      name: node.importClause.name,
+      isMain: declaration ? checkIfMainClass(declaration) : false,
+    })
+  }
+
+  // handle named import, e.g. import { Foo, Bar } from "./baz"
+  if (namedBindings && ts.isNamedImports(namedBindings)) {
+    // Map all bindings into meta objects
+    for (const binding of namedBindings.elements) {
+      const declaration = extractClassDeclarationFromType(
+        checker.getTypeAtLocation(binding.name)
+      )
+
+      namedImports.push({
+        name: binding.name,
+        isMain: declaration ? checkIfMainClass(declaration) : false,
+      })
+    }
   }
 
   let imports: ImportType[] = []
 
-  if (namedBindings.kind === SyntaxKind.NamedImports) {
-    const bindings = namedBindings as ts.NamedImports
+  for (const element of namedImports) {
+    const type = props.program.getTypeChecker().getTypeAtLocation(element.name)
 
-    for (const element of bindings.elements) {
-      const type = props.program.getTypeChecker().getTypeAtLocation(element)
+    // TODO rewrite this using new project obj
 
-      // TODO rewrite this using new project obj
+    if (isEnumType(type)) {
+      const { resPath, enumName } = getImportResPathForEnum(type, props)
 
-      if (isEnumType(type)) {
-        const { resPath, enumName } = getImportResPathForEnum(type, props)
+      imports.push({ importedName: enumName, resPath: resPath, type: "enum" })
+    } else if (type.symbol?.name === "PackedScene") {
+      const importedName = element.name.text
+      const className = importedName.slice(0, -"Tscn".length)
+      const resPath = props.project
+        .godotScenes()
+        .find((scene) => scene.name === className)?.resPath
 
-        imports.push({ importedName: enumName, resPath: resPath, type: "enum" })
-      } else if (type.symbol?.name === "PackedScene") {
-        const importedName = element.name.text
-        const className = importedName.slice(0, -"Tscn".length)
-        const resPath = props.project
-          .godotScenes()
-          .find((scene) => scene.name === className)?.resPath
+      if (!resPath) {
+        continue
+      }
 
-        if (!resPath) {
+      imports.push({
+        importedName: importedName,
+        resPath: resPath,
+        type: "scene",
+      })
+    } else {
+      const importedSourceFile = props.project
+        .sourceFiles()
+        .find((sf) => sf.fsPath === pathToImportedTs)
+
+      if (!importedSourceFile) {
+        if (pathToImportedTs.includes("@")) {
           continue
         }
 
-        imports.push({
-          importedName: importedName,
-          resPath: resPath,
-          type: "scene",
+        addError({
+          error: ErrorName.InvalidNumber,
+          location: node,
+          description: `Import ${pathToImportedTs} not found.`,
+          stack: new Error().stack ?? "",
         })
-      } else {
-        const importedSourceFile = props.project
-          .sourceFiles()
-          .find((sf) => sf.fsPath === pathToImportedTs)
 
-        if (!importedSourceFile) {
-          if (pathToImportedTs.includes("@")) {
-            continue
-          }
+        continue
+      }
 
-          addError({
-            error: ErrorName.InvalidNumber,
-            location: node,
-            description: `Import ${pathToImportedTs} not found.`,
-            stack: new Error().stack ?? "",
-          })
+      let typeString = props.program.getTypeChecker().typeToString(type)
 
-          continue
+      if (typeString.startsWith("typeof ")) {
+        typeString = typeString.slice("typeof ".length)
+      }
+
+      if (typeString === "(Missing)") {
+        typeString = element.name.getText()
+      }
+
+      const usages = props.usages.get(element.name)
+
+      let usedAsValue = false
+
+      // No import is necessary unless we actually use the identifier as a value. (Circular references
+      // will crash Godot, so we try to avoid them.)
+      for (const use of usages?.uses ?? []) {
+        if (use.domain & UsageDomain.Value) {
+          usedAsValue = true
+          break
         }
+      }
 
-        let typeString = props.program.getTypeChecker().typeToString(type)
-
-        if (typeString.startsWith("typeof ")) {
-          typeString = typeString.slice("typeof ".length)
-        }
-
-        const usages = props.usages.get(element.name)
-
-        let usedAsValue = false
-
-        // No import is necessary unless we actually use the identifier as a value. (Circular references
-        // will crash Godot, so we try to avoid them.)
-        for (const use of usages?.uses ?? []) {
-          if (use.domain & UsageDomain.Value) {
-            usedAsValue = true
-            break
-          }
-        }
-
-        if (!importedSourceFile.isAutoload() && usedAsValue) {
-          imports.push({
-            importedName: typeString,
-            resPath: importedSourceFile.resPath,
-            type: "class",
-          })
-        }
+      if (!importedSourceFile.isAutoload() && usedAsValue) {
+        imports.push({
+          importedName: typeString,
+          resPath: importedSourceFile.resPath,
+          type: element.isMain ? "class" : "subclass",
+        })
       }
     }
   }
@@ -201,6 +234,8 @@ export const parseImportDeclaration = (
         .map(({ importedName, type, resPath }) => {
           if (type === "class") {
             return `var ${importedName} = load("${resPath}")`
+          } else if (type === "subclass") {
+            return `const ${importedName} = preload("${resPath}").${importedName}`
           } else if (type === "enum") {
             return `const ${importedName} = preload("${resPath}").${importedName}`
           } else if (type === "scene") {
@@ -210,3 +245,5 @@ export const parseImportDeclaration = (
         .join("\n"),
   })
 }
+
+// TODO: we really should add tests for imports

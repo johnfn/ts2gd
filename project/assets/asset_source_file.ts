@@ -9,6 +9,7 @@ import { ErrorName, TsGdError, addError } from "../../errors"
 import { Scope } from "../../scope"
 import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
+import { checkIfMainClass } from "../../ts_utils"
 
 import { BaseAsset } from "./base_asset"
 
@@ -91,7 +92,7 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
     return ast
   }
 
-  private getClassNode(): ts.ClassDeclaration | TsGdError {
+  getClassNode(): ts.ClassDeclaration | TsGdError | null {
     const ast = this.getAst()
 
     if ("error" in ast) {
@@ -103,54 +104,34 @@ This is a ts2gd bug. Please create an issue on GitHub for it.`,
       .getChildren()
       .filter(
         (node): node is ts.ClassDeclaration =>
-          node.kind === SyntaxKind.ClassDeclaration
+          ts.isClassDeclaration(node) && checkIfMainClass(node)
       )
 
     if (topLevelClasses.length === 0) {
-      return {
-        error: ErrorName.ClassNameNotFound,
-        location: ast,
-        description: "Every file must have a class.",
-        stack: new Error().stack ?? "",
-      }
-    }
-
-    if (topLevelClasses.length > 1) {
-      return {
-        error: ErrorName.TooManyClassesFound,
-        location: topLevelClasses[1],
-        description:
-          "Every file must have exactly one class. Consider moving this class into a new file.",
-        stack: new Error().stack ?? "",
-      }
+      return null
     }
 
     return topLevelClasses[0]
   }
 
   // This can be different than the Godot class name for autoload classes.
-  exportedTsClassName(): string | TsGdError {
+  exportedTsClassName(realName?: boolean): string | TsGdError | null {
     const node = this.getClassNode()
 
-    if ("error" in node) {
+    if (node && "error" in node) {
       return node
     }
 
-    const name = node?.name
-
-    if (!name) {
-      return {
-        error: ErrorName.ClassCannotBeAnonymous,
-        location: node ?? this.tsRelativePath,
-        description: "This class cannot be anonymous",
-        stack: new Error().stack ?? "",
-      }
+    if (!node) {
+      return null
     }
 
-    return name?.text ?? null
+    return !realName && node.modifiers?.some((v) => v.getText() === "default")
+      ? "default"
+      : node.name?.text ?? "Anonymous"
   }
 
-  extendedClassName(): string | TsGdError {
+  extendedClassName(): string | TsGdError | null {
     const node = this.getClassNode()
 
     if (node === null || "error" in node) {
@@ -248,20 +229,13 @@ ${chalk.green(
     return this._isAutoload
   }
 
-  tsType(): string {
+  tsType(): string | null {
     const className = this.exportedTsClassName()
 
     if (className) {
       return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
     } else {
-      addError({
-        description: `Failed to find className for ${this.fsPath}`,
-        error: ErrorName.Ts2GdError,
-        location: this.fsPath,
-        stack: new Error().stack ?? "",
-      })
-
-      return "any"
+      return null
     }
   }
 
@@ -274,11 +248,11 @@ ${chalk.green(
   private isDecoratedAutoload(): boolean {
     const classNode = this.getClassNode()
 
-    if ("error" in classNode) {
+    if (classNode && "error" in classNode) {
       return false
     }
 
-    for (const dec of classNode.decorators ?? []) {
+    for (const dec of classNode?.decorators ?? []) {
       if (dec.expression.getText() === "autoload") {
         return true
       }
@@ -387,6 +361,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       usages: utils.collectVariableUsage(sourceFileAst),
       sourceFile: sourceFileAst,
       sourceFileAsset: this,
+      isMainClass: false,
     })
 
     // TODO: Only do this once per program run max!
@@ -432,7 +407,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
   validateAutoloadClass(): TsGdError | null {
     const classNode = this.getClassNode()
 
-    if ("error" in classNode) {
+    if (classNode && "error" in classNode) {
       return classNode
     }
 
@@ -507,7 +482,11 @@ ${chalk.white(
           description: `Since this is an autoload class in Godot, you must put ${chalk.white(
             "@autoload"
           )} the line before the class declaration.`,
-          location: "error" in classNode ? this.fsPath : classNode,
+          location: classNode
+            ? "error" in classNode
+              ? this.fsPath
+              : classNode
+            : "",
           stack: new Error().stack ?? "",
         })
 
@@ -530,7 +509,11 @@ ${chalk.white(
           description: `Since you removed this as an autoload class in Godot, you must remove ${chalk.white(
             "@autoload"
           )}.`,
-          location: "error" in classNode ? this.fsPath : classNode,
+          location: classNode
+            ? "error" in classNode
+              ? this.fsPath
+              : classNode
+            : "",
           stack: new Error().stack ?? "",
         })
 
