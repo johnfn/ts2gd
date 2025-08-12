@@ -2,7 +2,7 @@ import * as utils from "tsutils"
 import ts, { SyntaxKind, tokenToString } from "typescript"
 
 import { AssetSourceFile } from "./project/assets/asset_source_file"
-import { ErrorName, TsGdError, addError } from "./errors"
+import TsGdProject, { ErrorName } from "./project"
 import { LibraryFunctionName } from "./parse_node/library_functions"
 import { Scope } from "./scope"
 import {
@@ -63,7 +63,6 @@ import { parseVariableDeclarationList } from "./parse_node/parse_variable_declar
 import { parseVariableStatement } from "./parse_node/parse_variable_statement"
 import { parseWhileStatement } from "./parse_node/parse_while_statement"
 import { parseYieldExpression } from "./parse_node/parse_yield_expression"
-import TsGdProject from "./project"
 
 export type ParseState = {
   isConstructor: boolean
@@ -483,7 +482,7 @@ export const parseNode = (
 
     default:
       console.error("Unknown token:", syntaxKindToString(genericNode.kind))
-      addError({
+      props.project.errors.add({
         error: ErrorName.UnknownTsSyntax,
         location: genericNode,
         stack: new Error().stack ?? "",

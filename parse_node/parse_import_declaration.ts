@@ -4,7 +4,7 @@ import { UsageDomain } from "tsutils"
 import ts, { SyntaxKind } from "typescript"
 
 import TsGdProject from "../project/project"
-import { ErrorName, addError } from "../errors"
+import { ErrorName } from "../project/errors"
 import { ParseNodeType, ParseState, combine } from "../parse_node"
 import { isEnumType } from "../ts_utils"
 
@@ -152,7 +152,7 @@ export const parseImportDeclaration = (
             continue
           }
 
-          addError({
+          props.project.errors.add({
             error: ErrorName.InvalidNumber,
             location: node,
             description: `Import ${pathToImportedTs} not found.`,

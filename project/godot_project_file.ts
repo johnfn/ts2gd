@@ -143,3 +143,7 @@ export class GodotProjectFile {
     }
   }
 }
+
+export function isProjectFile(input: object): input is GodotProjectFile {
+  return input instanceof GodotProjectFile
+}

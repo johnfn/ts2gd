@@ -2,7 +2,7 @@ import path from "path"
 
 import chalk from "chalk"
 
-import { ErrorName, addError } from "../../errors"
+import { ErrorName } from "../errors"
 import TsGdProject from "../project"
 import { parseGodotConfigFile } from "../godot_parser"
 
@@ -180,7 +180,7 @@ export class GodotNode {
     }
 
     if (this.isInstanceOverride()) {
-      addError({
+      this.project.errors.add({
         description: `Error: should never try to get the type of an instance override. This is a ts2gd internal bug. Please report it on GitHub.`,
         error: ErrorName.InvalidFile,
         location: this.name,
@@ -196,7 +196,7 @@ export class GodotNode {
       return instancedSceneType
     }
 
-    addError({
+    this.project.errors.add({
       description: `Error: Your Godot scene ${chalk.blue(
         this.scene.fsPath
       )} refers to ${chalk.red(
@@ -315,7 +315,7 @@ export class AssetGodotScene extends BaseAsset {
         .find((sf) => sf.resPath === rootScript.resPath)
 
       if (!rootSourceFile) {
-        addError({
+        this.project.errors.add({
           description: `Failed to find root source file for ${rootScript.fsPath}`,
           error: ErrorName.Ts2GdError,
           location: rootScript.fsPath,
@@ -328,7 +328,7 @@ export class AssetGodotScene extends BaseAsset {
       const className = rootSourceFile.exportedTsClassName()
 
       if (!className) {
-        addError({
+        this.project.errors.add({
           description: `Failed to find classname for ${rootScript.fsPath}`,
           error: ErrorName.Ts2GdError,
           location: rootScript.fsPath,

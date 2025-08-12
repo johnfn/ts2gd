@@ -5,7 +5,7 @@ import ts, { SyntaxKind } from "typescript"
 import * as utils from "tsutils"
 import chalk from "chalk"
 
-import { ErrorName, TsGdError, addError } from "../../errors"
+import { ErrorName, TsGdError } from "../errors"
 import { Scope } from "../../scope"
 import TsGdProject from "../project"
 import { parseNode } from "../../parse_node"
@@ -67,15 +67,17 @@ export class AssetSourceFile extends BaseAsset {
       -".gd".length
     )
     this.project = project
-    this._isAutoload = !!this.project.godotProject.autoloads.find(
-      (a) => a.resPath === this.resPath
+    this._isAutoload = Boolean(
+      this.project.godotProject.autoloads.find(
+        (a) => a.resPath === this.resPath
+      )
     )
   }
 
   reload() {}
 
   private getAst(): TsGdError | ts.SourceFile {
-    const ast = this.project.program.getProgram().getSourceFile(this.fsPath)
+    const ast = this.project.program.getSourceFile(this.fsPath)
 
     if (!ast) {
       return {
@@ -254,7 +256,7 @@ ${chalk.green(
     if (className) {
       return `import('${this.fsPath.slice(0, -".ts".length)}').${className}`
     } else {
-      addError({
+      this.project.errors.add({
         description: `Failed to find className for ${this.fsPath}`,
         error: ErrorName.Ts2GdError,
         location: this.fsPath,
@@ -322,7 +324,7 @@ ${chalk.green(
       for (const theirFile of sf.writtenFiles) {
         for (const ourFile of this.writtenFiles) {
           if (theirFile === ourFile) {
-            addError({
+            this.project.errors.add({
               description: `You have two classes named ${
                 this.name
               } in the same folder. ts2gd saves every class as "class_name.gd", so they will overwrite each other. We recommend renaming one, but you can also move it into a new directory.
@@ -341,13 +343,11 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     }
   }
 
-  async compile(
-    watchProgram: ts.WatchOfConfigFile<ts.EmitAndSemanticDiagnosticsBuilderProgram>
-  ): Promise<void> {
+  async compile(watchProgram: ts.Program): Promise<void> {
     const oldAutoloadClassName = this.getAutoloadNameFromExportedVariable()
 
     let fsContent = await fs.readFile(this.fsPath, "utf-8")
-    let sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+    let sourceFileAst = watchProgram.getSourceFile(this.fsPath)
     let tries = 0
 
     while (
@@ -359,14 +359,14 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       ++tries < 50
     ) {
       await new Promise((resolve) => setTimeout(resolve, 10))
-      sourceFileAst = watchProgram.getProgram().getSourceFile(this.fsPath)
+      sourceFileAst = watchProgram.getSourceFile(this.fsPath)!
       if (sourceFileAst) {
         fsContent = await fs.readFile(this.fsPath, "utf-8")
       }
     }
 
     if (!sourceFileAst) {
-      addError({
+      this.project.errors.add({
         description: `TS can't find source file ${this.fsPath} after waiting 0.5 second. Try saving your TypeScript file again.`,
         error: ErrorName.PathNotFound,
         location: this.fsPath,
@@ -379,11 +379,11 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
     const parsedNode = parseNode(sourceFileAst, {
       indent: "",
       isConstructor: false,
-      scope: new Scope(watchProgram.getProgram().getProgram()),
+      scope: new Scope(watchProgram),
       project: this.project,
       mostRecentControlStructureIsSwitch: false,
       isAutoload: this.isProjectAutoload(),
-      program: watchProgram.getProgram().getProgram(),
+      program: watchProgram,
       usages: utils.collectVariableUsage(sourceFileAst),
       sourceFile: sourceFileAst,
       sourceFileAsset: this,
@@ -407,7 +407,7 @@ Second path: ${chalk.yellow(sf.fsPath)}`,
       const error = this.validateAutoloadClass()
 
       if (error !== null) {
-        addError(error)
+        this.project.errors.add(error)
       }
 
       const newAutoloadClassName = this.getAutoloadNameFromExportedVariable()
@@ -489,7 +489,7 @@ ${chalk.white(
           typeof autoloadClassName !== "string" &&
           "error" in autoloadClassName
         ) {
-          addError(autoloadClassName)
+          this.project.errors.add(autoloadClassName)
 
           return
         }
@@ -502,7 +502,7 @@ ${chalk.white(
 
         const classNode = this.getClassNode()
 
-        addError({
+        this.project.errors.add({
           error: ErrorName.AutoloadProjectButNotDecorated,
           description: `Since this is an autoload class in Godot, you must put ${chalk.white(
             "@autoload"
@@ -525,7 +525,7 @@ ${chalk.white(
 
         const classNode = this.getClassNode()
 
-        addError({
+        this.project.errors.add({
           error: ErrorName.AutoloadDecoratedButNotProject,
           description: `Since you removed this as an autoload class in Godot, you must remove ${chalk.white(
             "@autoload"
