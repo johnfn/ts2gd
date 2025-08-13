@@ -191,7 +191,13 @@ export const parseGodotConfigFile = (path: string, initial: any = {}) => {
     let result = ""
 
     while (peekcharIncludingWhitespace() !== '"') {
-      result += getCharIncludingWhitespace()
+      const char = getCharIncludingWhitespace()
+      if (char === "\\") {
+        result += getCharIncludingWhitespace()
+      } else {
+        result += char
+      }
+      result += char
     }
 
     getchar('"')
