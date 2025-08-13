@@ -79,12 +79,23 @@ export default function buildNodePathsTypeForScript(
   // For every potential relative path, validate that it can be found
   // in each instantiated node.
 
-  const className = script.exportedTsClassName()
+  const className = script.exportedTsClassName(true)
+  const classNode = script.getClassNode()
   const extendedClassName = script.extendedClassName()
 
-  if (!className) {
+  const destPath = path.join(
+    project.paths.dynamicGodotDefsPath,
+    `@node_paths_${script.getGodotClassName()}.d.ts`
+  )
+
+  if (!className || !classNode) {
+    fs.writeFileSync(destPath, "")
     return
   }
+
+  const isClassDefault = !("error" in classNode)
+    ? classNode.modifiers?.some((v) => v.getText() === "default")
+    : false
 
   let commonRelativePaths: {
     path: string
@@ -187,12 +198,13 @@ export default function buildNodePathsTypeForScript(
 
   for (const { path, node } of commonRelativePaths) {
     const script = node.getScript()
+    const className = script?.exportedTsClassName()
 
-    if (script) {
+    if (script && className) {
       pathToImport[path] = `import("${script.fsPath.slice(
         0,
         -".ts".length
-      )}").${script.exportedTsClassName()}`
+      )}").${className}`
     } else {
       pathToImport[path] = node.tsType()
     }
@@ -278,20 +290,22 @@ declare type NodePathToType${className} = {
 ${Object.entries(pathToImport)
   .map(([path, importStr]) => `  "${path}": ${importStr},`)
   .join("\n")}
-}    
+}
 `
 
   result += `
-  
-import { ${className} } from '${script.tsRelativePath.slice(0, -".ts".length)}'
+
+import ${
+    isClassDefault ? className : "{ " + className + " }"
+  } from '${script.tsRelativePath.slice(0, -".ts".length)}'
 
 declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   enum ADD_A_GENERIC_TYPE_TO_GET_NODE_FOR_THIS_TO_WORK {}
 
-  interface ${className} {
+  export${isClassDefault ? " default" : ""} interface ${className} {
     /**
      * Gets a node by a string path. There are two ways to use this function:
-     * 
+     *
      * 1. this.get_node("KnownNode") - Use this when ts2gd can prove there's a
      * node at the path you provide
      * 
@@ -322,11 +336,5 @@ declare module '${script.tsRelativePath.slice(0, -".ts".length)}' {
   }
 }
 `
-
-  const destPath = path.join(
-    project.paths.dynamicGodotDefsPath,
-    `@node_paths_${script.getGodotClassName()}.d.ts`
-  )
-
   fs.writeFileSync(destPath, result)
 }
