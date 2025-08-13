@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseConditionalExpression = (
   node: ts.ConditionalExpression,
@@ -15,10 +14,4 @@ export const parseConditionalExpression = (
       return `${true_} if ${cond} else ${false_}`
     },
   })
-}
-
-export const testConditionalExpression: Test = {
-  expectFail: true,
-  ts: `const x = true ? 1 : 2`,
-  expected: `var _x = 1 if true else 2`,
 }

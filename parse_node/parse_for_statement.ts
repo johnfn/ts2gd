@@ -6,7 +6,6 @@ import {
   combine,
   ParseNodeType,
 } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseForStatement = (
   node: ts.ForStatement,
@@ -70,44 +69,4 @@ while ${cond || "true"}:
   props.scope.leaveScope()
 
   return result
-}
-
-export const testMultipleSameNameVars: Test = {
-  ts: `
-
-for (let i = 0; i < 6; ++i) {
-  print(i)
-}
-for (let i = 0; i < 5; ++i) {
-  print(i)
-}
-for (let i = 0; i < 5; ++i) {
-  print(i)
-}
-  `,
-  expected: `
-var i: int = 0
-while i < 6:
-  print(i)
-  i += 1
-var i1: int = 0
-while i1 < 5:
-  print(i1)
-  i1 += 1
-var i2: int = 0
-while i2 < 5:
-  print(i2)
-  i2 += 1
-  `,
-}
-
-export const testPass2: Test = {
-  ts: `
-for (let x = 0; x < 10; );
-  `,
-  expected: `
-var x: int = 0
-while x < 10:
-  pass
-  `,
 }

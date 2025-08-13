@@ -8,7 +8,6 @@ import {
   parseNode,
   ParseNodeType,
 } from "../parse_node"
-import { Test } from "../tests/test"
 const { SyntaxKind } = ts
 
 export const parsePrefixUnaryExpression = (
@@ -68,88 +67,3 @@ export const parsePrefixUnaryExpression = (
 
 // TODO: for loops
 // TODO: indents
-
-export const testPreincrement1: Test = {
-  ts: `
-if (true) {
-  ++x
-  print(x)
-}
-  `,
-  expected: `
-if true:
-  x += 1
-  print(x)
-  `,
-}
-
-export const testPreincrement2: Test = {
-  ts: `
-if (true) {
-  print(++x)
-}
-  `,
-  expected: `
-if true:
-  x += 1
-  print(x)
-  `,
-}
-
-export const testPostincrement1: Test = {
-  ts: `
-if (true) {
-  print(x++)
-}
-  `,
-  expected: `
-if true:
-  print(x)
-  x += 1
-  `,
-}
-
-export const testIfStatement: Test = {
-  ts: `
-let x = 0
-if (true) {
-  if (++x) {
-    print(x)
-  } else {
-    print(x)
-  }
-}
-  `,
-  expected: `
-var x: int = 0
-if true:
-  x += 1
-  if x:
-    print(x)
-  else:
-    print(x)
-`,
-}
-
-export const testIfStatement2: Test = {
-  ts: `
-let x = 0
-if (true) {
-  if (x++) {
-    print(x)
-  } else {
-    print(x)
-  }
-}
-  `,
-  expected: `
-var x: int = 0
-if true:
-  if x:
-    x += 1
-    print(x)
-  else:
-    x += 1
-    print(x)
-`,
-}

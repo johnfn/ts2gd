@@ -7,7 +7,6 @@ import {
   combine,
   ParseNodeType,
 } from "../parse_node"
-import { Test } from "../tests/test"
 import { getGodotType } from "../ts_utils"
 
 const magic = `"[no value passed in]"`
@@ -63,20 +62,4 @@ export const parseParameter = (
   result.extraLines = initializers
 
   return result
-}
-
-export const testParameter: Test = {
-  ts: `
-export class Test {
-  test(a: int, b: string) {
-    print(a);
-  }
-}
-  `,
-  expected: `
-class_name Test
-
-func test(a: int, _b: String):
-  print(a)
-  `,
 }

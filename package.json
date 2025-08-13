@@ -8,7 +8,7 @@
     "auto-publish": "npm run tsc && git add . && git commit -m 'include generated JS' && npm version patch && npm publish",
     "tsc": "tsc",
     "dev": "ts-node-dev --respawn main.ts",
-    "test": "ts-node-dev --respawn --clear tests/test.ts",
+    "test": "ts-node-dev --clear tests/test.ts",
     "build-ci": "tsc",
     "test-ci": "node js/tests/test.js",
     "project-test": "ts-node-dev --respawn --clear tests/project_tests.ts",
@@ -43,6 +43,7 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "chokidar": "^3.5.2",
+    "diff": "^8.0.2",
     "pkginfo": "^0.4.1",
     "tsutils": "^3.21.0",
     "xml2js": "^0.4.23"

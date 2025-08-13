@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseWhileStatement = (
   node: ts.WhileStatement,
@@ -42,57 +41,4 @@ while ${expr.content}:
   props.scope.leaveScope()
 
   return result
-}
-
-export const testPassWhile: Test = {
-  ts: `
-while (true);
-  `,
-  expected: `
-while true:
-  pass
-  `,
-}
-
-export const testWhileConditionPostIncrement: Test = {
-  ts: `
-let x = 0
-while (x++ < 10) {
-  print(x)
-}
-  `,
-  expected: `
-var x: int = 0
-while x < 10:
-  x += 1
-  print(x)
-`,
-}
-
-export const testWhileConditionPass: Test = {
-  ts: `
-let x = 0
-while (x++ < 10) { }
-  `,
-  expected: `
-var x: int = 0
-while x < 10:
-  x += 1
-`,
-}
-
-export const testWhileConditionPreIncrement: Test = {
-  ts: `
-let x = 0
-while (++x < 10) {
-  print(x)
-}
-  `,
-  expected: `
-var x: int = 0
-x += 1
-while x < 10:
-  print(x)
-  x += 1
-`,
 }

@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseTemplateExpression = (
   node: ts.TemplateExpression,
@@ -29,13 +28,4 @@ export const parseTemplateExpression = (
       return result
     },
   })
-}
-
-export const testStringInterpolation: Test = {
-  ts: `
-let foo = \`blah \${ 10 }  \${ 20 }\`
-  `,
-  expected: `
-var _foo = "blah " + str(10) + "  " + str(20) + ""
-`,
 }

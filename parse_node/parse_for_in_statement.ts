@@ -1,7 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 
 import { ParseState, combine, ParseNodeType } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseForInStatement = (
   node: ts.ForInStatement,
@@ -46,26 +45,4 @@ for ${initExpr} in ${expr}:
   props.scope.leaveScope()
 
   return result
-}
-
-export const testForIn1: Test = {
-  ts: `
-for (let x in []);
-  `,
-  expected: `
-for x in []:
-  pass
-  `,
-}
-
-export const testForIn2: Test = {
-  ts: `
-let x: never;
-for (x in []);
-  `,
-  expected: `
-var x
-for x in []:
-  pass
-  `,
 }

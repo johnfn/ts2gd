@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 import { getImportResPathForEnum } from "./parse_import_declaration"
 
@@ -49,77 +48,4 @@ export const parseEnumDeclaration = (
     content: enumText.content,
     files: [],
   }
-}
-
-export const testEnumDeclaration: Test = {
-  ts: `
-export enum MyEnum { A, B }
-
-export class Hello {
-  constructor() {
-    print(MyEnum.A)
-  }
-}
-  `,
-  expected: `
-class_name Hello
-const MyEnum = {
-  "A": 0,
-  "B": 1,
-}
-func _ready():
-  print(MyEnum.A)
-  `,
-}
-
-export const testEnumDeclaration2: Test = {
-  ts: `
-export enum TestEnum {
-  A = 1,
-  B = 2
-}
-
-export class Hello {
-  constructor() {
-    print(TestEnum.A)
-  }
-}
-`,
-  expected: `
-class_name Hello
-const TestEnum = {
-  "A": 1,
-  "B": 2,
-}
-func _ready():
-  print(TestEnum.A)
-  `,
-}
-
-export const testEnumDeclaration3: Test = {
-  ts: `
-export enum TestEnum {
-  A = "A",
-  B = "B",
-  C = "C",
-  D = "D",
-}
-
-export class Hello {
-  constructor() {
-    print(TestEnum.C)
-  }
-}
-`,
-  expected: `
-class_name Hello
-const TestEnum = {
-  "A": "A",
-  "B": "B",
-  "C": "C",
-  "D": "D",
-}
-func _ready():
-  print(TestEnum.C)
-  `,
 }

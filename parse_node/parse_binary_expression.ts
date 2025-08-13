@@ -1,7 +1,6 @@
 import ts, { SyntaxKind } from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseBinaryExpression = (
   node: ts.BinaryExpression,
@@ -71,67 +70,4 @@ export const parseBinaryExpression = (
       return `${left}${needsLeftHandSpace ? " " : ""}${operatorToken} ${right}`
     },
   })
-}
-
-// Tests
-
-export const testAdd: Test = {
-  ts: "1 + 2",
-  expected: "1 + 2",
-}
-
-export const testMultiply: Test = {
-  ts: "1 * 2",
-  expected: "1 * 2",
-}
-
-export const testAssignmentToDict: Test = {
-  ts: `const foo = {};
-foo.bar = 1`,
-
-  expected: `var foo = {}
-foo.bar = 1
-`,
-}
-
-export const testNestedAssignmentToDict: Test = {
-  ts: `const foo = { bar: {} };
-foo.bar.baz = 1`,
-  expected: `
-var foo = { "bar": {} }
-foo.bar.baz = 1
-`,
-}
-
-export const testDoubleEqual: Test = {
-  ts: "(1 as int) == (2 as int)",
-  expected: "1 == 2",
-}
-
-export const testDoubleEqualDifferentTypes: Test = {
-  ts: `
-let a: { a: number; } | string
-let b: string
-
-a == b
-  `,
-  expected: `
-var a
-var b  
-((typeof(a) == typeof(b)) and (a == b))
-`,
-}
-
-export const testDoubleNotEqualDifferentTypes: Test = {
-  ts: `
-let a: { a: number; } | string
-let b: string
-
-a != b
-  `,
-  expected: `
-var a
-var b  
-((typeof(a) != typeof(b)) or ((typeof(a) == typeof(b)) and (a != b)))
-`,
 }

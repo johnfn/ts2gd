@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseState, combine, ParseNodeType } from "../parse_node"
-import { Test } from "../tests/test"
 
 import { getDestructuredNamesAndAccessStrings } from "./parse_variable_declaration"
 const { SyntaxKind } = ts
@@ -90,26 +89,4 @@ for ${initExpr} in ${expr}:
   props.scope.leaveScope()
 
   return result
-}
-
-export const testBasicForOf: Test = {
-  ts: `
-for (let x of []) print(1)
-  `,
-  expected: `
-for x in []:
-  print(1)
-  `,
-}
-
-export const testForOfDestructuring: Test = {
-  ts: `
-for (let [a, b] of [[1, 2]]) print(a, b)
-  `,
-  expected: `
-for __gen in [[1, 2]]:
-  var a = __gen[0]
-  var b = __gen[1]
-  print(a, b)
-  `,
 }

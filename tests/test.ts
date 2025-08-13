@@ -1,15 +1,15 @@
 import fs from "fs"
 import path from "path"
 
-import * as ts from "typescript"
-import * as utils from "tsutils"
 import chalk from "chalk"
+import { diffChars } from "diff"
+import * as utils from "tsutils"
+import ts from "typescript"
 
-import { ParseNodeType, parseNode } from "../parse_node"
-import { Scope } from "../scope"
 import { TsGdError, __getErrorsTestOnly } from "../errors"
 import { baseContentForTests } from "../generate_library_defs/generate_base"
-import { Paths } from "../project/paths"
+import { ParseNodeType, parseNode } from "../parse_node"
+import { Scope } from "../scope"
 
 import { createStubSourceFileAsset } from "./stubs"
 
@@ -155,19 +155,150 @@ export const compileTs = (code: string, isAutoload: boolean): ParseNodeType => {
   return godotFile
 }
 
-export type Test = {
-  expected:
-    | string
-    | { type: "error"; error: string }
-    | {
-        type: "multiple-files"
-        files: { fileName: string; expected: string }[]
+type TestCaseConfig = {
+  name: string
+  typescript?: string
+  gdscript?: string
+  error?: string
+  skip?: string
+}
+
+export class TestCase {
+  readonly input: string
+  readonly expected: string | { type: "error"; error: string } = ""
+  readonly sourcePath: string
+  readonly name: string
+  private _isAutoload = false
+  private _skipped = ""
+  constructor(sourcePath: string, config: TestCaseConfig) {
+    this.sourcePath = sourcePath
+    this.name = config.name
+    if (config.typescript) {
+      this.input = normalize(config.typescript)
+      this._isAutoload = this.input.includes("@autoload")
+    } else {
+      this.input = ""
+    }
+    if (config.gdscript !== undefined) {
+      this.expected = normalize(config.gdscript)
+    }
+    if (config.error !== undefined) {
+      this.expected = { type: "error", error: config.error }
+    }
+    if (config.skip !== undefined) {
+      this._skipped = config.skip
+    }
+  }
+  /*
+  Create a list of test cases from markdown file. Markdown file format:
+  ~~~markdown
+  This file contains multiple test cases. Every text, ecept `### test-name`, 
+  `typescript` block, `gdscript` block, `error` block and `skip` block are
+  stripped.
+
+  Lets write our first test case:
+
+  ### test-name: some-test-that-should-pass
+  ```typescript
+  // source type script, all comments are stripped during validation
+  let a = 2 + 3;
+  ```
+  ```gdscript
+  # expected output, all comments are stripped during validation
+  var a = 2 + 3
+  ```
+
+  ### test-name: some-test-that-should-fail
+  ```typescript
+  // source type script, all comments are stripped during validation
+  let a = 2 + 3;
+  ```
+  ```error
+  // expected error, all comments are stripped during validation
+  Expected an error here.
+  ```
+
+  ### test-name: some-test-that-should-be-skipped
+  ```skip
+  This test is skipped because it is not implemented yet.
+  ```
+  ~~~markdown
+  */
+  static fromMarkdownContent(markdownFilePath: string): TestCase[] {
+    const content = fs.readFileSync(markdownFilePath, "utf-8")
+    let args: null | TestCaseConfig = null
+    let currentBlock:
+      | ""
+      | "markdown"
+      | "typescript"
+      | "gdscript"
+      | "error"
+      | "skip" = ""
+    let tests: TestCase[] = []
+    let lineNumber = 0
+    let testLineNumber = 0
+    for (const line of content.split("\n")) {
+      lineNumber += 1
+      if (line.startsWith("~~~markdown") && currentBlock === "markdown") {
+        currentBlock = ""
+        continue
+      } else if (line.startsWith("~~~markdown")) {
+        currentBlock = "markdown"
+        continue
+      } else if (currentBlock === "markdown") {
+        continue
+      } else if (line.startsWith("### test-name:")) {
+        if (args) {
+          tests.push(
+            new TestCase(`${markdownFilePath}:${testLineNumber}`, args)
+          )
+          args = null
+        }
+        testLineNumber = lineNumber
+        args = {
+          name: "",
+          typescript: "",
+        }
+        args.name = line.replace("### test-name:", "").trim()
+      } else if (line.startsWith("```") && !args) {
+        console.error(
+          `Invalid test format at line ${lineNumber} in ${markdownFilePath}, expected '### test-name:' block`
+        )
+        return tests
+      } else if (line.startsWith("```typescript")) {
+        currentBlock = "typescript"
+      } else if (line.startsWith("```gdscript")) {
+        currentBlock = "gdscript"
+      } else if (line.startsWith("```error")) {
+        currentBlock = "error"
+      } else if (line.startsWith("```skip")) {
+        currentBlock = "skip"
+      } else if (line.trim() === "```") {
+        currentBlock = ""
+      } else if (currentBlock) {
+        if (args != null) {
+          if (args[currentBlock] === undefined) {
+            args[currentBlock] = ""
+          }
+          args[currentBlock] += line + "\n"
+        } else {
+          console.warn(
+            `Invalid test format at line ${lineNumber} in ${markdownFilePath}`
+          )
+        }
       }
-  ts: string
-  fileName?: string
-  isAutoload?: boolean
-  only?: boolean
-  expectFail?: boolean
+    }
+    if (args) {
+      tests.push(new TestCase(`${markdownFilePath}:${testLineNumber}`, args))
+    }
+    return tests
+  }
+  get isAutoload() {
+    return this._isAutoload
+  }
+  get skipped(): string {
+    return this._skipped
+  }
 }
 
 type TestResult = TestResultPass | TestResultFail
@@ -175,7 +306,6 @@ type TestResult = TestResultPass | TestResultFail
 type TestResultPass = { type: "success" }
 type TestResultFail = {
   type: "fail" | "fail-error" | "fail-no-error"
-  fileName?: string
   result: string
   name: string
   expected: string
@@ -187,7 +317,7 @@ type TestResultFail = {
 const trim = (s: string) => {
   return s
     .split("\n")
-    .map((x) => x.trimRight())
+    .map((x) => x.trimEnd())
     .filter((x) => x.trim() !== "")
     .join("\n")
 }
@@ -195,7 +325,9 @@ const trim = (s: string) => {
 const removeCommentLines = (s: string) => {
   return s
     .split("\n")
-    .filter((x) => !x.startsWith("#"))
+    .map((x) => x.replace(/^\s*#.*$/, ""))
+    .map((x) => x.replace(/^\s*\/\/.*$/, ""))
+    .filter((x) => x.trim() !== "")
     .join("\n")
 }
 
@@ -210,19 +342,29 @@ const areOutputsEqual = (left: string, right: string) => {
   return leftTrimmed === rightTrimmed
 }
 
-const test = (
-  props: Test,
-  name: string,
-  testFileName: string,
-  path: string
+const runTest = (
+  testCase: TestCase,
+  allowSkip = true
+  // name: string,
+  // testFileName: string,
+  // path: string
 ): TestResult => {
-  const { ts, expected } = props
-
+  if (testCase.skipped) {
+    return {
+      type: "fail-no-error",
+      result: "",
+      expected: `Skipped test because: ${testCase.skipped}`,
+      name: testCase.name,
+      expectFail: allowSkip,
+      path: testCase.sourcePath,
+    }
+  }
+  const { input: ts, expected } = testCase
   let compiled: ParseNodeType | null = null
   let errors: TsGdError[] = []
 
   try {
-    compiled = compileTs(ts, props.isAutoload ?? false)
+    compiled = compileTs(ts, testCase.isAutoload ?? false)
 
     errors = __getErrorsTestOnly()
   } catch (e) {
@@ -230,9 +372,9 @@ const test = (
       type: "fail",
       result: `Threw the following error: ${(e as any).stack}`,
       expected: `No errors`,
-      name,
-      expectFail: props.expectFail ?? false,
-      path,
+      name: testCase.name,
+      expectFail: !!testCase.skipped && allowSkip,
+      path: testCase.sourcePath,
     }
   }
 
@@ -247,9 +389,9 @@ const test = (
           expected: `Got more than one error but expected one:\n\n${errors
             .map((err) => err.description)
             .join("\n")}`,
-          name,
-          expectFail: props.expectFail ?? false,
-          path,
+          name: testCase.name,
+          expectFail: !!testCase.skipped && allowSkip,
+          path: testCase.sourcePath,
         }
       } else {
         if (errors[0].description.includes(expected.error)) {
@@ -266,9 +408,9 @@ Got:
 
 ${errors[0].description}
 `,
-            name,
-            expectFail: props.expectFail ?? false,
-            path,
+            name: testCase.name,
+            expectFail: !!testCase.skipped && allowSkip,
+            path: testCase.sourcePath,
           }
         }
       }
@@ -277,14 +419,12 @@ ${errors[0].description}
         type: "fail-no-error",
         result: "",
         expected: `Didn't get an error, but wanted: ${expected.error}`,
-        name,
-        expectFail: props.expectFail ?? false,
-        path,
+        name: testCase.name,
+        expectFail: !!testCase.skipped && allowSkip,
+        path: testCase.sourcePath,
       }
     }
-  }
-
-  if (typeof expected === "string") {
+  } else {
     if (errors.length > 0) {
       // Need to check if errors occured otherwise some passing tests are false positive
 
@@ -294,144 +434,62 @@ ${errors[0].description}
         expected: `Expected a string value but got an error:\n\n${errors
           .map((err) => err.description)
           .join("\n")}`,
-        name,
-        expectFail: props.expectFail ?? false,
-        path,
+        name: testCase.name,
+        expectFail: !!testCase.skipped && allowSkip,
+        path: testCase.sourcePath,
       }
     }
 
     if (areOutputsEqual(output, expected)) {
       return { type: "success" }
     }
-  } else {
-    if (expected.files.length !== compiled.files?.length) {
-      return {
-        type: "fail",
-        result:
-          compiled.files
-            ?.map(({ filePath: fileName }) => fileName)
-            .join(", ") ?? "[no files]",
-        expected: expected.files.map(({ fileName }) => fileName).join(", "),
-        name,
-        expectFail: props.expectFail ?? false,
-        path,
-      }
-    }
-
-    for (const expectedFile of expected.files) {
-      let found = false
-
-      for (const actualFile of compiled.files ?? []) {
-        if (actualFile.filePath === expectedFile.fileName) {
-          if (!areOutputsEqual(actualFile.body, expectedFile.expected)) {
-            return {
-              type: "fail",
-              fileName: actualFile.filePath,
-              result: normalize(actualFile.body),
-              expected: normalize(expectedFile.expected),
-              name,
-              expectFail: props.expectFail ?? false,
-              path,
-            }
-          }
-
-          found = true
-        }
-      }
-
-      if (!found) {
-        return {
-          type: "fail",
-          result: `No file named ${
-            expectedFile.fileName
-          } was written.\n\nWritten files: ${compiled.files
-            ?.map((f) => f.filePath)
-            .join(", ")}`,
-          expected: "",
-          name,
-          expectFail: props.expectFail ?? false,
-          path,
-        }
-      }
-    }
-
-    return { type: "success" }
   }
 
   return {
     type: "fail",
     result: normalize(output),
     expected: normalize(expected),
-    name,
-    expectFail: props.expectFail ?? false,
-    path,
+    name: testCase.name,
+    expectFail: !!testCase.skipped && allowSkip,
+    path: testCase.sourcePath,
   }
 }
 
-const getAllFiles = async (): Promise<{
-  [key: string]: { path: string; content: any }
-}> => {
+const loadTestCases = (): TestCase[] => {
   // __dirname allows this to either run via ts-node in developer mode or on CI with normal node
   // then __dirname will be within the js folder
-  const basePath = path.join(__dirname, "..", "parse_node")
-  const files = fs.readdirSync(basePath)
-  const results: { [key: string]: any } = {}
+  const basePath = path.join(__dirname, "..", "test_cases")
+  return fs
+    .readdirSync(basePath)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => TestCase.fromMarkdownContent(path.join(basePath, f)))
+    .flat()
+}
 
-  for (const fts of files) {
-    const f = path.basename(fts)
-    const ext = path.extname(fts)
-    if (f === "index" || ext === ".map") {
-      continue
-    }
-
-    let filePath = path.join(basePath, f)
-    const obj = await import(filePath)
-
-    results[f] = {
-      content: obj,
-      path: filePath,
-    }
-  }
-
-  return results
+function stringVisibleLength(str: string): number {
+  // Remove ANSI escape codes
+  // eslint-disable-next-line no-control-regex
+  const ansiRegex = /\x1b\[[0-9;]*m/g
+  const clean = str.replace(ansiRegex, "")
+  // Count Unicode grapheme clusters (for emoji, etc.)
+  return Array.from(clean).length
 }
 
 export const runTests = async () => {
   let total = 0
-  let tests: (Test & {
-    testName: string
-    fileName: string
-    path: string
-  })[] = []
-
-  const everything = await getAllFiles()
-
-  for (const [fileName, { path, content }] of Object.entries(everything)) {
-    for (const [testName, testObj] of Object.entries(content)) {
-      if (testName.startsWith("test")) {
-        tests.push({ ...(testObj as any), testName, fileName, path })
-      }
-    }
-  }
-
-  tests =
-    tests.filter((t) => t.only).length > 0 ? tests.filter((t) => t.only) : tests
-
+  const tests = loadTestCases()
   const failures: TestResultFail[] = []
   const start = new Date().getTime()
 
-  for (const testObj of tests) {
+  for (const testCase of tests) {
     // mock out console.log to display logs nicer
 
     const logged: any[][] = []
     const oldConsoleLog = console.log
     console.log = (...args: any[]) => logged.push(args)
-    const result = test(
-      testObj,
-      testObj.testName,
-      testObj.fileName,
-      testObj.path
-    )
+    const args = process.argv.slice(2)
+    const noSkip = args.includes("no-skip")
+    const result = runTest(testCase, !noSkip)
     console.log = oldConsoleLog
 
     total++
@@ -458,70 +516,53 @@ export const runTests = async () => {
     console.info(total, "tests passed, in", elapsed)
     console.info("\nSome failed, but they were expected to fail:")
     console.info(failures.map((f) => "  " + f.name).join("\n"))
+    console.info("\nUse 'npm test -- no-skip' to run all tests")
   } else {
-    for (let {
-      expected,
-      name,
-      result,
-      logs,
-      path,
-      type,
-      fileName,
-    } of failures.filter((x) => !x.expectFail)) {
-      const fileContents = fs.readFileSync(path, "utf-8")
-      const lines = fileContents.split("\n")
-      // Take a guess at line
-      let line =
-        (lines.findIndex((l) => l.includes(`export const ${name}`)) ?? -1) + 1
-
-      console.info("=============================================")
-      console.info(name, "failed:")
-      console.info(
-        `  in`,
-        chalk.yellowBright(`${path}${line ? `:${line}:0` : ``}`)
+    for (let { expected, name, result, logs, path, type } of failures.filter(
+      (x) => !x.expectFail
+    )) {
+      const header = ` ${chalk.whiteBright(name)} ${chalk.red("failed")}:`
+      const footer = `    in ${chalk.yellowBright(path)}`
+      const delim = "=".repeat(
+        1 + Math.max(stringVisibleLength(header), stringVisibleLength(footer))
       )
-      console.info("=============================================\n")
+      console.info(delim)
+      console.info(header)
+      console.info(footer)
+      console.info(delim)
+      console.log("")
 
       if (type === "fail-error") {
         console.info(expected + "\n")
       } else if (type === "fail-no-error") {
         console.info(expected + "\n")
       } else {
-        if (fileName) {
-          console.info(`${chalk.red("Expected")} (In file ${fileName}):`)
-        } else {
-          console.info(`${chalk.red("Expected")}`)
-        }
-
-        let str = ""
-
-        for (let i = 0; i < expected.length; i++) {
-          if (expected[i] !== result[i]) {
-            if (expected[i].trim() === "") {
-              str += `\x1b[41m${expected[i]}\x1b[0m`
-            } else {
-              str += `\x1b[31m${expected[i]}\x1b[0m`
-            }
-          } else {
-            str += expected[i]
-          }
-        }
-
-        console.info(
-          str
-            .split("\n")
-            .map((x) => x + "\n")
+        console.info(`${chalk.red("Expected")}:\n`)
+        console.log(
+          diffChars(result, expected)
+            .map((part) =>
+              part.added
+                ? chalk.whiteBright(part.value)
+                : part.removed
+                ? ""
+                : part.value
+            )
             .join("")
         )
-        console.info("\x1b[32mActual:\x1b[0m")
-        console.info(
-          result
-            .split("\n")
-            .map((x) => x + "\n")
+        console.log("")
+        console.info(`${chalk.blue("Result")}:\n`)
+        console.log(
+          diffChars(result, expected)
+            .map((part) =>
+              part.added
+                ? ""
+                : part.removed
+                ? chalk.whiteBright(part.value)
+                : part.value
+            )
             .join("")
         )
       }
-
       if (logs && logs.length > 0) {
         console.info("Logs:")
 

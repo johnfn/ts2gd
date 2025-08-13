@@ -2,7 +2,6 @@ import ts, { ClassDeclaration, SyntaxKind } from "typescript"
 
 import { ErrorName, addError } from "../errors"
 import { ParseNodeType, ParseState, combine, parseNode } from "../parse_node"
-import { Test } from "../tests/test"
 import { checkIfMainClass } from "../ts_utils"
 
 import { LibraryFunctions } from "./library_functions"
@@ -332,39 +331,4 @@ ${
     files,
     content: "",
   }
-}
-
-export const testToolAnnotation: Test = {
-  ts: `
-@tool
-export default class Test {
-}
-  `,
-  expected: `
-tool
-class_name Test
-`,
-}
-
-export const testInnerClass: Test = {
-  ts: `
-@inner
-export class InnerTest {
-  field: int = 2;
-}
-  `,
-  expected: `
-class InnerTest:
-  var field: int = 2
-`,
-}
-
-export const testAnonymousClass: Test = {
-  ts: `
-export default class extends Node2D {
-}
-  `,
-  expected: `
-extends Node2D
-`,
 }

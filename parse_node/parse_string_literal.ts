@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseStringLiteral = (
   node: ts.StringLiteral,
@@ -18,13 +17,4 @@ export const parseStringLiteral = (
     props,
     parsedStrings: () => `"${text}"`,
   })
-}
-
-export const testNewlineLiteral: Test = {
-  ts: `
-let d = "\\n"
-  `,
-  expected: `
-var _d = "\\n"
-`,
 }

@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseIdentifier = (
   node: ts.Identifier,
@@ -32,13 +31,4 @@ export const parseIdentifier = (
       return name
     },
   })
-}
-
-export const testUndefined: Test = {
-  ts: `
-let x = undefined
-  `,
-  expected: `
-var _x = null
-  `,
 }

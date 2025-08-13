@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseNodeType, ParseState, combine } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseNewExpression = (
   node: ts.NewExpression,
@@ -27,31 +26,4 @@ export const parseNewExpression = (
       return `${expr}.new(${args.join(", ")})`
     },
   })
-}
-
-export const testNormalNew: Test = {
-  ts: `
-let foo = new Node2D()
-  `,
-  expected: `
-var _foo = Node2D.new()
-  `,
-}
-
-export const testVectorNoNew: Test = {
-  ts: `
-let foo = new Vector2()
-  `,
-  expected: `
-var _foo = Vector2()
-  `,
-}
-
-export const testColorNoNew: Test = {
-  ts: `
-let foo = new Color()
-  `,
-  expected: `
-var _foo = Color()
-  `,
 }

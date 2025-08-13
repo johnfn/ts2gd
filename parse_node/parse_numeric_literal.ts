@@ -1,7 +1,6 @@
 import ts from "typescript"
 
 import { ParseState, combine, ParseNodeType } from "../parse_node"
-import { Test } from "../tests/test"
 
 export const parseNumericLiteral = (
   node: ts.NumericLiteral,
@@ -15,22 +14,4 @@ export const parseNumericLiteral = (
     props,
     parsedStrings: () => node.getText(),
   })
-}
-
-export const testInt: Test = {
-  ts: `
-let x = 1
-  `,
-  expected: `
-var _x: int = 1
-  `,
-}
-
-export const testFloat: Test = {
-  ts: `
-let x = 1.0
-  `,
-  expected: `
-var _x: float = 1.0
-  `,
 }

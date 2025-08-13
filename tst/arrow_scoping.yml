@@ -1,0 +1,9 @@
+input: |
+  #!typescript
+  let a = 1;
+  console.log(a);
+
+output: |
+  #!gdscript
+  var a = 1
+  print(a)
