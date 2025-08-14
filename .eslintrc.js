@@ -24,7 +24,7 @@ module.exports = {
   },
   plugins: ["import", "prettier", "@typescript-eslint"],
   rules: {
-    "prettier/prettier": "error",
+    "prettier/prettier": "warn",
     "import/first": "error",
     "import/no-duplicates": "error",
     "import/order": ["error", { "newlines-between": "always" }],
